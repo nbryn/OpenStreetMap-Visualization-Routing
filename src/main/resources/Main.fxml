@@ -6,8 +6,30 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            prefHeight="400.0" prefWidth="600.0">
+<VBox id="vbox" prefHeight="400" prefWidth="800"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="bfst20.presentation.MainController">
+    <MenuBar fx:id="menuBar" >
+        <menus>
+            <Menu fx:id="mainMenu" text="File">
+                <items>
 
-</AnchorPane>
+                    <MenuItem fx:id="openFile" text="Open"  onAction="#load" />
+                    <MenuItem text="Save"/>
+
+                    <SeparatorMenuItem  />
+                    <MenuItem text="Exit"/>
+                </items>
+            </Menu>
+
+            <Menu text="Help">
+                <items>
+
+
+                    <SeparatorMenuItem />
+                    <MenuItem text="About" />
+                </items>
+            </Menu>
+        </menus>
+    </MenuBar>
+</VBox>

@@ -28,7 +28,7 @@ dependencies {
 }
 
 application {
-    mainClassName = 'bfst20.Map.Main'
+    mainClassName = 'bfst20.presentation.MainController'
 }
 
 compileJava.options.encoding = 'UTF-8'
