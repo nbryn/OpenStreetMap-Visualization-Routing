@@ -1,4 +1,4 @@
-package bfst20.Map;
+package bfst20.presentation;
 
 /**
  * Main
