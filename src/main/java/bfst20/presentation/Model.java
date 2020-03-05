@@ -49,14 +49,14 @@ public class Model {
 
                 if(name.endsWith(".osm")){
                     InputStream stream = zipFile.getInputStream(entry);
-                    System.out.println(new String(stream.readAllBytes()));
+                    Parser.parseString(new String(stream.readAllBytes()));
                 }
             }
 
             zipFile.close();
 
 
-        } catch (IOException ex) {
+        } catch (IOException | XMLStreamException ex) {
             System.out.println(ex);
         }
 
