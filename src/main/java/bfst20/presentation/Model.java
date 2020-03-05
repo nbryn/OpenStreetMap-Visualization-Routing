@@ -11,6 +11,7 @@ import java.util.zip.ZipFile;
 
 public class Model {
 
+    
 
     public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
         long time = -System.nanoTime();
@@ -45,9 +46,6 @@ public class Model {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
-                long compressedSize = entry.getCompressedSize();
-                long normalSize = entry.getSize();
-                String type = entry.isDirectory() ? "DIR" : "FILE";
 
                 if(name.endsWith(".osm")){
                     InputStream stream = zipFile.getInputStream(entry);
