@@ -2,16 +2,12 @@ package bfst20.presentation;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class Model {
-
-    
 
     public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
         long time = -System.nanoTime();
@@ -25,7 +21,7 @@ public class Model {
 
                 break;
             case ".osm":
-
+                Parser.parseOSMFile(file);
                 break;
 
             case ".zip":

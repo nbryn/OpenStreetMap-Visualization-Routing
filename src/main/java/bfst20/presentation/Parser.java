@@ -4,8 +4,7 @@ import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.OSMElement;
 
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +21,18 @@ public class Parser {
     private Parser() {
     }
 
+    public static void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
+        parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+    }
+
     public static void parseString(String string) throws XMLStreamException {
         Reader stringReader = new StringReader(string);
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader reader = factory.createXMLStreamReader(stringReader);
+        parse(reader);
+    }
+
+    private static void parse(XMLStreamReader reader) throws XMLStreamException {
 
         List<OSMElement> OSMElements = new ArrayList<>();
 
