@@ -1,4 +1,4 @@
-package bfst20.Logic;
+package bfst20.logic;
 
 import java.util.ArrayList;
 

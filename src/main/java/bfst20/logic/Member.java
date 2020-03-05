@@ -1,4 +1,4 @@
-package bfst20.Logic;
+package bfst20.logic;
 
 public class Member {
     private String type, ref, role;
