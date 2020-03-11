@@ -1,6 +1,7 @@
 package bfst20.logic.entities;
 
 import bfst20.logic.interfaces.OSMElement;
+import javafx.scene.canvas.GraphicsContext;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class Node implements OSMElement {
     private List<Tag> tags;
     private XMLStreamReader reader;
 
-    public Node(){
+    public Node() {
         tags = new ArrayList<>();
     }
 
@@ -23,33 +24,27 @@ public class Node implements OSMElement {
         return id;
     }
 
-    public double getLatitude(){
+    public double getLatitude() {
         return latitude;
     }
 
-    public double getLongitude(){
+    public double getLongitude() {
         return longitude;
     }
 
-    public List<Tag> getTags(){
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void addTag(Tag tag){
+    public void addTag(Tag tag) {
         tags.add(tag);
     }
-
 
     @Override
     public void setValues() {
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
-        latitude = Double.parseDouble(reader.getAttributeValue(null, "lat"));
-        longitude = Double.parseDouble(reader.getAttributeValue(null, "lat"));
-    }
-
-    @Override
-    public void addSubElements(OSMElement subElement) {
-
+        latitude = -1 * Double.parseDouble(reader.getAttributeValue(null, "lat"));
+        longitude = Double.parseDouble(reader.getAttributeValue(null, "lon")) * 0.56f;
     }
 
     @Override

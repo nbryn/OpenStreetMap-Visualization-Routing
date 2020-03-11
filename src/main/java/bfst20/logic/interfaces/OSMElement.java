@@ -2,11 +2,11 @@ package bfst20.logic.interfaces;
 
 import javax.xml.stream.XMLStreamReader;
 
+import javafx.scene.canvas.GraphicsContext;
+
 public interface OSMElement {
 
     void setValues();
-
-    void addSubElements(OSMElement subElement);
 
     void setReader(XMLStreamReader reader);
 }
