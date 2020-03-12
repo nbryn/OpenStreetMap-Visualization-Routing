@@ -31,6 +31,7 @@ public class Parser {
         System.out.println("ParseOSMFILE");
         System.out.println(file);
         try {
+            // TODO: Wrong path
             s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
         } catch (Exception e) {
             System.out.println(e);
