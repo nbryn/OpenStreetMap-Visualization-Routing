@@ -19,6 +19,10 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
 
+    private static XMLStreamReader reader;
+    private static List<Way> osmWays;
+    private static Map<Long, Node> nodeMap;
+
     private Parser() {
     }
 
@@ -29,36 +33,27 @@ public class Parser {
     public static void parseString(String string) throws XMLStreamException {
         Reader stringReader = new StringReader(string);
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLStreamReader reader = factory.createXMLStreamReader(stringReader);
+        reader = factory.createXMLStreamReader(stringReader);
         parse(reader);
     }
 
     private static List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
-        Map<Long, Node> nodeMap = new HashMap<>();
+        nodeMap = new HashMap<>();
+        osmWays = new ArrayList<>();
 
-        List<Way> OSMways = new ArrayList<>();
-
-        while(reader.hasNext()){
+        while (reader.hasNext()) {
             reader.next();
 
-            switch(reader.getEventType()){
+            switch (reader.getEventType()) {
                 case START_ELEMENT:
                     String tagName = reader.getLocalName();
 
-                    if(tagName.equals("node")){
-                        Node node = new Node();
-                        node.setReader(reader);
-                        node.setValues();
-                        nodeMap.put(node.getId(), node);
-                    }else if(tagName.equals("way")){
-                        Way way = new Way();
-                        way.setReader(reader);
-                        way.setValues();
-                        OSMways.add(way);
-                    }else if(tagName.equals("nd")){
-                        Way way = (Way) OSMways.get(OSMways.size()-1);
-                        long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
-                        way.addNode(nodeMap.get(id));
+                    if (tagName.equals("node")) {
+                        addNodeToMap();
+                    } else if (tagName.equals("way")) {
+                        addWayToList();
+                    } else if (tagName.equals("nd")) {
+                        addSubElementToWay();
                     }
                     break;
                 case END_ELEMENT:
@@ -68,6 +63,31 @@ public class Parser {
 
         }
 
-        return OSMways;
+        return osmWays;
+    }
+
+    private static void addNodeToMap() {
+        Node node = new Node();
+        node.setReader(reader);
+        node.setValues();
+        nodeMap.put(node.getId(), node);
+
+
+    }
+
+    private static void addWayToList() {
+        Way way = new Way();
+        way.setReader(reader);
+        way.setValues();
+        osmWays.add(way);
+
+    }
+
+    private static void addSubElementToWay() {
+        Way way = (Way) osmWays.get(osmWays.size() - 1);
+        long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
+        way.addNode(nodeMap.get(id));
+
+
     }
 }
