@@ -12,19 +12,19 @@ import java.util.List;
 public class Way implements OSMElement, Drawable {
     private long id;
     private List<OSMElement> tags;
-    private List<OSMElement> nodes;
+    private List<Node> nodes;
     private XMLStreamReader reader;
 
     public Way() {
         tags = new ArrayList<OSMElement>();
-        nodes = new ArrayList<OSMElement>();
+        nodes = new ArrayList<Node>();
     }
 
     public long getId() {
         return id;
     }
 
-    public void addNode(OSMElement node) {
+    public void addNode(Node node) {
         this.nodes.add(node);
     }
 
@@ -46,21 +46,17 @@ public class Way implements OSMElement, Drawable {
     public void Draw(GraphicsContext gc) {
         Node start = (Node) nodes.get(0);
 
-        gc.beginPath();
         gc.moveTo(start.getLatitude(), start.getLongitude());
 
-        for(int i = 0; i< nodes.size(); i++){
-            Node node1 = (Node) nodes.get(i);
-            if(i+1 == nodes.size() - 1) return;
-            Node node2 = (Node) nodes.get(i+1);
+        for(int i = 1; i< nodes.size(); i++){
+            Node node1 = nodes.get(i-1);
+            Node node2 = nodes.get(i);
 
             gc.beginPath();
             gc.moveTo(node1.getLongitude(), node1.getLatitude());
             gc.lineTo(node2.getLongitude(), node2.getLatitude());
             gc.stroke();
         }
-
-        gc.stroke();
 
     }
 }

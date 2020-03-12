@@ -22,7 +22,7 @@ public class Parser {
     private Parser() {
     }
 
-    public static List<Drawable> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
+    public static List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
         return parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
     }
 
@@ -33,51 +33,41 @@ public class Parser {
         parse(reader);
     }
 
-    private static List<Drawable> parse(XMLStreamReader reader) throws XMLStreamException {
-        Map<Long, OSMElement> nodeMap = new HashMap<>();
+    private static List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
+        Map<Long, Node> nodeMap = new HashMap<>();
 
-
-        List<Drawable> OSMElements = new ArrayList<>();
+        List<Way> OSMways = new ArrayList<>();
 
         while(reader.hasNext()){
             reader.next();
 
-            OSMElement osmElement = null;
-
-            boolean isNested = false;
-
             switch(reader.getEventType()){
                 case START_ELEMENT:
-                    isNested = true;
                     String tagName = reader.getLocalName();
 
-                    if(tagName == "node"){
-                        osmElement = new Node();
-                        osmElement.setReader(reader);
-                        osmElement.setValues();
-                        nodeMap.put(((Node) osmElement).getId(), osmElement);
-                    }else if(tagName == "way"){
+                    if(tagName.equals("node")){
+                        Node node = new Node();
+                        node.setReader(reader);
+                        node.setValues();
+                        nodeMap.put(node.getId(), node);
+                    }else if(tagName.equals("way")){
                         Way way = new Way();
                         way.setReader(reader);
                         way.setValues();
-                        OSMElements.add(way);
-       
-                    }else if(tagName == "nd" && isNested && OSMElements.get(OSMElements.size()-1) instanceof Way){
-                        Way way = (Way) OSMElements.get(OSMElements.size()-1);
+                        OSMways.add(way);
+                    }else if(tagName.equals("nd")){
+                        Way way = (Way) OSMways.get(OSMways.size()-1);
                         long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
                         way.addNode(nodeMap.get(id));
                     }
-
-
                     break;
                 case END_ELEMENT:
-                    isNested = false;
 
                     break;
             }
 
         }
 
-        return OSMElements;
+        return OSMways;
     }
 }

@@ -22,10 +22,19 @@ public class Tag implements OSMElement {
 
     @Override
     public void setValues() {
-        key = String.valueOf(reader.getAttributeValue(null, "k"));
-        value = String.valueOf(reader.getAttributeValue(null, "v"));
+        setKey();
+        setValue();
     }
 
+    private void setKey(){
+        key = String.valueOf(reader.getAttributeValue(null, "k"));
+
+    }
+
+    private void setValue(){
+        value = String.valueOf(reader.getAttributeValue(null, "v"));
+
+    }
 
     @Override
     public void setReader(XMLStreamReader reader) {

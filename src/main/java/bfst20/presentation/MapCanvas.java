@@ -7,6 +7,7 @@ import javafx.scene.transform.Affine;
 
 import java.util.List;
 
+import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.interfaces.OSMElement;
 
@@ -15,7 +16,7 @@ import java.awt.*;
 public class MapCanvas extends Canvas {
 
     Affine trans = new Affine();
-    List<Drawable> data;
+    List<Way> data;
 
     public MapCanvas(Dimension dimension) {
         setWidth(dimension.getWidth());
@@ -30,7 +31,7 @@ public class MapCanvas extends Canvas {
 
     }
 
-    public void initalizeData(List<Drawable> data) {
+    public void initalizeData(List<Way> data) {
         this.data = data;
         repaint();
     }
@@ -45,7 +46,6 @@ public class MapCanvas extends Canvas {
         
         double pixelwidth = 1/Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
-
 
         for(Drawable element : data){
             element.Draw(gc);
