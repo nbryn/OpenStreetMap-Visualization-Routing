@@ -42,9 +42,24 @@ public class Node implements OSMElement {
 
     @Override
     public void setValues() {
+        setId();
+        setLatitude();
+        setLongtitude();
+    }
+
+    private void setId(){
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
+
+    }
+
+    private void setLatitude(){
         latitude = -1 * Double.parseDouble(reader.getAttributeValue(null, "lat"));
+
+    }
+
+    private void setLongtitude(){
         longitude = Double.parseDouble(reader.getAttributeValue(null, "lon")) * 0.56f;
+
     }
 
     @Override
