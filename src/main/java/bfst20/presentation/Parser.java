@@ -27,7 +27,16 @@ public class Parser {
     }
 
     public static List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
-        return parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+        List<Way> s = null;
+        System.out.println("ParseOSMFILE");
+        System.out.println(file);
+        try {
+            s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return s;
     }
 
     public static void parseString(String string) throws XMLStreamException {
@@ -38,6 +47,7 @@ public class Parser {
     }
 
     private static List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
+        System.out.println("Parse");
         nodeMap = new HashMap<>();
         osmWays = new ArrayList<>();
 
@@ -63,6 +73,7 @@ public class Parser {
 
         }
 
+        System.out.println(osmWays);
         return osmWays;
     }
 

@@ -31,8 +31,10 @@ public class MapCanvas extends Canvas {
 
     }
 
-    public void initalizeData(List<Way> data) {
+    public void initializeData(List<Way> data) {
         this.data = data;
+        System.out.println("MapCanvas");
+        System.out.println("Hej");
         repaint();
     }
 
