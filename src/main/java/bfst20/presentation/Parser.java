@@ -2,10 +2,9 @@ package bfst20.presentation;
 
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
-import bfst20.logic.interfaces.Drawable;
-import bfst20.logic.interfaces.OSMElement;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,7 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
 
-    private static XMLStreamReader reader;
+
     private static List<Way> osmWays;
     private static Map<Long, Node> nodeMap;
 
@@ -28,13 +27,13 @@ public class Parser {
 
     public static List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
         List<Way> s = null;
-        System.out.println("ParseOSMFILE");
-        System.out.println(file);
+
+        System.out.println(new File(".").getAbsolutePath());
         try {
             // TODO: Wrong path
-            s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+            s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader("/home/nbryn/Desktop/ITU/2. Semester/BFST20Gruppe17/src/main/resources/samsoe.osm")));
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("E is: " + e);
         }
 
         return s;
@@ -43,7 +42,7 @@ public class Parser {
     public static void parseString(String string) throws XMLStreamException {
         Reader stringReader = new StringReader(string);
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        reader = factory.createXMLStreamReader(stringReader);
+        XMLStreamReader reader = factory.createXMLStreamReader(stringReader);
         parse(reader);
     }
 
@@ -55,16 +54,17 @@ public class Parser {
         while (reader.hasNext()) {
             reader.next();
 
+
             switch (reader.getEventType()) {
                 case START_ELEMENT:
                     String tagName = reader.getLocalName();
 
                     if (tagName.equals("node")) {
-                        addNodeToMap();
+                        addNodeToMap(reader);
                     } else if (tagName.equals("way")) {
-                        addWayToList();
+                        addWayToList(reader);
                     } else if (tagName.equals("nd")) {
-                        addSubElementToWay();
+                        addSubElementToWay(reader);
                     }
                     break;
                 case END_ELEMENT:
@@ -74,11 +74,11 @@ public class Parser {
 
         }
 
-        System.out.println(osmWays);
+
         return osmWays;
     }
 
-    private static void addNodeToMap() {
+    private static void addNodeToMap(XMLStreamReader reader) {
         Node node = new Node();
         node.setReader(reader);
         node.setValues();
@@ -87,7 +87,7 @@ public class Parser {
 
     }
 
-    private static void addWayToList() {
+    private static void addWayToList(XMLStreamReader reader) {
         Way way = new Way();
         way.setReader(reader);
         way.setValues();
@@ -95,11 +95,14 @@ public class Parser {
 
     }
 
-    private static void addSubElementToWay() {
-        Way way = (Way) osmWays.get(osmWays.size() - 1);
+    private static void addSubElementToWay(XMLStreamReader reader) {
+        Way way = osmWays.get(osmWays.size() - 1);
         long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
         way.addNode(nodeMap.get(id));
 
 
     }
 }
+
+
+

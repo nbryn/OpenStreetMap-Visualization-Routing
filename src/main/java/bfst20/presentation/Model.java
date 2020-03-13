@@ -3,13 +3,14 @@ package bfst20.presentation;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class Model {
 
-    public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
+    public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError, URISyntaxException {
         long time = -System.nanoTime();
         String filename = file.getName();
         String fileExt = filename.substring(filename.lastIndexOf("."));

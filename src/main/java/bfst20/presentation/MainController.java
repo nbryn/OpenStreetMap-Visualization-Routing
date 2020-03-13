@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class MainController {
 
@@ -37,7 +38,7 @@ public class MainController {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("samsoe.osm").getFile());
-            System.out.println("MainController");
+
             mapCanvas.initializeData(Parser.parseOSMFile(file));
         } catch (Exception err) {
         }
@@ -53,7 +54,7 @@ public class MainController {
 
     }
 
-    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError, URISyntaxException {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         File file = chooser.showOpenDialog(openFile.getParentPopup().getScene().getWindow());
