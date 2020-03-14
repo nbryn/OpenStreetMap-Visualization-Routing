@@ -2,18 +2,16 @@ package bfst20.presentation;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.scene.control.Menu;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+
 
 public class MainController {
 
@@ -25,7 +23,7 @@ public class MainController {
     @FXML
     private VBox vbox;
 
-    MapCanvas mapCanvas;
+    private MapCanvas mapCanvas;
 
     public MainController() {
         this.model = new Model();
@@ -35,12 +33,13 @@ public class MainController {
     public void initialize() {
         
         mapCanvas = new MapCanvas(new Dimension(800, 400));
+
         vbox.getChildren().add(mapCanvas);
 
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("samsoe.osm").getFile());
-            mapCanvas.initalizeData(Parser.parseOSMFile(file));
+            mapCanvas.initializeData(Parser.parseOSMFile(file));
         } catch (Exception err) {
         }
 

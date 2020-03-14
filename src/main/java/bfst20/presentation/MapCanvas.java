@@ -9,7 +9,7 @@ import java.util.List;
 
 import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
-import bfst20.logic.interfaces.OSMElement;
+
 
 import java.awt.*;
 
@@ -31,12 +31,12 @@ public class MapCanvas extends Canvas {
 
     }
 
-    public void initalizeData(List<Way> data) {
+    public void initializeData(List<Way> data) {
         this.data = data;
         repaint();
     }
 
-    public void repaint(){
+    public void repaint() {
         GraphicsContext gc = getGraphicsContext2D();
 
         gc.setTransform(new Affine());
@@ -44,10 +44,11 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         
-        double pixelwidth = 1/Math.sqrt(Math.abs(trans.determinant()));
+
+        double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 
-        for(Drawable element : data){
+        for (Drawable element : data) {
             element.Draw(gc);
         }
     }
@@ -55,5 +56,5 @@ public class MapCanvas extends Canvas {
     public void zoom(double factor, double x, double y) {
         trans.prependScale(factor, factor, x, y);
         repaint();
-	}
+    }
 }

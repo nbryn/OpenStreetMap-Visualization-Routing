@@ -44,9 +44,14 @@ public class Way implements OSMElement, Drawable {
 
     @Override
     public void Draw(GraphicsContext gc) {
-        Node start = (Node) nodes.get(0);
+        Node start = nodes.get(0);
 
         gc.moveTo(start.getLatitude(), start.getLongitude());
+
+
+
+        gc.setFill(Color.BLACK);
+
 
         for(int i = 1; i< nodes.size(); i++){
             Node node1 = nodes.get(i-1);
