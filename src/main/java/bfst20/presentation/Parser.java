@@ -2,6 +2,8 @@ package bfst20.presentation;
 
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
+import bfst20.logic.entities.Relation;
+import bfst20.logic.interfaces.OSMElement;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,16 +20,18 @@ import static javax.xml.stream.XMLStreamConstants.*;
 public class Parser {
 
 
-    private static List<Way> osmWays;
+    private static List<Way> OSMWays;
     private static Map<Long, Node> nodeMap;
+    private static List<Relation> OSMRelations;
+
 
     private Parser() {
+
     }
 
     public static List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
         List<Way> s = null;
 
-        System.out.println(new File(".").getAbsolutePath());
         try {
 
             s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
@@ -46,35 +50,50 @@ public class Parser {
     }
 
     private static List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
-        System.out.println("Parse");
         nodeMap = new HashMap<>();
-        osmWays = new ArrayList<>();
+        OSMWays = new ArrayList<>();
+        OSMRelations = new ArrayList<>();
 
         while (reader.hasNext()) {
-            reader.next();
+            OSMElement lastElement = null;
 
+            while (reader.hasNext()) {
+                reader.next();
 
-            switch (reader.getEventType()) {
-                case START_ELEMENT:
-                    String tagName = reader.getLocalName();
+                switch (reader.getEventType()) {
+                    case START_ELEMENT:
+                        String tagName = reader.getLocalName();
 
-                    if (tagName.equals("node")) {
-                        addNodeToMap(reader);
-                    } else if (tagName.equals("way")) {
-                        addWayToList(reader);
-                    } else if (tagName.equals("nd")) {
-                        addSubElementToWay(reader);
-                    }
-                    break;
-                case END_ELEMENT:
+                        switch (tagName) {
+                            case "node":
+                                addNodeToMap(reader);
+                                break;
+                            case "way":
+                                addWayToList(reader);
+                                break;
+                            case "nd":
+                                addSubElementToWay(reader);
+                                break;
+                            case "relation":
+                                lastElement = addRelationToList(reader);
+                                break;
+                            case "tag":
+                                if (lastElement instanceof Relation) {
+                                     addTagToRelation(reader);
+                                }
+                                break;
+                            case "member":
+                                addMemberToRelation(reader);
+                                break;
+                        }
+                        break;
+                    case END_ELEMENT:
 
-                    break;
+                        break;
+                }
             }
-
         }
-
-
-        return osmWays;
+        return OSMWays;
     }
 
     private static void addNodeToMap(XMLStreamReader reader) {
@@ -83,6 +102,27 @@ public class Parser {
         node.setValues();
         nodeMap.put(node.getId(), node);
 
+    }
+
+    private static Relation addRelationToList(XMLStreamReader reader) {
+        Relation relation = new Relation();
+        OSMRelations.add(relation);
+
+        return relation;
+    }
+
+    private static void addTagToRelation(XMLStreamReader reader) {
+        Relation relation = OSMRelations.get(OSMRelations.size() - 1);
+        String key = reader.getAttributeValue(null, "k");
+        String value = reader.getAttributeValue(null, "v");
+        relation.addTag(key, value);
+
+    }
+
+    private static void addMemberToRelation(XMLStreamReader reader) {
+        Relation relation = OSMRelations.get(OSMRelations.size() - 1);
+        long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
+        relation.addMember(member);
 
     }
 
@@ -90,18 +130,20 @@ public class Parser {
         Way way = new Way();
         way.setReader(reader);
         way.setValues();
-        osmWays.add(way);
+        OSMWays.add(way);
 
     }
 
     private static void addSubElementToWay(XMLStreamReader reader) {
-        Way way = osmWays.get(osmWays.size() - 1);
+        Way way = OSMWays.get(OSMWays.size() - 1);
         long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
         way.addNode(nodeMap.get(id));
 
 
     }
 }
+
+
 
 
 

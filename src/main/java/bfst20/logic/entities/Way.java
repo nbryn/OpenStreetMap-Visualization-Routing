@@ -4,8 +4,6 @@ import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.interfaces.OSMElement;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;

@@ -11,7 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+
 
 public class MainController {
 
@@ -54,7 +54,7 @@ public class MainController {
 
     }
 
-    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError, URISyntaxException {
+    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open File");
         File file = chooser.showOpenDialog(openFile.getParentPopup().getScene().getWindow());
