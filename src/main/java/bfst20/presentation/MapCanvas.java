@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import javafx.scene.shape.Rectangle;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class MapCanvas extends Canvas {
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
+        
 
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);

@@ -1,13 +1,10 @@
 package bfst20.logic.entities;
 
 import bfst20.logic.interfaces.OSMElement;
-import javafx.scene.canvas.GraphicsContext;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Node implements OSMElement {
     private long id;
@@ -44,7 +41,7 @@ public class Node implements OSMElement {
     public void setValues() {
         setId();
         setLatitude();
-        setLongtitude();
+        setLongitude();
     }
 
     private void setId(){
@@ -53,11 +50,12 @@ public class Node implements OSMElement {
     }
 
     private void setLatitude(){
-        latitude = -1 * Double.parseDouble(reader.getAttributeValue(null, "lat"));
+        latitude = -Double.parseDouble(reader.getAttributeValue(null, "lat"));
+
 
     }
 
-    private void setLongtitude(){
+    private void setLongitude(){
         longitude = Double.parseDouble(reader.getAttributeValue(null, "lon")) * 0.56f;
 
     }

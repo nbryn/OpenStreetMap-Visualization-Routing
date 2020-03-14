@@ -33,12 +33,12 @@ public class MainController {
     public void initialize() {
         
         mapCanvas = new MapCanvas(new Dimension(800, 400));
+
         vbox.getChildren().add(mapCanvas);
 
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("samsoe.osm").getFile());
-
             mapCanvas.initializeData(Parser.parseOSMFile(file));
         } catch (Exception err) {
         }

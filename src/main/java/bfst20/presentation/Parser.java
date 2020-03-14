@@ -4,7 +4,6 @@ import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +29,8 @@ public class Parser {
 
         System.out.println(new File(".").getAbsolutePath());
         try {
-            // TODO: Wrong path
-            s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader("/home/nbryn/Desktop/ITU/2. Semester/BFST20Gruppe17/src/main/resources/samsoe.osm")));
+
+            s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
         } catch (Exception e) {
             System.out.println("E is: " + e);
         }
