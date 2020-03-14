@@ -7,6 +7,7 @@ import javafx.scene.transform.Affine;
 
 import java.util.List;
 
+import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
 
@@ -17,6 +18,7 @@ public class MapCanvas extends Canvas {
 
     Affine trans = new Affine();
     List<Way> data;
+    List<Relation> islandRelations;
 
     public MapCanvas(Dimension dimension) {
         setWidth(dimension.getWidth());
@@ -31,8 +33,10 @@ public class MapCanvas extends Canvas {
 
     }
 
-    public void initializeData(List<Way> data) {
-        this.data = data;
+    public void initializeData() {
+        Parser parser = Parser.getInstance();
+        this.data = parser.getOSMWays();
+        this.islandRelations = parser.getIslandRelations();
         repaint();
     }
 
@@ -44,7 +48,6 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         
-
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 

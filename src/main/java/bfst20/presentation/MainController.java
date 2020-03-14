@@ -39,7 +39,9 @@ public class MainController {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("samsoe.osm").getFile());
-            mapCanvas.initializeData(Parser.parseOSMFile(file));
+            Parser parser = Parser.getInstance();
+            parser.parseOSMFile(file);
+            mapCanvas.initializeData();
         } catch (Exception err) {
         }
 
