@@ -4,9 +4,7 @@ import bfst20.logic.interfaces.OSMElement;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Node implements OSMElement {
     private long id;
@@ -15,7 +13,7 @@ public class Node implements OSMElement {
     private List<Tag> tags;
     private XMLStreamReader reader;
 
-    public Node(){
+    public Node() {
         tags = new ArrayList<>();
     }
 
@@ -23,32 +21,42 @@ public class Node implements OSMElement {
         return id;
     }
 
-    public double getLatitude(){
+    public double getLatitude() {
         return latitude;
     }
 
-    public double getLongitude(){
+    public double getLongitude() {
         return longitude;
     }
 
-    public List<Tag> getTags(){
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void addTag(Tag tag){
+    public void addTag(Tag tag) {
         tags.add(tag);
     }
 
-
     @Override
     public void setValues() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
-        latitude = Double.parseDouble(reader.getAttributeValue(null, "lat"));
-        longitude = Double.parseDouble(reader.getAttributeValue(null, "lat"));
+        setId();
+        setLatitude();
+        setLongitude();
     }
 
-    @Override
-    public void addSubElements(OSMElement subElement) {
+    private void setId(){
+        id = Long.parseLong(reader.getAttributeValue(null, "id"));
+
+    }
+
+    private void setLatitude(){
+        latitude = -Double.parseDouble(reader.getAttributeValue(null, "lat"));
+
+
+    }
+
+    private void setLongitude(){
+        longitude = Double.parseDouble(reader.getAttributeValue(null, "lon")) * 0.56f;
 
     }
 

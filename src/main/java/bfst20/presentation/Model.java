@@ -46,7 +46,7 @@ public class Model {
                 if(name.endsWith(".osm")){
                     InputStream stream = zipFile.getInputStream(entry);
                     Parser.parseString(new String(stream.readAllBytes()));
-                }
+                } 
             }
 
             zipFile.close();
@@ -57,6 +57,5 @@ public class Model {
         }
 
     }
-
 
 }

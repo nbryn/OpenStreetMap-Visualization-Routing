@@ -6,7 +6,5 @@ public interface OSMElement {
 
     void setValues();
 
-    void addSubElements(OSMElement subElement);
-
     void setReader(XMLStreamReader reader);
 }

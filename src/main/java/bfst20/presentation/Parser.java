@@ -2,6 +2,7 @@ package bfst20.presentation;
 
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
+import bfst20.logic.entities.Relation;
 import bfst20.logic.interfaces.OSMElement;
 
 import java.io.*;
@@ -18,11 +19,27 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
 
+
+    private static List<Way> OSMWays;
+    private static Map<Long, Node> nodeMap;
+    private static List<Relation> OSMRelations;
+
+
     private Parser() {
+
     }
 
-    public static void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
-        parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+    public static List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
+        List<Way> s = null;
+
+        try {
+
+            s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+        } catch (Exception e) {
+            System.out.println("E is: " + e);
+        }
+
+        return s;
     }
 
     public static void parseString(String string) throws XMLStreamException {
@@ -32,48 +49,101 @@ public class Parser {
         parse(reader);
     }
 
-    private static void parse(XMLStreamReader reader) throws XMLStreamException {
+    private static List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
+        nodeMap = new HashMap<>();
+        OSMWays = new ArrayList<>();
+        OSMRelations = new ArrayList<>();
 
-        List<OSMElement> OSMElements = new ArrayList<>();
+        while (reader.hasNext()) {
+            OSMElement lastElement = null;
 
-        while(reader.hasNext()){
-            reader.next();
+            while (reader.hasNext()) {
+                reader.next();
 
-            OSMElement osmElement = null;
+                switch (reader.getEventType()) {
+                    case START_ELEMENT:
+                        String tagName = reader.getLocalName();
 
-            boolean isNested = false;
+                        switch (tagName) {
+                            case "node":
+                                addNodeToMap(reader);
+                                break;
+                            case "way":
+                                addWayToList(reader);
+                                break;
+                            case "nd":
+                                addSubElementToWay(reader);
+                                break;
+                            case "relation":
+                                lastElement = addRelationToList(reader);
+                                break;
+                            case "tag":
+                                if (lastElement instanceof Relation) {
+                                     addTagToRelation(reader);
+                                }
+                                break;
+                            case "member":
+                                addMemberToRelation(reader);
+                                break;
+                        }
+                        break;
+                    case END_ELEMENT:
 
-            switch(reader.getEventType()){
-                case START_ELEMENT:
-                    isNested = true;
-                    String tagName = reader.getLocalName();
-
-                    if(tagName == "node" || tagName == "way"){
-                        osmElement = tagName == "node" ? new Node() : new Way();
-                        osmElement.setReader(reader);
-                        osmElement.setValues();
-                        OSMElements.add(osmElement);
-                    }else if(tagName == "nd" && isNested && OSMElements.get(OSMElements.size()-1) instanceof Way){
-                        Way way = (Way) OSMElements.get(OSMElements.size()-1);
-                        way.addId();
-                    }
-
-
-                    break;
-                case END_ELEMENT:
-                    isNested = false;
-
-                    break;
+                        break;
+                }
             }
-
         }
+        return OSMWays;
+    }
 
-        System.out.println(OSMElements.size());
+    private static void addNodeToMap(XMLStreamReader reader) {
+        Node node = new Node();
+        node.setReader(reader);
+        node.setValues();
+        nodeMap.put(node.getId(), node);
 
-        OSMElements.forEach(e -> {
-            if(e instanceof Way){
-                System.out.println(((Way) e).getNodeIds().size());
-            }
-        });
+    }
+
+    private static Relation addRelationToList(XMLStreamReader reader) {
+        Relation relation = new Relation();
+        OSMRelations.add(relation);
+
+        return relation;
+    }
+
+    private static void addTagToRelation(XMLStreamReader reader) {
+        Relation relation = OSMRelations.get(OSMRelations.size() - 1);
+        String key = reader.getAttributeValue(null, "k");
+        String value = reader.getAttributeValue(null, "v");
+        relation.addTag(key, value);
+
+    }
+
+    private static void addMemberToRelation(XMLStreamReader reader) {
+        Relation relation = OSMRelations.get(OSMRelations.size() - 1);
+        long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
+        relation.addMember(member);
+
+    }
+
+    private static void addWayToList(XMLStreamReader reader) {
+        Way way = new Way();
+        way.setReader(reader);
+        way.setValues();
+        OSMWays.add(way);
+
+    }
+
+    private static void addSubElementToWay(XMLStreamReader reader) {
+        Way way = OSMWays.get(OSMWays.size() - 1);
+        long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
+        way.addNode(nodeMap.get(id));
+
+
     }
 }
+
+
+
+
+
