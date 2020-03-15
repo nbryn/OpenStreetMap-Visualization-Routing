@@ -21,7 +21,8 @@ public class Model {
 
                 break;
             case ".osm":
-                Parser.parseOSMFile(file);
+                Parser parser = Parser.getInstance();
+                parser.parseOSMFile(file);
                 break;
 
             case ".zip":
@@ -45,7 +46,8 @@ public class Model {
 
                 if(name.endsWith(".osm")){
                     InputStream stream = zipFile.getInputStream(entry);
-                    Parser.parseString(new String(stream.readAllBytes()));
+                    Parser parser = Parser.getInstance();
+                    parser.parseString(new String(stream.readAllBytes()));
                 } 
             }
 
