@@ -20,16 +20,51 @@ import static javax.xml.stream.XMLStreamConstants.*;
 public class Parser {
 
 
-    private static List<Way> OSMWays;
-    private static Map<Long, Node> nodeMap;
-    private static List<Relation> OSMRelations;
+    private List<Way> OSMWays;
+    private Map<Long, Node> nodeMap;
+    private List<Relation> OSMRelations;
+    private static boolean isLoaded = false;
+    private static Parser parser;
 
 
     private Parser() {
-
+        OSMWays = new ArrayList<>();
+        nodeMap = new HashMap<>();
+        OSMRelations = new ArrayList<>();
     }
 
-    public static List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
+    public List<Way> getOSMWays (){
+        return OSMWays;
+    }
+
+    public List<Relation> getOSMRelations (){
+        return OSMRelations;
+    }
+
+    public List<Relation> getIslandRelations (){
+        List<Relation> islands = new ArrayList<>();
+
+        for(Relation relation : OSMRelations){
+            String place = relation.getTag("place");
+            if(place == null) continue;
+            if(place.equals("island")){
+                islands.add(relation);
+            }
+        }
+
+        return islands;
+    }
+
+    public static Parser getInstance(){
+        if(isLoaded == false){
+            isLoaded = true;
+            parser = new Parser();
+        }
+
+        return parser;
+    }
+
+    public List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
         List<Way> s = null;
 
         try {
@@ -42,17 +77,14 @@ public class Parser {
         return s;
     }
 
-    public static void parseString(String string) throws XMLStreamException {
+    public void parseString(String string) throws XMLStreamException {
         Reader stringReader = new StringReader(string);
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader reader = factory.createXMLStreamReader(stringReader);
         parse(reader);
     }
 
-    private static List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
-        nodeMap = new HashMap<>();
-        OSMWays = new ArrayList<>();
-        OSMRelations = new ArrayList<>();
+    private List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
 
         while (reader.hasNext()) {
             OSMElement lastElement = null;
@@ -96,7 +128,7 @@ public class Parser {
         return OSMWays;
     }
 
-    private static void addNodeToMap(XMLStreamReader reader) {
+    private void addNodeToMap(XMLStreamReader reader) {
         Node node = new Node();
         node.setReader(reader);
         node.setValues();
@@ -104,14 +136,14 @@ public class Parser {
 
     }
 
-    private static Relation addRelationToList(XMLStreamReader reader) {
+    private Relation addRelationToList(XMLStreamReader reader) {
         Relation relation = new Relation();
         OSMRelations.add(relation);
 
         return relation;
     }
 
-    private static void addTagToRelation(XMLStreamReader reader) {
+    private void addTagToRelation(XMLStreamReader reader) {
         Relation relation = OSMRelations.get(OSMRelations.size() - 1);
         String key = reader.getAttributeValue(null, "k");
         String value = reader.getAttributeValue(null, "v");
@@ -119,14 +151,14 @@ public class Parser {
 
     }
 
-    private static void addMemberToRelation(XMLStreamReader reader) {
+    private void addMemberToRelation(XMLStreamReader reader) {
         Relation relation = OSMRelations.get(OSMRelations.size() - 1);
         long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
         relation.addMember(member);
 
     }
 
-    private static void addWayToList(XMLStreamReader reader) {
+    private void addWayToList(XMLStreamReader reader) {
         Way way = new Way();
         way.setReader(reader);
         way.setValues();
@@ -134,7 +166,7 @@ public class Parser {
 
     }
 
-    private static void addSubElementToWay(XMLStreamReader reader) {
+    private void addSubElementToWay(XMLStreamReader reader) {
         Way way = OSMWays.get(OSMWays.size() - 1);
         long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
         way.addNode(nodeMap.get(id));
