@@ -25,7 +25,7 @@ public class Parser {
     private List<Relation> OSMRelations;
     private static boolean isLoaded = false;
     private static Parser parser;
-
+    private float minlat, maxlon, maxlat, minlon;
 
     private Parser() {
         OSMWays = new ArrayList<>();
@@ -36,6 +36,11 @@ public class Parser {
     public List<Way> getOSMWays (){
         return OSMWays;
     }
+
+    public float getMinLat(){return minlat;}
+    public float getMaxLon(){return maxlon;}
+    public float getMaxLat(){return maxlat;}
+    public float getMinLon(){return minlon;}
 
     public List<Relation> getOSMRelations (){
         return OSMRelations;
@@ -97,6 +102,12 @@ public class Parser {
                         String tagName = reader.getLocalName();
 
                         switch (tagName) {
+                            case "bounds":
+                                minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
+                                maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+                                maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
+                                minlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+                                break;
                             case "node":
                                 addNodeToMap(reader);
                                 break;

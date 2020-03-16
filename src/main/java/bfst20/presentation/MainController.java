@@ -32,7 +32,7 @@ public class MainController {
     @FXML
     public void initialize() {
         
-        mapCanvas = new MapCanvas(new Dimension(800, 400));
+        mapCanvas = new MapCanvas(new Dimension(1270, 720));
 
         vbox.getChildren().add(mapCanvas);
 

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="vbox" prefHeight="400" prefWidth="800"
+<VBox fx:id="vbox" prefHeight="720" prefWidth="1270"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="bfst20.presentation.MainController">
     <MenuBar fx:id="menuBar" >
