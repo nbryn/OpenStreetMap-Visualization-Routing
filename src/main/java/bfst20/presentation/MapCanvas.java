@@ -37,6 +37,15 @@ public class MapCanvas extends Canvas {
         Parser parser = Parser.getInstance();
         this.data = parser.getOSMWays();
         this.islandRelations = parser.getIslandRelations();
+        float minlon = parser.getMinLon();
+        float maxlon = parser.getMaxLon();
+        float minlat = parser.getMinLat();
+        float maxlat = parser.getMaxLat();
+
+        pan(-minlon, -minlat);
+        zoom(getHeight() / (maxlon- minlon), (minlat- maxlat)/2, 0);
+
+
         repaint();
     }
 
@@ -60,4 +69,9 @@ public class MapCanvas extends Canvas {
         trans.prependScale(factor, factor, x, y);
         repaint();
     }
+
+    public void pan(double dx, double dy) {
+        trans.prependTranslation(dx, dy);
+        repaint();
+	}
 }
