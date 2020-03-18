@@ -7,16 +7,20 @@ import javafx.scene.paint.Color;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Way implements OSMElement, Drawable {
     private long id;
-    private List<OSMElement> tags;
+    private Map<String, String> tags;
     private List<Node> nodes;
     private XMLStreamReader reader;
+    private Color drawColor;
 
     public Way() {
-        tags = new ArrayList<OSMElement>();
+        drawColor = Color.BLACK;
+        tags = new HashMap<>();
         nodes = new ArrayList<Node>();
     }
 
@@ -33,8 +37,14 @@ public class Way implements OSMElement, Drawable {
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
     }
 
-    public void addTag(OSMElement tag) {
-        this.tags.add(tag);
+    public void addTag(String key, String value){
+        tags.put(key, value);
+
+        if  (key.equals("border_type") && value.equals("territorial")
+        ||  (key.equals("route") && value.equals("ferry"))
+        ||  (key.equals("boundary") && value.equals("protected_area"))){
+            drawColor = Color.TRANSPARENT;
+        }
     }
 
     @Override
@@ -49,8 +59,7 @@ public class Way implements OSMElement, Drawable {
         gc.moveTo(start.getLatitude(), start.getLongitude());
 
 
-
-        gc.setFill(Color.BLACK);
+        gc.setStroke(drawColor);
 
 
         for(int i = 1; i< nodes.size(); i++){
