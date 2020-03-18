@@ -1,16 +1,18 @@
 package bfst20.presentation;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
+import java.awt.Dimension;
+import java.io.File;
+import java.io.IOException;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
 
 public class MainController {
@@ -23,8 +25,6 @@ public class MainController {
     @FXML
     private VBox vbox;
 
-    private MapCanvas mapCanvas;
-
     public MainController() {
         this.model = new Model();
     }
@@ -32,22 +32,24 @@ public class MainController {
     @FXML
     public void initialize() {
         
-        mapCanvas = new MapCanvas(new Dimension(1270, 720));
+        Canvas canvas = new Canvas(1270, 720);
+        
+        View view = new View(canvas);
 
-        vbox.getChildren().add(mapCanvas);
+        vbox.getChildren().add(canvas);
 
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("samsoe.osm").getFile());
             Parser parser = Parser.getInstance();
             parser.parseOSMFile(file);
-            mapCanvas.initializeData();
+            view.initializeData();
         } catch (Exception err) {
         }
 
-        mapCanvas.setOnScroll(e -> {
+        canvas.setOnScroll(e -> {
             double factor = Math.pow(1.001, e.getDeltaY());
-            mapCanvas.zoom(factor, e.getX(), e.getY());
+            view.zoom(factor, e.getX(), e.getY());
         });
     }
 
@@ -58,12 +60,5 @@ public class MainController {
 
     public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Open File");
-        File file = chooser.showOpenDialog(openFile.getParentPopup().getScene().getWindow());
-        model.load(file);
-    }
-
-    public void updateMapCanvas() {
-        mapCanvas.update();
     }
 }

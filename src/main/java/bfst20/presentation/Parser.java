@@ -3,6 +3,7 @@ package bfst20.presentation;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.Relation;
+import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.interfaces.OSMElement;
 
 import java.io.*;
@@ -19,7 +20,7 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
 
-    private List<Way> OSMWays;
+    private Map<Long, Way>  OSMWays;
     private Map<Long, Node> nodeMap;
     private List<Relation> OSMRelations;
     private static boolean isLoaded = false;
@@ -27,13 +28,9 @@ public class Parser {
     private float minlat, maxlon, maxlat, minlon;
 
     private Parser() {
-        OSMWays = new ArrayList<>();
+        OSMWays = new HashMap<>();
         nodeMap = new HashMap<>();
         OSMRelations = new ArrayList<>();
-    }
-
-    public List<Way> getOSMWays() {
-        return OSMWays;
     }
 
     public float getMinLat() {
@@ -50,6 +47,14 @@ public class Parser {
 
     public float getMinLon() {
         return minlon;
+    }
+
+    public Map<Long, Way> getOSMWays(){
+        return OSMWays;
+    }
+
+    public Map<Long, Node> getOSMNodes(){
+        return nodeMap;
     }
 
     public List<Relation> getOSMRelations() {
@@ -80,17 +85,15 @@ public class Parser {
         return parser;
     }
 
-    public List<Way> parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
-        List<Way> s = null;
+    public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
         try {
-
-            s = parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+            parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("E is: " + e);
         }
 
-        return s;
     }
 
     public void parseString(String string) throws XMLStreamException {
@@ -100,10 +103,16 @@ public class Parser {
         parse(reader);
     }
 
-    private List<Way> parse(XMLStreamReader reader) throws XMLStreamException {
+    private List<Drawable> getDrawables(){
+        List<Drawable> drawables = new ArrayList<>();
 
-        OSMElement lastElement = null;
+        return drawables;
+    }
 
+    private void parse(XMLStreamReader reader) throws XMLStreamException {
+
+        OSMElement lastElementParsed = null;
+        
         while (reader.hasNext()) {
             reader.next();
 
@@ -113,28 +122,27 @@ public class Parser {
 
                     switch (tagName) {
                         case "bounds":
-                            minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
-                            maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
-                            maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
-                            minlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+                            setBounds(reader);
                             break;
                         case "node":
                             addNodeToMap(reader);
                             break;
                         case "way":
-                            lastElement = addWayToList(reader);
+                            lastElementParsed  = addWayToList(reader);
                             break;
                         case "nd":
-                            addSubElementToWay(reader);
+                            if (lastElementParsed  instanceof Way) {
+                                addSubElementToWay(reader, (Way) lastElementParsed );
+                            }
                             break;
                         case "relation":
-                            lastElement = addRelationToList(reader);
+                            lastElementParsed  = addRelationToList(reader);
                             break;
                         case "tag":
-                            if (lastElement instanceof Relation) {
+                            if (lastElementParsed  instanceof Relation) {
                                 addTagToRelation(reader);
-                            } else if (lastElement instanceof Way) {
-                                addTagToWay(reader);
+                            } else if (lastElementParsed  instanceof Way) {
+                                addTagToWay(reader, (Way) lastElementParsed );
                             }
                             break;
                         case "member":
@@ -147,7 +155,13 @@ public class Parser {
                     break;
             }
         }
-        return OSMWays;
+    }
+
+    private void setBounds(XMLStreamReader reader){
+        minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
+        maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+        maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
+        minlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
     }
 
     private void addNodeToMap(XMLStreamReader reader) {
@@ -173,8 +187,7 @@ public class Parser {
 
     }
 
-    private void addTagToWay(XMLStreamReader reader) {
-        Way way = OSMWays.get(OSMWays.size() - 1);
+    private void addTagToWay(XMLStreamReader reader, Way way) {
         String key = reader.getAttributeValue(null, "k");
         String value = reader.getAttributeValue(null, "v");
         way.addTag(key, value);
@@ -192,15 +205,13 @@ public class Parser {
         Way way = new Way();
         way.setReader(reader);
         way.setValues();
-        OSMWays.add(way);
+        OSMWays.put(way.getId(), way);
 
         return way;
     }
 
-    private void addSubElementToWay(XMLStreamReader reader) {
-        Way way = OSMWays.get(OSMWays.size() - 1);
+    private void addSubElementToWay(XMLStreamReader reader, Way lastWay) {
         long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
-        way.addNode(nodeMap.get(id));
-
+        lastWay.addNodeId(id);
     }
 }
