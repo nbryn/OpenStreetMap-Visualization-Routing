@@ -8,8 +8,8 @@ import java.util.List;
 
 public class Node implements OSMElement {
     private long id;
-    private double latitude;
-    private double longitude;
+    private float latitude;
+    private float longitude;
     private List<Tag> tags;
     private XMLStreamReader reader;
 
@@ -21,11 +21,11 @@ public class Node implements OSMElement {
         return id;
     }
 
-    public double getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
@@ -50,13 +50,13 @@ public class Node implements OSMElement {
     }
 
     private void setLatitude(){
-        latitude = -Double.parseDouble(reader.getAttributeValue(null, "lat"));
+        latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
 
 
     }
 
     private void setLongitude(){
-        longitude = Double.parseDouble(reader.getAttributeValue(null, "lon")) * 0.56f;
+        longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
 
     }
 
