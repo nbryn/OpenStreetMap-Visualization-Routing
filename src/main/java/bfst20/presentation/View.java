@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import java.util.List;
+import java.util.Map;
 
 import bfst20.logic.drawables.DrawableFactory;
 import bfst20.logic.drawables.Type;
@@ -23,6 +24,7 @@ public class View {
     List<Relation> islandRelations;
     Canvas canvas;
     GraphicsContext gc;
+    Map<Type, List<Drawable>> drawables;
 
     public View(Canvas canvas) {
         this.canvas = canvas;
@@ -42,6 +44,8 @@ public class View {
         float minlat = parser.getMinLat();
         float maxlat = parser.getMaxLat();
 
+        drawables = DrawableFactory.createDrawables();
+
         pan(-minlon, -minlat);
         zoom(canvas.getHeight() / (maxlon- minlon), (minlat- maxlat)/2, 0);
 
@@ -59,8 +63,10 @@ public class View {
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 
-        for (Drawable element : DrawableFactory.createDrawables().get(Type.HIGHWAY)){
-            element.draw(gc);
+        for(Map.Entry<Type, List<Drawable>> way : drawables.entrySet()){
+            for (Drawable element : way.getValue()){
+                element.draw(gc);
+            }
         }
     }
 

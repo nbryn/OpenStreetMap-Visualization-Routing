@@ -8,13 +8,17 @@ import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.interfaces.OSMElement;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class LinePath implements Drawable {
     float[] coords;
     Type type;
+    Color color;
+    Boolean fill;
 
-    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes) {
-
+    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Color color, Boolean fill) {
+        this.color = color;
+        this.fill = fill;
         List<Long> nodeIds = way.getNodeIds();
 
         coords = new float[nodeIds.size() * 2];
@@ -28,6 +32,8 @@ public class LinePath implements Drawable {
     @Override
     public void draw(GraphicsContext gc) {
         gc.beginPath();
+        gc.setStroke(color);
+        gc.setFill(fill ? color : Color.TRANSPARENT);
         trace(gc);
         gc.stroke();
     }
@@ -41,6 +47,9 @@ public class LinePath implements Drawable {
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2; i < coords.length; i += 2) {
             gc.lineTo(coords[i], coords[i + 1]);
+            if(fill){
+                gc.fill();
+            }
         }
     }
 }

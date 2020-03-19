@@ -22,6 +22,7 @@ public class Parser {
 
     private Map<Long, Way>  OSMWays;
     private Map<Long, Node> nodeMap;
+    private List<Relation> tempOSMRelations;
     private List<Relation> OSMRelations;
     private static boolean isLoaded = false;
     private static Parser parser;
@@ -30,7 +31,9 @@ public class Parser {
     private Parser() {
         OSMWays = new HashMap<>();
         nodeMap = new HashMap<>();
+        tempOSMRelations = new ArrayList<>();
         OSMRelations = new ArrayList<>();
+
     }
 
     public float getMinLat() {
@@ -59,21 +62,6 @@ public class Parser {
 
     public List<Relation> getOSMRelations() {
         return OSMRelations;
-    }
-
-    public List<Relation> getIslandRelations() {
-        List<Relation> islands = new ArrayList<>();
-
-        for (Relation relation : OSMRelations) {
-            String place = relation.getTag("place");
-            if (place == null)
-                continue;
-            if (place.equals("island")) {
-                islands.add(relation);
-            }
-        }
-
-        return islands;
     }
 
     public static Parser getInstance() {
@@ -117,6 +105,7 @@ public class Parser {
             reader.next();
 
             switch (reader.getEventType()) {
+
                 case START_ELEMENT:
                     String tagName = reader.getLocalName();
 
@@ -136,7 +125,7 @@ public class Parser {
                             }
                             break;
                         case "relation":
-                            lastElementParsed  = addRelationToList(reader);
+                            lastElementParsed = addRelationToList(reader);
                             break;
                         case "tag":
                             if (lastElementParsed  instanceof Relation) {
@@ -151,7 +140,20 @@ public class Parser {
                     }
                     break;
                 case END_ELEMENT:
+                    tagName = reader.getLocalName();
 
+                    switch (tagName) {
+                        case "relation":
+                            Relation relation = (Relation) lastElementParsed;
+                            if( relation.getTag("place") != null && relation.getTag("place").equals("island")
+                            ||  relation.getTag("type") != null && relation.getTag("type").equals("boundary")){
+                                OSMRelations.add(relation);
+                            }
+                            break;
+                    
+                        default:
+                            break;
+                    }
                     break;
             }
         }
@@ -174,15 +176,17 @@ public class Parser {
 
     private Relation addRelationToList(XMLStreamReader reader) {
         Relation relation = new Relation();
-        OSMRelations.add(relation);
+
+        tempOSMRelations.add(relation);
 
         return relation;
     }
 
     private void addTagToRelation(XMLStreamReader reader) {
-        Relation relation = OSMRelations.get(OSMRelations.size() - 1);
+        Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
         String key = reader.getAttributeValue(null, "k");
         String value = reader.getAttributeValue(null, "v");
+
         relation.addTag(key, value);
 
     }
@@ -195,10 +199,10 @@ public class Parser {
     }
 
     private void addMemberToRelation(XMLStreamReader reader) {
-        Relation relation = OSMRelations.get(OSMRelations.size() - 1);
+        Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
         long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
-        relation.addMember(member);
-
+        String type = reader.getAttributeValue(null, "type");
+        relation.addMember(member, type);
     }
 
     private Way addWayToList(XMLStreamReader reader) {

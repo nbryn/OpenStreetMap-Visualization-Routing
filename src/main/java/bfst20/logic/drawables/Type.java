@@ -12,10 +12,23 @@ public enum Type {
     GREEN,
     HEATH,
     FOREST,
-    PARKING;
+    PARKING,
+    NATURAL;
 
-    public static Paint getColor(Type type) {
+    public static Boolean getFill(Type type){
         switch (type) {
+            case COASTLINE:
+            case BUILDING:
+                return true;
+            default: //TODO FIX
+                return false;
+        }
+    } 
+
+    public static Color getColor(Type type) {
+        switch (type) {
+            case COASTLINE:
+                return Color.GREEN;
             case WATER:
                 return Color.BLUE;
             case GREEN:
@@ -23,15 +36,17 @@ public enum Type {
             case BUILDING:
                 return Color.BROWN;
             case HIGHWAY:
-                return Color.RED;
+                return Color.BLACK;
             case HEATH:
                 return Color.YELLOW;
             case FOREST:
                 return Color.DARKGREEN;
             case PARKING:
-                return Color.LIGHTGREY;
-            default:
-                return Color.BLACK;
+                return Color.RED;
+            case NATURAL:
+                return Color.BLUEVIOLET;
+            default: //TODO FIX
+                return Color.TRANSPARENT;
         }
     }
 }

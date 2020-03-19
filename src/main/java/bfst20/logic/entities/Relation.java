@@ -12,15 +12,15 @@ public class Relation implements OSMElement {
     private int id;
     private XMLStreamReader reader;
     private Map<String, String> tags;
-    private List<Long> members;
+    private Map<Long, String> members;
 
     public Relation(){
         tags = new HashMap<>();
-        members = new ArrayList<>();
+        members = new HashMap<>();
     }
 
-    public void addMember(long member){
-        members.add(member);
+    public void addMember(long member, String type){
+        members.put(member, type);
     }
 
     public void addTag(String key, String value){
@@ -31,7 +31,7 @@ public class Relation implements OSMElement {
         return tags.get(key);
     }
 
-    public List<Long> getMembers(){
+    public Map<Long, String> getMembers(){
         return members;
     }
 
