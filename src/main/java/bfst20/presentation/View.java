@@ -66,8 +66,13 @@ public class View {
         for(Map.Entry<Type, List<Drawable>> way : drawables.entrySet()){
             for (Drawable element : way.getValue()){
                 element.draw(gc);
+                gc.fill();
             }
         }
+
+        //for (Drawable element : drawables.get(Type.COASTLINE)) element.draw(gc);
+        //for (Drawable element : drawables.get(Type.HIGHWAY)) element.draw(gc);
+
     }
 
     public void drawWay(){
