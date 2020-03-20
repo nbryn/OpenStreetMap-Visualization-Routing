@@ -12,8 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.LongSupplier;
 
 public class Way implements OSMElement {
+
+
     private long id;
     private Map<String, String> tags;
     private List<Long> nodeIds;
@@ -27,8 +30,9 @@ public class Way implements OSMElement {
         nodeIds = new ArrayList<Long>();
     }
 
-    public Way(List<Long> nodeIds) {
-        this.nodeIds = new ArrayList<Long>(nodeIds);
+    public Way(Way way) {
+        this.nodeIds = new ArrayList<Long>(way.getNodeIds());
+        this.id = way.getId();
         drawColor = Color.BLACK;
         tags = new HashMap<>();
     }
@@ -98,6 +102,7 @@ public class Way implements OSMElement {
     public static Way merge(Way before, Way after, Map<Long, Node> OSMNodes){
         if (before == null) return after;
         if (after == null) return before;
+
         Way res = new Way();
         if (before.getFirstNodeId() == after.getFirstNodeId()) {
             res.addAllNodeIds(before);
@@ -113,7 +118,7 @@ public class Way implements OSMElement {
             res.getNodeIds().remove(res.getNodeIds().size() - 1);
             res.addAllNodeIds(after);
         } else if (before.getLastNodeId() == after.getLastNodeId()) {
-            Way tmp = new Way(after.getNodeIds());
+            Way tmp = new Way(after);
             Collections.reverse(tmp.getNodeIds());
             res.addAllNodeIds(before);
             res.getNodeIds().remove(res.getNodeIds().size() - 1);
@@ -121,6 +126,8 @@ public class Way implements OSMElement {
         } else {
             throw new IllegalArgumentException("Cannot merge unconnected OSMWays");
         }
+
         return res;
     }
+
 }

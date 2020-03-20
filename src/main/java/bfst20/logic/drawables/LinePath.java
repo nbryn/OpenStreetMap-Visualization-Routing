@@ -48,7 +48,7 @@ public class LinePath implements Drawable {
         for (int i = 2; i < coords.length; i += 2) {
             gc.lineTo(coords[i], coords[i + 1]);
             if(fill){
-                gc.fill();
+                //gc.fill();
             }
         }
     }

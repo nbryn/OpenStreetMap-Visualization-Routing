@@ -20,7 +20,7 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
 
-    private Map<Long, Way>  OSMWays;
+    private List<Way> OSMWays;
     private Map<Long, Node> nodeMap;
     private List<Relation> tempOSMRelations;
     private List<Relation> OSMRelations;
@@ -29,7 +29,7 @@ public class Parser {
     private float minlat, maxlon, maxlat, minlon;
 
     private Parser() {
-        OSMWays = new HashMap<>();
+        OSMWays = new ArrayList<>();
         nodeMap = new HashMap<>();
         tempOSMRelations = new ArrayList<>();
         OSMRelations = new ArrayList<>();
@@ -52,7 +52,7 @@ public class Parser {
         return minlon;
     }
 
-    public Map<Long, Way> getOSMWays(){
+    public List<Way> getOSMWays(){
         return OSMWays;
     }
 
@@ -146,7 +146,7 @@ public class Parser {
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
                             if( relation.getTag("place") != null && relation.getTag("place").equals("island")
-                            ||  relation.getTag("type") != null && relation.getTag("type").equals("boundary")){
+                              ||  relation.getTag("type") != null && relation.getTag("type").equals("boundary")){
                                 OSMRelations.add(relation);
                             }
                             break;
@@ -176,6 +176,8 @@ public class Parser {
 
     private Relation addRelationToList(XMLStreamReader reader) {
         Relation relation = new Relation();
+        relation.setReader(reader);
+        relation.setValues();
 
         tempOSMRelations.add(relation);
 
@@ -209,7 +211,7 @@ public class Parser {
         Way way = new Way();
         way.setReader(reader);
         way.setValues();
-        OSMWays.put(way.getId(), way);
+        OSMWays.add(way);
 
         return way;
     }

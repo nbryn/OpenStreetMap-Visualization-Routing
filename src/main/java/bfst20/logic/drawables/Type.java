@@ -13,7 +13,8 @@ public enum Type {
     HEATH,
     FOREST,
     PARKING,
-    NATURAL;
+    NATURAL,
+    PLACE;
 
     public static Boolean getFill(Type type){
         switch (type) {
@@ -27,6 +28,7 @@ public enum Type {
 
     public static Color getColor(Type type) {
         switch (type) {
+            case PLACE:
             case COASTLINE:
                 return Color.GREEN;
             case WATER:
