@@ -63,16 +63,24 @@ public class View {
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 
-        for(Map.Entry<Type, List<Drawable>> way : drawables.entrySet()){
-            for (Drawable element : way.getValue()){
-                element.draw(gc);
-                gc.fill();
-            }
+        
+
+        for (Drawable element : drawables.get(Type.COASTLINE)) {
+            element.draw(gc);
+            gc.fill();
         }
-
-        //for (Drawable element : drawables.get(Type.COASTLINE)) element.draw(gc);
-        //for (Drawable element : drawables.get(Type.HIGHWAY)) element.draw(gc);
-
+        for (Drawable element : drawables.get(Type.HIGHWAY)){
+            element.draw(gc);
+            gc.fill();
+        }
+        for (Drawable element : drawables.get(Type.BUILDING)) {
+            element.draw(gc);
+            gc.fill();
+        }
+        for (Drawable element : drawables.get(Type.NATURAL)) {
+            element.draw(gc);
+            gc.fill();
+        }
     }
 
     public void drawWay(){

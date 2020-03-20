@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 //TODO: FIX
 public class Relation implements OSMElement {
-    private int id;
+    private long id;
     private XMLStreamReader reader;
     private Map<String, String> tags;
     private ArrayList<Long> members;
@@ -36,7 +36,7 @@ public class Relation implements OSMElement {
         return members;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -47,7 +47,8 @@ public class Relation implements OSMElement {
 
     @Override
     public void setValues() {
-        
+        id = Long.parseLong(reader.getAttributeValue(null, "id"));
+
     }
 
 }

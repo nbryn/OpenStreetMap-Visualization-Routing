@@ -26,52 +26,53 @@ public class DrawableFactory {
 
         Map<Node, Way> nodeToCoastline = new HashMap<>();
 
-        for (Way way : OSMWays) {
+        
+          for (Way way : OSMWays) {
+          
+          Type type = Type.UNKNOWN;
+          
+          try { type = Type.valueOf(way.getFirstTag()[0].toUpperCase()); } catch
+          (Exception err) { }
+         
+          Color color = Type.getColor(type); Boolean fill = Type.getFill(type);
+          
+          if (drawables.get(type) == null) { drawables.put(type, new ArrayList<>()); }
+          
+          if(type != Type.PLACE){ drawables.get(type).add(new LinePath(way, type,
+          OSMNodes, color, fill)); }
+          
+         }
+         
 
-            Type type = Type.UNKNOWN;
-
-            try {
-                type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
-            } catch (Exception err) {
-            }
-
-            Color color = Type.getColor(type);
-            Boolean fill = Type.getFill(type);
-
-            if (drawables.get(type) == null) {
-                drawables.put(type, new ArrayList<>());
-            }
-
-            drawables.get(type).add(new LinePath(way, type, OSMNodes, color, fill));
-
-        }
+        System.out.println(OSMRelations.size());
 
         for (Relation relation : OSMRelations) {
-            Collections.sort(relation.getMembers());
-            for (long entry : relation.getMembers()) {
-                Way way = (binarySearch(OSMWays, entry));
+            if(relation.getTag("name").contains("Region")){
+                Collections.sort(relation.getMembers());
+                for (long entry : relation.getMembers()) {
+                    Way way = (binarySearch(OSMWays, entry));
 
-                if (way != null && way.getTagValue("natural") != null
-                        && way.getTagValue("natural").equals("coastline")) {
+                    if (way != null && way.getTagValue("natural") != null
+                            && way.getTagValue("natural").equals("coastline")) {
 
-                    Way before = nodeToCoastline.remove(OSMNodes.get(way.getFirstNodeId()));
-                    if (before != null) {
-                        nodeToCoastline.remove(OSMNodes.get(before.getFirstNodeId()));
-                        nodeToCoastline.remove(OSMNodes.get(before.getLastNodeId()));
+                        Way before = nodeToCoastline.remove(OSMNodes.get(way.getFirstNodeId()));
+                        if (before != null) {
+                            nodeToCoastline.remove(OSMNodes.get(before.getFirstNodeId()));
+                            nodeToCoastline.remove(OSMNodes.get(before.getLastNodeId()));
+                        }
+                        Way after = nodeToCoastline.remove(OSMNodes.get(way.getLastNodeId()));
+                        if (after != null) {
+                            nodeToCoastline.remove(OSMNodes.get(after.getFirstNodeId()));
+                            nodeToCoastline.remove(OSMNodes.get(after.getLastNodeId()));
+                        }
+                        way = Way.merge(Way.merge(before, way, OSMNodes), after, OSMNodes);
+                        nodeToCoastline.put(OSMNodes.get(way.getFirstNodeId()), way);
+                        nodeToCoastline.put(OSMNodes.get(way.getLastNodeId()), way);
                     }
-                    Way after = nodeToCoastline.remove(OSMNodes.get(way.getLastNodeId()));
-                    if (after != null) {
-                        nodeToCoastline.remove(OSMNodes.get(after.getFirstNodeId()));
-                        nodeToCoastline.remove(OSMNodes.get(after.getLastNodeId()));
-                    }
-                    way = Way.merge(Way.merge(before, way, OSMNodes), after, OSMNodes);
-                    nodeToCoastline.put(OSMNodes.get(way.getFirstNodeId()), way);
-                    nodeToCoastline.put(OSMNodes.get(way.getLastNodeId()), way);
-
 
                 }
-
             }
+
         }
 
         for (var entry : nodeToCoastline.entrySet()) {
@@ -79,8 +80,6 @@ public class DrawableFactory {
                 if (drawables.get(Type.COASTLINE) == null) {
                     drawables.put(Type.COASTLINE, new ArrayList<>());
                 }
-
-                System.out.println(entry.getValue().getNodeIds().size());
 
                 drawables.get(Type.COASTLINE).add(
                         new LinePath(entry.getValue(), Type.COASTLINE, OSMNodes, Type.getColor(Type.COASTLINE), true));

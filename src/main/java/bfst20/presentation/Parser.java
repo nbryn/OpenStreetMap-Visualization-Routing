@@ -176,6 +176,8 @@ public class Parser {
 
     private Relation addRelationToList(XMLStreamReader reader) {
         Relation relation = new Relation();
+        relation.setReader(reader);
+        relation.setValues();
 
         tempOSMRelations.add(relation);
 
