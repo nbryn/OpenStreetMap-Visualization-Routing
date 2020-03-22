@@ -1,5 +1,6 @@
 package bfst20.presentation;
 
+import bfst20.logic.AppController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ public class Launcher extends Application {
 
         FXMLLoader MainLoader = new FXMLLoader(getClass().getResource("/Main.fxml"));
         Scene sceneMain = new Scene(MainLoader.load());
+
 
         primaryStage.setResizable(false);
         primaryStage.setTitle("Map");

@@ -9,17 +9,18 @@ import java.util.HashMap;
 import java.util.Map;
 //TODO: FIX
 public class Relation implements OSMElement {
-    private int id;
+    private long id;
     private XMLStreamReader reader;
     private Map<String, String> tags;
-    private List<Long> members;
+    private ArrayList<Long> members;
 
     public Relation(){
         tags = new HashMap<>();
         members = new ArrayList<>();
     }
 
-    public void addMember(long member){
+    public void addMember(long member, String type){
+        if(!type.equals("way")) return;
         members.add(member);
     }
 
@@ -31,11 +32,11 @@ public class Relation implements OSMElement {
         return tags.get(key);
     }
 
-    public List<Long> getMembers(){
+    public ArrayList<Long> getMembers(){
         return members;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -46,7 +47,7 @@ public class Relation implements OSMElement {
 
     @Override
     public void setValues() {
-        
+        id = Long.parseLong(reader.getAttributeValue(null, "id"));
     }
 
 }
