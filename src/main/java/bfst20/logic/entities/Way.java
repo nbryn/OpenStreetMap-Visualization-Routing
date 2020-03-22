@@ -74,12 +74,6 @@ public class Way implements OSMElement {
             firstKey = key;
             firstValue = value;
         }
-
-        if  (key.equals("border_type") && value.equals("territorial")
-        ||  (key.equals("route") && value.equals("ferry"))
-        ||  (key.equals("boundary") && value.equals("protected_area"))){
-            drawColor = Color.TRANSPARENT;
-        }
     }
 
     @Override
@@ -99,35 +93,5 @@ public class Way implements OSMElement {
         nodeIds.addAll(way.getNodeIds());
     }
 
-    public static Way merge(Way before, Way after, Map<Long, Node> OSMNodes){
-        if (before == null) return after;
-        if (after == null) return before;
-
-        Way res = new Way();
-        if (before.getFirstNodeId() == after.getFirstNodeId()) {
-            res.addAllNodeIds(before);
-            Collections.reverse(res.getNodeIds());
-            res.getNodeIds().remove(res.getNodeIds().size() - 1);
-            res.addAllNodeIds(after);
-        } else if (before.getFirstNodeId() == after.getLastNodeId()) {
-            res.addAllNodeIds(after);
-            res.getNodeIds().remove(res.getNodeIds().size() - 1);
-            res.addAllNodeIds(before);
-        } else if (before.getLastNodeId() == after.getFirstNodeId()) {
-            res.addAllNodeIds(before);
-            res.getNodeIds().remove(res.getNodeIds().size() - 1);
-            res.addAllNodeIds(after);
-        } else if (before.getLastNodeId() == after.getLastNodeId()) {
-            Way tmp = new Way(after);
-            Collections.reverse(tmp.getNodeIds());
-            res.addAllNodeIds(before);
-            res.getNodeIds().remove(res.getNodeIds().size() - 1);
-            res.addAllNodeIds(tmp);
-        } else {
-            throw new IllegalArgumentException("Cannot merge unconnected OSMWays");
-        }
-
-        return res;
-    }
 
 }

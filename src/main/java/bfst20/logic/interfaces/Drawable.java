@@ -2,7 +2,7 @@ package bfst20.logic.interfaces;
 
 import java.util.List;
 
-import bfst20.logic.drawables.Type;
+import bfst20.logic.Type;
 import javafx.scene.canvas.GraphicsContext;
 
 public interface Drawable{

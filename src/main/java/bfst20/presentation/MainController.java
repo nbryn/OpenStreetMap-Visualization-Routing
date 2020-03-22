@@ -17,7 +17,7 @@ import javafx.stage.FileChooser;
 
 public class MainController {
 
-    Model model;
+    FileLoader fileLoader;
 
     @FXML
     private MenuItem openFile;
@@ -26,7 +26,7 @@ public class MainController {
     private VBox vbox;
 
     public MainController() {
-        this.model = new Model();
+        this.fileLoader = new FileLoader();
     }
 
     @FXML
@@ -59,6 +59,5 @@ public class MainController {
     }
 
     public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
-        FileChooser chooser = new FileChooser();
     }
 }
