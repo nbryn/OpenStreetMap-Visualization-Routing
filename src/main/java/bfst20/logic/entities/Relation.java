@@ -48,7 +48,6 @@ public class Relation implements OSMElement {
     @Override
     public void setValues() {
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
-
     }
 
 }

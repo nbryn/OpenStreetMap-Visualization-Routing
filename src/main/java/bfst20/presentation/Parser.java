@@ -1,5 +1,6 @@
 package bfst20.presentation;
 
+import bfst20.logic.AppController;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.Relation;
@@ -20,48 +21,15 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
 
-    private List<Way> OSMWays;
-    private Map<Long, Node> nodeMap;
-    private List<Relation> tempOSMRelations;
-    private List<Relation> OSMRelations;
     private static boolean isLoaded = false;
     private static Parser parser;
-    private float minlat, maxlon, maxlat, minlon;
+    private List<Relation> tempOSMRelations;
+    private AppController appController;
 
     private Parser() {
-        OSMWays = new ArrayList<>();
-        nodeMap = new HashMap<>();
+        appController = new AppController();
         tempOSMRelations = new ArrayList<>();
-        OSMRelations = new ArrayList<>();
 
-    }
-
-    public float getMinLat() {
-        return minlat;
-    }
-
-    public float getMaxLon() {
-        return maxlon;
-    }
-
-    public float getMaxLat() {
-        return maxlat;
-    }
-
-    public float getMinLon() {
-        return minlon;
-    }
-
-    public List<Way> getOSMWays(){
-        return OSMWays;
-    }
-
-    public Map<Long, Node> getOSMNodes(){
-        return nodeMap;
-    }
-
-    public List<Relation> getOSMRelations() {
-        return OSMRelations;
     }
 
     public static Parser getInstance() {
@@ -72,6 +40,7 @@ public class Parser {
 
         return parser;
     }
+
 
     public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
@@ -147,7 +116,7 @@ public class Parser {
                             Relation relation = (Relation) lastElementParsed;
                             if( relation.getTag("place") != null && relation.getTag("place").equals("island")
                               ||  relation.getTag("type") != null && relation.getTag("type").equals("boundary")){
-                                OSMRelations.add(relation);
+                                appController.addRelationToModel(relation);
                             }
                             break;
                     
@@ -157,23 +126,31 @@ public class Parser {
                     break;
             }
         }
+
+        
     }
 
     private void setBounds(XMLStreamReader reader){
-        minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
-        maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
-        maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
-        minlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+        float minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
+        float maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+        float maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
+        float minlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+
+        appController.setBoundsOnModel(minlat, maxlon, maxlat, minlon);
     }
 
     private void addNodeToMap(XMLStreamReader reader) {
         Node node = new Node();
         node.setReader(reader);
         node.setValues();
-        nodeMap.put(node.getId(), node);
+        appController.addNodeToModel(node.getId(), node);
 
     }
 
+    //1. Adding relation to temp
+    //2. Adding sub elements to the temp relation
+    //3. Adding final relation to the real realtions list.
+    //Why: to have all sub elements in the final relations.
     private Relation addRelationToList(XMLStreamReader reader) {
         Relation relation = new Relation();
         relation.setReader(reader);
@@ -211,7 +188,7 @@ public class Parser {
         Way way = new Way();
         way.setReader(reader);
         way.setValues();
-        OSMWays.add(way);
+        appController.addWayToModel(way);
 
         return way;
     }

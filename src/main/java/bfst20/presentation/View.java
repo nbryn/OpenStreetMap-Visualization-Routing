@@ -8,8 +8,9 @@ import javafx.scene.transform.Affine;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.logic.drawables.DrawableFactory;
-import bfst20.logic.drawables.Type;
+import bfst20.data.Model;
+import bfst20.logic.DrawableGenerator;
+import bfst20.logic.Type;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
@@ -38,13 +39,15 @@ public class View {
     }
 
     public void initializeData() {
-        Parser parser = Parser.getInstance();
-        float minlon = parser.getMinLon();
-        float maxlon = parser.getMaxLon();
-        float minlat = parser.getMinLat();
-        float maxlat = parser.getMaxLat();
+        Model model = Model.getInstance();
+        float minlon = model.getMinLon();
+        float maxlon = model.getMaxLon();
+        float minlat = model.getMinLat();
+        float maxlat = model.getMaxLat();
 
-        drawables = DrawableFactory.createDrawables();
+        DrawableGenerator drawableGenerator = DrawableGenerator.getInstance();
+
+        drawables = drawableGenerator.createDrawables();
 
         pan(-minlon, -minlat);
         zoom(canvas.getHeight() / (maxlon- minlon), (minlat- maxlat)/2, 0);

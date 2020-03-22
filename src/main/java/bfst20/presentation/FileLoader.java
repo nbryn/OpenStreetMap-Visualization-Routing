@@ -7,7 +7,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class Model {
+public class FileLoader {
 
     public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
         long time = -System.nanoTime();

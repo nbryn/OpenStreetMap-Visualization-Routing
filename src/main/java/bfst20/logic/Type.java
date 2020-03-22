@@ -1,4 +1,4 @@
-package bfst20.logic.drawables;
+package bfst20.logic;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
