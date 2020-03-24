@@ -1,5 +1,6 @@
 package bfst20.presentation;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ public class LinePath implements Drawable {
     Color color;
     Boolean fill;
     Way way;
+    float minY,minX,maxY,maxX, centerLatitude, centerLongitude;
 
     public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Color color, Boolean fill) {
         this.color = color;
@@ -24,12 +26,57 @@ public class LinePath implements Drawable {
         this.way = way;
         List<Long> nodeIds = way.getNodeIds();
 
+        minY = Float.POSITIVE_INFINITY;
+        minX = Float.POSITIVE_INFINITY;
+        maxY = Float.NEGATIVE_INFINITY;
+        maxX = Float.NEGATIVE_INFINITY;
+
         coords = new float[nodeIds.size() * 2];
         for (int i = 0; i < nodeIds.size(); ++i) {
             coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
             coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
+
+            if(minX > coords[i*2+1]) minX = coords[i*2+1];
+            if(minY > coords[i*2]) minY = coords[i*2];
+            if(maxX < coords[i*2+1]) maxX = coords[i*2+1];
+            if(maxY < coords[i*2]) maxY = coords[i*2];
+
         }
+
+        centerLatitude = (maxX - minX)/2 + minX;
+        centerLongitude = (maxY - minY)/2 + minY;
+
         this.type = type;
+    }
+
+    /**
+     * @return the centerLatitude
+     */
+    public float getCenterLatitude() {
+        return centerLatitude;
+    }
+
+    /**
+     * @return the centerLongitude
+     */
+    public float getCenterLongitude() {
+        return centerLongitude;
+    }
+
+    public float getMaxX() {
+        return maxX;
+    }
+
+    public float getMaxY() {
+        return maxY;
+    }
+
+    public float getMinX() {
+        return minX;
+    }
+
+    public float getMinY() {
+        return minY;
     }
 
     @Override
@@ -38,12 +85,17 @@ public class LinePath implements Drawable {
         gc.setStroke(color);
         gc.setFill(fill ? color : Color.TRANSPARENT);
 
-        if(way.getTagValue("name") != null){
+        /*if(way.getTagValue("name") != null){
             gc.setFill(Color.BLACK);
             gc.setFont(new Font(0.00022));
             gc.fillText(way.getTagValue("name"), coords[0], coords[1]);
             gc.setFill(fill ? color : Color.TRANSPARENT);
-        }
+        }*/
+        //gc.setStroke(Color.BLUE);
+        //gc.strokeRect(minX, minY, maxX-minX, maxY-minY);
+        //gc.setStroke(color);
+
+
 
         trace(gc);
         gc.stroke();

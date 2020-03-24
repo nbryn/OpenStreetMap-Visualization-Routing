@@ -19,7 +19,7 @@ import javafx.scene.paint.Color;
 
 public class DrawableGenerator {
 
-    Map<Type, List<Drawable>> drawables = new HashMap<>();
+    Map<Type, List<LinePath>> drawables = new HashMap<>();
     Map<Node, Way> nodeToCoastline = new HashMap<>();
     List<Way> OSMWays;
     Map<Long, Node> OSMNodes;
@@ -44,7 +44,7 @@ public class DrawableGenerator {
         return drawableGenerator;
     }
 
-    public Map<Type, List<Drawable>> createDrawables() {
+    public Map<Type, List<LinePath>> createDrawables() {
 
         createWays();
 
