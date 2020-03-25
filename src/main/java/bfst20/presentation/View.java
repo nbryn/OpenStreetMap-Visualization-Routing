@@ -50,7 +50,7 @@ public class View {
         drawables = drawableGenerator.createDrawables();
 
         pan(-minlon, -minlat);
-        zoom(canvas.getHeight() / (maxlon- minlon), (minlat- maxlat)/2, 0);
+        zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
 
 
         repaint();
@@ -62,17 +62,16 @@ public class View {
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
-        
+
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 
-        
 
         for (Drawable element : drawables.get(Type.COASTLINE)) {
             element.draw(gc);
             gc.fill();
         }
-        for (Drawable element : drawables.get(Type.HIGHWAY)){
+        for (Drawable element : drawables.get(Type.HIGHWAY)) {
             element.draw(gc);
             gc.fill();
         }
@@ -84,9 +83,19 @@ public class View {
             element.draw(gc);
             gc.fill();
         }
+        for (Drawable element : drawables.get(Type.FOREST)){
+            element.draw(gc);
+            gc.fill();
+        }
+
+        for (Drawable element : drawables.get(Type.FARMLAND)){
+            element.draw(gc);
+            gc.fill();
+        }
     }
 
-    public void drawWay(){
+
+    public void drawWay() {
 
     }
 
@@ -98,5 +107,5 @@ public class View {
     public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
         repaint();
-	}
+    }
 }
