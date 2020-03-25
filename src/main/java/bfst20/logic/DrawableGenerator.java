@@ -59,17 +59,14 @@ public class DrawableGenerator {
         for (Way way : OSMWays) {
             if (way.getTagValue("natural") != null && way.getTagValue("natural").equals("coastline")) continue;
 
-
             LinePath linePath = createLinePath(way);
-
-
 
             if (linePath.getType() == Type.LANDUSE) {
 
                 try {
                     for (Type t : Type.values()) {
 
-
+                        // TODO: Add all landuse values to Types
                         if (way.getTagValue(linePath.getType().toString().toLowerCase()) != null) {
                             if (way.getTagValue(linePath.getType().toString().toLowerCase()).equals(t.toString().toLowerCase())) {
 
