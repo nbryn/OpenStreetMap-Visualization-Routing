@@ -63,7 +63,7 @@ public class View {
 
 
         pan(-minlon, -minlat);
-        zoom(canvas.getHeight() / (maxlon- minlon), (minlat- maxlat)/2, 0);
+        zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
 
 
         repaint();
@@ -144,9 +144,19 @@ public class View {
             e.printStackTrace();
             return null;
         }
+        for (Drawable element : drawables.get(Type.FOREST)){
+            element.draw(gc);
+            gc.fill();
+        }
+
+        for (Drawable element : drawables.get(Type.FARMLAND)){
+            element.draw(gc);
+            gc.fill();
+        }
     }
 
-    public void drawWay(){
+
+    public void drawWay() {
 
     }
 
@@ -163,5 +173,5 @@ public class View {
     public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
         repaint();
-	}
+    }
 }

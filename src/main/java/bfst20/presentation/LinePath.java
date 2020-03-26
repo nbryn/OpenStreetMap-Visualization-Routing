@@ -87,8 +87,8 @@ public class LinePath implements Drawable {
 
         /*if(way.getTagValue("name") != null){
             gc.setFill(Color.BLACK);
-            gc.setFont(new Font(0.00022));
-            gc.fillText(way.getTagValue("name"), coords[0], coords[1]);
+         /*   gc.setFont(new Font(0.00022));
+            gc.fillText(way.getTagValue("name"), coords[0], coords[1]);*/
             gc.setFill(fill ? color : Color.TRANSPARENT);
         }*/
         //gc.setStroke(Color.BLUE);
@@ -101,9 +101,22 @@ public class LinePath implements Drawable {
         gc.stroke();
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setFill(boolean fill) {
+        this.fill = fill;
+    }
+
     @Override
     public Type getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = Type.valueOf(type.toUpperCase());
+
     }
 
     private void trace(GraphicsContext gc) {

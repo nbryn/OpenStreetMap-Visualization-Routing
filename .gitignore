@@ -5,6 +5,7 @@
 bin
 /bin/bfst20
 
+.idea
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
