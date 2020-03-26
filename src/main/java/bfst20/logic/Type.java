@@ -14,10 +14,16 @@ public enum Type {
     FOREST,
     PARKING,
     NATURAL,
+    FARMLAND,
+    LANDUSE,
     PLACE;
 
     public static Boolean getFill(Type type){
         switch (type) {
+            case NATURAL:
+            case FARMLAND:
+            case FOREST:
+            case WATER:
             case COASTLINE:
             case BUILDING:
                 return true;
@@ -30,17 +36,17 @@ public enum Type {
         switch (type) {
             case PLACE:
             case COASTLINE:
-                return Color.GREEN;
+            case GREEN:
+                return Color.LIGHTGREEN;
             case WATER:
                 return Color.BLUE;
-            case GREEN:
-                return Color.GREEN;
             case BUILDING:
                 return Color.BROWN;
             case HIGHWAY:
                 return Color.BLACK;
             case HEATH:
-                return Color.YELLOW;
+            case FARMLAND:
+                return Color.rgb(238,240,213);
             case FOREST:
                 return Color.DARKGREEN;
             case PARKING:

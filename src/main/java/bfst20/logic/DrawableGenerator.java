@@ -29,15 +29,15 @@ public class DrawableGenerator {
     static DrawableGenerator drawableGenerator;
     AppController appController;
 
-    private DrawableGenerator(){
+    private DrawableGenerator() {
         appController = new AppController();
         OSMWays = appController.getOSMWaysFromModel();
         OSMNodes = appController.getOSMNodesFromModel();
         OSMRelations = appController.getOSMRelationsFromModel();
     }
 
-    public static DrawableGenerator getInstance(){
-        if(loaded == false){
+    public static DrawableGenerator getInstance() {
+        if (loaded == false) {
             drawableGenerator = new DrawableGenerator();
         }
 
@@ -51,17 +51,43 @@ public class DrawableGenerator {
         createRelations();
 
         addCoastlines();
-        
+
         return drawables;
     }
 
-    private void createWays(){
+    private void createWays() {
         for (Way way : OSMWays) {
+            if (way.getTagValue("natural") != null && way.getTagValue("natural").equals("coastline")) continue;
 
             LinePath linePath = createLinePath(way);
-            Type type = linePath.getType();
 
+            if (linePath.getType() == Type.LANDUSE) {
+
+                try {
+                    for (Type t : Type.values()) {
+
+                        // TODO: Add all landuse values to Types
+                        if (way.getTagValue(linePath.getType().toString().toLowerCase()) != null) {
+                            if (way.getTagValue(linePath.getType().toString().toLowerCase()).equals(t.toString().toLowerCase())) {
+
+
+                                linePath.setType(way.getTagValue(linePath.getType().toString().toLowerCase()));
+                                Color color = Type.getColor(linePath.getType());
+                                Boolean fill = Type.getFill(linePath.getType());
+
+                                linePath.setColor(color);
+                                linePath.setFill(fill);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            Type type = linePath.getType();
             if (drawables.get(type) == null) {
+
                 drawables.put(type, new ArrayList<>());
             }
 
@@ -71,7 +97,7 @@ public class DrawableGenerator {
         }
     }
 
-    private void createRelations(){
+    private void createRelations() {
         for (Relation relation : OSMRelations) {
             if (relation.getTag("name").contains("Region")) {
                 Collections.sort(relation.getMembers());
@@ -92,9 +118,9 @@ public class DrawableGenerator {
             }
         }
     }
-    
-    private void addCoastlines(){
-        if(!drawables.containsKey(Type.COASTLINE)){
+
+    private void addCoastlines() {
+        if (!drawables.containsKey(Type.COASTLINE)) {
             drawables.put(Type.COASTLINE, new ArrayList<>());
         }
 
@@ -130,6 +156,7 @@ public class DrawableGenerator {
     private LinePath createLinePath(Way way) {
         Type type = Type.UNKNOWN;
 
+
         try {
             type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
         } catch (Exception err) {
@@ -142,7 +169,7 @@ public class DrawableGenerator {
     }
 
 
-    public Way merge(Way before, Way after){
+    public Way merge(Way before, Way after) {
         if (before == null) return after;
         if (after == null) return before;
 
@@ -154,7 +181,7 @@ public class DrawableGenerator {
             Collections.reverse(way.getNodeIds());
             way.getNodeIds().remove(way.getNodeIds().size() - 1);
             way.addAllNodeIds(after);
-        } else*/ 
+        } else*/
         if (before.getFirstNodeId() == after.getLastNodeId()) {
 
             addWayToMerge(way, after, before);
@@ -163,7 +190,7 @@ public class DrawableGenerator {
 
             addWayToMerge(way, before, after);
         }
-        
+
         // Why do we need this? Seems to do the same without it
         /* else if (before.getLastNodeId() == after.getLastNodeId()) {
             Way tmp = new Way(after);
@@ -172,7 +199,8 @@ public class DrawableGenerator {
             way.addAllNodeIds(before);
             way.getNodeIds().remove(way.getNodeIds().size() - 1);
             way.addAllNodeIds(tmp);
-        }*/ else {
+        }*/
+        else {
             throw new IllegalArgumentException("Cannot merge unconnected OSMWays");
         }
 
@@ -180,13 +208,13 @@ public class DrawableGenerator {
     }
 
     //Order of before and after depends on the context
-    private void addWayToMerge(Way way,Way before, Way after){
+    private void addWayToMerge(Way way, Way before, Way after) {
         way.addAllNodeIds(before);
         way.getNodeIds().remove(way.getNodeIds().size() - 1);
         way.addAllNodeIds(after);
     }
 
-    
+
     private Way binarySearch(List<Way> list, long id) {
         int low = 0;
         int high = list.size() - 1;
