@@ -54,10 +54,10 @@ public enum Type {
                 return Color.BLACK;
             case HEATH:
                 return Color.YELLOW;
-            case RESIDENTIAL:
+           /* case RESIDENTIAL:
                 return Color.GREY;
             case FARMLAND:
-                return Color.rgb(238, 240, 213);
+                return Color.rgb(238, 240, 213);*/
             case WOOD:
             case FOREST:
             case TREE_ROW:

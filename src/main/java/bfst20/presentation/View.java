@@ -20,8 +20,6 @@ import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.kdtree.KdTree;
 import javafx.scene.transform.NonInvertibleTransformException;
 
-import java.awt.*;
-
 public class View {
 
     Affine trans = new Affine();
@@ -30,7 +28,7 @@ public class View {
     Canvas canvas;
     GraphicsContext gc;
     Map<Type, List<LinePath>> drawables;
-    Map<Type, KdTree> kdtrees;
+    Map<Type, KdTree> kdTrees;
     boolean kd;
 
     public View(Canvas canvas) {
@@ -56,17 +54,11 @@ public class View {
 
         drawables = drawableGenerator.createDrawables();
         //Burde flyttes.
-        kdtrees = new HashMap<>();
+        kdTrees = new HashMap<>();
         Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
-        kdtrees.put(Type.BUILDING, new KdTree(drawables.get(Type.BUILDING), rect));
-        kdtrees.put(Type.HIGHWAY, new KdTree(drawables.get(Type.HIGHWAY), rect));
-        kdtrees.put(Type.FARMLAND, new KdTree(drawables.get(Type.FARMLAND), rect));
-        kdtrees.put(Type.FOREST, new KdTree(drawables.get(Type.FOREST), rect));
-        kdtrees.put(Type.HEATH, new KdTree(drawables.get(Type.HEATH), rect));
-        kdtrees.put(Type.WOOD, new KdTree(drawables.get(Type.WOOD), rect));
-        kdtrees.put(Type.RESIDENTIAL, new KdTree(drawables.get(Type.RESIDENTIAL), rect));
-        kdtrees.put(Type.TREE_ROW, new KdTree(drawables.get(Type.TREE_ROW), rect));
-        kdtrees.put(Type.WATER, new KdTree(drawables.get(Type.WATER), rect));
+        for (Map.Entry<Type, List<LinePath>> entry: drawables.entrySet()) {
+            kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
+        }
 
 
         pan(-minlon, -minlat);
@@ -107,6 +99,15 @@ public class View {
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
+        //Why does this draw the map different?
+   /*     for (Map.Entry<Type, KdTree> entry: kdTrees.entrySet()) {
+            System.out.println(entry.getKey());
+            for (Drawable element : entry.getValue().query(rect)) {
+                element.draw(gc);
+                gc.fill();
+            }
+        }*/
+
         drawTypeKdTree(Type.HIGHWAY, rect);
         drawTypeKdTree(Type.BUILDING, rect);
         //drawTypeKdTree(Type.FARMLAND, rect);
@@ -117,11 +118,10 @@ public class View {
         drawTypeKdTree(Type.TREE_ROW, rect);
         drawTypeKdTree(Type.WATER, rect);
 
-
     }
 
     public void drawTypeKdTree(Type type, Rect rect) {
-        for (Drawable element : kdtrees.get(type).query(rect)) {
+        for (Drawable element : kdTrees.get(type).query(rect)) {
             element.draw(gc);
             gc.fill();
         }
