@@ -24,7 +24,7 @@ public class Model {
     }
 
     public static Model getInstance(){
-        if(isLoaded == false){
+        if(!isLoaded){
             isLoaded = true;
             model = new Model();
         }

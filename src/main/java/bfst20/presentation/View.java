@@ -112,7 +112,7 @@ public class View {
 
         //Rect rect = new Rect(-55, -56, 0, (float) 5.93);
 
-        int boxSize = 200;
+        int boxSize = 300;
 
         Point2D mc1 = toModelCoords((canvas.getWidth()/2) - boxSize, (canvas.getHeight()/2) - boxSize);
         Point2D mc2 = toModelCoords((canvas.getWidth()/2) + boxSize, (canvas.getHeight()/2) + boxSize);
