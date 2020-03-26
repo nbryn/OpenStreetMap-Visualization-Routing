@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
@@ -28,6 +29,9 @@ public class MainController {
     public MainController() {
         this.fileLoader = new FileLoader();
     }
+
+    Point2D lastMouse;
+
 
     @FXML
     public void initialize() {
@@ -50,6 +54,16 @@ public class MainController {
         canvas.setOnScroll(e -> {
             double factor = Math.pow(1.001, e.getDeltaY());
             view.zoom(factor, e.getX(), e.getY());
+        });
+
+
+        canvas.setOnMousePressed(e -> {
+            lastMouse = new Point2D(e.getX(), e.getY());
+        });
+
+        canvas.setOnMouseDragged(e -> {
+            view.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
+            lastMouse = new Point2D(e.getX(), e.getY());
         });
     }
 
