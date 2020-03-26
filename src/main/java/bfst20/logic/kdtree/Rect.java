@@ -29,16 +29,45 @@ public class Rect {
         return minlon;
     }
 
-    public boolean intersects(KdNode node) {
-        LinePath path = node.getLinePath();
+    /*public boolean intersects(KdNode node) {
+        //LinePath path = node.getLinePath();
+        //return     maxlat >= path.getMinX() && maxlon >= path.getMinY() && path.getMaxX() >= minlat && path.getMaxY() >= minlon;
+        if(node.getDirection() == Direction.Latitudinal){
+            return node.getSplit() <= maxlat && node.getSplit() >= minlat;
+        }else{
+            return maxlon >= node.getSplit() && node.getSplit() >= minlon;
+        }
+    }*/
 
-        return     maxlat <= path.getMinX() && maxlon >= path.getMinY() && path.getMaxX() <= minlat && path.getMaxY() >= minlon;
+    public boolean intersectsRight(KdNode node) {
+        //LinePath path = node.getLinePath();
+        //return     maxlat >= path.getMinX() && maxlon >= path.getMinY() && path.getMaxX() >= minlat && path.getMaxY() >= minlon;
+        if(node.getDirection() == Direction.Latitudinal){
+           // return node.getSplit() >= minlat;
+            return true;
+        }else{
+            //return maxlon >= node.getSplit() && node.getSplit() >= minlon;
+            return true;
+        }
+    }
+
+    public boolean intersectsLeft(KdNode node) {
+        //LinePath path = node.getLinePath();
+        //return     maxlat >= path.getMinX() && maxlon >= path.getMinY() && path.getMaxX() >= minlat && path.getMaxY() >= minlon;
+        if(node.getDirection() == Direction.Latitudinal){
+            //return node.getSplit() <= minlat;
+            return true;
+        }else{
+            //return maxlon >= node.getSplit() && node.getSplit() >= minlon;
+            return true;
+        }
     }
 
     public boolean contains(KdNode node) {
         LinePath path = node.getLinePath();
-        return (path.getCenterLatitude() <= minlat) && (path.getCenterLatitude() >= maxlat)
+        return (path.getCenterLatitude() >= minlat) && (path.getCenterLatitude() <= maxlat)
                 && (path.getCenterLongitude() >= minlon) && (path.getCenterLongitude() <= maxlon);
     }
+
 
 }

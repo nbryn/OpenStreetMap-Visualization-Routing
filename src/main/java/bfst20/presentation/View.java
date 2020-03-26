@@ -1,6 +1,7 @@
 package bfst20.presentation;
 
 import bfst20.logic.kdtree.Rect;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -17,6 +18,7 @@ import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.kdtree.KdTree;
+import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.awt.*;
 
@@ -57,6 +59,8 @@ public class View {
         kdtrees = new HashMap<>();
         Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
         kdtrees.put(Type.BUILDING, new KdTree(drawables.get(Type.BUILDING), rect));
+        kdtrees.put(Type.HIGHWAY, new KdTree(drawables.get(Type.HIGHWAY), rect));
+
 
         pan(-minlon, -minlat);
         zoom(canvas.getHeight() / (maxlon- minlon), (minlat- maxlat)/2, 0);
@@ -72,7 +76,8 @@ public class View {
         gc.setFill(Color.LIGHTBLUE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
-        
+
+
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 
@@ -101,13 +106,44 @@ public class View {
             gc.fill();
         }*/
 
-        Rect rect = new Rect(-55, -56, 0, (float) 5.93);
+       // Point2D mc1 = toModelCoords(0, 50);
+
+       // Point2D mc2 = toModelCoords(50, 50);
+
+        //Rect rect = new Rect(-55, -56, 0, (float) 5.93);
+
+        int boxSize = 200;
+
+        Point2D mc1 = toModelCoords((canvas.getWidth()/2) - boxSize, (canvas.getHeight()/2) - boxSize);
+        Point2D mc2 = toModelCoords((canvas.getWidth()/2) + boxSize, (canvas.getHeight()/2) + boxSize);
+        Rect rect = new Rect((float)mc1.getY(), (float) mc2.getY(),(float) mc1.getX(), (float)mc2.getX());
+
+
+        gc.setStroke(Color.PURPLE);
+        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         for (Drawable element : kdtrees.get(Type.BUILDING).query(rect)) {
             element.draw(gc);
             gc.fill();
         }
 
+        for (Drawable element : kdtrees.get(Type.HIGHWAY).query(rect)) {
+            element.draw(gc);
+            gc.fill();
+        }
+
+
+
+    }
+
+    public Point2D toModelCoords(double x, double y) {
+        try {
+            return trans.inverseTransform(x, y);
+        } catch (NonInvertibleTransformException e) {
+            // Troels siger at det her ikke kan ske
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void drawWay(){

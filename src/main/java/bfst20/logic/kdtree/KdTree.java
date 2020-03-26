@@ -38,9 +38,17 @@ public class KdTree{
         }
         // Check the left and right subtrees if the input rectangle intersects
         // the current rectangle
-        if (rect.intersects(node)) {
+        /*if (rect.intersects(node)) {
             range(node.getLeftNode(), rect, list);
             range(node.getRightNode(), rect, list);
+        }*/
+
+        if(rect.intersectsRight(node)){
+            range(node.getRightNode(), rect, list);
+        }
+
+        if(rect.intersectsLeft(node)){
+            range(node.getLeftNode(), rect, list);
         }
     }
 
