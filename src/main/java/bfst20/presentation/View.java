@@ -62,7 +62,11 @@ public class View {
         kdtrees.put(Type.HIGHWAY, new KdTree(drawables.get(Type.HIGHWAY), rect));
         kdtrees.put(Type.FARMLAND, new KdTree(drawables.get(Type.FARMLAND), rect));
         kdtrees.put(Type.FOREST, new KdTree(drawables.get(Type.FOREST), rect));
-
+        kdtrees.put(Type.HEATH, new KdTree(drawables.get(Type.HEATH), rect));
+        kdtrees.put(Type.WOOD, new KdTree(drawables.get(Type.WOOD), rect));
+        kdtrees.put(Type.RESIDENTIAL, new KdTree(drawables.get(Type.RESIDENTIAL), rect));
+        kdtrees.put(Type.TREE_ROW, new KdTree(drawables.get(Type.TREE_ROW), rect));
+        kdtrees.put(Type.WATER, new KdTree(drawables.get(Type.WATER), rect));
 
 
         pan(-minlon, -minlat);
@@ -89,15 +93,15 @@ public class View {
             gc.fill();
         }
 
-       // Point2D mc1 = toModelCoords(0, 50);
-       // Point2D mc2 = toModelCoords(50, 50);
+        // Point2D mc1 = toModelCoords(0, 50);
+        // Point2D mc2 = toModelCoords(50, 50);
         //Rect rect = new Rect(-55, -56, 0, (float) 5.93);
 
         int boxSize = 300;
 
-        Point2D mc1 = toModelCoords((canvas.getWidth()/2) - boxSize, (canvas.getHeight()/2) - boxSize);
-        Point2D mc2 = toModelCoords((canvas.getWidth()/2) + boxSize, (canvas.getHeight()/2) + boxSize);
-        Rect rect = new Rect((float)mc1.getY(), (float) mc2.getY(),(float) mc1.getX(), (float)mc2.getX());
+        Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
+        Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
+        Rect rect = new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
 
 
         gc.setStroke(Color.PURPLE);
@@ -105,13 +109,18 @@ public class View {
 
         drawTypeKdTree(Type.HIGHWAY, rect);
         drawTypeKdTree(Type.BUILDING, rect);
-        drawTypeKdTree(Type.FARMLAND, rect);
+        //drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.FOREST, rect);
+        drawTypeKdTree(Type.HEATH, rect);
+        drawTypeKdTree(Type.WOOD, rect);
+        //drawTypeKdTree(Type.RESIDENTIAL, rect);
+        drawTypeKdTree(Type.TREE_ROW, rect);
+        drawTypeKdTree(Type.WATER, rect);
 
 
     }
 
-    public void drawTypeKdTree( Type type, Rect rect){
+    public void drawTypeKdTree(Type type, Rect rect) {
         for (Drawable element : kdtrees.get(type).query(rect)) {
             element.draw(gc);
             gc.fill();
@@ -134,9 +143,9 @@ public class View {
     }
 
     public void zoom(double factor, double x, double y) {
-        if(trans.determinant() >= 1.7365306045084698E9){
+        if (trans.determinant() >= 1.7365306045084698E9) {
             kd = true;
-        }else{
+        } else {
             kd = false;
         }
         trans.prependScale(factor, factor, x, y);

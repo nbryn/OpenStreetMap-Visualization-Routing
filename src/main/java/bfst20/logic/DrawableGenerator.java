@@ -64,6 +64,7 @@ public class DrawableGenerator {
             Type type = linePath.getType();
             if (drawables.get(type) == null) {
 
+                System.out.println(type);
                 drawables.put(type, new ArrayList<>());
             }
 
@@ -134,6 +135,7 @@ public class DrawableGenerator {
         Type type = Type.UNKNOWN;
 
         try {
+
             type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
 
             if (type == Type.LANDUSE || type == Type.NATURAL) {

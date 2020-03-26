@@ -114,10 +114,6 @@ public class LinePath implements Drawable {
         return type;
     }
 
-    public void setType(String type) {
-        System.out.println(Type.valueOf(type.toUpperCase()));
-        this.type = Type.valueOf(type.toUpperCase());
-    }
 
     private void trace(GraphicsContext gc) {
         gc.moveTo(coords[0], coords[1]);
