@@ -115,6 +115,7 @@ public class LinePath implements Drawable {
     }
 
     public void setType(String type) {
+        System.out.println(Type.valueOf(type.toUpperCase()));
         this.type = Type.valueOf(type.toUpperCase());
     }
 

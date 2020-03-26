@@ -15,10 +15,13 @@ public enum Type {
     PARKING,
     NATURAL,
     FARMLAND,
+    TREE_ROW,
     LANDUSE,
+    RESIDENTIAL,
+    WOOD,
     PLACE;
 
-    public static Boolean getFill(Type type){
+    public static boolean getFill(Type type) {
         switch (type) {
             case NATURAL:
             case FARMLAND:
@@ -26,11 +29,16 @@ public enum Type {
             case WATER:
             case COASTLINE:
             case BUILDING:
+            case RESIDENTIAL:
+            case WOOD:
+            case TREE_ROW:
+            case HEATH:
+            case GREEN:
                 return true;
             default: //TODO FIX
                 return false;
         }
-    } 
+    }
 
     public static Color getColor(Type type) {
         switch (type) {
@@ -45,9 +53,14 @@ public enum Type {
             case HIGHWAY:
                 return Color.BLACK;
             case HEATH:
-            case FARMLAND:
-                return Color.rgb(238,240,213);
+                return Color.YELLOW;
+            case RESIDENTIAL:
+                return Color.GREY;
+         /*   case FARMLAND:
+                return Color.rgb(238, 240, 213);*/
+            case WOOD:
             case FOREST:
+            case TREE_ROW:
                 return Color.DARKGREEN;
             case PARKING:
                 return Color.RED;
