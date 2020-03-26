@@ -60,6 +60,9 @@ public class View {
         Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
         kdtrees.put(Type.BUILDING, new KdTree(drawables.get(Type.BUILDING), rect));
         kdtrees.put(Type.HIGHWAY, new KdTree(drawables.get(Type.HIGHWAY), rect));
+        kdtrees.put(Type.FARMLAND, new KdTree(drawables.get(Type.FARMLAND), rect));
+        kdtrees.put(Type.FOREST, new KdTree(drawables.get(Type.FOREST), rect));
+
 
 
         pan(-minlon, -minlat);
@@ -86,30 +89,8 @@ public class View {
             gc.fill();
         }
 
-
-
-        /*for (Drawable element : drawables.get(Type.HIGHWAY)){
-            element.draw(gc);
-            gc.fill();
-        }
-        for (Drawable element : drawables.get(Type.BUILDING)) {
-            element.draw(gc);
-            gc.fill();
-        }
-        for (Drawable element : drawables.get(Type.NATURAL)) {
-            element.draw(gc);
-            gc.fill();
-        }  */
-
-        /*for (Drawable element : drawables.get(Type.BUILDING)) {
-            element.draw(gc);
-            gc.fill();
-        }*/
-
        // Point2D mc1 = toModelCoords(0, 50);
-
        // Point2D mc2 = toModelCoords(50, 50);
-
         //Rect rect = new Rect(-55, -56, 0, (float) 5.93);
 
         int boxSize = 300;
@@ -122,18 +103,19 @@ public class View {
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
-        for (Drawable element : kdtrees.get(Type.BUILDING).query(rect)) {
+        drawTypeKdTree(Type.HIGHWAY, rect);
+        drawTypeKdTree(Type.BUILDING, rect);
+        drawTypeKdTree(Type.FARMLAND, rect);
+        drawTypeKdTree(Type.FOREST, rect);
+
+
+    }
+
+    public void drawTypeKdTree( Type type, Rect rect){
+        for (Drawable element : kdtrees.get(type).query(rect)) {
             element.draw(gc);
             gc.fill();
         }
-
-        for (Drawable element : kdtrees.get(Type.HIGHWAY).query(rect)) {
-            element.draw(gc);
-            gc.fill();
-        }
-
-
-
     }
 
     public Point2D toModelCoords(double x, double y) {
@@ -143,15 +125,6 @@ public class View {
             // Troels siger at det her ikke kan ske
             e.printStackTrace();
             return null;
-        }
-        for (Drawable element : drawables.get(Type.FOREST)){
-            element.draw(gc);
-            gc.fill();
-        }
-
-        for (Drawable element : drawables.get(Type.FARMLAND)){
-            element.draw(gc);
-            gc.fill();
         }
     }
 
