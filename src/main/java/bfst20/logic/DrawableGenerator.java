@@ -64,7 +64,6 @@ public class DrawableGenerator {
             Type type = linePath.getType();
             if (drawables.get(type) == null) {
 
-                System.out.println(type);
                 drawables.put(type, new ArrayList<>());
             }
 
@@ -136,12 +135,13 @@ public class DrawableGenerator {
 
         try {
 
-            type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
-
-            if (type == Type.LANDUSE || type == Type.NATURAL) {
-                type = getSubType(way, type);
+            if (way.containsKey("landuse") || way.containsKey("natural")) {
+                type = getSubType(way);
+            } else {
+                type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
             }
         } catch (Exception err) {
+
         }
 
         Color color = Type.getColor(type);
@@ -189,23 +189,16 @@ public class DrawableGenerator {
         return way;
     }
 
-    private Type getSubType(Way way, Type type) {
-        try {
-            for (Type t : Type.values()) {
+    private Type getSubType(Way way) {
+        Type newType;
 
-                // TODO: Add all landuse values to Types
-                if (way.getTagValue(type.toString().toLowerCase()) != null) {
-                    if (way.getTagValue(type.toString().toLowerCase()).equals(t.toString().toLowerCase())) {
-
-                        String h = (way.getTagValue(type.toString().toLowerCase()));
-                        type = Type.valueOf(h.toUpperCase());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (way.containsKey("natural")) {
+            newType = Type.valueOf(way.getTagValue("natural").toUpperCase());
+        } else {
+            newType = Type.valueOf(way.getTagValue("landuse").toUpperCase());
         }
-        return type;
+
+        return newType;
     }
 
     //Order of before and after depends on the context
