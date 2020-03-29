@@ -37,7 +37,7 @@ public class DrawableGenerator {
     }
 
     public static DrawableGenerator getInstance() {
-        if (loaded == false) {
+        if (!loaded) {
             drawableGenerator = new DrawableGenerator();
         }
 
@@ -61,33 +61,10 @@ public class DrawableGenerator {
 
             LinePath linePath = createLinePath(way);
 
-            if (linePath.getType() == Type.LANDUSE) {
-
-                try {
-                    for (Type t : Type.values()) {
-
-                        // TODO: Add all landuse values to Types
-                        if (way.getTagValue(linePath.getType().toString().toLowerCase()) != null) {
-                            if (way.getTagValue(linePath.getType().toString().toLowerCase()).equals(t.toString().toLowerCase())) {
-
-
-                                linePath.setType(way.getTagValue(linePath.getType().toString().toLowerCase()));
-                                Color color = Type.getColor(linePath.getType());
-                                Boolean fill = Type.getFill(linePath.getType());
-
-                                linePath.setColor(color);
-                                linePath.setFill(fill);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
             Type type = linePath.getType();
             if (drawables.get(type) == null) {
 
+                System.out.println(type);
                 drawables.put(type, new ArrayList<>());
             }
 
@@ -96,6 +73,7 @@ public class DrawableGenerator {
             }
         }
     }
+
 
     private void createRelations() {
         for (Relation relation : OSMRelations) {
@@ -156,9 +134,13 @@ public class DrawableGenerator {
     private LinePath createLinePath(Way way) {
         Type type = Type.UNKNOWN;
 
-
         try {
+
             type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
+
+            if (type == Type.LANDUSE || type == Type.NATURAL) {
+                type = getSubType(way, type);
+            }
         } catch (Exception err) {
         }
 
@@ -205,6 +187,25 @@ public class DrawableGenerator {
         }
 
         return way;
+    }
+
+    private Type getSubType(Way way, Type type) {
+        try {
+            for (Type t : Type.values()) {
+
+                // TODO: Add all landuse values to Types
+                if (way.getTagValue(type.toString().toLowerCase()) != null) {
+                    if (way.getTagValue(type.toString().toLowerCase()).equals(t.toString().toLowerCase())) {
+
+                        String h = (way.getTagValue(type.toString().toLowerCase()));
+                        type = Type.valueOf(h.toUpperCase());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return type;
     }
 
     //Order of before and after depends on the context
