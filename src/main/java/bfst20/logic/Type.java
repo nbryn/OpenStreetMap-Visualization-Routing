@@ -53,15 +53,15 @@ public enum Type {
             case HIGHWAY:
                 return Color.BLACK;
             case HEATH:
-                return Color.YELLOW;
-           /* case RESIDENTIAL:
-                return Color.GREY;
+                return Color.rgb(255, 178, 102, 0.6);
+            case RESIDENTIAL:
+                return Color.rgb(128, 128, 128, 0.6);
             case FARMLAND:
-                return Color.rgb(238, 240, 213);*/
+                return Color.rgb(238, 240, 213, 0.6);
             case WOOD:
             case FOREST:
             case TREE_ROW:
-                return Color.DARKGREEN;
+                return Color.rgb(0, 102, 0, 0.7);
             case PARKING:
                 return Color.RED;
             case NATURAL:

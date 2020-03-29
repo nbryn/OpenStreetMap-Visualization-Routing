@@ -108,15 +108,17 @@ public class View {
             }
         }*/
 
-        drawTypeKdTree(Type.HIGHWAY, rect);
-        drawTypeKdTree(Type.BUILDING, rect);
-        //drawTypeKdTree(Type.FARMLAND, rect);
-        drawTypeKdTree(Type.FOREST, rect);
+
+
+        drawTypeKdTree(Type.FARMLAND, rect);
+        drawTypeKdTree(Type.RESIDENTIAL, rect);
         drawTypeKdTree(Type.HEATH, rect);
         drawTypeKdTree(Type.WOOD, rect);
-        //drawTypeKdTree(Type.RESIDENTIAL, rect);
         drawTypeKdTree(Type.TREE_ROW, rect);
         drawTypeKdTree(Type.WATER, rect);
+        drawTypeKdTree(Type.FOREST, rect);
+        drawTypeKdTree(Type.BUILDING, rect);
+        drawTypeKdTree(Type.HIGHWAY, rect);
 
     }
 
