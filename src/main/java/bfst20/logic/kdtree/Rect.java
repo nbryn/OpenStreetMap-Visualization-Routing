@@ -43,11 +43,13 @@ public class Rect {
         //LinePath path = node.getLinePath();
         //return     maxlat >= path.getMinX() && maxlon >= path.getMinY() && path.getMaxX() >= minlat && path.getMaxY() >= minlon;
         if(node.getDirection() == Direction.Latitudinal){
-           // return node.getSplit() >= minlat;
-            return true;
-        }else{
+            // return node.getSplit() >= minlat;
+            return node.getSplit() <= maxlat;
+        }else if(node.getDirection() == Direction.Longitudinal){
             //return maxlon >= node.getSplit() && node.getSplit() >= minlon;
-            return true;
+            return node.getSplit() >= minlon;
+        }else{
+            return false;
         }
     }
 
@@ -55,11 +57,11 @@ public class Rect {
         //LinePath path = node.getLinePath();
         //return     maxlat >= path.getMinX() && maxlon >= path.getMinY() && path.getMaxX() >= minlat && path.getMaxY() >= minlon;
         if(node.getDirection() == Direction.Latitudinal){
-            //return node.getSplit() <= minlat;
-            return true;
+            return node.getSplit() >= minlat;
+        }else if(node.getDirection() == Direction.Longitudinal){
+            return node.getSplit() <= maxlon;
         }else{
-            //return maxlon >= node.getSplit() && node.getSplit() >= minlon;
-            return true;
+            return false;
         }
     }
 

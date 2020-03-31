@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,9 +96,14 @@ public class View {
         Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
         Rect rect = new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
 
-
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
+
+        // I still don't know why these constants are needed.
+        Point2D mouse = toModelCoords(
+                MouseInfo.getPointerInfo().getLocation().getX()-325,
+                MouseInfo.getPointerInfo().getLocation().getY()-140);
+
 
         //Why does this draw the map different?
    /*     for (Map.Entry<Type, KdTree> entry: kdTrees.entrySet()) {
@@ -108,8 +114,6 @@ public class View {
             }
         }*/
 
-
-
         drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.RESIDENTIAL, rect);
         drawTypeKdTree(Type.HEATH, rect);
@@ -118,12 +122,29 @@ public class View {
         drawTypeKdTree(Type.WATER, rect);
         drawTypeKdTree(Type.FOREST, rect);
         drawTypeKdTree(Type.BUILDING, rect);
-        drawTypeKdTree(Type.HIGHWAY, rect);
+        drawTypeKdTree(Type.HIGHWAY, rect, mouse);
 
+        drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
+
+
+    }
+
+    public void drawTypeKdTreeClosetsNodes(Type type){
+        for (Drawable element : kdTrees.get(type).getCurrentClosestPaths()) {
+            element.draw(gc);
+            gc.fill();
+        }
     }
 
     public void drawTypeKdTree(Type type, Rect rect) {
         for (Drawable element : kdTrees.get(type).query(rect)) {
+            element.draw(gc);
+            gc.fill();
+        }
+    }
+
+    public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
+        for (Drawable element : kdTrees.get(type).query(rect, point)) {
             element.draw(gc);
             gc.fill();
         }

@@ -65,6 +65,10 @@ public class MainController {
             view.pan(e.getX() - lastMouse.getX(), e.getY() - lastMouse.getY());
             lastMouse = new Point2D(e.getX(), e.getY());
         });
+
+        canvas.setOnMouseMoved(e -> {
+            view.repaint();
+        });
     }
 
     public static void main(String[] args) {
