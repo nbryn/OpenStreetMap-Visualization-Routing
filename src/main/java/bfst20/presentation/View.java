@@ -82,18 +82,12 @@ public class View {
         gc.setLineWidth(pixelwidth);
 
 
-        // Point2D mc1 = toModelCoords(0, 50);
-        // Point2D mc2 = toModelCoords(50, 50);
-        //Rect rect = new Rect(-55, -56, 0, (float) 5.93);
-
         int boxSize = 300;
 
         Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
         Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
         Rect rect = new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
 
-        gc.setStroke(Color.PURPLE);
-        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         // I still don't know why these constants are needed.
         Point2D mouse = toModelCoords(
@@ -101,24 +95,11 @@ public class View {
                 MouseInfo.getPointerInfo().getLocation().getY()-140);
 
 
-        //Why does this draw the map different?
-    /*    for (Map.Entry<Type, KdTree> entry : kdTrees.entrySet()) {
+        for (Drawable element : drawables.get(Type.COASTLINE)) {
+            element.draw(gc);
+            gc.fill();
+        }
 
-
-            for (Drawable element : entry.getValue().query(rect)) {
-
-                if (element.getType() == Type.NATURAL) {
-
-                }
-
-                element.draw(gc);
-                gc.fill();
-            }
-
-        }*/
-
-
-        drawTypeKdTree(Type.COASTLINE, rect);
         drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.RESIDENTIAL, rect);
         drawTypeKdTree(Type.HEATH, rect);
@@ -131,6 +112,8 @@ public class View {
 
         drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
 
+        gc.setStroke(Color.PURPLE);
+        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
     }
 
