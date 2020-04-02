@@ -57,14 +57,15 @@ public class View {
         //Burde flyttes.
         kdTrees = new HashMap<>();
         Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
-        for (Map.Entry<Type, List<LinePath>> entry: drawables.entrySet()) {
-            kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
+        for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
+
+                kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
+
         }
 
 
         pan(-minlon, -minlat);
         zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
-
 
         repaint();
     }
@@ -77,14 +78,9 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
-
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 
-        for (Drawable element : drawables.get(Type.COASTLINE)) {
-            element.draw(gc);
-            gc.fill();
-        }
 
         // Point2D mc1 = toModelCoords(0, 50);
         // Point2D mc2 = toModelCoords(50, 50);
@@ -106,14 +102,23 @@ public class View {
 
 
         //Why does this draw the map different?
-   /*     for (Map.Entry<Type, KdTree> entry: kdTrees.entrySet()) {
-            System.out.println(entry.getKey());
+    /*    for (Map.Entry<Type, KdTree> entry : kdTrees.entrySet()) {
+
+
             for (Drawable element : entry.getValue().query(rect)) {
+
+                if (element.getType() == Type.NATURAL) {
+
+                }
+
                 element.draw(gc);
                 gc.fill();
             }
+
         }*/
 
+
+        drawTypeKdTree(Type.COASTLINE, rect);
         drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.RESIDENTIAL, rect);
         drawTypeKdTree(Type.HEATH, rect);
@@ -150,7 +155,7 @@ public class View {
         }
     }
 
-    public Point2D toModelCoords(double x, double y) {
+    private Point2D toModelCoords(double x, double y) {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
@@ -160,10 +165,6 @@ public class View {
         }
     }
 
-
-    public void drawWay() {
-
-    }
 
     public void zoom(double factor, double x, double y) {
         if (trans.determinant() >= 1.7365306045084698E9) {
