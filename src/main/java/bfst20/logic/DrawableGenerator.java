@@ -122,25 +122,6 @@ public class DrawableGenerator {
     }
 
 
-    private Way removeWayAfter(Way way, Map<Node, Way> nodeTo) {
-        Way after = nodeToCoastline.remove(OSMNodes.get(way.getLastNodeId()));
-        if (after != null) {
-            nodeToCoastline.remove(OSMNodes.get(after.getFirstNodeId()));
-            nodeToCoastline.remove(OSMNodes.get(after.getLastNodeId()));
-        }
-        return after;
-    }
-
-    private Way removeWayBefore(Way way, Map<Node, Way> nodeTo) {
-        Way before = nodeToCoastline.remove(OSMNodes.get(way.getFirstNodeId()));
-        if (before != null) {
-            nodeToCoastline.remove(OSMNodes.get(before.getFirstNodeId()));
-            nodeToCoastline.remove(OSMNodes.get(before.getLastNodeId()));
-        }
-        return before;
-    }
-
-
     private LinePath createLinePath(Way way) {
         Type type = Type.UNKNOWN;
 
@@ -161,6 +142,23 @@ public class DrawableGenerator {
         return new LinePath(way, type, OSMNodes, color, fill);
     }
 
+    private Way removeWayAfter(Way way, Map<Node, Way> nodeTo) {
+        Way after = nodeToCoastline.remove(OSMNodes.get(way.getLastNodeId()));
+        if (after != null) {
+            nodeToCoastline.remove(OSMNodes.get(after.getFirstNodeId()));
+            nodeToCoastline.remove(OSMNodes.get(after.getLastNodeId()));
+        }
+        return after;
+    }
+
+    private Way removeWayBefore(Way way, Map<Node, Way> nodeTo) {
+        Way before = nodeToCoastline.remove(OSMNodes.get(way.getFirstNodeId()));
+        if (before != null) {
+            nodeToCoastline.remove(OSMNodes.get(before.getFirstNodeId()));
+            nodeToCoastline.remove(OSMNodes.get(before.getLastNodeId()));
+        }
+        return before;
+    }
 
     private Way merge(Way before, Way after) {
         if (before == null) return after;
