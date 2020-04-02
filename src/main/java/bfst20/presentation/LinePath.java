@@ -109,6 +109,7 @@ public class LinePath implements Drawable {
         this.fill = fill;
     }
 
+
     @Override
     public Type getType() {
         return type;

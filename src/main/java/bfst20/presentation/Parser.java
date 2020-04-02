@@ -60,7 +60,7 @@ public class Parser {
         parse(reader);
     }
 
-    private List<Drawable> getDrawables(){
+    private List<Drawable> getDrawables() {
         List<Drawable> drawables = new ArrayList<>();
 
         return drawables;
@@ -69,7 +69,7 @@ public class Parser {
     private void parse(XMLStreamReader reader) throws XMLStreamException {
 
         OSMElement lastElementParsed = null;
-        
+
         while (reader.hasNext()) {
             reader.next();
 
@@ -86,21 +86,21 @@ public class Parser {
                             addNodeToMap(reader);
                             break;
                         case "way":
-                            lastElementParsed  = addWayToList(reader);
+                            lastElementParsed = addWayToList(reader);
                             break;
                         case "nd":
-                            if (lastElementParsed  instanceof Way) {
-                                addSubElementToWay(reader, (Way) lastElementParsed );
+                            if (lastElementParsed instanceof Way) {
+                                addSubElementToWay(reader, (Way) lastElementParsed);
                             }
                             break;
                         case "relation":
                             lastElementParsed = addRelationToList(reader);
                             break;
                         case "tag":
-                            if (lastElementParsed  instanceof Relation) {
+                            if (lastElementParsed instanceof Relation) {
                                 addTagToRelation(reader);
-                            } else if (lastElementParsed  instanceof Way) {
-                                addTagToWay(reader, (Way) lastElementParsed );
+                            } else if (lastElementParsed instanceof Way) {
+                                addTagToWay(reader, (Way) lastElementParsed);
                             }
                             break;
                         case "member":
@@ -114,12 +114,12 @@ public class Parser {
                     switch (tagName) {
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
-                            if( relation.getTag("place") != null && relation.getTag("place").equals("island")
-                              ||  relation.getTag("type") != null && relation.getTag("type").equals("boundary")){
+                            if (relation.getTag("place") != null && relation.getTag("place").equals("island")
+                                    || relation.getTag("type") != null && relation.getTag("type").equals("boundary")) {
                                 appController.addRelationToModel(relation);
                             }
                             break;
-                    
+
                         default:
                             break;
                     }
@@ -127,10 +127,9 @@ public class Parser {
             }
         }
 
-        
     }
 
-    private void setBounds(XMLStreamReader reader){
+    private void setBounds(XMLStreamReader reader) {
         float minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
         float maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
         float maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));

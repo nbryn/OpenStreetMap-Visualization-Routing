@@ -36,9 +36,9 @@ public class Way implements OSMElement {
         drawColor = Color.BLACK;
         tags = new HashMap<>();
     }
-    
 
-    public List<Long> getNodeIds(){
+
+    public List<Long> getNodeIds() {
         return nodeIds;
     }
 
@@ -55,22 +55,31 @@ public class Way implements OSMElement {
     public void setValues() {
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
     }
-    
-    public String getTagValue(String key){
+
+    public boolean containsKey(String key) {
+
+        return tags.containsKey(key);
+    }
+
+    public String getTagValue(String key) {
         return tags.get(key);
     }
 
-    public String[] getFirstTag(){
+    public Map<String, String> getTags() {
+        return this.tags;
+    }
+
+    public String[] getFirstTag() {
         String[] first = new String[2];
         first[0] = firstKey;
         first[1] = firstValue;
         return first;
     }
 
-    public void addTag(String key, String value){
+    public void addTag(String key, String value) {
         tags.put(key, value);
 
-        if(firstKey == null){
+        if (firstKey == null) {
             firstKey = key;
             firstValue = value;
         }
@@ -81,15 +90,15 @@ public class Way implements OSMElement {
         this.reader = reader;
     }
 
-    public long getFirstNodeId(){
+    public long getFirstNodeId() {
         return nodeIds.get(0);
     }
 
-    public long getLastNodeId(){
+    public long getLastNodeId() {
         return nodeIds.get(nodeIds.size() - 1);
     }
 
-    public void addAllNodeIds(Way way){
+    public void addAllNodeIds(Way way) {
         nodeIds.addAll(way.getNodeIds());
     }
 
