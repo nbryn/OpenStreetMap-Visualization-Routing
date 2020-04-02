@@ -3,9 +3,28 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="vbox" prefHeight="720" prefWidth="1270"
+
+<HBox fx:id="hbox" prefHeight="720" prefWidth="1600"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="bfst20.presentation.MainController">
+    <VBox fx:id="vbox" prefHeight="720" prefWidth="330">
+        <HBox prefHeight="30" prefWidth="330">
+            <Button fx:id="bikeButton"  mnemonicParsing="false" prefHeight="30" prefWidth="175" text="Bike">
+             </Button>
+            <Button fx:id="carButton"  mnemonicParsing="false" prefHeight="30" prefWidth="175" text="Car">
+            </Button>
+        </HBox>
+        <TextField fx:id="searchbar" layoutX="115.0" layoutY="28.0"  promptText="Search"/>
+        <TextField fx:id="yesbar" layoutX="115.0" layoutY="28.0"  promptText="Address"/>
+        <ScrollPane fx:id="scrollPane" layoutX="14.0" layoutY="22.0" pannable="true" prefHeight="900" prefWidth="330" style="-fx-background: #17181f; -fx-border-color: #17181f;" vbarPolicy="ALWAYS" fitToWidth="true" >
+                <content>
+                 <FlowPane fx:id="displayPane" hgap="50.0" prefWidth="1600" style="-fx-background-color: #17181f;" vgap="20.0" />
+             </content>
+        </ScrollPane>
+
+    </VBox>  
+
+    <VBox fx:id="vbox" prefHeight="720" prefWidth="1270">
     <MenuBar fx:id="menuBar" >
         <menus>
             <Menu fx:id="mainMenu" text="File">
@@ -22,11 +41,19 @@
             <Menu text="Help">
                 <items>
 
-
                     <SeparatorMenuItem />
                     <MenuItem text="About" />
                 </items>
             </Menu>
         </menus>
+
+        
+            
+         
     </MenuBar>
-</VBox>
+    
+    
+</VBox>  
+</HBox>
+
+
