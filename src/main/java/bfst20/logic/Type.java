@@ -64,8 +64,8 @@ public enum Type {
                 return Color.rgb(0, 102, 0, 0.7);
             case PARKING:
                 return Color.RED;
-            case NATURAL:
-                return Color.BLUEVIOLET;
+            /*case NATURAL:
+                return Color.BLUEVIOLET;*/
             default: //TODO FIX
                 return Color.TRANSPARENT;
         }

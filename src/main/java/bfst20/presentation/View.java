@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,17 +54,20 @@ public class View {
         DrawableGenerator drawableGenerator = DrawableGenerator.getInstance();
 
         drawables = drawableGenerator.createDrawables();
+
         //Burde flyttes.
         kdTrees = new HashMap<>();
         Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
-        for (Map.Entry<Type, List<LinePath>> entry: drawables.entrySet()) {
-            kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
+        for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
+
+            if (entry.getValue().size() != 0) {
+                kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
+            }
         }
 
 
         pan(-minlon, -minlat);
         zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
-
 
         repaint();
     }
@@ -76,18 +80,9 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
-
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
 
-        for (Drawable element : drawables.get(Type.COASTLINE)) {
-            element.draw(gc);
-            gc.fill();
-        }
-
-        // Point2D mc1 = toModelCoords(0, 50);
-        // Point2D mc2 = toModelCoords(50, 50);
-        //Rect rect = new Rect(-55, -56, 0, (float) 5.93);
 
         int boxSize = 300;
 
@@ -96,19 +91,16 @@ public class View {
         Rect rect = new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
 
 
-        gc.setStroke(Color.PURPLE);
-        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
-
-        //Why does this draw the map different?
-   /*     for (Map.Entry<Type, KdTree> entry: kdTrees.entrySet()) {
-            System.out.println(entry.getKey());
-            for (Drawable element : entry.getValue().query(rect)) {
-                element.draw(gc);
-                gc.fill();
-            }
-        }*/
+        // I still don't know why these constants are needed.
+        Point2D mouse = toModelCoords(
+                MouseInfo.getPointerInfo().getLocation().getX() - 325,
+                MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
 
+        for (Drawable element : drawables.get(Type.COASTLINE)) {
+            element.draw(gc);
+            gc.fill();
+        }
 
         drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.RESIDENTIAL, rect);
@@ -118,8 +110,20 @@ public class View {
         drawTypeKdTree(Type.WATER, rect);
         drawTypeKdTree(Type.FOREST, rect);
         drawTypeKdTree(Type.BUILDING, rect);
-        drawTypeKdTree(Type.HIGHWAY, rect);
+        drawTypeKdTree(Type.HIGHWAY, rect, mouse);
 
+        drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
+
+        gc.setStroke(Color.PURPLE);
+        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
+
+    }
+
+    public void drawTypeKdTreeClosetsNodes(Type type) {
+        for (Drawable element : kdTrees.get(type).getCurrentClosestPaths()) {
+            element.draw(gc);
+            gc.fill();
+        }
     }
 
     public void drawTypeKdTree(Type type, Rect rect) {
@@ -129,7 +133,14 @@ public class View {
         }
     }
 
-    public Point2D toModelCoords(double x, double y) {
+    public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
+        for (Drawable element : kdTrees.get(type).query(rect, point)) {
+            element.draw(gc);
+            gc.fill();
+        }
+    }
+
+    private Point2D toModelCoords(double x, double y) {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
@@ -139,10 +150,6 @@ public class View {
         }
     }
 
-
-    public void drawWay() {
-
-    }
 
     public void zoom(double factor, double x, double y) {
         if (trans.determinant() >= 1.7365306045084698E9) {

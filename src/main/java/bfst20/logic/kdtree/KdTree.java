@@ -2,12 +2,17 @@ package bfst20.logic.kdtree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import bfst20.presentation.LinePath;
- 
+import javafx.geometry.Point2D;
+
+import javax.sound.sampled.Line;
+
 public class KdTree{
 
     private KdNode root;
+    private List<LinePath> currentClosestPaths;
 
     public KdTree(List<LinePath> paths,Rect rect){
         root = new KdNode();
@@ -15,13 +20,11 @@ public class KdTree{
         root.setDirection(Direction.Latitudinal);
         root.setSplit(rect.getMinlat() + (rect.getMaxlat()-rect.getMinlat())/2);
 
-
         for(int i = 1; i < paths.size(); i++){
             LinePath path = paths.get(i);
 
             insert(root, path);
         }
-
     }
 
     public Iterable<LinePath> query(Rect rect){
@@ -30,18 +33,24 @@ public class KdTree{
         return list;
     }
 
-    private void range(KdNode node, Rect rect, List<LinePath> list ){
+    public Iterable<LinePath> getCurrentClosestPaths(){
+        return currentClosestPaths;
+    }
+
+    public Iterable<LinePath> query(Rect rect, Point2D point){
+        List<LinePath> list = new ArrayList<>();
+        currentClosestPaths = new ArrayList<>();
+        range(root,  rect, list, point);
+        return list;
+    }
+
+    private void range(KdNode node, Rect rect, List<LinePath> list){
         if (node == null) return;
-        // If the current point is in the input rectangle, enqueue that point
+
         if (rect.contains(node)) {
             list.add(node.getLinePath());
+
         }
-        // Check the left and right subtrees if the input rectangle intersects
-        // the current rectangle
-        /*if (rect.intersects(node)) {
-            range(node.getLeftNode(), rect, list);
-            range(node.getRightNode(), rect, list);
-        }*/
 
         if(rect.intersectsRight(node)){
             range(node.getRightNode(), rect, list);
@@ -52,32 +61,26 @@ public class KdTree{
         }
     }
 
-   /* private void insert(KdNode node, LinePath path){
-        if(node.getLeftNode() == null && node.getRightNode() == null){
-            //Both nodes are empty
-            KdNode newNode = new KdNode();
-            newNode.setLinePath(path);
-            if(node.getDirection() == Direction.Latitudinal){
-                newNode.setDirection(Direction.Longitudinal);
-                newNode.setSplit(path.getCenterLongitude());
-                if(node.getSplit() > path.getCenterLatitude()){
-                    //Since it is less it would be to the left of the split line for the node.
-                    node.setLeftNode(newNode);
-                }else{
-                    node.setRightNode(newNode);
-                }
-            }else{
-                newNode.setDirection(Direction.Latitudinal);
-                newNode.setSplit(path.getCenterLatitude());
-                if(node.getSplit() > path.getCenterLongitude()){
-                    //Since it is less it would be to the left of the split line for the node.
-                    node.setRightNode(newNode);
-                }else{
-                    node.setLeftNode(newNode);
-                }
+    private void range(KdNode node, Rect rect, List<LinePath> list, Point2D point){
+        if (node == null) return;
+
+        if (rect.contains(node)) {
+            list.add(node.getLinePath());
+            float distance = (float) Math.sqrt(Math.pow(node.getLinePath().getCenterLatitude() - point.getY(), 2) + Math.pow(node.getLinePath().getCenterLongitude() - point.getX(), 2));
+
+            if(distance < 0.001){
+                currentClosestPaths.add(node.getLinePath());
             }
         }
-    }*/
+
+        if(rect.intersectsRight(node)){
+            range(node.getRightNode(), rect, list, point);
+        }
+
+        if(rect.intersectsLeft(node)){
+            range(node.getLeftNode(), rect, list, point);
+        }
+    }
 
     private KdNode createNewKdNode(LinePath path, Direction direction){
         KdNode node = new KdNode();

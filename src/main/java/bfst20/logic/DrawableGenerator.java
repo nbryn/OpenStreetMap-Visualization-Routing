@@ -1,33 +1,29 @@
 package bfst20.logic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.logic.AppController;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
-import bfst20.logic.Type;
-import bfst20.logic.interfaces.Drawable;
 import bfst20.presentation.LinePath;
-import bfst20.presentation.Parser;
 import javafx.scene.paint.Color;
 
 public class DrawableGenerator {
 
-    Map<Type, List<LinePath>> drawables = new HashMap<>();
-    Map<Node, Way> nodeToCoastline = new HashMap<>();
-    List<Way> OSMWays;
-    Map<Long, Node> OSMNodes;
-    List<Relation> OSMRelations;
-    List<Drawable> islands = new ArrayList<>();
-    static boolean loaded = false;
-    static DrawableGenerator drawableGenerator;
-    AppController appController;
+    private Map<Type, List<LinePath>> drawables = new HashMap<>();
+    private Map<Node, Way> nodeToCoastline = new HashMap<>();
+    private Map<Node, Way> nodeToForest = new HashMap<>();
+    private Map<Node, Way> nodeToFarmland = new HashMap<>();
+    private List<Way> OSMWays;
+    private Map<Long, Node> OSMNodes;
+    private List<Relation> OSMRelations;
+    private static boolean loaded = false;
+    private static DrawableGenerator drawableGenerator;
+    private AppController appController;
 
     private DrawableGenerator() {
         appController = new AppController();
@@ -50,8 +46,6 @@ public class DrawableGenerator {
 
         createRelations();
 
-        addCoastlines();
-
         return drawables;
     }
 
@@ -64,7 +58,6 @@ public class DrawableGenerator {
             Type type = linePath.getType();
             if (drawables.get(type) == null) {
 
-                System.out.println(type);
                 drawables.put(type, new ArrayList<>());
             }
 
@@ -77,71 +70,70 @@ public class DrawableGenerator {
 
     private void createRelations() {
         for (Relation relation : OSMRelations) {
-            if (relation.getTag("name").contains("Region")) {
-                Collections.sort(relation.getMembers());
-                for (long entry : relation.getMembers()) {
-                    Way way = (binarySearch(OSMWays, entry));
 
-                    if (way != null && way.getTagValue("natural") != null
-                            && way.getTagValue("natural").equals("coastline")) {
+            if (relation.getTag("landuse") != null && relation.getTag("landuse").contains("forest")) {
 
-                        Way before = removeWayBefore(way);
-                        Way after = removeWayAfter(way);
+                connectWays(relation, nodeToForest);
 
-                        way = merge(merge(before, way), after);
-                        nodeToCoastline.put(OSMNodes.get(way.getFirstNodeId()), way);
-                        nodeToCoastline.put(OSMNodes.get(way.getLastNodeId()), way);
-                    }
+            } else if (relation.getTag("landuse") != null && relation.getTag("landuse").contains("farmland")) {
+
+                connectWays(relation, nodeToFarmland);
+
+            } else if (relation.getTag("name") != null && relation.getTag("name").contains("Region")) {
+                if (!drawables.containsKey(Type.COASTLINE)) {
+                    drawables.put(Type.COASTLINE, new ArrayList<>());
                 }
+
+                connectWays(relation, nodeToCoastline);
+
             }
+        }
+
+        addRelation(Type.FOREST, nodeToForest);
+        addRelation(Type.FARMLAND, nodeToFarmland);
+        addRelation(Type.COASTLINE, nodeToCoastline);
+    }
+
+    private void connectWays(Relation relation, Map<Node, Way> nodeTo) {
+        Collections.sort(relation.getMembers());
+        for (long entry : relation.getMembers()) {
+            Way way = (binarySearch(OSMWays, entry));
+
+            if (way == null) continue;
+
+            Way before = removeWayBefore(way, nodeTo);
+            Way after = removeWayAfter(way, nodeTo);
+
+            way = merge(merge(before, way), after);
+
+            nodeTo.put(OSMNodes.get(way.getFirstNodeId()), way);
+            nodeTo.put(OSMNodes.get(way.getLastNodeId()), way);
         }
     }
 
-    private void addCoastlines() {
-        if (!drawables.containsKey(Type.COASTLINE)) {
-            drawables.put(Type.COASTLINE, new ArrayList<>());
-        }
 
-
-        for (Map.Entry<Node, Way> entry : nodeToCoastline.entrySet()) {
+    private void addRelation(Type type, Map<Node, Way> nodeTo) {
+        for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
-
-
-                drawables.get(Type.COASTLINE).add(
-                        new LinePath(entry.getValue(), Type.COASTLINE, OSMNodes, Type.getColor(Type.COASTLINE), true));
+                drawables.get(type).add(
+                        new LinePath(entry.getValue(), type, OSMNodes, Type.getColor(type), true));
             }
         }
     }
 
-    private Way removeWayAfter(Way way) {
-        Way after = nodeToCoastline.remove(OSMNodes.get(way.getLastNodeId()));
-        if (after != null) {
-            nodeToCoastline.remove(OSMNodes.get(after.getFirstNodeId()));
-            nodeToCoastline.remove(OSMNodes.get(after.getLastNodeId()));
-        }
-        return after;
-    }
-
-    private Way removeWayBefore(Way way) {
-        Way before = nodeToCoastline.remove(OSMNodes.get(way.getFirstNodeId()));
-        if (before != null) {
-            nodeToCoastline.remove(OSMNodes.get(before.getFirstNodeId()));
-            nodeToCoastline.remove(OSMNodes.get(before.getLastNodeId()));
-        }
-        return before;
-    }
 
     private LinePath createLinePath(Way way) {
         Type type = Type.UNKNOWN;
 
         try {
 
-            type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
-
-            if (type == Type.LANDUSE || type == Type.NATURAL) {
-                type = getSubType(way, type);
+            if (way.containsKey("landuse") || way.containsKey("natural")) {
+                type = getSubType(way);
+            } else {
+                type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
             }
         } catch (Exception err) {
+
         }
 
         Color color = Type.getColor(type);
@@ -150,21 +142,37 @@ public class DrawableGenerator {
         return new LinePath(way, type, OSMNodes, color, fill);
     }
 
+    private Way removeWayAfter(Way way, Map<Node, Way> nodeTo) {
+        Way after = nodeToCoastline.remove(OSMNodes.get(way.getLastNodeId()));
+        if (after != null) {
+            nodeToCoastline.remove(OSMNodes.get(after.getFirstNodeId()));
+            nodeToCoastline.remove(OSMNodes.get(after.getLastNodeId()));
+        }
+        return after;
+    }
 
-    public Way merge(Way before, Way after) {
+    private Way removeWayBefore(Way way, Map<Node, Way> nodeTo) {
+        Way before = nodeToCoastline.remove(OSMNodes.get(way.getFirstNodeId()));
+        if (before != null) {
+            nodeToCoastline.remove(OSMNodes.get(before.getFirstNodeId()));
+            nodeToCoastline.remove(OSMNodes.get(before.getLastNodeId()));
+        }
+        return before;
+    }
+
+    private Way merge(Way before, Way after) {
         if (before == null) return after;
         if (after == null) return before;
 
         Way way = new Way();
         // Why do we need this? Seems to do the same without it
-        /*if (before.getFirstNodeId() == after.getFirstNodeId()) {
+        if (before.getFirstNodeId() == after.getFirstNodeId()) {
             way.addAllNodeIds(before);
-            
+
             Collections.reverse(way.getNodeIds());
             way.getNodeIds().remove(way.getNodeIds().size() - 1);
             way.addAllNodeIds(after);
-        } else*/
-        if (before.getFirstNodeId() == after.getLastNodeId()) {
+        } else if (before.getFirstNodeId() == after.getLastNodeId()) {
 
             addWayToMerge(way, after, before);
 
@@ -174,38 +182,30 @@ public class DrawableGenerator {
         }
 
         // Why do we need this? Seems to do the same without it
-        /* else if (before.getLastNodeId() == after.getLastNodeId()) {
+        else if (before.getLastNodeId() == after.getLastNodeId()) {
             Way tmp = new Way(after);
-            
+
             Collections.reverse(tmp.getNodeIds());
             way.addAllNodeIds(before);
             way.getNodeIds().remove(way.getNodeIds().size() - 1);
             way.addAllNodeIds(tmp);
-        }*/
-        else {
+        } else {
             throw new IllegalArgumentException("Cannot merge unconnected OSMWays");
         }
 
         return way;
     }
 
-    private Type getSubType(Way way, Type type) {
-        try {
-            for (Type t : Type.values()) {
+    private Type getSubType(Way way) {
+        Type newType;
 
-                // TODO: Add all landuse values to Types
-                if (way.getTagValue(type.toString().toLowerCase()) != null) {
-                    if (way.getTagValue(type.toString().toLowerCase()).equals(t.toString().toLowerCase())) {
-
-                        String h = (way.getTagValue(type.toString().toLowerCase()));
-                        type = Type.valueOf(h.toUpperCase());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (way.containsKey("natural")) {
+            newType = Type.valueOf(way.getTagValue("natural").toUpperCase());
+        } else {
+            newType = Type.valueOf(way.getTagValue("landuse").toUpperCase());
         }
-        return type;
+
+        return newType;
     }
 
     //Order of before and after depends on the context
@@ -233,7 +233,6 @@ public class DrawableGenerator {
                 return midElement;
             }
         }
-
         return null;
     }
 
