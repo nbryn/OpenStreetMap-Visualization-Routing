@@ -54,13 +54,15 @@ public class View {
         DrawableGenerator drawableGenerator = DrawableGenerator.getInstance();
 
         drawables = drawableGenerator.createDrawables();
+
         //Burde flyttes.
         kdTrees = new HashMap<>();
         Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
         for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
 
+            if (entry.getValue().size() != 0) {
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
-
+            }
         }
 
 
@@ -91,8 +93,8 @@ public class View {
 
         // I still don't know why these constants are needed.
         Point2D mouse = toModelCoords(
-                MouseInfo.getPointerInfo().getLocation().getX()-325,
-                MouseInfo.getPointerInfo().getLocation().getY()-140);
+                MouseInfo.getPointerInfo().getLocation().getX() - 325,
+                MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
 
         for (Drawable element : drawables.get(Type.COASTLINE)) {
@@ -117,7 +119,7 @@ public class View {
 
     }
 
-    public void drawTypeKdTreeClosetsNodes(Type type){
+    public void drawTypeKdTreeClosetsNodes(Type type) {
         for (Drawable element : kdTrees.get(type).getCurrentClosestPaths()) {
             element.draw(gc);
             gc.fill();
