@@ -28,6 +28,10 @@ public class Relation implements OSMElement {
         tags.put(key, value);
     }
 
+    public Map<String, String> getTags() {
+        return this.tags;
+    }
+
     public String getTag(String key){
         return tags.get(key);
     }
