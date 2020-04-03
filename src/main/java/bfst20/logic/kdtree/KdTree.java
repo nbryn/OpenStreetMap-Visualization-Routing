@@ -52,13 +52,11 @@ public class KdTree{
 
         }
 
-        if(rect.intersectsRight(node)){
+        if(rect.intersects(node)){
             range(node.getRightNode(), rect, list);
-        }
-
-        if(rect.intersectsLeft(node)){
             range(node.getLeftNode(), rect, list);
         }
+
     }
 
     private void range(KdNode node, Rect rect, List<LinePath> list, Point2D point){
@@ -73,13 +71,11 @@ public class KdTree{
             }
         }
 
-        if(rect.intersectsRight(node)){
+        if(rect.intersects(node)){
             range(node.getRightNode(), rect, list, point);
-        }
-
-        if(rect.intersectsLeft(node)){
             range(node.getLeftNode(), rect, list, point);
         }
+
     }
 
     private KdNode createNewKdNode(LinePath path, Direction direction){

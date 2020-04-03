@@ -112,7 +112,7 @@ public class View {
         drawTypeKdTree(Type.BUILDING, rect);
         drawTypeKdTree(Type.HIGHWAY, rect, mouse);
 
-        drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
+        //drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
 
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
