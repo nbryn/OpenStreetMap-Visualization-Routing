@@ -92,8 +92,8 @@ public class LinePath implements Drawable {
             gc.setFill(fill ? color : Color.TRANSPARENT);
         }*/
         //gc.setStroke(Color.BLUE);
-        //gc.strokeRect(minX, minY, maxX-minX, maxY-minY);
-        //gc.setStroke(color);
+        ///gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
+      //  gc.setStroke(color);
 
 
 
