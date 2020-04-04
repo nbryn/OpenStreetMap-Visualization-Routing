@@ -96,7 +96,6 @@ public class View {
                 MouseInfo.getPointerInfo().getLocation().getX() - 325,
                 MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
-
         for (Drawable element : drawables.get(Type.COASTLINE)) {
             element.draw(gc);
             gc.fill();
@@ -117,6 +116,7 @@ public class View {
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
+        System.out.println(trans.determinant());
     }
 
     public void drawTypeKdTreeClosetsNodes(Type type) {
@@ -127,14 +127,14 @@ public class View {
     }
 
     public void drawTypeKdTree(Type type, Rect rect) {
-        for (Drawable element : kdTrees.get(type).query(rect)) {
+        for (Drawable element : kdTrees.get(type).query(rect, trans.determinant())) {
             element.draw(gc);
             gc.fill();
         }
     }
 
     public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
-        for (Drawable element : kdTrees.get(type).query(rect, point)) {
+        for (Drawable element : kdTrees.get(type).query(rect, trans.determinant(), point)) {
             element.draw(gc);
             gc.fill();
         }
@@ -152,11 +152,7 @@ public class View {
 
 
     public void zoom(double factor, double x, double y) {
-        if (trans.determinant() >= 1.7365306045084698E9) {
-            kd = true;
-        } else {
-            kd = false;
-        }
+
         trans.prependScale(factor, factor, x, y);
         repaint();
     }
