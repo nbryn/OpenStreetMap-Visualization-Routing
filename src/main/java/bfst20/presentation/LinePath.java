@@ -81,6 +81,7 @@ public class LinePath implements Drawable {
 
     @Override
     public void draw(GraphicsContext gc) {
+
         gc.beginPath();
         gc.setStroke(color);
         gc.setFill(fill ? color : Color.TRANSPARENT);

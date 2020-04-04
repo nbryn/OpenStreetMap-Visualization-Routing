@@ -21,6 +21,28 @@ public enum Type {
     WOOD,
     PLACE;
 
+    public static double getZoomLevel(Type type){
+        switch (type){
+            case WATER:
+            case FARMLAND:
+            case NATURAL:
+            case WOOD:
+            case TREE_ROW:
+            case GREEN:
+            case COASTLINE:
+            case HIGHWAY:
+                return 1;
+            case FOREST:
+            case HEATH:
+                return 1.3011416847239474E7;
+            case RESIDENTIAL:
+            case BUILDING:
+                return 2.8945867784311756E7;
+            default:
+                return Double.POSITIVE_INFINITY;
+        }
+    }
+
     public static boolean getFill(Type type) {
         switch (type) {
             case NATURAL:
