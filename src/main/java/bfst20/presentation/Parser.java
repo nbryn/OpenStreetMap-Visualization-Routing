@@ -1,6 +1,7 @@
 package bfst20.presentation;
 
 import bfst20.logic.AppController;
+import bfst20.logic.Type;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.Relation;
@@ -63,12 +64,17 @@ public class Parser {
     private List<Drawable> getDrawables() {
         List<Drawable> drawables = new ArrayList<>();
 
+        tempOSMRelations = null;
+        System.gc();
+
         return drawables;
     }
 
     private void parse(XMLStreamReader reader) throws XMLStreamException {
 
         OSMElement lastElementParsed = null;
+        HashMap<String, String> tags = null;
+        String[] firstTag = new String[2];
 
         while (reader.hasNext()) {
             reader.next();
@@ -87,6 +93,7 @@ public class Parser {
                             break;
                         case "way":
                             lastElementParsed = addWayToList(reader);
+                            tags = new HashMap<>();
                             break;
                         case "nd":
                             if (lastElementParsed instanceof Way) {
@@ -95,13 +102,20 @@ public class Parser {
                             break;
                         case "relation":
                             lastElementParsed = addRelationToList(reader);
+                            tags = new HashMap<>();
                             break;
                         case "tag":
-                            if (lastElementParsed instanceof Relation) {
-                                addTagToRelation(reader);
-                            } else if (lastElementParsed instanceof Way) {
-                                addTagToWay(reader, (Way) lastElementParsed);
+                            if(tags == null) break;
+
+                            String key = reader.getAttributeValue(null, "k");
+                            String value = reader.getAttributeValue(null, "v");
+
+                            if(firstTag[0] == null){
+                                firstTag[0] = key;
+                                firstTag[1] = value;
                             }
+
+                            tags.put(key, value);
                             break;
                         case "member":
                             addMemberToRelation(reader);
@@ -115,6 +129,10 @@ public class Parser {
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
                             appController.addRelationToModel(relation);
+                            parseTags(reader, lastElementParsed, tags, firstTag);
+                            break;
+                        case "way":
+                            parseTags(reader, lastElementParsed, tags, firstTag);
                             break;
                         default:
                             break;
@@ -124,6 +142,35 @@ public class Parser {
         }
     }
 
+    private void parseTags( XMLStreamReader reader, 
+                            OSMElement lastElementParsed, 
+                            HashMap<String, 
+                            String> tags, 
+                            String[] firstTag){
+
+
+        try {
+            if(tags.containsKey("name")){
+                lastElementParsed.setName(tags.get("name"));
+            }
+
+            if (tags.containsKey("landuse") || tags.containsKey("natural")) {
+                if (tags.containsKey("natural")) {
+                    lastElementParsed.setType(Type.valueOf(tags.get("natural").toUpperCase()));
+                } else {
+                    lastElementParsed.setType(Type.valueOf(tags.get("landuse").toUpperCase()));
+                }
+            } else if(tags.containsKey("building")) {
+                lastElementParsed.setType(Type.BUILDING);
+            }else if(tags.containsKey("highway")) {
+                lastElementParsed.setType(Type.HIGHWAY);
+            }else{
+                lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
+            }
+
+        } catch (Exception err) {
+        }
+    }
 
     private void setBounds(XMLStreamReader reader) {
         float minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
@@ -154,23 +201,6 @@ public class Parser {
         tempOSMRelations.add(relation);
 
         return relation;
-    }
-
-    private void addTagToRelation(XMLStreamReader reader) {
-        Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
-        String key = reader.getAttributeValue(null, "k");
-        String value = reader.getAttributeValue(null, "v");
-
-
-        relation.addTag(key, value);
-
-    }
-
-    private void addTagToWay(XMLStreamReader reader, Way way) {
-        String key = reader.getAttributeValue(null, "k");
-        String value = reader.getAttributeValue(null, "v");
-        way.addTag(key, value);
-
     }
 
     private void addMemberToRelation(XMLStreamReader reader) {

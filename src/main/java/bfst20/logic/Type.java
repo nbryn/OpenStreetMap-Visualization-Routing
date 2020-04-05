@@ -23,17 +23,17 @@ public enum Type {
 
     public static double getZoomLevel(Type type){
         switch (type){
+            case COASTLINE:
+            case HIGHWAY:
+                return 1;
+            case FOREST:
+            case HEATH:
             case WATER:
             case FARMLAND:
             case NATURAL:
             case WOOD:
             case TREE_ROW:
             case GREEN:
-            case COASTLINE:
-            case HIGHWAY:
-                return 1;
-            case FOREST:
-            case HEATH:
                 return 1.3011416847239474E7;
             case RESIDENTIAL:
             case BUILDING:

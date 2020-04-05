@@ -3,57 +3,84 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<AnchorPane prefHeight="720" prefWidth="1600" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bfst20.presentation.MainController">
+<HBox fx:id="hbox" prefHeight="720" prefWidth="1600">
+    <!-- Pane for both the searching of addresses and routing-->
+      <Pane fx:id="omniPane" prefHeight="200.0" prefWidth="330.0">
+         <children>
+             <!-- VBox for routing elements-->
+             <VBox fx:id="routeVBox" prefHeight="720" prefWidth="330" visible="false">
+                  <TextField fx:id="searchbar" layoutX="115.0" layoutY="28.0" prefHeight="48.0" prefWidth="330.0" promptText="Search" />
+                <TextField fx:id="yesbar" layoutX="115.0" layoutY="28.0" prefHeight="48.0" prefWidth="330.0" promptText="Address" />
+                <HBox prefHeight="30" prefWidth="330">
+                  <Button fx:id="bikeButton" mnemonicParsing="false" prefHeight="30" prefWidth="175" text="Bike">
+                    </Button>
+                  <Button fx:id="carButton" mnemonicParsing="false" prefHeight="30" prefWidth="175" text="Car">
+                    </Button>
+                </HBox>
+                 <!-- Scrollpane to contain directions-->
+                <ScrollPane fitToWidth="true" layoutX="14.0" layoutY="22.0" pannable="true" prefHeight="617.0" prefWidth="330" style="-fx-background: #17181f; -fx-border-color: #17181f;" vbarPolicy="ALWAYS">
+                      <content>
+                       <FlowPane fx:id="displayPane" hgap="50.0" prefWidth="1600" style="-fx-background-color: #17181f;" />
+                   </content>
+                </ScrollPane>
+                 <Button fx:id="toAddressButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="334.0" text="Done" />
+             </VBox>
 
-<HBox fx:id="hbox" prefHeight="720" prefWidth="1600"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="bfst20.presentation.MainController">
-    <VBox fx:id="vbox" prefHeight="720" prefWidth="330">
-        <HBox prefHeight="30" prefWidth="330">
-            <Button fx:id="bikeButton"  mnemonicParsing="false" prefHeight="30" prefWidth="175" text="Bike">
-             </Button>
-            <Button fx:id="carButton"  mnemonicParsing="false" prefHeight="30" prefWidth="175" text="Car">
-            </Button>
-        </HBox>
-        <TextField fx:id="searchbar" layoutX="115.0" layoutY="28.0"  promptText="Search"/>
-        <TextField fx:id="yesbar" layoutX="115.0" layoutY="28.0"  promptText="Address"/>
-        <ScrollPane fx:id="scrollPane" layoutX="14.0" layoutY="22.0" pannable="true" prefHeight="900" prefWidth="330" style="-fx-background: #17181f; -fx-border-color: #17181f;" vbarPolicy="ALWAYS" fitToWidth="true" >
-                <content>
-                 <FlowPane fx:id="displayPane" hgap="50.0" prefWidth="1600" style="-fx-background-color: #17181f;" vgap="20.0" />
-             </content>
-        </ScrollPane>
-
-    </VBox>  
-
-    <VBox fx:id="vbox" prefHeight="720" prefWidth="1270">
-    <MenuBar fx:id="menuBar" >
-        <menus>
-            <Menu fx:id="mainMenu" text="File">
-                <items>
-
-                    <MenuItem fx:id="openFile" text="Open"  onAction="#load" />
-                    <MenuItem text="Save"/>
-
-                    <SeparatorMenuItem  />
-                    <MenuItem text="Exit"/>
-                </items>
-            </Menu>
-
-            <Menu text="Help">
-                <items>
-
-                    <SeparatorMenuItem />
-                    <MenuItem text="About" />
-                </items>
-            </Menu>
-        </menus>
-
-        
-            
-         
-    </MenuBar>
+             <!-- VBox for address-finding elements-->
+             <VBox fx:id="addressVBox" prefHeight="720.0" prefWidth="330.0">
+               <children>
+                  <TextField fx:id="searchAddress" prefHeight="50.0" prefWidth="330.0" promptText="SEARCH HERE" />
+                  <Separator prefWidth="200.0" />
+                  <HBox alignment="TOP_RIGHT" prefHeight="47.0" prefWidth="330.0" spacing="9.0">
+                     <children>
+                        <Button fx:id="searchAdressButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="182.0" text="Search" />
+                        <Button fx:id="toRouteButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="182.0" text="Route" />
+                     </children>
+                  </HBox>
+                  <Separator prefHeight="0.0" prefWidth="330.0" />
+                   <!-- Scrollpane to contain suggestions for addresses-->
+                  <ScrollPane fitToWidth="true" layoutX="14.0" layoutY="22.0" pannable="true" prefHeight="617.0" prefWidth="330" style="-fx-background: #17181f; -fx-border-color: #17181f;" vbarPolicy="ALWAYS">
+                    <content>
+                        <FlowPane fx:id="displayPane2" hgap="50.0" prefWidth="330" style="-fx-background-color: #17181f;" />
+                    </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+         </children>
+      </Pane>
     
-    
-</VBox>  
+      <Pane fx:id="mapPane" prefHeight="720.0" prefWidth="1270.0">
+         <children>  
+      
+          <VBox fx:id="vbox" prefHeight="720.0" prefWidth="1270">
+          <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1270.0">
+              <menus>
+                  <Menu fx:id="mainMenu" text="File">
+                      <items>
+      
+                          <MenuItem fx:id="openFile" onAction="#load" text="Open" />
+                          <MenuItem text="Save" />
+      
+                          <SeparatorMenuItem />
+                          <MenuItem text="Exit" />
+                      </items>
+                  </Menu>
+      
+                  <Menu text="Help">
+                      <items>
+      
+                          <SeparatorMenuItem />
+                          <MenuItem text="About" />
+                      </items>
+                  </Menu>
+              </menus>
+          </MenuBar>
+      </VBox>
+         </children>
+      </Pane>  
 </HBox>
 
 
+
+</AnchorPane>

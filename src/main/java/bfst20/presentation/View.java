@@ -65,6 +65,10 @@ public class View {
             }
         }
 
+        for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
+
+        }
+
 
         pan(-minlon, -minlat);
         zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
@@ -96,10 +100,12 @@ public class View {
                 MouseInfo.getPointerInfo().getLocation().getX() - 325,
                 MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
+
         for (Drawable element : drawables.get(Type.COASTLINE)) {
             element.draw(gc);
             gc.fill();
         }
+
 
         drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.RESIDENTIAL, rect);
@@ -116,7 +122,6 @@ public class View {
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
-        System.out.println(trans.determinant());
     }
 
     public void drawTypeKdTreeClosetsNodes(Type type) {

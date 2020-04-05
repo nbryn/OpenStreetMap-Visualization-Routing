@@ -1,5 +1,6 @@
 package bfst20.logic.entities;
 
+import bfst20.logic.Type;
 import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.interfaces.OSMElement;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,15 +19,16 @@ public class Way implements OSMElement {
 
 
     private long id;
-    private Map<String, String> tags;
     private List<Long> nodeIds;
     private XMLStreamReader reader;
     private Color drawColor;
     private String firstKey, firstValue;
 
+    private String name;
+    private Type type;
+
     public Way() {
         drawColor = Color.BLACK;
-        tags = new HashMap<>();
         nodeIds = new ArrayList<Long>();
     }
 
@@ -34,9 +36,24 @@ public class Way implements OSMElement {
         this.nodeIds = new ArrayList<Long>(way.getNodeIds());
         this.id = way.getId();
         drawColor = Color.BLACK;
-        tags = new HashMap<>();
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(Type type){
+        this.type = type;
+    }
+
+    
+    public Type getType(){
+        return type;
+    }
+
+    public String getName(){
+        return name;
+    }
 
     public List<Long> getNodeIds() {
         return nodeIds;
@@ -55,20 +72,7 @@ public class Way implements OSMElement {
     public void setValues() {
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
     }
-
-    public boolean containsKey(String key) {
-
-        return tags.containsKey(key);
-    }
-
-    public String getTagValue(String key) {
-        return tags.get(key);
-    }
-
-    public Map<String, String> getTags() {
-        return this.tags;
-    }
-
+    
     public String[] getFirstTag() {
         String[] first = new String[2];
         first[0] = firstKey;
@@ -76,14 +80,6 @@ public class Way implements OSMElement {
         return first;
     }
 
-    public void addTag(String key, String value) {
-        tags.put(key, value);
-
-        if (firstKey == null) {
-            firstKey = key;
-            firstValue = value;
-        }
-    }
 
     @Override
     public void setReader(XMLStreamReader reader) {

@@ -30,6 +30,7 @@ public class DrawableGenerator {
         OSMWays = appController.getOSMWaysFromModel();
         OSMNodes = appController.getOSMNodesFromModel();
         OSMRelations = appController.getOSMRelationsFromModel();
+        appController.clearData();
     }
 
     public static DrawableGenerator getInstance() {
@@ -42,20 +43,30 @@ public class DrawableGenerator {
 
     public Map<Type, List<LinePath>> createDrawables() {
 
+        System.out.println("1");
+
         createWays();
 
+        System.out.println("2");
+
         createRelations();
+
+        System.out.println("3");
+        System.out.println("Size: ");
+        System.out.println(drawables.size());
 
         return drawables;
     }
 
     private void createWays() {
         for (Way way : OSMWays) {
-            if (way.getTagValue("natural") != null && way.getTagValue("natural").equals("coastline")) continue;
+            if (way.getType() == Type.COASTLINE || way.getType() == null) continue;
 
             LinePath linePath = createLinePath(way);
 
+
             Type type = linePath.getType();
+            
             if (drawables.get(type) == null) {
 
                 drawables.put(type, new ArrayList<>());
@@ -71,22 +82,19 @@ public class DrawableGenerator {
     private void createRelations() {
         for (Relation relation : OSMRelations) {
 
-            if (relation.getTag("landuse") != null && relation.getTag("landuse").contains("forest")) {
-
+            if(relation.getType() == Type.FOREST){
                 connectWays(relation, nodeToForest);
-
-            } else if (relation.getTag("landuse") != null && relation.getTag("landuse").contains("farmland")) {
-
+            }else if(relation.getType() == Type.FARMLAND){
                 connectWays(relation, nodeToFarmland);
-
-            } else if (relation.getTag("name") != null && relation.getTag("name").contains("Region")) {
+            }else if(relation.getName() != null && relation.getName().contains("Region")){
                 if (!drawables.containsKey(Type.COASTLINE)) {
                     drawables.put(Type.COASTLINE, new ArrayList<>());
                 }
 
                 connectWays(relation, nodeToCoastline);
-
             }
+
+            String a = "";
         }
 
         addRelation(Type.FOREST, nodeToForest);
@@ -126,20 +134,16 @@ public class DrawableGenerator {
         Type type = Type.UNKNOWN;
 
         try {
-
-            if (way.containsKey("landuse") || way.containsKey("natural")) {
-                type = getSubType(way);
-            } else {
-                type = Type.valueOf(way.getFirstTag()[0].toUpperCase());
-            }
-        } catch (Exception err) {
-
+            type = way.getType();
+        } catch (Exception e) {
+            //TODO: handle exception
+            e.printStackTrace();
         }
 
         Color color = Type.getColor(type);
         Boolean fill = Type.getFill(type);
-
         return new LinePath(way, type, OSMNodes, color, fill);
+
     }
 
     private Way removeWayAfter(Way way, Map<Node, Way> nodeTo) {
@@ -194,18 +198,6 @@ public class DrawableGenerator {
         }
 
         return way;
-    }
-
-    private Type getSubType(Way way) {
-        Type newType;
-
-        if (way.containsKey("natural")) {
-            newType = Type.valueOf(way.getTagValue("natural").toUpperCase());
-        } else {
-            newType = Type.valueOf(way.getTagValue("landuse").toUpperCase());
-        }
-
-        return newType;
     }
 
     //Order of before and after depends on the context
