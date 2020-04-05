@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -25,6 +26,19 @@ public class MainController {
 
     @FXML
     private VBox vbox;
+
+    @FXML
+    private VBox addressVBox;
+
+    @FXML
+    private VBox routeVBox;
+
+    @FXML
+    private Button toAddressButton;
+
+    @FXML
+    private Button toRouteButton;
+
 
     public MainController() {
         this.fileLoader = new FileLoader();
@@ -41,6 +55,16 @@ public class MainController {
         View view = new View(canvas);
 
         vbox.getChildren().add(canvas);
+
+        toRouteButton.setOnAction(e -> {
+            addressVBox.setVisible(false);
+            routeVBox.setVisible(true);
+        });
+
+        toAddressButton.setOnAction(e -> {
+            addressVBox.setVisible(true);
+            routeVBox.setVisible(false);
+        });
 
         try {
             ClassLoader classLoader = getClass().getClassLoader();
