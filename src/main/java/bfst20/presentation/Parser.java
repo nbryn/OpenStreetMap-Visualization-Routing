@@ -114,20 +114,16 @@ public class Parser {
                     switch (tagName) {
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
-                            if (relation.getTag("place") != null && relation.getTag("place").equals("island")
-                                    || relation.getTag("type") != null && relation.getTag("type").equals("boundary")) {
-                                appController.addRelationToModel(relation);
-                            }
+                            appController.addRelationToModel(relation);
                             break;
-
                         default:
                             break;
                     }
                     break;
             }
         }
-
     }
+
 
     private void setBounds(XMLStreamReader reader) {
         float minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
@@ -164,6 +160,7 @@ public class Parser {
         Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
         String key = reader.getAttributeValue(null, "k");
         String value = reader.getAttributeValue(null, "v");
+
 
         relation.addTag(key, value);
 

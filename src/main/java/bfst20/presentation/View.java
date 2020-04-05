@@ -54,13 +54,15 @@ public class View {
         DrawableGenerator drawableGenerator = DrawableGenerator.getInstance();
 
         drawables = drawableGenerator.createDrawables();
+
         //Burde flyttes.
         kdTrees = new HashMap<>();
         Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
         for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
 
+            if (entry.getValue().size() != 0) {
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
-
+            }
         }
 
 
@@ -91,9 +93,8 @@ public class View {
 
         // I still don't know why these constants are needed.
         Point2D mouse = toModelCoords(
-                MouseInfo.getPointerInfo().getLocation().getX()-325,
-                MouseInfo.getPointerInfo().getLocation().getY()-140);
-
+                MouseInfo.getPointerInfo().getLocation().getX() - 325,
+                MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
         for (Drawable element : drawables.get(Type.COASTLINE)) {
             element.draw(gc);
@@ -110,14 +111,15 @@ public class View {
         drawTypeKdTree(Type.BUILDING, rect);
         drawTypeKdTree(Type.HIGHWAY, rect, mouse);
 
-        drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
+        //drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
 
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
+        System.out.println(trans.determinant());
     }
 
-    public void drawTypeKdTreeClosetsNodes(Type type){
+    public void drawTypeKdTreeClosetsNodes(Type type) {
         for (Drawable element : kdTrees.get(type).getCurrentClosestPaths()) {
             element.draw(gc);
             gc.fill();
@@ -125,14 +127,14 @@ public class View {
     }
 
     public void drawTypeKdTree(Type type, Rect rect) {
-        for (Drawable element : kdTrees.get(type).query(rect)) {
+        for (Drawable element : kdTrees.get(type).query(rect, trans.determinant())) {
             element.draw(gc);
             gc.fill();
         }
     }
 
     public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
-        for (Drawable element : kdTrees.get(type).query(rect, point)) {
+        for (Drawable element : kdTrees.get(type).query(rect, trans.determinant(), point)) {
             element.draw(gc);
             gc.fill();
         }
@@ -150,11 +152,7 @@ public class View {
 
 
     public void zoom(double factor, double x, double y) {
-        if (trans.determinant() >= 1.7365306045084698E9) {
-            kd = true;
-        } else {
-            kd = false;
-        }
+
         trans.prependScale(factor, factor, x, y);
         repaint();
     }

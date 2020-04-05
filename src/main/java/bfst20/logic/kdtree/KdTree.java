@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import bfst20.logic.Type;
 import bfst20.presentation.LinePath;
 import javafx.geometry.Point2D;
 
@@ -27,44 +28,42 @@ public class KdTree{
         }
     }
 
-    public Iterable<LinePath> query(Rect rect){
-        List<LinePath> list = new ArrayList<>();
-        range(root,  rect, list);
-        return list;
-    }
-
     public Iterable<LinePath> getCurrentClosestPaths(){
         return currentClosestPaths;
     }
 
-    public Iterable<LinePath> query(Rect rect, Point2D point){
+    public Iterable<LinePath> query(Rect rect, double zoomLevel){
         List<LinePath> list = new ArrayList<>();
-        currentClosestPaths = new ArrayList<>();
-        range(root,  rect, list, point);
+        range(root,  rect, zoomLevel, list);
         return list;
     }
 
-    private void range(KdNode node, Rect rect, List<LinePath> list){
+    public Iterable<LinePath> query(Rect rect, double zoomLevel, Point2D point){
+        List<LinePath> list = new ArrayList<>();
+        currentClosestPaths = new ArrayList<>();
+        range(root,  rect, list,zoomLevel, point);
+        return list;
+    }
+
+    private void range(KdNode node, Rect rect , double zoomLevel, List<LinePath> list){
         if (node == null) return;
 
-        if (rect.contains(node)) {
+        if (rect.contains(node) && Type.getZoomLevel(node.getLinePath().getType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
         }
 
-        if(rect.intersectsRight(node)){
-            range(node.getRightNode(), rect, list);
+        if(rect.intersects(node)){
+            range(node.getRightNode(), rect, zoomLevel, list);
+            range(node.getLeftNode(), rect, zoomLevel, list);
         }
 
-        if(rect.intersectsLeft(node)){
-            range(node.getLeftNode(), rect, list);
-        }
     }
 
-    private void range(KdNode node, Rect rect, List<LinePath> list, Point2D point){
+    private void range(KdNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point){
         if (node == null) return;
 
-        if (rect.contains(node)) {
+        if (rect.contains(node) && Type.getZoomLevel(node.getLinePath().getType()) <= zoomLevel) {
             list.add(node.getLinePath());
             float distance = (float) Math.sqrt(Math.pow(node.getLinePath().getCenterLatitude() - point.getY(), 2) + Math.pow(node.getLinePath().getCenterLongitude() - point.getX(), 2));
 
@@ -73,13 +72,11 @@ public class KdTree{
             }
         }
 
-        if(rect.intersectsRight(node)){
-            range(node.getRightNode(), rect, list, point);
+        if(rect.intersects(node)){
+            range(node.getRightNode(), rect, list, zoomLevel, point);
+            range(node.getLeftNode(), rect, list, zoomLevel, point);
         }
 
-        if(rect.intersectsLeft(node)){
-            range(node.getLeftNode(), rect, list, point);
-        }
     }
 
     private KdNode createNewKdNode(LinePath path, Direction direction){
