@@ -1,5 +1,6 @@
 package bfst20.logic.entities;
 
+import bfst20.logic.Type;
 import bfst20.logic.interfaces.OSMElement;
 
 import javax.xml.stream.XMLStreamReader;
@@ -9,31 +10,38 @@ import java.util.HashMap;
 import java.util.Map;
 //TODO: FIX
 public class Relation implements OSMElement {
+
     private long id;
     private XMLStreamReader reader;
-    private Map<String, String> tags;
     private ArrayList<Long> members;
 
+    private String name;
+    private Type type;
+
     public Relation(){
-        tags = new HashMap<>();
         members = new ArrayList<>();
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(Type type){
+        this.type = type;
+    }
+
+    public Type getType(){
+        return type;
+    }
+
+    public String getName(){
+        return name;
+    }
+
 
     public void addMember(long member, String type){
         if(!type.equals("way")) return;
         members.add(member);
-    }
-
-    public void addTag(String key, String value){
-        tags.put(key, value);
-    }
-
-    public Map<String, String> getTags() {
-        return this.tags;
-    }
-
-    public String getTag(String key){
-        return tags.get(key);
     }
 
     public ArrayList<Long> getMembers(){

@@ -46,4 +46,5 @@ public class AppController{
     public List<Relation> getOSMRelationsFromModel() {
         return model.getOSMRelations();
     }
+    public void clearData(){model.clearData();}
 }

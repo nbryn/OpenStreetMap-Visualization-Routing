@@ -78,5 +78,12 @@ public class Model {
         return OSMRelations;
     }
 
+    public void clearData(){
+        OSMWays = null;
+        nodeMap = null;
+        OSMRelations = null;
+        System.gc();
+    }
+
     
 }

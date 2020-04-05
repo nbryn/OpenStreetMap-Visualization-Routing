@@ -44,7 +44,9 @@ public class MainController {
 
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //File file = new File(classLoader.getResource("fyn.osm").getFile());
+            File file = new File("F:\\denmark.osm");
+
             Parser parser = Parser.getInstance();
             parser.parseOSMFile(file);
             view.initializeData();
