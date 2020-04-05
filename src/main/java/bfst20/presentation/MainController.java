@@ -68,8 +68,8 @@ public class MainController {
 
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            //File file = new File(classLoader.getResource("fyn.osm").getFile());
-            File file = new File("F:\\denmark.osm");
+            File file = new File(classLoader.getResource("fyn.osm").getFile());
+
 
             Parser parser = Parser.getInstance();
             parser.parseOSMFile(file);
