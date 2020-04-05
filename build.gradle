@@ -8,6 +8,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.8'
 
     id 'org.openjfx.javafxplugin' version '0.0.8'
+
 }
 
 javafx {
@@ -29,6 +30,8 @@ dependencies {
 
 application {
     mainClassName = 'bfst20.presentation.MainController'
+    applicationDefaultJvmArgs = ["-Xmx8096m"]
+
 }
 
 compileJava.options.encoding = 'UTF-8'

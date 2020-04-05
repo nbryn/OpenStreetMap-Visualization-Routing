@@ -1,5 +1,6 @@
 package bfst20.logic.entities;
 
+import bfst20.logic.Type;
 import bfst20.logic.interfaces.OSMElement;
 
 import javax.xml.stream.XMLStreamReader;
@@ -10,11 +11,9 @@ public class Node implements OSMElement {
     private long id;
     private float latitude;
     private float longitude;
-    private List<Tag> tags;
     private XMLStreamReader reader;
 
     public Node() {
-        tags = new ArrayList<>();
     }
 
     public long getId() {
@@ -29,14 +28,6 @@ public class Node implements OSMElement {
         return longitude;
     }
 
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void addTag(Tag tag) {
-        tags.add(tag);
-    }
-
     @Override
     public void setValues() {
         setId();
@@ -44,18 +35,17 @@ public class Node implements OSMElement {
         setLongitude();
     }
 
-    private void setId(){
+    private void setId() {
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
 
     }
 
-    private void setLatitude(){
+    private void setLatitude() {
         latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
-
 
     }
 
-    private void setLongitude(){
+    private void setLongitude() {
         longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
 
     }
@@ -63,6 +53,18 @@ public class Node implements OSMElement {
     @Override
     public void setReader(XMLStreamReader reader) {
         this.reader = reader;
+    }
+
+    @Override
+    public void setName(String name) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setType(Type type) {
+        // TODO Auto-generated method stub
+
     }
 
 }
