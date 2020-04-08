@@ -13,7 +13,9 @@ import javax.sound.sampled.Line;
 public class KdTree{
 
     private KdNode root;
-    private List<LinePath> currentClosestPaths;
+
+    private float closetNodeDistance;
+    private KdNode closetsNode;
 
     public KdTree(List<LinePath> paths,Rect rect){
         root = new KdNode();
@@ -28,9 +30,6 @@ public class KdTree{
         }
     }
 
-    public Iterable<LinePath> getCurrentClosestPaths(){
-        return currentClosestPaths;
-    }
 
     public Iterable<LinePath> query(Rect rect, double zoomLevel){
         List<LinePath> list = new ArrayList<>();
@@ -39,8 +38,10 @@ public class KdTree{
     }
 
     public Iterable<LinePath> query(Rect rect, double zoomLevel, Point2D point){
+        closetsNode = root;
+        closetNodeDistance = Float.POSITIVE_INFINITY;
+
         List<LinePath> list = new ArrayList<>();
-        currentClosestPaths = new ArrayList<>();
         range(root,  rect, list,zoomLevel, point);
         return list;
     }
@@ -65,19 +66,34 @@ public class KdTree{
 
         if (rect.contains(node) && Type.getZoomLevel(node.getLinePath().getType()) <= zoomLevel) {
             list.add(node.getLinePath());
-            float distance = (float) Math.sqrt(Math.pow(node.getLinePath().getCenterLatitude() - point.getY(), 2) + Math.pow(node.getLinePath().getCenterLongitude() - point.getX(), 2));
 
-            if(distance < 0.001){
-                currentClosestPaths.add(node.getLinePath());
+            float[] coords = node.getLinePath().getCoords();
+
+            for (int i = 2; i <= coords.length; i += 2) {
+
+                float distance = (float) Math.sqrt(Math.pow(point.getY() - coords[i-1], 2) + Math.pow(point.getX() - coords[i-2], 2));
+
+                if(distance < closetNodeDistance){
+                    closetNodeDistance = distance;
+                    closetsNode = node;
+                }
+
+
             }
+
         }
 
         if(rect.intersects(node)){
             range(node.getRightNode(), rect, list, zoomLevel, point);
             range(node.getLeftNode(), rect, list, zoomLevel, point);
         }
-
     }
+
+    public LinePath getClosetsLinepath(){
+        return closetsNode.getLinePath();
+    }
+
+
 
     private KdNode createNewKdNode(LinePath path, Direction direction){
         KdNode node = new KdNode();

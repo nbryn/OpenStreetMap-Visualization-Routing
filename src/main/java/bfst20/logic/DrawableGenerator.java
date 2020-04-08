@@ -43,17 +43,9 @@ public class DrawableGenerator {
 
     public Map<Type, List<LinePath>> createDrawables() {
 
-        System.out.println("1");
-
         createWays();
 
-        System.out.println("2");
-
         createRelations();
-
-        System.out.println("3");
-        System.out.println("Size: ");
-        System.out.println(drawables.size());
 
         return drawables;
     }

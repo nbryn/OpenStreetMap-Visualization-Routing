@@ -63,6 +63,10 @@ public class LinePath implements Drawable {
         return centerLongitude;
     }
 
+    public Way getWay(){
+        return way;
+    }
+
     public float getMaxX() {
         return maxX;
     }
@@ -79,6 +83,10 @@ public class LinePath implements Drawable {
         return minY;
     }
 
+    public float[] getCoords(){
+        return coords;
+    }
+
     @Override
     public void draw(GraphicsContext gc) {
 
@@ -93,7 +101,7 @@ public class LinePath implements Drawable {
             gc.setFill(fill ? color : Color.TRANSPARENT);
         }*/
         //gc.setStroke(Color.BLUE);
-        ///gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
+        //gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
       //  gc.setStroke(color);
 
 
@@ -119,8 +127,8 @@ public class LinePath implements Drawable {
 
     private void trace(GraphicsContext gc) {
         gc.moveTo(coords[0], coords[1]);
-        for (int i = 2; i < coords.length; i += 2) {
-            gc.lineTo(coords[i], coords[i + 1]);
+        for (int i = 2; i <= coords.length; i += 2) {
+            gc.lineTo(coords[i-2], coords[i - 1]);
         }
     }
 }
