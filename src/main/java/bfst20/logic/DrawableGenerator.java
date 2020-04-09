@@ -4,9 +4,10 @@ import java.util.*;
 
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
+import bfst20.logic.entities.SerializableColor;
 import bfst20.logic.entities.Way;
 import bfst20.presentation.LinePath;
-import javafx.scene.paint.Color;
+import java.awt.Color;
 
 public class DrawableGenerator {
 
@@ -95,6 +96,8 @@ public class DrawableGenerator {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
 
+
+
                 appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, Type.getColor(type), true));
             }
         }
@@ -153,7 +156,7 @@ public class DrawableGenerator {
             //TODO: handle exception
             e.printStackTrace();
         }
-        Color color = Type.getColor(type);
+        SerializableColor color = Type.getColor(type);
         Boolean fill = Type.getFill(type);
 
         // TODO: Does every LinePath need all nodes?

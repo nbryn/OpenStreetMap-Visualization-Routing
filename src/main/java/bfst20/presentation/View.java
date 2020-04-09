@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,19 +41,30 @@ public class View {
     }
 
 
-    public void initializeData() {
+    public void initializeData() throws IOException {
+
+        if (appController.isBinary()) {
+
+            drawables = appController.getDrawablesFromModel();
+
+        } else {
+            appController.createDrawables();
+            //appController.generateBinary();
+            drawables = appController.getDrawablesFromModel();
+
+            appController.clearDrawableData();
+        }
+        createKDTrees();
+    }
+
+    private void createKDTrees() {
 
         float minLon = appController.getMinLonFromModel();
         float maxLon = appController.getMaxLonFromModel();
         float minLat = appController.getMinLatFromModel();
         float maxLat = appController.getMaxLatFromModel();
-
-        appController.createDrawables();
-        drawables = appController.getDrawablesFromModel();
-
-        appController.clearDrawableData();
-
-        //Burde flyttes.
+        System.out.println(minLon);
+        System.out.println(maxLat);
         kdTrees = new HashMap<>();
         Rect rect = new Rect(minLat, maxLat, minLon, maxLon);
         for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {

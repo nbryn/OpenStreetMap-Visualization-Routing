@@ -73,15 +73,19 @@ public class MainController {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
 
-            File file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //File file = new File(classLoader.getResource("samsoe.osm").getFile());
+            File file = new File(classLoader.getResource("samsoe.bin").getFile());
             //File file = new File("F:\\bornholm.osm");
             //File file = new File("F:\\denmark.osm");
+            System.out.println(file.toString());
 
             appController.startParsing(file);
             view = appController.initialize();
 
 
+
         } catch (Exception err) {
+            //err.printStackTrace();
         }
 
         canvas.setOnScroll(e -> {

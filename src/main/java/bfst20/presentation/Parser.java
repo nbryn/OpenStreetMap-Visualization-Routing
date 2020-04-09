@@ -2,6 +2,7 @@ package bfst20.presentation;
 
 import bfst20.logic.AppController;
 import bfst20.logic.Type;
+import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.Relation;
@@ -12,7 +13,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.sound.sampled.Line;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -40,6 +43,34 @@ public class Parser {
         return parser;
     }
 
+    public void parseBinary(File file) throws FileNotFoundException {
+        try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try {
+
+                Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
+
+                for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
+                    if (entry.getKey() == Type.BOUNDS) {
+                        List<LinePath> linePath = entry.getValue();
+                        LinePath linePath1 = linePath.get(0);
+
+                        System.out.println(linePath);
+
+                        if (linePath1.getBounds() != null) {
+                            appController.setBoundsOnModel(linePath1.getBounds());
+                        }
+                    }
+                }
+
+                appController.setDrawablesInModel(drawables);
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
         try {
@@ -61,14 +92,6 @@ public class Parser {
         parse(reader);
     }
 
-    private List<Drawable> getDrawables() {
-        List<Drawable> drawables = new ArrayList<>();
-
-        tempOSMRelations = null;
-        System.gc();
-
-        return drawables;
-    }
 
     private void parse(XMLStreamReader reader) throws XMLStreamException {
         OSMElement lastElementParsed = null;

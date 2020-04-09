@@ -3,6 +3,7 @@ package bfst20.data;
 import bfst20.logic.Type;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
+import bfst20.logic.interfaces.Drawable;
 import bfst20.presentation.LinePath;
 
 import java.util.ArrayList;
@@ -75,6 +76,9 @@ public class LinePathModel {
     public void addToNodeToCoastline(Node node, Way way) {
         nodeToCoastline.put(node, way);
 
+    }
+    public void setDrawables(Map<Type, List<LinePath>> drawables) {
+        this.drawables = drawables;
     }
 
     public void addLinePathToList(Type type, LinePath linePath) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import bfst20.logic.Type;
+import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
@@ -15,9 +16,11 @@ public class OSMElementModel {
     private List<Way> OSMWays;
     private Map<Long, Node> nodeMap;
     private List<Relation> OSMRelations;
+    private Bounds bounds;
     private float minLat, maxLon, maxLat, minLon;
     private static boolean isLoaded = false;
     private static OSMElementModel OSMElementModel;
+
 
     private OSMElementModel() {
         OSMWays = new ArrayList<>();
@@ -37,11 +40,26 @@ public class OSMElementModel {
         OSMRelations.add(relation);
     }
 
+    public void setBounds(Bounds bounds) {
+        this.minLat = bounds.getMinLat();
+        this.maxLon = bounds.getMaxLon();
+        this.maxLat = bounds.getMaxLat();
+        this.minLon = bounds.getMinLon();
+        this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
+
+
+    }
+
+    public Bounds getBounds() {
+        return bounds;
+    }
+
     public void setBounds(float minLat, float maxLon, float maxLat, float minLon) {
         this.minLat = minLat;
         this.maxLon = maxLon;
         this.maxLat = maxLat;
         this.minLon = minLon;
+        this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
     }
 
     public void addToNodeMap(long id, Node node) {
@@ -67,6 +85,8 @@ public class OSMElementModel {
     public float getMinLon() {
         return minLon;
     }
+
+
 
     public List<Way> getOSMWays() {
         return OSMWays;

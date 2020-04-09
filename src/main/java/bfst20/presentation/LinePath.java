@@ -1,25 +1,38 @@
 package bfst20.presentation;
 
 
+import java.io.SerializablePermission;
 import java.util.List;
 import java.util.Map;
 
+import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
+import bfst20.logic.entities.SerializableColor;
 import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
 import javafx.scene.canvas.GraphicsContext;
 import bfst20.logic.Type;
+import javafx.scene.paint.Paint;
+
 import javafx.scene.paint.Color;
 
 
 public class LinePath implements Drawable {
     float[] coords;
     Type type;
-    Color color;
+    SerializableColor color;
     Boolean fill;
     float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
+    Bounds bounds;
 
-    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Color color, Boolean fill) {
+
+    public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
+        this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
+
+    }
+
+
+    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, SerializableColor color, Boolean fill) {
         this.color = color;
         this.fill = fill;
         List<Long> nodeIds = way.getNodeIds();
@@ -47,6 +60,9 @@ public class LinePath implements Drawable {
         this.type = type;
     }
 
+    public Bounds getBounds() {
+        return this.bounds;
+    }
 
     public float getCenterLatitude() {
         return centerLatitude;
@@ -80,8 +96,8 @@ public class LinePath implements Drawable {
     public void draw(GraphicsContext gc) {
 
         gc.beginPath();
-        gc.setStroke(color);
-        gc.setFill(fill ? color : Color.TRANSPARENT);
+        gc.setStroke(color.getFXColor());
+        gc.setFill(fill ? color.getFXColor() : Color.TRANSPARENT);
 
         /*if(way.getTagValue("name") != null){
             gc.setFill(Color.BLACK);
@@ -98,13 +114,6 @@ public class LinePath implements Drawable {
         gc.stroke();
     }
 
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void setFill(boolean fill) {
-        this.fill = fill;
-    }
 
 
     @Override
