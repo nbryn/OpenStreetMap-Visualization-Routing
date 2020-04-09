@@ -17,13 +17,11 @@ public class LinePath implements Drawable {
     Type type;
     Color color;
     Boolean fill;
-    Way way;
     float minY,minX,maxY,maxX, centerLatitude, centerLongitude;
 
     public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Color color, Boolean fill) {
         this.color = color;
         this.fill = fill;
-        this.way = way;
         List<Long> nodeIds = way.getNodeIds();
 
         minY = Float.POSITIVE_INFINITY;
@@ -61,10 +59,6 @@ public class LinePath implements Drawable {
      */
     public float getCenterLongitude() {
         return centerLongitude;
-    }
-
-    public Way getWay(){
-        return way;
     }
 
     public float getMaxX() {
