@@ -60,8 +60,9 @@ public class View {
 
 
             if (entry.getValue().size() != 0) {
+                System.out.println(entry.getKey().toString() + ": " + entry.getValue().size());
 
-                System.out.println(entry.getValue().size());
+
 
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
