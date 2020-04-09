@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.data.OSMElementModel;
 import bfst20.logic.Type;
 import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.kdtree.KdTree;
@@ -23,10 +22,10 @@ public class View {
 
     private AppController appController;
     private Affine trans = new Affine();
-    private  Canvas canvas;
-    private  GraphicsContext gc;
+    private Canvas canvas;
+    private GraphicsContext gc;
     private Map<Type, List<LinePath>> drawables;
-    private  Map<Type, KdTree> kdTrees;
+    private Map<Type, KdTree> kdTrees;
     private List<LinePath> coastLine;
     private boolean kd;
 
@@ -58,12 +57,7 @@ public class View {
         Rect rect = new Rect(minLat, maxLat, minLon, maxLon);
         for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
 
-
             if (entry.getValue().size() != 0) {
-                System.out.println(entry.getKey().toString() + ": " + entry.getValue().size());
-
-
-
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }

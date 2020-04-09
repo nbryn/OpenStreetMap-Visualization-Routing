@@ -35,7 +35,7 @@ public class LinePathModel {
     }
 
     public Map<Type, List<LinePath>> getDrawables() {
-       return drawables;
+        return drawables;
     }
 
 

@@ -71,7 +71,6 @@ public class Parser {
     }
 
     private void parse(XMLStreamReader reader) throws XMLStreamException {
-
         OSMElement lastElementParsed = null;
         HashMap<String, String> tags = null;
         String[] firstTag = new String[2];
@@ -114,7 +113,6 @@ public class Parser {
                                 firstTag[0] = key;
                                 firstTag[1] = value;
                             }
-
                             tags.put(key, value);
                             break;
                         case "member":
@@ -147,7 +145,6 @@ public class Parser {
                            HashMap<String,
                                    String> tags,
                            String[] firstTag) {
-
 
         try {
             if (tags.containsKey("name")) {

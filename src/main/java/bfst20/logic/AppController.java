@@ -95,8 +95,6 @@ public class AppController {
         OSMElementModel.clearData();
     }
 
-
-
     public Map<Type, List<LinePath>> getDrawablesFromModel() {
         return linePathModel.getDrawables();
     }
@@ -137,13 +135,11 @@ public class AppController {
     public void createDrawables() {
         drawableGenerator = DrawableGenerator.getInstance();
         drawableGenerator.createDrawables();
-
-
     }
+
     public void clearDrawableData() {
         drawableGenerator = DrawableGenerator.getInstance();
         drawableGenerator.clearData();
         linePathModel.clearData();
     }
-
 }

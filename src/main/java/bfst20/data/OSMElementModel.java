@@ -80,13 +80,10 @@ public class OSMElementModel {
         return OSMRelations;
     }
 
-
     public void clearData() {
         OSMWays = null;
         nodeMap = null;
         OSMRelations = null;
         System.gc();
     }
-
-
 }

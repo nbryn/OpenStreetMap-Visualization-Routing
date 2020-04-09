@@ -89,7 +89,6 @@ public class MainController {
             view.zoom(factor, e.getX(), e.getY());
         });
 
-
         canvas.setOnMousePressed(e -> {
             lastMouse = new Point2D(e.getX(), e.getY());
         });
@@ -106,7 +105,6 @@ public class MainController {
 
     public static void main(String[] args) {
         Launcher.main(args);
-
     }
 
     public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
