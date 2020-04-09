@@ -16,14 +16,12 @@ public class DrawableGenerator {
     private static boolean loaded = false;
     private static DrawableGenerator drawableGenerator;
     private AppController appController;
-    private List<Type> types;
 
     private DrawableGenerator() {
         appController = new AppController();
         OSMWays = appController.getOSMWaysFromModel();
         OSMNodes = appController.getOSMNodesFromModel();
         OSMRelations = appController.getOSMRelationsFromModel();
-        types = new ArrayList<>();
         appController.clearOSMData();
     }
 
@@ -58,8 +56,7 @@ public class DrawableGenerator {
 
             Type type = linePath.getType();
 
-            if (!types.contains(type)) {
-                types.add(type);
+            if (!appController.getDrawablesFromModel().containsKey(type)) {
                 appController.addTypeListToModel(type);
             }
 
@@ -81,8 +78,7 @@ public class DrawableGenerator {
 
             } else if (relation.getName() != null && relation.getName().contains("Region")) {
 
-                if (!types.contains(Type.COASTLINE)) {
-                    types.add(Type.COASTLINE);
+                if (!appController.getDrawablesFromModel().containsKey(Type.COASTLINE)) {
                     appController.addTypeListToModel(Type.COASTLINE);
                 }
 
@@ -92,7 +88,6 @@ public class DrawableGenerator {
             addRelation(Type.FOREST, appController.getNodeTo(Type.FOREST));
             addRelation(Type.FARMLAND, appController.getNodeTo(Type.FARMLAND));
             addRelation(Type.COASTLINE, appController.getNodeTo(Type.COASTLINE));
-
         }
     }
 
@@ -101,10 +96,8 @@ public class DrawableGenerator {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
 
                 appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, Type.getColor(type), true));
-
             }
         }
-
     }
 
     private void connectWays(Relation relation, Type type) {
