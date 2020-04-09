@@ -53,7 +53,6 @@ public class DrawableGenerator {
             if (way.getType() == Type.COASTLINE || way.getType() == null) continue;
 
             LinePath linePath = createLinePath(way);
-
             Type type = linePath.getType();
 
             if (!appController.getDrawablesFromModel().containsKey(type)) {
@@ -85,10 +84,11 @@ public class DrawableGenerator {
                 connectWays(relation, Type.COASTLINE);
             }
 
-            addRelation(Type.FOREST, appController.getNodeTo(Type.FOREST));
-            addRelation(Type.FARMLAND, appController.getNodeTo(Type.FARMLAND));
-            addRelation(Type.COASTLINE, appController.getNodeTo(Type.COASTLINE));
+
         }
+        addRelation(Type.FOREST, appController.getNodeTo(Type.FOREST));
+        addRelation(Type.FARMLAND, appController.getNodeTo(Type.FARMLAND));
+        addRelation(Type.COASTLINE, appController.getNodeTo(Type.COASTLINE));
     }
 
     private void addRelation(Type type, Map<Node, Way> nodeTo) {
@@ -120,12 +120,12 @@ public class DrawableGenerator {
 
     private Way removeWayAfter(Way way, Type type) {
         Node node = OSMNodes.get(way.getLastNodeId());
-        Way after = appController.removeWayFromNodeTo(Type.COASTLINE, node);
+        Way after = appController.removeWayFromNodeTo(type, node);
         if (after != null) {
             Node firstNode = OSMNodes.get(after.getFirstNodeId());
             Node lastNode = OSMNodes.get(after.getLastNodeId());
-            appController.removeWayFromNodeTo(Type.COASTLINE, firstNode);
-            appController.removeWayFromNodeTo(Type.COASTLINE, lastNode);
+            appController.removeWayFromNodeTo(type, firstNode);
+            appController.removeWayFromNodeTo(type, lastNode);
 
         }
         return after;
@@ -133,12 +133,12 @@ public class DrawableGenerator {
 
     private Way removeWayBefore(Way way, Type type) {
         Node node = OSMNodes.get(way.getFirstNodeId());
-        Way before = appController.removeWayFromNodeTo(Type.COASTLINE, node);
+        Way before = appController.removeWayFromNodeTo(type, node);
         if (before != null) {
             Node firstNode = OSMNodes.get(before.getFirstNodeId());
             Node lastNode = OSMNodes.get(before.getLastNodeId());
-            appController.removeWayFromNodeTo(Type.COASTLINE, firstNode);
-            appController.removeWayFromNodeTo(Type.COASTLINE, lastNode);
+            appController.removeWayFromNodeTo(type, firstNode);
+            appController.removeWayFromNodeTo(type, lastNode);
         }
         return before;
     }
@@ -156,6 +156,7 @@ public class DrawableGenerator {
         Color color = Type.getColor(type);
         Boolean fill = Type.getFill(type);
 
+        // TODO: Does every LinePath need all nodes?
         return new LinePath(way, type, OSMNodes, color, fill);
     }
 

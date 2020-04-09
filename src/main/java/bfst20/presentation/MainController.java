@@ -77,7 +77,6 @@ public class MainController {
             //File file = new File("F:\\bornholm.osm");
             //File file = new File("F:\\denmark.osm");
 
-            //File file = new File(classLoader.getResource("fyn.osm").getFile());
             appController.startParsing(file);
             view = appController.initialize();
 
