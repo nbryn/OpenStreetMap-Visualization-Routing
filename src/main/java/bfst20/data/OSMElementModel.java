@@ -5,41 +5,43 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bfst20.logic.Type;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
+import bfst20.presentation.LinePath;
 
-public class Model {
+public class OSMElementModel {
     private List<Way> OSMWays;
     private Map<Long, Node> nodeMap;
     private List<Relation> OSMRelations;
-    private float minlat, maxlon, maxlat, minlon;
+    private float minLat, maxLon, maxLat, minLon;
     private static boolean isLoaded = false;
-    private static Model model;
+    private static OSMElementModel OSMElementModel;
 
-    private Model() {
+    private OSMElementModel() {
         OSMWays = new ArrayList<>();
         nodeMap = new HashMap<>();
         OSMRelations = new ArrayList<>();
     }
 
-    public static Model getInstance(){
+    public static OSMElementModel getInstance(){
         if(!isLoaded){
             isLoaded = true;
-            model = new Model();
+            OSMElementModel = new OSMElementModel();
         }
-        return model;
+        return OSMElementModel;
     }
 
     public void addRelation(Relation relation ){
         OSMRelations.add(relation);
     }
 
-    public void setBounds(float minlat, float maxlon, float maxlat, float minlon){
-        this.minlat = minlat;
-        this.maxlon = maxlon;
-        this.maxlat = maxlat;
-        this.minlon = minlon;
+    public void setBounds(float minLat, float maxLon, float maxLat, float minLon){
+        this.minLat = minLat;
+        this.maxLon = maxLon;
+        this.maxLat = maxLat;
+        this.minLon = minLon;
     }
 
     public void addToNodeMap(long id, Node node){
@@ -51,19 +53,19 @@ public class Model {
     }
 
     public float getMinLat() {
-        return minlat;
+        return minLat;
     }
 
     public float getMaxLon() {
-        return maxlon;
+        return maxLon;
     }
 
     public float getMaxLat() {
-        return maxlat;
+        return maxLat;
     }
 
     public float getMinLon() {
-        return minlon;
+        return minLon;
     }
 
     public List<Way> getOSMWays(){
@@ -77,6 +79,8 @@ public class Model {
     public List<Relation> getOSMRelations() {
         return OSMRelations;
     }
+
+
 
     public void clearData(){
         OSMWays = null;

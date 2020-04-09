@@ -1,5 +1,6 @@
 package bfst20.presentation;
 
+import bfst20.logic.AppController;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -12,28 +13,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.data.Model;
-import bfst20.logic.DrawableGenerator;
+import bfst20.data.OSMElementModel;
 import bfst20.logic.Type;
-import bfst20.logic.entities.Relation;
-import bfst20.logic.entities.Way;
 import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.kdtree.KdTree;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
 
-    Affine trans = new Affine();
-    List<Way> data;
-    List<Relation> islandRelations;
-    Canvas canvas;
-    GraphicsContext gc;
-    Map<Type, List<LinePath>> drawables;
-    Map<Type, KdTree> kdTrees;
-    List<LinePath> coastLine;
-    boolean kd;
+    private AppController appController;
+    private Affine trans = new Affine();
+    private  Canvas canvas;
+    private  GraphicsContext gc;
+    private Map<Type, List<LinePath>> drawables;
+    private  Map<Type, KdTree> kdTrees;
+    private List<LinePath> coastLine;
+    private boolean kd;
 
     public View(Canvas canvas) {
+        appController = new AppController();
         kd = false;
         this.canvas = canvas;
         gc = canvas.getGraphicsContext2D();
@@ -41,28 +39,26 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    public void update() {
-
-    }
 
     public void initializeData() {
-        Model model = Model.getInstance();
-        float minlon = model.getMinLon();
-        float maxlon = model.getMaxLon();
-        float minlat = model.getMinLat();
-        float maxlat = model.getMaxLat();
 
-        DrawableGenerator drawableGenerator = DrawableGenerator.getInstance();
+        float minLon = appController.getMinLonFromModel();
+        float maxLon = appController.getMaxLonFromModel();
+        float minLat = appController.getMinLatFromModel();
+        float maxLat = appController.getMaxLatFromModel();
 
-        drawables = drawableGenerator.createDrawables();
-        drawableGenerator.clearData();
+        drawables = appController.createDrawables();
+
+        appController.clearDrawableData();
 
         //Burde flyttes.
         kdTrees = new HashMap<>();
-        Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
+        Rect rect = new Rect(minLat, maxLat, minLon, maxLon);
         for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
 
+
             if (entry.getValue().size() != 0) {
+
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }
@@ -74,8 +70,8 @@ public class View {
         drawables = null;
         System.gc();
 
-        pan(-minlon, -minlat);
-        zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
+        pan(-minLon, -minLat);
+        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
 
         repaint();
     }
@@ -109,7 +105,6 @@ public class View {
             element.draw(gc);
             gc.fill();
         }
-
 
         drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.RESIDENTIAL, rect);

@@ -12,7 +12,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -34,14 +33,12 @@ public class Parser {
     }
 
     public static Parser getInstance() {
-        if (isLoaded == false) {
+        if (!isLoaded) {
             isLoaded = true;
             parser = new Parser();
         }
-
         return parser;
     }
-
 
     public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
@@ -51,6 +48,9 @@ public class Parser {
             e.printStackTrace();
             System.out.println("E is: " + e);
         }
+
+        tempOSMRelations = null;
+        System.gc();
 
     }
 
@@ -105,12 +105,12 @@ public class Parser {
                             tags = new HashMap<>();
                             break;
                         case "tag":
-                            if(tags == null) break;
+                            if (tags == null) break;
 
                             String key = reader.getAttributeValue(null, "k");
                             String value = reader.getAttributeValue(null, "v");
 
-                            if(firstTag[0] == null){
+                            if (firstTag[0] == null) {
                                 firstTag[0] = key;
                                 firstTag[1] = value;
                             }
@@ -142,15 +142,15 @@ public class Parser {
         }
     }
 
-    private void parseTags( XMLStreamReader reader, 
-                            OSMElement lastElementParsed, 
-                            HashMap<String, 
-                            String> tags, 
-                            String[] firstTag){
+    private void parseTags(XMLStreamReader reader,
+                           OSMElement lastElementParsed,
+                           HashMap<String,
+                                   String> tags,
+                           String[] firstTag) {
 
 
         try {
-            if(tags.containsKey("name")){
+            if (tags.containsKey("name")) {
                 lastElementParsed.setName(tags.get("name"));
             }
 
@@ -160,11 +160,11 @@ public class Parser {
                 } else {
                     lastElementParsed.setType(Type.valueOf(tags.get("landuse").toUpperCase()));
                 }
-            } else if(tags.containsKey("building")) {
+            } else if (tags.containsKey("building")) {
                 lastElementParsed.setType(Type.BUILDING);
-            }else if(tags.containsKey("highway")) {
+            } else if (tags.containsKey("highway")) {
                 lastElementParsed.setType(Type.HIGHWAY);
-            }else{
+            } else {
                 lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
             }
 
@@ -173,12 +173,12 @@ public class Parser {
     }
 
     private void setBounds(XMLStreamReader reader) {
-        float minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
-        float maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
-        float maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
-        float minlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+        float minLat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
+        float maxLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+        float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
+        float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-        appController.setBoundsOnModel(minlat, maxlon, maxlat, minlon);
+        appController.setBoundsOnModel(minLat, maxLon, maxLat, minLon);
     }
 
     private void addNodeToMap(XMLStreamReader reader) {

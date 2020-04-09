@@ -47,16 +47,11 @@ public class LinePath implements Drawable {
         this.type = type;
     }
 
-    /**
-     * @return the centerLatitude
-     */
+
     public float getCenterLatitude() {
         return centerLatitude;
     }
 
-    /**
-     * @return the centerLongitude
-     */
     public float getCenterLongitude() {
         return centerLongitude;
     }

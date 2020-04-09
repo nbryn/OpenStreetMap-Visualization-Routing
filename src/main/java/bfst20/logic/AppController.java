@@ -3,48 +3,123 @@ package bfst20.logic;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.data.Model;
+import bfst20.data.LinePathModel;
+import bfst20.data.OSMElementModel;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
+import bfst20.presentation.LinePath;
 import bfst20.presentation.Parser;
 
-public class AppController{
+public class AppController {
 
-    Model model;
-    Parser parser;
+    private OSMElementModel OSMElementModel;
+    private LinePathModel linePathModel;
+    private Parser parser;
+    private DrawableGenerator drawableGenerator;
 
-    public AppController(){
-        model = Model.getInstance();
+    public AppController() {
+        OSMElementModel = OSMElementModel.getInstance();
+        linePathModel = LinePathModel.getInstance();
         parser = Parser.getInstance();
     }
 
-    public void addRelationToModel(Relation relation){
-        model.addRelation(relation);
+    public float getMinLonFromModel() {
+        return OSMElementModel.getMinLon();
     }
 
-    public void setBoundsOnModel(float minlat, float maxlon, float maxlat, float minlon){
-        model.setBounds(minlat, maxlon, maxlat, minlon);
+    public float getMaxLonFromModel() {
+        return OSMElementModel.getMaxLon();
     }
 
-    public void addNodeToModel(long id, Node node){
-        model.addToNodeMap(id, node);
+    public float getMinLatFromModel() {
+        return OSMElementModel.getMinLat();
     }
 
-    public void addWayToModel(Way way){
-        model.addWay(way);
+    public float getMaxLatFromModel() {
+        return OSMElementModel.getMaxLat();
     }
 
-    public List<Way> getOSMWaysFromModel(){
-        return model.getOSMWays();
+    public void addRelationToModel(Relation relation) {
+        OSMElementModel.addRelation(relation);
     }
 
-    public Map<Long, Node> getOSMNodesFromModel(){
-        return model.getOSMNodes();
+    public void setBoundsOnModel(float minLat, float maxLon, float maxLat, float minLon) {
+        OSMElementModel.setBounds(minLat, maxLon, maxLat, minLon);
+    }
+
+    public void addNodeToModel(long id, Node node) {
+        OSMElementModel.addToNodeMap(id, node);
+    }
+
+    public void addWayToModel(Way way) {
+        OSMElementModel.addWay(way);
+    }
+
+
+    public List<Way> getOSMWaysFromModel() {
+        return OSMElementModel.getOSMWays();
+    }
+
+    public Map<Long, Node> getOSMNodesFromModel() {
+        return OSMElementModel.getOSMNodes();
     }
 
     public List<Relation> getOSMRelationsFromModel() {
-        return model.getOSMRelations();
+        return OSMElementModel.getOSMRelations();
     }
-    public void clearData(){model.clearData();}
+
+    public void clearModelData() {
+        OSMElementModel.clearData();
+    }
+
+    public void clearDrawableData() {
+        drawableGenerator = DrawableGenerator.getInstance();
+        drawableGenerator.clearData();
+        linePathModel.clearData();
+    }
+
+    public Map<Type, List<LinePath>> getDrawablesFromModel() {
+        return linePathModel.getDrawables();
+    }
+
+
+    public Way removeWayFromNodeTo(Type type, Node node) {
+        Way way = null;
+        if (type == Type.COASTLINE) way = linePathModel.removeWayFromNodeToCoastline(node);
+        else if (type == Type.FARMLAND) way = linePathModel.removeWayFromNodeToFarmland(node);
+        else if (type == Type.FOREST) way = linePathModel.removeWayFromNodeToForest(node);
+
+        return way;
+    }
+
+    public void addToMapInModel(Type type, Node node, Way way) {
+        if (type == Type.COASTLINE) linePathModel.addToNodeToCoastline(node, way);
+        else if (type == Type.FARMLAND) linePathModel.addToNodeToFarmland(node, way);
+        else if (type == Type.FOREST) linePathModel.addNodeToForest(node, way);
+    }
+
+    public Map<Node, Way> getNodeTo(Type type) {
+        Map<Node, Way> nodeTo = null;
+        if (type == Type.COASTLINE) nodeTo = linePathModel.getNodeToCoastline();
+        else if (type == Type.FARMLAND) nodeTo = linePathModel.getNodeToFarmland();
+        else if (type == Type.FOREST) nodeTo = linePathModel.getNodeToForest();
+
+        return nodeTo;
+    }
+
+    public void addLinePathToModel(Type type, LinePath linePath) {
+        linePathModel.addLinePathToList(type, linePath);
+    }
+
+    public void addTypeListToModel(Type type) {
+        linePathModel.addTypeList(type);
+    }
+
+    public Map<Type, List<LinePath>> createDrawables() {
+        drawableGenerator = DrawableGenerator.getInstance();
+        drawableGenerator.createDrawables();
+
+        return getDrawablesFromModel();
+    }
 }
