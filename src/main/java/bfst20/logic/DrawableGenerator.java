@@ -13,7 +13,7 @@ import bfst20.presentation.LinePath;
 import javafx.scene.paint.Color;
 
 public class DrawableGenerator {
-
+    //Sorry
     private Map<Type, List<LinePath>> drawables = new HashMap<>();
     private Map<Node, Way> nodeToCoastline = new HashMap<>();
     private Map<Node, Way> nodeToForest = new HashMap<>();
@@ -31,6 +31,12 @@ public class DrawableGenerator {
         OSMNodes = appController.getOSMNodesFromModel();
         OSMRelations = appController.getOSMRelationsFromModel();
         appController.clearData();
+    }
+
+    public void clearData(){
+        OSMNodes = null;
+        OSMWays = null;
+        OSMRelations = null;
     }
 
     public static DrawableGenerator getInstance() {

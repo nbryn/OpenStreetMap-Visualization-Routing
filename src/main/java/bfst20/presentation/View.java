@@ -30,6 +30,7 @@ public class View {
     GraphicsContext gc;
     Map<Type, List<LinePath>> drawables;
     Map<Type, KdTree> kdTrees;
+    List<LinePath> coastLine;
     boolean kd;
 
     public View(Canvas canvas) {
@@ -54,6 +55,7 @@ public class View {
         DrawableGenerator drawableGenerator = DrawableGenerator.getInstance();
 
         drawables = drawableGenerator.createDrawables();
+        drawableGenerator.clearData();
 
         //Burde flyttes.
         kdTrees = new HashMap<>();
@@ -65,10 +67,12 @@ public class View {
             }
         }
 
-        for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
+        coastLine = drawables.get(Type.COASTLINE);
 
-        }
-
+        drawables.remove(Type.HIGHWAY);
+        drawables.remove(Type.BUILDING);
+        drawables = null;
+        System.gc();
 
         pan(-minlon, -minlat);
         zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
@@ -101,7 +105,7 @@ public class View {
                 MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
 
-        for (Drawable element : drawables.get(Type.COASTLINE)) {
+        for (Drawable element : coastLine) {
             element.draw(gc);
             gc.fill();
         }
@@ -117,7 +121,8 @@ public class View {
         drawTypeKdTree(Type.BUILDING, rect);
         drawTypeKdTree(Type.HIGHWAY, rect, mouse);
 
-        System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
+        //System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
+
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
