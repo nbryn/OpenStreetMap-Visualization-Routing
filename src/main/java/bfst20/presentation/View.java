@@ -97,7 +97,7 @@ public class View {
 
         // I still don't know why these constants are needed.
         Point2D mouse = toModelCoords(
-                MouseInfo.getPointerInfo().getLocation().getX() - 325,
+                MouseInfo.getPointerInfo().getLocation().getX() - 490,
                 MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
 
@@ -117,19 +117,13 @@ public class View {
         drawTypeKdTree(Type.BUILDING, rect);
         drawTypeKdTree(Type.HIGHWAY, rect, mouse);
 
-        //drawTypeKdTreeClosetsNodes(Type.HIGHWAY);
-
+        System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
         gc.setStroke(Color.PURPLE);
+        gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
     }
 
-    public void drawTypeKdTreeClosetsNodes(Type type) {
-        for (Drawable element : kdTrees.get(type).getCurrentClosestPaths()) {
-            element.draw(gc);
-            gc.fill();
-        }
-    }
 
     public void drawTypeKdTree(Type type, Rect rect) {
         for (Drawable element : kdTrees.get(type).query(rect, trans.determinant())) {
