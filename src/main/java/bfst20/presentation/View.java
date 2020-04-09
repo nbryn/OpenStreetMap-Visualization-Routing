@@ -63,6 +63,7 @@ public class View {
         for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
 
             if (entry.getValue().size() != 0) {
+                System.out.println(entry.getKey().toString() + ": " + entry.getValue().size());
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }
