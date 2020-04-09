@@ -1,8 +1,6 @@
 package bfst20.logic;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
@@ -18,19 +16,23 @@ public class DrawableGenerator {
     private static boolean loaded = false;
     private static DrawableGenerator drawableGenerator;
     private AppController appController;
+    private List<Type> types;
 
     private DrawableGenerator() {
         appController = new AppController();
         OSMWays = appController.getOSMWaysFromModel();
         OSMNodes = appController.getOSMNodesFromModel();
         OSMRelations = appController.getOSMRelationsFromModel();
-        appController.clearModelData();
+        types = new ArrayList<>();
+        appController.clearOSMData();
     }
 
     public void clearData() {
         OSMNodes = null;
         OSMWays = null;
         OSMRelations = null;
+
+        System.gc();
     }
 
     public static DrawableGenerator getInstance() {
@@ -56,7 +58,8 @@ public class DrawableGenerator {
 
             Type type = linePath.getType();
 
-            if (appController.getDrawablesFromModel().get(type) == null) {
+            if (!types.contains(type)) {
+                types.add(type);
                 appController.addTypeListToModel(type);
             }
 
@@ -78,7 +81,8 @@ public class DrawableGenerator {
 
             } else if (relation.getName() != null && relation.getName().contains("Region")) {
 
-                if (!appController.getDrawablesFromModel().containsKey(Type.COASTLINE)) {
+                if (!types.contains(Type.COASTLINE)) {
+                    types.add(Type.COASTLINE);
                     appController.addTypeListToModel(Type.COASTLINE);
                 }
 
@@ -96,11 +100,11 @@ public class DrawableGenerator {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
 
-                LinePath linePath = new LinePath(entry.getValue(), type, OSMNodes, Type.getColor(type), true);
-                appController.addLinePathToModel(type, linePath);
+                appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, Type.getColor(type), true));
 
             }
         }
+
     }
 
     private void connectWays(Relation relation, Type type) {

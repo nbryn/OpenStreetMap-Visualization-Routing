@@ -54,11 +54,9 @@ public class MainController {
 
     @FXML
     public void initialize() {
-
         Canvas canvas = new Canvas(1270, 720);
 
         appController.createView(canvas);
-
 
         vbox.getChildren().add(canvas);
 

@@ -48,7 +48,8 @@ public class View {
         float minLat = appController.getMinLatFromModel();
         float maxLat = appController.getMaxLatFromModel();
 
-        drawables = appController.createDrawables();
+        appController.createDrawables();
+        drawables = appController.getDrawablesFromModel();
 
         appController.clearDrawableData();
 
@@ -60,14 +61,14 @@ public class View {
 
             if (entry.getValue().size() != 0) {
 
+                System.out.println(entry.getValue().size());
+
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }
 
         coastLine = drawables.get(Type.COASTLINE);
 
-        drawables.remove(Type.HIGHWAY);
-        drawables.remove(Type.BUILDING);
         drawables = null;
         System.gc();
 

@@ -26,7 +26,6 @@ public class AppController {
     private View view;
 
 
-
     public AppController() {
         OSMElementModel = OSMElementModel.getInstance();
         linePathModel = LinePathModel.getInstance();
@@ -92,15 +91,11 @@ public class AppController {
         return OSMElementModel.getOSMRelations();
     }
 
-    public void clearModelData() {
+    public void clearOSMData() {
         OSMElementModel.clearData();
     }
 
-    public void clearDrawableData() {
-        drawableGenerator = DrawableGenerator.getInstance();
-        drawableGenerator.clearData();
-        linePathModel.clearData();
-    }
+
 
     public Map<Type, List<LinePath>> getDrawablesFromModel() {
         return linePathModel.getDrawables();
@@ -139,10 +134,16 @@ public class AppController {
         linePathModel.addTypeList(type);
     }
 
-    public Map<Type, List<LinePath>> createDrawables() {
+    public void createDrawables() {
         drawableGenerator = DrawableGenerator.getInstance();
         drawableGenerator.createDrawables();
 
-        return getDrawablesFromModel();
+
     }
+    public void clearDrawableData() {
+        drawableGenerator = DrawableGenerator.getInstance();
+        drawableGenerator.clearData();
+        linePathModel.clearData();
+    }
+
 }

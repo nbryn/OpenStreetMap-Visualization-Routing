@@ -35,7 +35,7 @@ public class LinePathModel {
     }
 
     public Map<Type, List<LinePath>> getDrawables() {
-        return drawables;
+       return drawables;
     }
 
 
@@ -46,12 +46,10 @@ public class LinePathModel {
 
     public Map<Node, Way> getNodeToForest() {
         return nodeToForest;
-
     }
 
     public Map<Node, Way> getNodeToFarmland() {
         return nodeToFarmland;
-
     }
 
     public Way removeWayFromNodeToForest(Node node) {
@@ -60,13 +58,10 @@ public class LinePathModel {
 
     public Way removeWayFromNodeToFarmland(Node node) {
         return nodeToFarmland.remove(node);
-
-
     }
 
     public Way removeWayFromNodeToCoastline(Node node) {
         return nodeToCoastline.remove(node);
-
     }
 
     public void addNodeToForest(Node node, Way way) {
@@ -75,8 +70,6 @@ public class LinePathModel {
 
     public void addToNodeToFarmland(Node node, Way way) {
         nodeToFarmland.put(node, way);
-
-
     }
 
     public void addToNodeToCoastline(Node node, Way way) {
