@@ -49,9 +49,9 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        
+
         Canvas canvas = new Canvas(1270, 720);
-        
+
         View view = new View(canvas);
 
         vbox.getChildren().add(canvas);
@@ -68,9 +68,13 @@ public class MainController {
 
         try {
             ClassLoader classLoader = getClass().getClassLoader();
+
             //File file = new File(classLoader.getResource("samsoe.osm").getFile());
-            File file = new File("F:\\bornholm.osm");
+            //File file = new File("F:\\bornholm.osm");
             //File file = new File("F:\\denmark.osm");
+
+            File file = new File(classLoader.getResource("fyn.osm").getFile());
+
 
             Parser parser = Parser.getInstance();
             parser.parseOSMFile(file);
