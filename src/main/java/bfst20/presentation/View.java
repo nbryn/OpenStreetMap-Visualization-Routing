@@ -30,6 +30,7 @@ public class View {
     private List<LinePath> coastLine;
     private boolean kd;
 
+
     public View(Canvas canvas) {
         appController = new AppController();
         kd = false;

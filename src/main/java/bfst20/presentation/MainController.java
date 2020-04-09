@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.logic.AppController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -18,7 +19,11 @@ import javafx.stage.FileChooser;
 
 public class MainController {
 
-    FileLoader fileLoader;
+    private AppController appController;
+
+    private FileLoader fileLoader;
+
+    private View view;
 
     @FXML
     private MenuItem openFile;
@@ -40,6 +45,7 @@ public class MainController {
 
 
     public MainController() {
+        appController = new AppController();
         this.fileLoader = new FileLoader();
     }
 
@@ -51,7 +57,8 @@ public class MainController {
 
         Canvas canvas = new Canvas(1270, 720);
 
-        View view = new View(canvas);
+        appController.createView(canvas);
+
 
         vbox.getChildren().add(canvas);
 
@@ -73,12 +80,10 @@ public class MainController {
             //File file = new File("F:\\denmark.osm");
 
             //File file = new File(classLoader.getResource("fyn.osm").getFile());
+            appController.startParsing(file);
+            view = appController.initialize();
 
 
-            Parser parser = Parser.getInstance();
-            parser.parseOSMFile(file);
-
-            view.initializeData();
         } catch (Exception err) {
         }
 

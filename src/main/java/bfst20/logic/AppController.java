@@ -1,5 +1,7 @@
 package bfst20.logic;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +12,10 @@ import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
 import bfst20.presentation.LinePath;
 import bfst20.presentation.Parser;
+import bfst20.presentation.View;
+import javafx.scene.canvas.Canvas;
+
+import javax.xml.stream.XMLStreamException;
 
 public class AppController {
 
@@ -17,11 +23,28 @@ public class AppController {
     private LinePathModel linePathModel;
     private Parser parser;
     private DrawableGenerator drawableGenerator;
+    private View view;
+
+
 
     public AppController() {
         OSMElementModel = OSMElementModel.getInstance();
         linePathModel = LinePathModel.getInstance();
         parser = Parser.getInstance();
+    }
+
+    public void startParsing(File file) throws FileNotFoundException, XMLStreamException {
+        parser.parseOSMFile(file);
+    }
+
+    public void createView(Canvas canvas) {
+        view = new View(canvas);
+    }
+
+    public View initialize() {
+        view.initializeData();
+
+        return view;
     }
 
     public float getMinLonFromModel() {

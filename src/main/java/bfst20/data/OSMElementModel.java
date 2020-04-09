@@ -25,30 +25,30 @@ public class OSMElementModel {
         OSMRelations = new ArrayList<>();
     }
 
-    public static OSMElementModel getInstance(){
-        if(!isLoaded){
+    public static OSMElementModel getInstance() {
+        if (!isLoaded) {
             isLoaded = true;
             OSMElementModel = new OSMElementModel();
         }
         return OSMElementModel;
     }
 
-    public void addRelation(Relation relation ){
+    public void addRelation(Relation relation) {
         OSMRelations.add(relation);
     }
 
-    public void setBounds(float minLat, float maxLon, float maxLat, float minLon){
+    public void setBounds(float minLat, float maxLon, float maxLat, float minLon) {
         this.minLat = minLat;
         this.maxLon = maxLon;
         this.maxLat = maxLat;
         this.minLon = minLon;
     }
 
-    public void addToNodeMap(long id, Node node){
+    public void addToNodeMap(long id, Node node) {
         nodeMap.put(id, node);
     }
 
-    public void addWay(Way way){
+    public void addWay(Way way) {
         OSMWays.add(way);
     }
 
@@ -68,11 +68,11 @@ public class OSMElementModel {
         return minLon;
     }
 
-    public List<Way> getOSMWays(){
+    public List<Way> getOSMWays() {
         return OSMWays;
     }
 
-    public Map<Long, Node> getOSMNodes(){
+    public Map<Long, Node> getOSMNodes() {
         return nodeMap;
     }
 
@@ -81,13 +81,12 @@ public class OSMElementModel {
     }
 
 
-
-    public void clearData(){
+    public void clearData() {
         OSMWays = null;
         nodeMap = null;
         OSMRelations = null;
         System.gc();
     }
 
-    
+
 }
