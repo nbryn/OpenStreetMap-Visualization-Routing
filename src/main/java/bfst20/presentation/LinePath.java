@@ -7,20 +7,15 @@ import java.util.Map;
 
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
-import bfst20.logic.entities.SerializableColor;
 import bfst20.logic.entities.Way;
 
 import javafx.scene.canvas.GraphicsContext;
 import bfst20.logic.Type;
-
-
 import javafx.scene.paint.Color;
-
 
 public class LinePath implements Serializable {
     float[] coords;
     Type type;
-    SerializableColor color;
     Boolean fill;
     float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
     Bounds bounds;
@@ -31,9 +26,7 @@ public class LinePath implements Serializable {
 
     }
 
-
-    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, SerializableColor color, Boolean fill) {
-        this.color = color;
+    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Boolean fill) {
         this.fill = fill;
         List<Long> nodeIds = way.getNodeIds();
 
@@ -95,8 +88,8 @@ public class LinePath implements Serializable {
     public void draw(GraphicsContext gc) {
 
         gc.beginPath();
-        gc.setStroke(color.getFXColor());
-        gc.setFill(fill ? color.getFXColor() : Color.TRANSPARENT);
+        gc.setStroke(Type.getColor(type));
+        gc.setFill(fill ? Type.getColor(type) : Color.TRANSPARENT);
 
         /*if(way.getTagValue("name") != null){
             gc.setFill(Color.BLACK);

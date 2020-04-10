@@ -65,34 +65,34 @@ public enum Type {
         }
     }
 
-    public static SerializableColor getColor(Type type) {
+    public static Color getColor(Type type) {
         switch (type) {
             case PLACE:
             case COASTLINE:
             case GREEN:
-                return new SerializableColor(Color.LIGHTGREEN);
+                return Color.LIGHTGREEN;
             case WATER:
-                return new SerializableColor(Color.BLUE);
+                return Color.BLUE;
             case BUILDING:
-                return new SerializableColor(Color.BROWN);
+                return Color.BROWN;
             case HIGHWAY:
-                return new SerializableColor (Color.BLACK);
+                return Color.BLACK;
             case HEATH:
-                return new SerializableColor(Color.rgb(255, 178, 102, 0.6));
+                return Color.rgb(255, 178, 102, 0.6);
             case RESIDENTIAL:
-                return new SerializableColor(Color.rgb(128, 128, 128, 0.6));
+                return Color.rgb(128, 128, 128, 0.6);
             case FARMLAND:
-                return new SerializableColor(Color.rgb(238, 240, 213, 0.6));
+                return Color.rgb(238, 240, 213, 0.6);
             case WOOD:
             case FOREST:
             case TREE_ROW:
-                return new SerializableColor(Color.rgb(0, 102, 0, 0.7));
+                return Color.rgb(0, 102, 0, 0.7);
             case PARKING:
-                return new SerializableColor(Color.RED);
+                return Color.RED;
             case NATURAL:
-                return new SerializableColor(Color.BLUEVIOLET);
+                return Color.BLUEVIOLET;
             default: //TODO FIX
-                return new SerializableColor(Color.TRANSPARENT);
+                return Color.TRANSPARENT;
         }
     }
 }
