@@ -49,11 +49,12 @@ public class View {
 
         } else {
             appController.createLinePaths();
-            //appController.generateBinary();
+            appController.generateBinary();
             linePaths = appController.getLinePathsFromModel();
 
-            appController.clearDrawableData();
         }
+        appController.clearDrawableData();
+
         createKDTrees();
     }
 

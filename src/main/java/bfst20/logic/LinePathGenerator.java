@@ -98,7 +98,7 @@ public class LinePathGenerator {
 
 
 
-                appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, Type.getColor(type), true));
+                appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, true));
             }
         }
     }
@@ -156,11 +156,10 @@ public class LinePathGenerator {
             //TODO: handle exception
             e.printStackTrace();
         }
-        SerializableColor color = Type.getColor(type);
         Boolean fill = Type.getFill(type);
 
         // TODO: Does every LinePath need all nodes?
-        return new LinePath(way, type, OSMNodes, color, fill);
+        return new LinePath(way, type, OSMNodes, fill);
     }
 
 
