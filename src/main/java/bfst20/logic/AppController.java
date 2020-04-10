@@ -136,7 +136,7 @@ public class AppController {
         linePathGenerator.createLinePaths();
     }
 
-    public void clearDrawableData() {
+    public void clearLinePathData() {
         linePathGenerator = LinePathGenerator.getInstance();
         linePathGenerator.clearData();
         linePathModel.clearData();
