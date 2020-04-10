@@ -1,5 +1,7 @@
 package bfst20.presentation;
 
+import bfst20.logic.AppController;
+import bfst20.logic.entities.Bounds;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -8,32 +10,29 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.data.Model;
-import bfst20.logic.DrawableGenerator;
 import bfst20.logic.Type;
-import bfst20.logic.entities.Relation;
-import bfst20.logic.entities.Way;
-import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.kdtree.KdTree;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
 
-    Affine trans = new Affine();
-    List<Way> data;
-    List<Relation> islandRelations;
-    Canvas canvas;
-    GraphicsContext gc;
-    Map<Type, List<LinePath>> drawables;
-    Map<Type, KdTree> kdTrees;
-    List<LinePath> coastLine;
-    boolean kd;
+    private AppController appController;
+    private Affine trans = new Affine();
+    private Canvas canvas;
+    private GraphicsContext gc;
+    private Map<Type, List<LinePath>> linePaths;
+    private Map<Type, KdTree> kdTrees;
+    private List<LinePath> coastLine;
+    private boolean kd;
+
 
     public View(Canvas canvas) {
+        appController = new AppController();
         kd = false;
         this.canvas = canvas;
         gc = canvas.getGraphicsContext2D();
@@ -41,41 +40,48 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    public void update() {
 
+    public void initializeData() throws IOException {
+
+        if (appController.isBinary()) {
+
+            linePaths = appController.getLinePathsFromModel();
+
+        } else {
+            appController.createLinePaths();
+            //appController.generateBinary();
+            linePaths = appController.getLinePathsFromModel();
+
+            appController.clearDrawableData();
+        }
+        createKDTrees();
     }
 
-    public void initializeData() {
-        Model model = Model.getInstance();
-        float minlon = model.getMinLon();
-        float maxlon = model.getMaxLon();
-        float minlat = model.getMinLat();
-        float maxlat = model.getMaxLat();
+    private void createKDTrees() {
 
-        DrawableGenerator drawableGenerator = DrawableGenerator.getInstance();
+        Bounds bounds = appController.getBoundsFromModel();
 
-        drawables = drawableGenerator.createDrawables();
-        drawableGenerator.clearData();
+        float minLon = bounds.getMinLon();
+        float maxLon = bounds.getMaxLon();
+        float minLat = bounds.getMinLat();
+        float maxLat = bounds.getMaxLat();
 
-        //Burde flyttes.
         kdTrees = new HashMap<>();
-        Rect rect = new Rect(minlat, maxlat, minlon, maxlon);
-        for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
+        Rect rect = new Rect(minLat, maxLat, minLon, maxLon);
+        for (Map.Entry<Type, List<LinePath>> entry : linePaths.entrySet()) {
 
             if (entry.getValue().size() != 0) {
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }
 
-        coastLine = drawables.get(Type.COASTLINE);
+        coastLine = linePaths.get(Type.COASTLINE);
 
-        drawables.remove(Type.HIGHWAY);
-        drawables.remove(Type.BUILDING);
-        drawables = null;
+        linePaths = null;
         System.gc();
 
-        pan(-minlon, -minlat);
-        zoom(canvas.getHeight() / (maxlon - minlon), (minlat - maxlat) / 2, 0);
+        pan(-minLon, -minLat);
+        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
 
         repaint();
     }
@@ -105,11 +111,10 @@ public class View {
                 MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
 
-        for (Drawable element : coastLine) {
-            element.draw(gc);
+        for (LinePath linePath : coastLine) {
+            linePath.draw(gc);
             gc.fill();
         }
-
 
         drawTypeKdTree(Type.FARMLAND, rect);
         drawTypeKdTree(Type.RESIDENTIAL, rect);
@@ -131,15 +136,15 @@ public class View {
 
 
     public void drawTypeKdTree(Type type, Rect rect) {
-        for (Drawable element : kdTrees.get(type).query(rect, trans.determinant())) {
-            element.draw(gc);
+        for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant())) {
+            linePath.draw(gc);
             gc.fill();
         }
     }
 
     public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
-        for (Drawable element : kdTrees.get(type).query(rect, trans.determinant(), point)) {
-            element.draw(gc);
+        for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant(), point)) {
+            linePath.draw(gc);
             gc.fill();
         }
     }

@@ -1,10 +1,13 @@
 package bfst20.logic;
 
+import bfst20.logic.entities.SerializableColor;
 import javafx.scene.paint.Color;
+
 import javafx.scene.paint.Paint;
 
 public enum Type {
     UNKNOWN,
+    BOUNDS,
     BUILDING,
     HIGHWAY,
     COASTLINE,
@@ -62,34 +65,34 @@ public enum Type {
         }
     }
 
-    public static Color getColor(Type type) {
+    public static SerializableColor getColor(Type type) {
         switch (type) {
             case PLACE:
             case COASTLINE:
             case GREEN:
-                return Color.LIGHTGREEN;
+                return new SerializableColor(Color.LIGHTGREEN);
             case WATER:
-                return Color.BLUE;
+                return new SerializableColor(Color.BLUE);
             case BUILDING:
-                return Color.BROWN;
+                return new SerializableColor(Color.BROWN);
             case HIGHWAY:
-                return Color.BLACK;
+                return new SerializableColor (Color.BLACK);
             case HEATH:
-                return Color.rgb(255, 178, 102, 0.6);
+                return new SerializableColor(Color.rgb(255, 178, 102, 0.6));
             case RESIDENTIAL:
-                return Color.rgb(128, 128, 128, 0.6);
+                return new SerializableColor(Color.rgb(128, 128, 128, 0.6));
             case FARMLAND:
-                return Color.rgb(238, 240, 213, 0.6);
+                return new SerializableColor(Color.rgb(238, 240, 213, 0.6));
             case WOOD:
             case FOREST:
             case TREE_ROW:
-                return Color.rgb(0, 102, 0, 0.7);
+                return new SerializableColor(Color.rgb(0, 102, 0, 0.7));
             case PARKING:
-                return Color.RED;
-            /*case NATURAL:
-                return Color.BLUEVIOLET;*/
+                return new SerializableColor(Color.RED);
+            case NATURAL:
+                return new SerializableColor(Color.BLUEVIOLET);
             default: //TODO FIX
-                return Color.TRANSPARENT;
+                return new SerializableColor(Color.TRANSPARENT);
         }
     }
 }

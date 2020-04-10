@@ -1,25 +1,38 @@
 package bfst20.presentation;
 
-import java.util.Arrays;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
+import bfst20.logic.entities.SerializableColor;
 import bfst20.logic.entities.Way;
-import bfst20.logic.interfaces.Drawable;
+
 import javafx.scene.canvas.GraphicsContext;
 import bfst20.logic.Type;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
-public class LinePath implements Drawable {
+
+import javafx.scene.paint.Color;
+
+
+public class LinePath implements Serializable {
     float[] coords;
     Type type;
-    Color color;
+    SerializableColor color;
     Boolean fill;
-    float minY,minX,maxY,maxX, centerLatitude, centerLongitude;
+    float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
+    Bounds bounds;
 
-    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Color color, Boolean fill) {
+
+    public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
+        this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
+
+    }
+
+
+    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, SerializableColor color, Boolean fill) {
         this.color = color;
         this.fill = fill;
         List<Long> nodeIds = way.getNodeIds();
@@ -34,29 +47,27 @@ public class LinePath implements Drawable {
             coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
             coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
 
-            if(minX > coords[i*2+1]) minX = coords[i*2+1];
-            if(minY > coords[i*2]) minY = coords[i*2];
-            if(maxX < coords[i*2+1]) maxX = coords[i*2+1];
-            if(maxY < coords[i*2]) maxY = coords[i*2];
+            if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
+            if (minY > coords[i * 2]) minY = coords[i * 2];
+            if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
+            if (maxY < coords[i * 2]) maxY = coords[i * 2];
 
         }
 
-        centerLatitude = (maxX - minX)/2 + minX;
-        centerLongitude = (maxY - minY)/2 + minY;
+        centerLatitude = (maxX - minX) / 2 + minX;
+        centerLongitude = (maxY - minY) / 2 + minY;
 
         this.type = type;
     }
 
-    /**
-     * @return the centerLatitude
-     */
+    public Bounds getBounds() {
+        return this.bounds;
+    }
+
     public float getCenterLatitude() {
         return centerLatitude;
     }
 
-    /**
-     * @return the centerLongitude
-     */
     public float getCenterLongitude() {
         return centerLongitude;
     }
@@ -77,16 +88,15 @@ public class LinePath implements Drawable {
         return minY;
     }
 
-    public float[] getCoords(){
+    public float[] getCoords() {
         return coords;
     }
 
-    @Override
     public void draw(GraphicsContext gc) {
 
         gc.beginPath();
-        gc.setStroke(color);
-        gc.setFill(fill ? color : Color.TRANSPARENT);
+        gc.setStroke(color.getFXColor());
+        gc.setFill(fill ? color.getFXColor() : Color.TRANSPARENT);
 
         /*if(way.getTagValue("name") != null){
             gc.setFill(Color.BLACK);
@@ -96,24 +106,14 @@ public class LinePath implements Drawable {
         }*/
         //gc.setStroke(Color.BLUE);
         //gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
-      //  gc.setStroke(color);
-
+        //  gc.setStroke(color);
 
 
         trace(gc);
         gc.stroke();
     }
 
-    public void setColor(Color color) {
-        this.color = color;
-    }
 
-    public void setFill(boolean fill) {
-        this.fill = fill;
-    }
-
-
-    @Override
     public Type getType() {
         return type;
     }
@@ -122,7 +122,7 @@ public class LinePath implements Drawable {
     private void trace(GraphicsContext gc) {
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2; i <= coords.length; i += 2) {
-            gc.lineTo(coords[i-2], coords[i - 1]);
+            gc.lineTo(coords[i - 2], coords[i - 1]);
         }
     }
 }
