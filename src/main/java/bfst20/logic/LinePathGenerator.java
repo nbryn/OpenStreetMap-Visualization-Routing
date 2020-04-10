@@ -7,18 +7,18 @@ import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.SerializableColor;
 import bfst20.logic.entities.Way;
 import bfst20.presentation.LinePath;
-import java.awt.Color;
 
-public class DrawableGenerator {
+
+public class LinePathGenerator {
 
     private List<Way> OSMWays;
     private Map<Long, Node> OSMNodes;
     private List<Relation> OSMRelations;
     private static boolean loaded = false;
-    private static DrawableGenerator drawableGenerator;
+    private static LinePathGenerator linePathGenerator;
     private AppController appController;
 
-    private DrawableGenerator() {
+    private LinePathGenerator() {
         appController = new AppController();
         OSMWays = appController.getOSMWaysFromModel();
         OSMNodes = appController.getOSMNodesFromModel();
@@ -34,15 +34,15 @@ public class DrawableGenerator {
         System.gc();
     }
 
-    public static DrawableGenerator getInstance() {
+    public static LinePathGenerator getInstance() {
         if (!loaded) {
-            drawableGenerator = new DrawableGenerator();
+            linePathGenerator = new LinePathGenerator();
         }
 
-        return drawableGenerator;
+        return linePathGenerator;
     }
 
-    public void createDrawables() {
+    public void createLinePaths() {
         createWays();
 
         createRelations();
@@ -56,7 +56,7 @@ public class DrawableGenerator {
             LinePath linePath = createLinePath(way);
             Type type = linePath.getType();
 
-            if (!appController.getDrawablesFromModel().containsKey(type)) {
+            if (!appController.getLinePathsFromModel().containsKey(type)) {
                 appController.addTypeListToModel(type);
             }
 
@@ -78,7 +78,7 @@ public class DrawableGenerator {
 
             } else if (relation.getName() != null && relation.getName().contains("Region")) {
 
-                if (!appController.getDrawablesFromModel().containsKey(Type.COASTLINE)) {
+                if (!appController.getLinePathsFromModel().containsKey(Type.COASTLINE)) {
                     appController.addTypeListToModel(Type.COASTLINE);
                 }
 

@@ -41,11 +41,8 @@ public class OSMElementModel {
     }
 
     public void setBounds(Bounds bounds) {
-        this.minLat = bounds.getMinLat();
-        this.maxLon = bounds.getMaxLon();
-        this.maxLat = bounds.getMaxLat();
-        this.minLon = bounds.getMinLon();
-        this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
+
+        this.bounds = new Bounds(bounds.getMaxLat(), bounds.getMinLat(), bounds.getMaxLon(), bounds.getMinLon());
 
 
     }
@@ -54,13 +51,6 @@ public class OSMElementModel {
         return bounds;
     }
 
-    public void setBounds(float minLat, float maxLon, float maxLat, float minLon) {
-        this.minLat = minLat;
-        this.maxLon = maxLon;
-        this.maxLat = maxLat;
-        this.minLon = minLon;
-        this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
-    }
 
     public void addToNodeMap(long id, Node node) {
         nodeMap.put(id, node);
@@ -70,21 +60,6 @@ public class OSMElementModel {
         OSMWays.add(way);
     }
 
-    public float getMinLat() {
-        return minLat;
-    }
-
-    public float getMaxLon() {
-        return maxLon;
-    }
-
-    public float getMaxLat() {
-        return maxLat;
-    }
-
-    public float getMinLon() {
-        return minLon;
-    }
 
 
 

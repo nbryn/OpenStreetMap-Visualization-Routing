@@ -1,7 +1,7 @@
 package bfst20.presentation;
 
 
-import java.io.SerializablePermission;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -9,15 +9,15 @@ import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.SerializableColor;
 import bfst20.logic.entities.Way;
-import bfst20.logic.interfaces.Drawable;
+
 import javafx.scene.canvas.GraphicsContext;
 import bfst20.logic.Type;
-import javafx.scene.paint.Paint;
+
 
 import javafx.scene.paint.Color;
 
 
-public class LinePath implements Drawable {
+public class LinePath implements Serializable {
     float[] coords;
     Type type;
     SerializableColor color;
@@ -92,7 +92,6 @@ public class LinePath implements Drawable {
         return coords;
     }
 
-    @Override
     public void draw(GraphicsContext gc) {
 
         gc.beginPath();
@@ -115,8 +114,6 @@ public class LinePath implements Drawable {
     }
 
 
-
-    @Override
     public Type getType() {
         return type;
     }

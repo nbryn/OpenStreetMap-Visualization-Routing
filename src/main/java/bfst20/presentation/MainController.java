@@ -14,14 +14,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 
 
 public class MainController {
 
     private AppController appController;
-
-    private FileLoader fileLoader;
 
     private View view;
 
@@ -46,7 +43,7 @@ public class MainController {
 
     public MainController() {
         appController = new AppController();
-        this.fileLoader = new FileLoader();
+
     }
 
     Point2D lastMouse;
@@ -77,9 +74,8 @@ public class MainController {
             File file = new File(classLoader.getResource("samsoe.bin").getFile());
             //File file = new File("F:\\bornholm.osm");
             //File file = new File("F:\\denmark.osm");
-            System.out.println(file.toString());
 
-            appController.startParsing(file);
+            appController.loadFile(file);
             view = appController.initialize();
 
 

@@ -1,13 +1,11 @@
-package bfst20.presentation;
+package bfst20.logic;
 
-import bfst20.logic.AppController;
-import bfst20.logic.Type;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.Relation;
-import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.interfaces.OSMElement;
+import bfst20.presentation.LinePath;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sound.sampled.Line;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -48,21 +45,10 @@ public class Parser {
             try {
 
                 Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
+                Bounds bounds = drawables.get(Type.BOUNDS).get(0).getBounds();
 
-                for (Map.Entry<Type, List<LinePath>> entry : drawables.entrySet()) {
-                    if (entry.getKey() == Type.BOUNDS) {
-                        List<LinePath> linePath = entry.getValue();
-                        LinePath linePath1 = linePath.get(0);
-
-                        System.out.println(linePath);
-
-                        if (linePath1.getBounds() != null) {
-                            appController.setBoundsOnModel(linePath1.getBounds());
-                        }
-                    }
-                }
-
-                appController.setDrawablesInModel(drawables);
+                appController.setBoundsOnModel(bounds);
+                appController.setLinePathsOnModel(drawables);
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
@@ -198,7 +184,7 @@ public class Parser {
         float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-        appController.setBoundsOnModel(minLat, maxLon, maxLat, minLon);
+        appController.setBoundsOnModel(new Bounds(maxLat, minLat, maxLon, minLon));
     }
 
     private void addNodeToMap(XMLStreamReader reader) {

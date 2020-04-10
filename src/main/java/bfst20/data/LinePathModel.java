@@ -3,7 +3,6 @@ package bfst20.data;
 import bfst20.logic.Type;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
-import bfst20.logic.interfaces.Drawable;
 import bfst20.presentation.LinePath;
 
 import java.util.ArrayList;
@@ -15,13 +14,13 @@ public class LinePathModel {
 
     private static boolean isLoaded = false;
     private static LinePathModel linePathModel;
-    private Map<Type, List<LinePath>> drawables;
+    private Map<Type, List<LinePath>> linePaths;
     private Map<Node, Way> nodeToCoastline;
     private Map<Node, Way> nodeToForest;
     private Map<Node, Way> nodeToFarmland;
 
     private LinePathModel() {
-        drawables = new HashMap<>();
+        linePaths = new HashMap<>();
         nodeToCoastline = new HashMap<>();
         nodeToForest = new HashMap<>();
         nodeToFarmland = new HashMap<>();
@@ -35,8 +34,8 @@ public class LinePathModel {
         return linePathModel;
     }
 
-    public Map<Type, List<LinePath>> getDrawables() {
-        return drawables;
+    public Map<Type, List<LinePath>> getLinePaths() {
+        return linePaths;
     }
 
 
@@ -77,20 +76,20 @@ public class LinePathModel {
         nodeToCoastline.put(node, way);
 
     }
-    public void setDrawables(Map<Type, List<LinePath>> drawables) {
-        this.drawables = drawables;
+    public void setLinePaths(Map<Type, List<LinePath>> linePaths) {
+        this.linePaths = linePaths;
     }
 
     public void addLinePathToList(Type type, LinePath linePath) {
-        drawables.get(type).add(linePath);
+        linePaths.get(type).add(linePath);
     }
 
     public void addTypeList(Type type) {
-        drawables.put(type, new ArrayList<>());
+        linePaths.put(type, new ArrayList<>());
     }
 
     public void clearData() {
-        drawables = null;
+        linePaths = null;
         nodeToCoastline = null;
         nodeToForest = null;
         nodeToFarmland = null;

@@ -1,12 +1,8 @@
 package bfst20.logic.entities;
 
-import bfst20.logic.Type;
-import bfst20.logic.interfaces.Drawable;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.io.Serializable;
 
-public class Bounds implements Drawable, Serializable {
+public class Bounds implements Serializable {
 
     float maxLat, minLat, maxLon, minLon;
 
@@ -33,13 +29,4 @@ public class Bounds implements Drawable, Serializable {
         return minLat;
     }
 
-    @Override
-    public void draw(GraphicsContext gc) {
-
-    }
-
-    @Override
-    public Type getType() {
-        return null;
-    }
 }
