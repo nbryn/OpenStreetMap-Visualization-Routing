@@ -4,7 +4,6 @@ import java.util.*;
 
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
-import bfst20.logic.entities.SerializableColor;
 import bfst20.logic.entities.Way;
 import bfst20.presentation.LinePath;
 
@@ -95,8 +94,6 @@ public class LinePathGenerator {
     private void addRelation(Type type, Map<Node, Way> nodeTo) {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
-
-
 
                 appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, true));
             }
@@ -207,7 +204,6 @@ public class LinePathGenerator {
         way.addAllNodeIds(after);
     }
 
-
     private Way binarySearch(List<Way> list, long id) {
         int low = 0;
         int high = list.size() - 1;
@@ -227,5 +223,4 @@ public class LinePathGenerator {
         }
         return null;
     }
-
 }

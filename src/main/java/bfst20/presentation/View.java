@@ -49,11 +49,11 @@ public class View {
 
         } else {
             appController.createLinePaths();
-            appController.generateBinary();
+            //appController.generateBinary();
             linePaths = appController.getLinePathsFromModel();
 
         }
-        appController.clearDrawableData();
+        appController.clearLinePathData();
 
         createKDTrees();
     }
@@ -72,11 +72,9 @@ public class View {
         for (Map.Entry<Type, List<LinePath>> entry : linePaths.entrySet()) {
 
             if (entry.getValue().size() != 0) {
-                System.out.println(entry.getKey().toString() + ": " + entry.getValue().size());
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }
-
         coastLine = linePaths.get(Type.COASTLINE);
 
         linePaths = null;
@@ -89,16 +87,14 @@ public class View {
     }
 
     public void repaint() {
-
         gc.setTransform(new Affine());
-
         gc.setFill(Color.LIGHTBLUE);
+
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
         gc.setLineWidth(pixelwidth);
-
 
         int boxSize = 300;
 
@@ -133,7 +129,6 @@ public class View {
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
-
     }
 
 
@@ -160,7 +155,6 @@ public class View {
             return null;
         }
     }
-
 
     public void zoom(double factor, double x, double y) {
 

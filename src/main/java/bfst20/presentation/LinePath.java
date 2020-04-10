@@ -106,11 +106,9 @@ public class LinePath implements Serializable {
         gc.stroke();
     }
 
-
     public Type getType() {
         return type;
     }
-
 
     private void trace(GraphicsContext gc) {
         gc.moveTo(coords[0], coords[1]);

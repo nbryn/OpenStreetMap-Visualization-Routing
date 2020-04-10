@@ -1,9 +1,7 @@
 package bfst20.logic;
 
-import bfst20.logic.entities.SerializableColor;
 import javafx.scene.paint.Color;
 
-import javafx.scene.paint.Paint;
 
 public enum Type {
     UNKNOWN,
