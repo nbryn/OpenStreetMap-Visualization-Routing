@@ -1,12 +1,11 @@
-package bfst20.presentation;
+package bfst20.logic;
 
-import bfst20.logic.AppController;
-import bfst20.logic.Type;
+import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.Relation;
-import bfst20.logic.interfaces.Drawable;
 import bfst20.logic.interfaces.OSMElement;
+import bfst20.presentation.LinePath;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -34,14 +33,29 @@ public class Parser {
     }
 
     public static Parser getInstance() {
-        if (isLoaded == false) {
+        if (!isLoaded) {
             isLoaded = true;
             parser = new Parser();
         }
-
         return parser;
     }
 
+    public void parseBinary(File file) throws FileNotFoundException {
+        try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try {
+
+                Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
+                Bounds bounds = drawables.get(Type.BOUNDS).get(0).getBounds();
+
+                appController.setBoundsOnModel(bounds);
+                appController.setLinePathsOnModel(drawables);
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
@@ -52,6 +66,9 @@ public class Parser {
             System.out.println("E is: " + e);
         }
 
+        tempOSMRelations = null;
+        System.gc();
+
     }
 
     public void parseString(String string) throws XMLStreamException {
@@ -61,17 +78,8 @@ public class Parser {
         parse(reader);
     }
 
-    private List<Drawable> getDrawables() {
-        List<Drawable> drawables = new ArrayList<>();
-
-        tempOSMRelations = null;
-        System.gc();
-
-        return drawables;
-    }
 
     private void parse(XMLStreamReader reader) throws XMLStreamException {
-
         OSMElement lastElementParsed = null;
         HashMap<String, String> tags = null;
         String[] firstTag = new String[2];
@@ -105,16 +113,15 @@ public class Parser {
                             tags = new HashMap<>();
                             break;
                         case "tag":
-                            if(tags == null) break;
+                            if (tags == null) break;
 
                             String key = reader.getAttributeValue(null, "k");
                             String value = reader.getAttributeValue(null, "v");
 
-                            if(firstTag[0] == null){
+                            if (firstTag[0] == null) {
                                 firstTag[0] = key;
                                 firstTag[1] = value;
                             }
-
                             tags.put(key, value);
                             break;
                         case "member":
@@ -142,15 +149,14 @@ public class Parser {
         }
     }
 
-    private void parseTags( XMLStreamReader reader, 
-                            OSMElement lastElementParsed, 
-                            HashMap<String, 
-                            String> tags, 
-                            String[] firstTag){
-
+    private void parseTags(XMLStreamReader reader,
+                           OSMElement lastElementParsed,
+                           HashMap<String,
+                                   String> tags,
+                           String[] firstTag) {
 
         try {
-            if(tags.containsKey("name")){
+            if (tags.containsKey("name")) {
                 lastElementParsed.setName(tags.get("name"));
             }
 
@@ -160,11 +166,11 @@ public class Parser {
                 } else {
                     lastElementParsed.setType(Type.valueOf(tags.get("landuse").toUpperCase()));
                 }
-            } else if(tags.containsKey("building")) {
+            } else if (tags.containsKey("building")) {
                 lastElementParsed.setType(Type.BUILDING);
-            }else if(tags.containsKey("highway")) {
+            } else if (tags.containsKey("highway")) {
                 lastElementParsed.setType(Type.HIGHWAY);
-            }else{
+            } else {
                 lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
             }
 
@@ -173,12 +179,12 @@ public class Parser {
     }
 
     private void setBounds(XMLStreamReader reader) {
-        float minlat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
-        float maxlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
-        float maxlat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
-        float minlon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+        float minLat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
+        float maxLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+        float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
+        float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-        appController.setBoundsOnModel(minlat, maxlon, maxlat, minlon);
+        appController.setBoundsOnModel(new Bounds(maxLat, minLat, maxLon, minLon));
     }
 
     private void addNodeToMap(XMLStreamReader reader) {
