@@ -8,6 +8,10 @@ public enum Type {
     BOUNDS,
     BUILDING,
     HIGHWAY,
+    TERTIARY,
+    RESIDENTIAL_HIGHWAY,
+    UNCLASSIFIED_HIGHWAY,
+    UNCLASSIFIED,
     COASTLINE,
     WATER,
     GREEN,
@@ -25,7 +29,8 @@ public enum Type {
     public static double getZoomLevel(Type type){
         switch (type){
             case COASTLINE:
-            case HIGHWAY:
+            case TERTIARY:
+            case UNCLASSIFIED_HIGHWAY:
                 return 1;
             case FOREST:
             case HEATH:
@@ -35,9 +40,11 @@ public enum Type {
             case WOOD:
             case TREE_ROW:
             case GREEN:
+            case HIGHWAY:
                 return 1.3011416847239474E7;
             case RESIDENTIAL:
             case BUILDING:
+            case RESIDENTIAL_HIGHWAY:
                 return 2.8945867784311756E7;
             default:
                 return Double.POSITIVE_INFINITY;
@@ -73,7 +80,10 @@ public enum Type {
                 return Color.BLUE;
             case BUILDING:
                 return Color.BROWN;
+            case RESIDENTIAL_HIGHWAY:
+            case TERTIARY:
             case HIGHWAY:
+            case UNCLASSIFIED_HIGHWAY:
                 return Color.BLACK;
             case HEATH:
                 return Color.rgb(255, 178, 102, 0.6);

@@ -123,6 +123,9 @@ public class View {
         drawTypeKdTree(Type.FOREST, rect);
         drawTypeKdTree(Type.BUILDING, rect);
         drawTypeKdTree(Type.HIGHWAY, rect, mouse);
+        drawTypeKdTree(Type.TERTIARY, rect, mouse);
+        drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, mouse);
+        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, mouse);
 
         //System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
 

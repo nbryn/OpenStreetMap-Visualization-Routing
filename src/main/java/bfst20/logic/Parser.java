@@ -169,7 +169,19 @@ public class Parser {
             } else if (tags.containsKey("building")) {
                 lastElementParsed.setType(Type.BUILDING);
             } else if (tags.containsKey("highway")) {
-                lastElementParsed.setType(Type.HIGHWAY);
+                Type type = Type.HIGHWAY;
+
+                try{
+                    type = Type.valueOf(tags.get("highway").toUpperCase());
+
+                    if(type == Type.RESIDENTIAL){
+                        type = Type.RESIDENTIAL_HIGHWAY;
+                    }else if(type == Type.UNCLASSIFIED){
+                        type = Type.UNCLASSIFIED_HIGHWAY;
+                    }
+                }catch (Exception e){}
+
+                lastElementParsed.setType(type);
             } else {
                 lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
             }
