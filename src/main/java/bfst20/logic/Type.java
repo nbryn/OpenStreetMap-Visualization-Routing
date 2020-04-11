@@ -26,6 +26,18 @@ public enum Type {
     WOOD,
     PLACE;
 
+    public static double getLineWidth(Type type, double lineWidth){
+        switch (type){
+            case TERTIARY:
+            case UNCLASSIFIED_HIGHWAY:
+            case HIGHWAY:
+            case RESIDENTIAL_HIGHWAY:
+                return lineWidth*2;
+            default:
+                return lineWidth;
+        }
+    }
+
     public static double getZoomLevel(Type type){
         switch (type){
             case COASTLINE:
@@ -81,10 +93,13 @@ public enum Type {
             case BUILDING:
                 return Color.BROWN;
             case RESIDENTIAL_HIGHWAY:
+                return Color.rgb(92, 92, 92, 1);
             case TERTIARY:
-            case HIGHWAY:
-            case UNCLASSIFIED_HIGHWAY:
                 return Color.BLACK;
+            case HIGHWAY:
+                return Color.rgb(54, 54, 54, 1);
+            case UNCLASSIFIED_HIGHWAY:
+                return Color.rgb(79, 79, 79, 1);
             case HEATH:
                 return Color.rgb(255, 178, 102, 0.6);
             case RESIDENTIAL:

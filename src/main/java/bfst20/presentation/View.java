@@ -94,7 +94,6 @@ public class View {
         gc.setTransform(trans);
 
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
-        gc.setLineWidth(pixelwidth);
 
         int boxSize = 300;
 
@@ -110,41 +109,41 @@ public class View {
 
 
         for (LinePath linePath : coastLine) {
-            linePath.draw(gc);
+            linePath.draw(gc, pixelwidth);
             gc.fill();
         }
 
-        drawTypeKdTree(Type.FARMLAND, rect);
-        drawTypeKdTree(Type.RESIDENTIAL, rect);
-        drawTypeKdTree(Type.HEATH, rect);
-        drawTypeKdTree(Type.WOOD, rect);
-        drawTypeKdTree(Type.TREE_ROW, rect);
-        drawTypeKdTree(Type.WATER, rect);
-        drawTypeKdTree(Type.FOREST, rect);
-        drawTypeKdTree(Type.BUILDING, rect);
-        drawTypeKdTree(Type.HIGHWAY, rect, mouse);
-        drawTypeKdTree(Type.TERTIARY, rect, mouse);
-        drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, mouse);
-        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, mouse);
+        drawTypeKdTree(Type.FARMLAND, rect, pixelwidth);
+        drawTypeKdTree(Type.RESIDENTIAL, rect, pixelwidth);
+        drawTypeKdTree(Type.HEATH, rect, pixelwidth);
+        drawTypeKdTree(Type.WOOD, rect, pixelwidth);
+        drawTypeKdTree(Type.TREE_ROW, rect, pixelwidth);
+        drawTypeKdTree(Type.WATER, rect, pixelwidth);
+        drawTypeKdTree(Type.FOREST, rect, pixelwidth);
+        drawTypeKdTree(Type.BUILDING, rect, pixelwidth);
+        drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
+        drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);
 
         // System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
 
         gc.setStroke(Color.PURPLE);
-        gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
+        //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
     }
 
 
-    public void drawTypeKdTree(Type type, Rect rect) {
+    public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant())) {
-            linePath.draw(gc);
+            linePath.draw(gc, lineWidth);
             gc.fill();
         }
     }
 
-    public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
+    public void drawTypeKdTree(Type type, Rect rect, double lineWidth, Point2D point) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant(), point)) {
-            linePath.draw(gc);
+            linePath.draw(gc, lineWidth);
             gc.fill();
         }
     }
