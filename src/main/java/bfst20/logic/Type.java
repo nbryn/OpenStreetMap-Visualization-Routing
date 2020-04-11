@@ -63,7 +63,14 @@ public enum Type {
         }
     }
 
-    public static Color getColor(Type type) {
+
+
+    public static Color getColor(Type type, Boolean colorBlindMode) {
+        if (!colorBlindMode) return getNormalColor(type);
+        else return getColorBlindColor(type);
+    }
+
+    public  static Color getNormalColor(Type type){
         switch (type) {
             case PLACE:
             case COASTLINE:
@@ -92,5 +99,38 @@ public enum Type {
             default: //TODO FIX
                 return Color.TRANSPARENT;
         }
+
+    }
+
+    public static Color getColorBlindColor(Type type){
+        switch (type) {
+            case PLACE:
+            case COASTLINE:
+            case GREEN:
+                return Color.PINK;
+            case WATER:
+                return Color.RED;
+            case BUILDING:
+                return Color.YELLOW;
+            case HIGHWAY:
+                return Color.BURLYWOOD;
+            case HEATH:
+                return Color.rgb(255, 178, 102, 0.6);
+            case RESIDENTIAL:
+                return Color.rgb(128, 128, 128, 0.6);
+            case FARMLAND:
+                return Color.rgb(238, 240, 213, 0.6);
+            case WOOD:
+            case FOREST:
+            case TREE_ROW:
+                return Color.rgb(0, 102, 0, 0.7);
+            case PARKING:
+                return Color.RED;
+            case NATURAL:
+                return Color.BLUEVIOLET;
+            default: //TODO FIX
+                return Color.TRANSPARENT;
+        }
+
     }
 }

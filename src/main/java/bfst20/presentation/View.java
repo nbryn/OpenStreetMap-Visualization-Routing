@@ -29,6 +29,7 @@ public class View {
     private Map<Type, KdTree> kdTrees;
     private List<LinePath> coastLine;
     private boolean kd;
+    private boolean isColorBlindMode = false;
 
 
     public View(Canvas canvas) {
@@ -110,7 +111,7 @@ public class View {
 
 
         for (LinePath linePath : coastLine) {
-            linePath.draw(gc);
+            linePath.draw(gc,isColorBlindMode);
             gc.fill();
         }
 
@@ -134,14 +135,14 @@ public class View {
 
     public void drawTypeKdTree(Type type, Rect rect) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant())) {
-            linePath.draw(gc);
+            linePath.draw(gc,isColorBlindMode);
             gc.fill();
         }
     }
 
     public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant(), point)) {
-            linePath.draw(gc);
+            linePath.draw(gc,isColorBlindMode);
             gc.fill();
         }
     }
@@ -165,5 +166,9 @@ public class View {
     public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
         repaint();
+    }
+
+    public void changeToColorBlindMode(boolean isColorBlindMode){
+        this.isColorBlindMode = isColorBlindMode;
     }
 }

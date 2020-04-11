@@ -74,6 +74,12 @@
                           <MenuItem text="About" />
                       </items>
                   </Menu>
+                     <Menu mnemonicParsing="false" text="Color Scheme">
+                       <items>
+                         <MenuItem mnemonicParsing="false" onAction="#normalColorButton" text="Normal Colors" />
+                           <MenuItem mnemonicParsing="false" onAction="#colorBlindButton" text="Colorblind Mode" />
+                       </items>
+                     </Menu>
               </menus>
           </MenuBar>
       </VBox>
