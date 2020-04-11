@@ -123,8 +123,11 @@ public class View {
         drawTypeKdTree(Type.FOREST, rect);
         drawTypeKdTree(Type.BUILDING, rect);
         drawTypeKdTree(Type.HIGHWAY, rect, mouse);
+        drawTypeKdTree(Type.TERTIARY, rect, mouse);
+        drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, mouse);
+        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, mouse);
 
-        //System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
+        // System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
 
         gc.setStroke(Color.PURPLE);
         gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
