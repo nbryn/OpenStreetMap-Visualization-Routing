@@ -4,9 +4,12 @@ import java.io.*;
 import java.util.List;
 import java.util.Map;
 
+import bfst20.data.KDTreeModel;
 import bfst20.data.LinePathModel;
 import bfst20.data.OSMElementModel;
 import bfst20.logic.entities.*;
+import bfst20.logic.kdtree.KDTree;
+import bfst20.logic.kdtree.Rect;
 import bfst20.presentation.LinePath;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
@@ -18,6 +21,7 @@ public class AppController {
 
     private OSMElementModel OSMElementModel;
     private LinePathModel linePathModel;
+    private KDTreeModel kdTreeModel;
     private Parser parser;
     private LinePathGenerator linePathGenerator;
     private View view;
@@ -27,6 +31,7 @@ public class AppController {
     public AppController() {
         OSMElementModel = OSMElementModel.getInstance();
         linePathModel = LinePathModel.getInstance();
+        kdTreeModel = KDTreeModel.getInstance();
         parser = Parser.getInstance();
 
     }
@@ -56,7 +61,9 @@ public class AppController {
         return view;
     }
 
-    public void putAddressToModel(long id, Address address){OSMElementModel.putAddress(id, address);}
+    public void putAddressToModel(long id, Address address) {
+        OSMElementModel.putAddress(id, address);
+    }
 
     public void addRelationToModel(Relation relation) {
         OSMElementModel.addRelation(relation);
@@ -98,7 +105,7 @@ public class AppController {
         return linePathModel.getLinePaths();
     }
 
-    public Map<Long, Address> getAddresses(){
+    public Map<Long, Address> getAddresses() {
         return OSMElementModel.getAddresses();
     }
 
@@ -147,6 +154,24 @@ public class AppController {
 
     public void setLinePathsOnModel(Map<Type, List<LinePath>> drawables) {
         linePathModel.setLinePaths(drawables);
+    }
+
+    public void setupRect() {
+        Bounds bounds = getBoundsFromModel();
+
+        kdTreeModel.setValuesOnRect(bounds.getMinLat(), bounds.getMaxLat(), bounds.getMinLon(), bounds.getMaxLon());
+    }
+
+    public Rect getRectFromModel() {
+        return kdTreeModel.getRect();
+    }
+
+    public void addKDTreeToModel(Type type, List<LinePath> linePaths) {
+        kdTreeModel.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
+    }
+
+    public KDTree getKDTreeFromModel(Type type) {
+        return kdTreeModel.getKDTree(type);
     }
 
     public void generateBinary() throws IOException {

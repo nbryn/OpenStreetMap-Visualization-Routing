@@ -1,7 +1,6 @@
 package bfst20.presentation;
 
 import bfst20.logic.AppController;
-import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
@@ -13,14 +12,11 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import bfst20.logic.Type;
-import bfst20.logic.kdtree.KdTree;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
@@ -30,7 +26,6 @@ public class View {
     private Canvas canvas;
     private GraphicsContext gc;
     private Map<Type, List<LinePath>> linePaths;
-    private Map<Type, KdTree> kdTrees;
     private List<LinePath> coastLine;
     private boolean kd;
     private boolean isColorBlindMode = false;
@@ -48,37 +43,24 @@ public class View {
 
 
     public void initializeData() throws IOException {
-
-        if (appController.isBinary()) {
-
-            linePaths = appController.getLinePathsFromModel();
-
-        } else {
+        if (!appController.isBinary()) {
             appController.createLinePaths();
             //appController.generateBinary();
-            linePaths = appController.getLinePathsFromModel();
-
         }
+        linePaths = appController.getLinePathsFromModel();
         appController.clearLinePathData();
 
         createKDTrees();
     }
 
     private void createKDTrees() {
+        appController.setupRect();
 
-        Bounds bounds = appController.getBoundsFromModel();
-
-        float minLon = bounds.getMinLon();
-        float maxLon = bounds.getMaxLon();
-        float minLat = bounds.getMinLat();
-        float maxLat = bounds.getMaxLat();
-
-        kdTrees = new HashMap<>();
-        Rect rect = new Rect(minLat, maxLat, minLon, maxLon);
         for (Map.Entry<Type, List<LinePath>> entry : linePaths.entrySet()) {
-            if(entry.getKey() == Type.HIGHWAY || entry.getKey() == Type.RESIDENTIAL_HIGHWAY || entry.getKey() == Type.TERTIARY || entry.getKey() == Type.UNCLASSIFIED_HIGHWAY) continue;
+            if (entry.getKey() == Type.HIGHWAY || entry.getKey() == Type.RESIDENTIAL_HIGHWAY || entry.getKey() == Type.TERTIARY || entry.getKey() == Type.UNCLASSIFIED_HIGHWAY)
+                continue;
             if (entry.getValue().size() != 0) {
-                kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
+                appController.addKDTreeToModel(entry.getKey(), entry.getValue());
             }
         }
 
@@ -87,14 +69,20 @@ public class View {
         allHighways.addAll(linePaths.get(Type.TERTIARY));
         allHighways.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
         allHighways.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
-        allHighways.addAll(linePaths.get(Type.MOTORWAY));
-        kdTrees.put(Type.HIGHWAY, new KdTree(allHighways, rect));
+        if (linePaths.get(Type.MOTORWAY) != null) allHighways.addAll(linePaths.get(Type.MOTORWAY));
 
-        kdTrees.put(Type.COASTLINE, new KdTree(linePaths.get(Type.COASTLINE), rect));
-
+        appController.addKDTreeToModel(Type.HIGHWAY, allHighways);
+        appController.addKDTreeToModel(Type.COASTLINE, linePaths.get(Type.COASTLINE));
 
         linePaths = null;
         System.gc();
+
+        Bounds bounds = appController.getBoundsFromModel();
+
+        float minLon = bounds.getMinLon();
+        float maxLon = bounds.getMaxLon();
+        float minLat = bounds.getMinLat();
+        float maxLat = bounds.getMaxLat();
 
         pan(-minLon, -minLat);
         zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
@@ -142,26 +130,29 @@ public class View {
         drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);*/
 
-        mouseLocationLabel.setText(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getName());
+        //mouseLocationLabel.setText(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getName());
+
+        mouseLocationLabel.setText(appController.getKDTreeFromModel(Type.HIGHWAY).getClosetsLinepath().getName());
 
         gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
+
     }
 
 
     public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
-        for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant())) {
+        for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {
 
-            linePath.draw(gc, lineWidth,isColorBlindMode);
+            linePath.draw(gc, lineWidth, isColorBlindMode);
             gc.fill();
         }
     }
 
     public void drawTypeKdTree(Type type, Rect rect, double lineWidth, Point2D point) {
-        for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant(), point)) {
+        for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant(), point)) {
 
-            linePath.draw(gc, lineWidth,isColorBlindMode);
+            linePath.draw(gc, lineWidth, isColorBlindMode);
             gc.fill();
         }
     }
@@ -190,6 +181,7 @@ public class View {
     public void changeToColorBlindMode(boolean isColorBlindMode) {
         this.isColorBlindMode = isColorBlindMode;
     }
+
     public void setMouseLocationView(Label mouseLocationLabel) {
         this.mouseLocationLabel = mouseLocationLabel;
     }
