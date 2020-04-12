@@ -89,14 +89,18 @@ public class LinePath implements Serializable {
         return coords;
     }
 
+
     public String getName(){return name;}
     public Long getWayId(){return wayId;}
 
-    public void draw(GraphicsContext gc, double lineWidth) {
+
+
+
+        public void draw(GraphicsContext gc, double lineWidth,boolean isColorBlindMode) {
         gc.setLineWidth(Type.getLineWidth(type, lineWidth));
         gc.beginPath();
-        gc.setStroke(Type.getColor(type));
-        gc.setFill(fill ? Type.getColor(type) : Color.TRANSPARENT);
+        gc.setStroke(Type.getColor(type,isColorBlindMode));
+        gc.setFill(fill ? Type.getColor(type,isColorBlindMode) : Color.TRANSPARENT);
 
         /*if(way.getTagValue("name") != null){
             gc.setFill(Color.BLACK);

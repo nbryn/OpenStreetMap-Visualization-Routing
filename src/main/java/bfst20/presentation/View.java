@@ -33,6 +33,7 @@ public class View {
     private Map<Type, KdTree> kdTrees;
     private List<LinePath> coastLine;
     private boolean kd;
+    private boolean isColorBlindMode = false;
 
     Label mouseLocationLabel;
 
@@ -122,7 +123,7 @@ public class View {
 
 
         for (LinePath linePath : coastLine) {
-            linePath.draw(gc, pixelwidth);
+            linePath.draw(gc, pixelwidth,isColorBlindMode);
             gc.fill();
         }
 
@@ -152,14 +153,16 @@ public class View {
 
     public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant())) {
-            linePath.draw(gc, lineWidth);
+
+            linePath.draw(gc, lineWidth,isColorBlindMode);
             gc.fill();
         }
     }
 
     public void drawTypeKdTree(Type type, Rect rect, double lineWidth, Point2D point) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant(), point)) {
-            linePath.draw(gc, lineWidth);
+
+            linePath.draw(gc, lineWidth,isColorBlindMode);
             gc.fill();
         }
     }
@@ -185,6 +188,9 @@ public class View {
         repaint();
     }
 
+    public void changeToColorBlindMode(boolean isColorBlindMode) {
+        this.isColorBlindMode = isColorBlindMode;
+    }
     public void setMouseLocationView(Label mouseLocationLabel) {
         this.mouseLocationLabel = mouseLocationLabel;
     }

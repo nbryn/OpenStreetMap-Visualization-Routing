@@ -23,6 +23,9 @@ public class MainController {
 
     private View view;
 
+
+
+
     @FXML
     private MenuItem openFile;
 
@@ -87,6 +90,13 @@ public class MainController {
         } catch (Exception err) {
             //err.printStackTrace();
         }
+       // colorBlindButton.setOnAction(e ->{
+           // view.changeToColorBlindMode(true);
+        //});
+
+        //normalColorButton.setOnAction(e ->{
+         //   view.changeToColorBlindMode(false);
+        //});
 
         canvas.setOnScroll(e -> {
             double factor = Math.pow(1.001, e.getDeltaY());
@@ -112,5 +122,13 @@ public class MainController {
     }
 
     public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+    }
+
+    public void normalColorButton(ActionEvent actionEvent) {
+        view.changeToColorBlindMode(false);
+    }
+
+    public void colorBlindButton(ActionEvent actionEvent) {
+        view.changeToColorBlindMode(true);
     }
 }
