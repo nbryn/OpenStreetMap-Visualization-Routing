@@ -8,6 +8,7 @@ public enum Type {
     BOUNDS,
     BUILDING,
     HIGHWAY,
+    MOTORWAY,
     TERTIARY,
     RESIDENTIAL_HIGHWAY,
     UNCLASSIFIED_HIGHWAY,
@@ -31,6 +32,7 @@ public enum Type {
             case TERTIARY:
             case UNCLASSIFIED_HIGHWAY:
             case HIGHWAY:
+            case MOTORWAY:
             case RESIDENTIAL_HIGHWAY:
                 return lineWidth*2;
             default:
@@ -41,8 +43,7 @@ public enum Type {
     public static double getZoomLevel(Type type){
         switch (type){
             case COASTLINE:
-            case TERTIARY:
-            case UNCLASSIFIED_HIGHWAY:
+            case MOTORWAY:
                 return 1;
             case FOREST:
             case HEATH:
@@ -53,6 +54,8 @@ public enum Type {
             case TREE_ROW:
             case GREEN:
             case HIGHWAY:
+            case TERTIARY:
+            case UNCLASSIFIED_HIGHWAY:
                 return 1.3011416847239474E7;
             case RESIDENTIAL:
             case BUILDING:
@@ -95,6 +98,7 @@ public enum Type {
             case RESIDENTIAL_HIGHWAY:
                 return Color.rgb(92, 92, 92, 1);
             case TERTIARY:
+            case MOTORWAY:
                 return Color.BLACK;
             case HIGHWAY:
                 return Color.rgb(54, 54, 54, 1);
