@@ -6,7 +6,7 @@ import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
-import bfst20.presentation.LinePath;
+import bfst20.logic.entities.LinePath;
 
 
 public class LinePathGenerator {

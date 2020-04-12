@@ -1,32 +1,52 @@
 package bfst20.logic.kdtree;
 
-import bfst20.presentation.LinePath;
+import bfst20.logic.entities.LinePath;
 
 public class Rect {
 
-    private float minlat, maxlat, minlon, maxlon;
+    private float minLat, maxLat, minLon, maxLon;
 
-    public Rect(float minlat,float maxlat,float minlon,float maxlon){
-        this.maxlat = maxlat;
-        this.maxlon = maxlon;
-        this.minlat = minlat;
-        this.minlon = minlon;
+    public Rect() {
+
     }
 
-    public float getMaxlat() {
-        return maxlat;
+    public Rect(float minLat, float maxLat, float minLon, float maxLon){
+        this.maxLat = maxLat;
+        this.maxLon = maxLon;
+        this.minLat = minLat;
+        this.minLon = minLon;
     }
 
-    public float getMaxlon() {
-        return maxlon;
+    public void setMinLat(float minLat) {
+        this.minLat = minLat;
     }
 
-    public float getMinlat() {
-        return minlat;
+    public void setMaxLat(float matLat) {
+        this.maxLat = matLat;
     }
 
-    public float getMinlon() {
-        return minlon;
+    public void setMinLon(float minLon) {
+        this.minLon = minLon;
+    }
+
+    public void setMaxLon(float maxLon) {
+        this.maxLon = maxLon;
+    }
+
+    public float getMaxLat() {
+        return maxLat;
+    }
+
+    public float getMaxLon() {
+        return maxLon;
+    }
+
+    public float getMinLat() {
+        return minLat;
+    }
+
+    public float getMinLon() {
+        return minLon;
     }
 
 
@@ -35,18 +55,18 @@ public class Rect {
         return path.getMinX() >= minlat || path.getMaxY() <= maxlon;
     }*/
 
-    public boolean intersects(KdNode node) {
+    public boolean intersects(KDNode node) {
         LinePath path = node.getLinePath();
-        return      path.getMaxX() >= minlat
-                ||  path.getMinX() <= maxlat
-                ||  path.getMaxY() >= minlon
-                ||  path.getMinY() <= maxlon;
+        return      path.getMaxX() >= minLat
+                ||  path.getMinX() <= maxLat
+                ||  path.getMaxY() >= minLon
+                ||  path.getMinY() <= maxLon;
     }
 
-    public boolean contains(KdNode node){
+    public boolean contains(KDNode node){
         LinePath path = node.getLinePath();
-        return (path.getMaxX() >= minlat) && (path.getMinX() <= maxlat)
-                && (path.getMaxY() >= minlon) && (path.getMinY() <= maxlon);
+        return (path.getMaxX() >= minLat) && (path.getMinX() <= maxLat)
+                && (path.getMaxY() >= minLon) && (path.getMinY() <= maxLon);
     }
 
 

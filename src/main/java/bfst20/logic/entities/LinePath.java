@@ -1,5 +1,4 @@
-package bfst20.presentation;
-
+package bfst20.logic.entities;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,7 +16,7 @@ import javafx.scene.paint.Color;
 public class LinePath implements Serializable {
     float[] coords;
     Type type;
-    Boolean fill;
+    boolean fill;
     float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
     Bounds bounds;
     String name;
@@ -89,42 +88,20 @@ public class LinePath implements Serializable {
         return coords;
     }
 
+    public boolean getFill() {
+        return this.fill;
+    }
 
-    public String getName(){return name;}
-    public Long getWayId(){return wayId;}
-
-
-
-
-        public void draw(GraphicsContext gc, double lineWidth,boolean isColorBlindMode) {
-        gc.setLineWidth(Type.getLineWidth(type, lineWidth));
-        gc.beginPath();
-        gc.setStroke(Type.getColor(type,isColorBlindMode));
-        gc.setFill(fill ? Type.getColor(type,isColorBlindMode) : Color.TRANSPARENT);
-
-        /*if(way.getTagValue("name") != null){
-            gc.setFill(Color.BLACK);
-            gc.setFont(new Font(0.00022));
-            gc.fillText(way.getTagValue("name"), coords[0], coords[1]);
-            gc.setFill(fill ? color : Color.TRANSPARENT);
-        }*/
-        //gc.setStroke(Color.BLUE);
-        //gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
-        //  gc.setStroke(color);
-
-
-        trace(gc);
-        gc.stroke();
+    public String getName() {
+        return name;
     }
 
     public Type getType() {
         return type;
     }
 
-    private void trace(GraphicsContext gc) {
-        gc.moveTo(coords[0], coords[1]);
-        for (int i = 2; i <= coords.length; i += 2) {
-            gc.lineTo(coords[i - 2], coords[i - 1]);
-        }
+    public Long getWayId() {
+        return wayId;
     }
+
 }

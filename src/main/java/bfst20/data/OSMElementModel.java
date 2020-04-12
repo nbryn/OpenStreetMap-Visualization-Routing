@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.logic.Type;
 import bfst20.logic.entities.*;
-import bfst20.presentation.LinePath;
+
 
 public class OSMElementModel {
     private List<Way> OSMWays;
@@ -15,7 +14,6 @@ public class OSMElementModel {
     private List<Relation> OSMRelations;
     private Map<Long, Address> addresses;
     private Bounds bounds;
-    private float minLat, maxLon, maxLat, minLon;
     private static boolean isLoaded = false;
     private static OSMElementModel OSMElementModel;
 

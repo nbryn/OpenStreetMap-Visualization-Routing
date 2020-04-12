@@ -1,19 +1,18 @@
 package bfst20.logic.kdtree;
 
-import bfst20.logic.kdtree.KdTree;
-import bfst20.presentation.LinePath;
+import bfst20.logic.entities.LinePath;
 
-public class KdNode{
+public class KDNode {
     private LinePath path;
-    private KdNode left;
-    private KdNode right;
+    private KDNode left;
+    private KDNode right;
     private Direction direction;
     private float split;
 
-    public void setLeftNode(KdNode node){
+    public void setLeftNode(KDNode node){
         left = node;
     }
-    public void setRightNode(KdNode node){
+    public void setRightNode(KDNode node){
         right = node;
     }
     public void setLinePath(LinePath path){
@@ -24,8 +23,8 @@ public class KdNode{
     }
     public void setSplit(float split) {this.split = split;}
 
-    public KdNode getLeftNode(){return left;}
-    public KdNode getRightNode(){return right;}
+    public KDNode getLeftNode(){return left;}
+    public KDNode getRightNode(){return right;}
     public Direction getDirection() {return direction;}
     public float getSplit() {return split;}
     public LinePath getLinePath() {return path;}
