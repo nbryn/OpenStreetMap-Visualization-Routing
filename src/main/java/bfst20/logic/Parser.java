@@ -1,9 +1,6 @@
 package bfst20.logic;
 
-import bfst20.logic.entities.Bounds;
-import bfst20.logic.entities.Node;
-import bfst20.logic.entities.Way;
-import bfst20.logic.entities.Relation;
+import bfst20.logic.entities.*;
 import bfst20.logic.interfaces.OSMElement;
 import bfst20.presentation.LinePath;
 
@@ -29,7 +26,6 @@ public class Parser {
     private Parser() {
         appController = new AppController();
         tempOSMRelations = new ArrayList<>();
-
     }
 
     public static Parser getInstance() {
@@ -83,6 +79,7 @@ public class Parser {
         OSMElement lastElementParsed = null;
         HashMap<String, String> tags = null;
         String[] firstTag = new String[2];
+        long lastNodeId = 0;
 
         while (reader.hasNext()) {
             reader.next();
@@ -97,7 +94,9 @@ public class Parser {
                             setBounds(reader);
                             break;
                         case "node":
+                            lastNodeId = Long.parseLong(reader.getAttributeValue(null, "id"));
                             addNodeToMap(reader);
+                            tags = new HashMap<>();
                             break;
                         case "way":
                             lastElementParsed = addWayToList(reader);
@@ -133,6 +132,9 @@ public class Parser {
                     tagName = reader.getLocalName();
 
                     switch (tagName) {
+                        case "node":
+                            parseTagsAddress(lastNodeId, tags);
+                            break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
                             appController.addRelationToModel(relation);
@@ -147,6 +149,20 @@ public class Parser {
                     break;
             }
         }
+    }
+
+    private void parseTagsAddress(long lastNodeId, HashMap<String, String> tags){
+        if(tags.size() == 0) return;
+
+        String city = tags.get("addr:city");
+        String housenumber = tags.get("addr:housenumber");
+        String postcode = tags.get("addr:postcode");
+        String street = tags.get("addr:street");
+
+        if(city == null) return;
+
+        Address address = new Address(city, housenumber, postcode, street);
+        appController.putAddressToModel(lastNodeId, address);
     }
 
     private void parseTags(XMLStreamReader reader,
@@ -169,7 +185,19 @@ public class Parser {
             } else if (tags.containsKey("building")) {
                 lastElementParsed.setType(Type.BUILDING);
             } else if (tags.containsKey("highway")) {
-                lastElementParsed.setType(Type.HIGHWAY);
+                Type type = Type.HIGHWAY;
+
+                try{
+                    type = Type.valueOf(tags.get("highway").toUpperCase());
+
+                    if(type == Type.RESIDENTIAL){
+                        type = Type.RESIDENTIAL_HIGHWAY;
+                    }else if(type == Type.UNCLASSIFIED){
+                        type = Type.UNCLASSIFIED_HIGHWAY;
+                    }
+                }catch (Exception e){}
+
+                lastElementParsed.setType(type);
             } else {
                 lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
             }

@@ -11,6 +11,7 @@ public class Node implements OSMElement {
     private long id;
     private float latitude;
     private float longitude;
+
     private XMLStreamReader reader;
 
     public Node() {

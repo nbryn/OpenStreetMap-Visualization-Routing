@@ -6,13 +6,11 @@ import java.util.Map;
 
 import bfst20.data.LinePathModel;
 import bfst20.data.OSMElementModel;
-import bfst20.logic.entities.Bounds;
-import bfst20.logic.entities.Node;
-import bfst20.logic.entities.Relation;
-import bfst20.logic.entities.Way;
+import bfst20.logic.entities.*;
 import bfst20.presentation.LinePath;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -47,8 +45,9 @@ public class AppController {
         return isBinary;
     }
 
-    public void createView(Canvas canvas) {
+    public void createView(Canvas canvas, Label mouseLocationLabel) {
         view = new View(canvas);
+        view.setMouseLocationView(mouseLocationLabel);
     }
 
     public View initialize() throws IOException {
@@ -56,6 +55,8 @@ public class AppController {
 
         return view;
     }
+
+    public void putAddressToModel(long id, Address address){OSMElementModel.putAddress(id, address);}
 
     public void addRelationToModel(Relation relation) {
         OSMElementModel.addRelation(relation);
@@ -77,7 +78,6 @@ public class AppController {
         OSMElementModel.addWay(way);
     }
 
-
     public List<Way> getOSMWaysFromModel() {
         return OSMElementModel.getOSMWays();
     }
@@ -98,6 +98,9 @@ public class AppController {
         return linePathModel.getLinePaths();
     }
 
+    public Map<Long, Address> getAddresses(){
+        return OSMElementModel.getAddresses();
+    }
 
     public Way removeWayFromNodeTo(Type type, Node node) {
         Way way = null;

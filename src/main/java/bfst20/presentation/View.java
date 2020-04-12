@@ -1,16 +1,20 @@
 package bfst20.presentation;
 
 import bfst20.logic.AppController;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,7 @@ public class View {
     private boolean kd;
     private boolean isColorBlindMode = false;
 
+    Label mouseLocationLabel;
 
     public View(Canvas canvas) {
         appController = new AppController();
@@ -71,11 +76,19 @@ public class View {
         kdTrees = new HashMap<>();
         Rect rect = new Rect(minLat, maxLat, minLon, maxLon);
         for (Map.Entry<Type, List<LinePath>> entry : linePaths.entrySet()) {
-
+            if(entry.getKey() == Type.HIGHWAY || entry.getKey() == Type.RESIDENTIAL_HIGHWAY || entry.getKey() == Type.TERTIARY || entry.getKey() == Type.UNCLASSIFIED_HIGHWAY) continue;
             if (entry.getValue().size() != 0) {
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }
+
+        List<LinePath> allHighways = new ArrayList<>();
+        allHighways.addAll(linePaths.get(Type.HIGHWAY));
+        allHighways.addAll(linePaths.get(Type.TERTIARY));
+        allHighways.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
+        allHighways.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
+        kdTrees.put(Type.HIGHWAY, new KdTree(allHighways, rect));
+
         coastLine = linePaths.get(Type.COASTLINE);
 
         linePaths = null;
@@ -95,7 +108,6 @@ public class View {
         gc.setTransform(trans);
 
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
-        gc.setLineWidth(pixelwidth);
 
         int boxSize = 300;
 
@@ -111,38 +123,46 @@ public class View {
 
 
         for (LinePath linePath : coastLine) {
-            linePath.draw(gc,isColorBlindMode);
+            linePath.draw(gc, pixelwidth,isColorBlindMode);
             gc.fill();
         }
 
-        drawTypeKdTree(Type.FARMLAND, rect);
-        drawTypeKdTree(Type.RESIDENTIAL, rect);
-        drawTypeKdTree(Type.HEATH, rect);
-        drawTypeKdTree(Type.WOOD, rect);
-        drawTypeKdTree(Type.TREE_ROW, rect);
-        drawTypeKdTree(Type.WATER, rect);
-        drawTypeKdTree(Type.FOREST, rect);
-        drawTypeKdTree(Type.BUILDING, rect);
-        drawTypeKdTree(Type.HIGHWAY, rect, mouse);
+        drawTypeKdTree(Type.FARMLAND, rect, pixelwidth);
+        drawTypeKdTree(Type.RESIDENTIAL, rect, pixelwidth);
+        drawTypeKdTree(Type.HEATH, rect, pixelwidth);
+        drawTypeKdTree(Type.WOOD, rect, pixelwidth);
+        drawTypeKdTree(Type.TREE_ROW, rect, pixelwidth);
+        drawTypeKdTree(Type.WATER, rect, pixelwidth);
+        drawTypeKdTree(Type.FOREST, rect, pixelwidth);
+        drawTypeKdTree(Type.BUILDING, rect, pixelwidth);
 
-        //System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
+        drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
+
+        /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
+        drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);*/
+
+        mouseLocationLabel.setText(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getName());
 
         gc.setStroke(Color.PURPLE);
-        gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
+        //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
     }
 
 
-    public void drawTypeKdTree(Type type, Rect rect) {
+    public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant())) {
-            linePath.draw(gc,isColorBlindMode);
+
+            linePath.draw(gc, lineWidth,isColorBlindMode);
             gc.fill();
         }
     }
 
-    public void drawTypeKdTree(Type type, Rect rect, Point2D point) {
+    public void drawTypeKdTree(Type type, Rect rect, double lineWidth, Point2D point) {
         for (LinePath linePath : kdTrees.get(type).query(rect, trans.determinant(), point)) {
-            linePath.draw(gc,isColorBlindMode);
+
+            linePath.draw(gc, lineWidth,isColorBlindMode);
             gc.fill();
         }
     }
@@ -168,7 +188,10 @@ public class View {
         repaint();
     }
 
-    public void changeToColorBlindMode(boolean isColorBlindMode){
+    public void changeToColorBlindMode(boolean isColorBlindMode) {
         this.isColorBlindMode = isColorBlindMode;
+    }
+    public void setMouseLocationView(Label mouseLocationLabel) {
+        this.mouseLocationLabel = mouseLocationLabel;
     }
 }

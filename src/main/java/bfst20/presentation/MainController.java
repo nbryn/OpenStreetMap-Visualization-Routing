@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -43,6 +44,8 @@ public class MainController {
     @FXML
     private Button toRouteButton;
 
+    @FXML
+    private Label mouseLocationLabel;
 
     public MainController() {
         appController = new AppController();
@@ -56,7 +59,7 @@ public class MainController {
     public void initialize() {
         Canvas canvas = new Canvas(1270, 720);
 
-        appController.createView(canvas);
+        appController.createView(canvas, mouseLocationLabel);
 
         vbox.getChildren().add(canvas);
 
