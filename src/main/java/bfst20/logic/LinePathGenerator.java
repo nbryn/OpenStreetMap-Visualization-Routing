@@ -2,6 +2,7 @@ package bfst20.logic;
 
 import java.util.*;
 
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
@@ -12,6 +13,7 @@ public class LinePathGenerator {
 
     private List<Way> OSMWays;
     private Map<Long, Node> OSMNodes;
+    private Map<Long, Address> addresses;
     private List<Relation> OSMRelations;
     private static boolean loaded = false;
     private static LinePathGenerator linePathGenerator;
@@ -22,6 +24,7 @@ public class LinePathGenerator {
         OSMWays = appController.getOSMWaysFromModel();
         OSMNodes = appController.getOSMNodesFromModel();
         OSMRelations = appController.getOSMRelationsFromModel();
+        addresses = appController.getAddresses();
         appController.clearOSMData();
     }
 
@@ -95,7 +98,7 @@ public class LinePathGenerator {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
 
-                appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, true));
+                appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, addresses, true));
             }
         }
     }
@@ -156,7 +159,7 @@ public class LinePathGenerator {
         Boolean fill = Type.getFill(type);
 
         // TODO: Does every LinePath need all nodes?
-        return new LinePath(way, type, OSMNodes, fill);
+        return new LinePath(way, type, OSMNodes, addresses, fill);
     }
 
 

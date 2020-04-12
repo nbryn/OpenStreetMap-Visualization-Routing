@@ -6,16 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import bfst20.logic.Type;
-import bfst20.logic.entities.Bounds;
-import bfst20.logic.entities.Node;
-import bfst20.logic.entities.Relation;
-import bfst20.logic.entities.Way;
+import bfst20.logic.entities.*;
 import bfst20.presentation.LinePath;
 
 public class OSMElementModel {
     private List<Way> OSMWays;
     private Map<Long, Node> nodeMap;
     private List<Relation> OSMRelations;
+    private Map<Long, Address> addresses;
     private Bounds bounds;
     private float minLat, maxLon, maxLat, minLon;
     private static boolean isLoaded = false;
@@ -26,6 +24,7 @@ public class OSMElementModel {
         OSMWays = new ArrayList<>();
         nodeMap = new HashMap<>();
         OSMRelations = new ArrayList<>();
+        addresses = new HashMap<>();
     }
 
     public static OSMElementModel getInstance() {
@@ -35,6 +34,8 @@ public class OSMElementModel {
         }
         return OSMElementModel;
     }
+
+    public void putAddress(long id, Address address) { addresses.put(id, address);}
 
     public void addRelation(Relation relation) {
         OSMRelations.add(relation);
@@ -75,10 +76,13 @@ public class OSMElementModel {
         return OSMRelations;
     }
 
+    public Map<Long, Address> getAddresses(){return addresses;}
+
     public void clearData() {
         OSMWays = null;
         nodeMap = null;
         OSMRelations = null;
+        addresses = null;
         System.gc();
     }
 }

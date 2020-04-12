@@ -1,16 +1,20 @@
 package bfst20.presentation;
 
 import bfst20.logic.AppController;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,7 @@ public class View {
     private List<LinePath> coastLine;
     private boolean kd;
 
+    Label mouseLocationLabel;
 
     public View(Canvas canvas) {
         appController = new AppController();
@@ -70,11 +75,19 @@ public class View {
         kdTrees = new HashMap<>();
         Rect rect = new Rect(minLat, maxLat, minLon, maxLon);
         for (Map.Entry<Type, List<LinePath>> entry : linePaths.entrySet()) {
-
+            if(entry.getKey() == Type.HIGHWAY || entry.getKey() == Type.RESIDENTIAL_HIGHWAY || entry.getKey() == Type.TERTIARY || entry.getKey() == Type.UNCLASSIFIED_HIGHWAY) continue;
             if (entry.getValue().size() != 0) {
                 kdTrees.put(entry.getKey(), new KdTree(entry.getValue(), rect));
             }
         }
+
+        List<LinePath> allHighways = new ArrayList<>();
+        allHighways.addAll(linePaths.get(Type.HIGHWAY));
+        allHighways.addAll(linePaths.get(Type.TERTIARY));
+        allHighways.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
+        allHighways.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
+        kdTrees.put(Type.HIGHWAY, new KdTree(allHighways, rect));
+
         coastLine = linePaths.get(Type.COASTLINE);
 
         linePaths = null;
@@ -121,12 +134,15 @@ public class View {
         drawTypeKdTree(Type.WATER, rect, pixelwidth);
         drawTypeKdTree(Type.FOREST, rect, pixelwidth);
         drawTypeKdTree(Type.BUILDING, rect, pixelwidth);
+
         drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
+
+        /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
-        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);*/
 
-        // System.out.println(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getWay().getName());
+        mouseLocationLabel.setText(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getName());
 
         gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
@@ -167,5 +183,9 @@ public class View {
     public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
         repaint();
+    }
+
+    public void setMouseLocationView(Label mouseLocationLabel) {
+        this.mouseLocationLabel = mouseLocationLabel;
     }
 }

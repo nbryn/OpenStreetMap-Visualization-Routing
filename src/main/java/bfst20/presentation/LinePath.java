@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
@@ -19,14 +20,17 @@ public class LinePath implements Serializable {
     Boolean fill;
     float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
     Bounds bounds;
-
+    String name;
+    long wayId;
 
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
 
     }
 
-    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Boolean fill) {
+    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
+        name = way.getName();
+        wayId = way.getId();
         this.fill = fill;
         List<Long> nodeIds = way.getNodeIds();
 
@@ -84,6 +88,9 @@ public class LinePath implements Serializable {
     public float[] getCoords() {
         return coords;
     }
+
+    public String getName(){return name;}
+    public Long getWayId(){return wayId;}
 
     public void draw(GraphicsContext gc, double lineWidth) {
         gc.setLineWidth(Type.getLineWidth(type, lineWidth));
