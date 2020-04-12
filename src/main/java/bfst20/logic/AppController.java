@@ -10,7 +10,7 @@ import bfst20.data.OSMElementModel;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
-import bfst20.presentation.LinePath;
+import bfst20.logic.entities.LinePath;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;

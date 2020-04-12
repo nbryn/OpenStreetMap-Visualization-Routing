@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bfst20.logic.Type;
-import bfst20.presentation.LinePath;
+import bfst20.logic.entities.LinePath;
 import javafx.geometry.Point2D;
 
 public class KDTree {

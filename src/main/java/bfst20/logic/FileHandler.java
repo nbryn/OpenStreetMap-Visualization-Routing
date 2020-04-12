@@ -1,7 +1,7 @@
 package bfst20.logic;
 
 import bfst20.logic.entities.Bounds;
-import bfst20.presentation.LinePath;
+import bfst20.logic.entities.LinePath;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;

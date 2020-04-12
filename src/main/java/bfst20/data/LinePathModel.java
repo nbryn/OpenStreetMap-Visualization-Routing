@@ -3,7 +3,7 @@ package bfst20.data;
 import bfst20.logic.Type;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
-import bfst20.presentation.LinePath;
+import bfst20.logic.entities.LinePath;
 
 import java.util.ArrayList;
 import java.util.HashMap;

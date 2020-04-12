@@ -2,6 +2,7 @@ package bfst20.presentation;
 
 import bfst20.logic.AppController;
 import bfst20.logic.entities.Bounds;
+import bfst20.logic.entities.LinePath;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -144,7 +145,7 @@ public class View {
     public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
         for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {
 
-            linePath.draw(gc, lineWidth, isColorBlindMode);
+            drawLinePath(linePath, lineWidth);
             gc.fill();
         }
     }
@@ -152,8 +153,37 @@ public class View {
     public void drawTypeKdTree(Type type, Rect rect, double lineWidth, Point2D point) {
         for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant(), point)) {
 
-            linePath.draw(gc, lineWidth, isColorBlindMode);
+            drawLinePath(linePath, lineWidth);
             gc.fill();
+        }
+    }
+
+    private void drawLinePath(LinePath linePath, double lineWidth) {
+        Type type = linePath.getType();
+        gc.setLineWidth(Type.getLineWidth(type, lineWidth));
+        gc.beginPath();
+        gc.setStroke(Type.getColor(type, isColorBlindMode));
+        gc.setFill(linePath.getFill() ? Type.getColor(type, isColorBlindMode) : Color.TRANSPARENT);
+
+        /*if(way.getTagValue("name") != null){
+            gc.setFill(Color.BLACK);
+            gc.setFont(new Font(0.00022));
+            gc.fillText(way.getTagValue("name"), coords[0], coords[1]);
+            gc.setFill(fill ? color : Color.TRANSPARENT);
+        }*/
+        //gc.setStroke(Color.BLUE);
+        //gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
+        //  gc.setStroke(color);
+
+        trace(linePath, gc);
+        gc.stroke();
+    }
+
+    private void trace(LinePath linePath, GraphicsContext gc) {
+        float[] coords = linePath.getCoords();
+        gc.moveTo(coords[0], coords[1]);
+        for (int i = 2; i <= coords.length; i += 2) {
+            gc.lineTo(coords[i - 2], coords[i - 1]);
         }
     }
 
