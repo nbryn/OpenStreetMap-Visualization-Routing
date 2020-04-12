@@ -87,9 +87,11 @@ public class View {
         allHighways.addAll(linePaths.get(Type.TERTIARY));
         allHighways.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
         allHighways.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
+        allHighways.addAll(linePaths.get(Type.MOTORWAY));
         kdTrees.put(Type.HIGHWAY, new KdTree(allHighways, rect));
 
-        coastLine = linePaths.get(Type.COASTLINE);
+        kdTrees.put(Type.COASTLINE, new KdTree(linePaths.get(Type.COASTLINE), rect));
+
 
         linePaths = null;
         System.gc();
@@ -122,10 +124,7 @@ public class View {
                 MouseInfo.getPointerInfo().getLocation().getY() - 140);
 
 
-        for (LinePath linePath : coastLine) {
-            linePath.draw(gc, pixelwidth,isColorBlindMode);
-            gc.fill();
-        }
+        drawTypeKdTree(Type.COASTLINE, rect, pixelwidth);
 
         drawTypeKdTree(Type.FARMLAND, rect, pixelwidth);
         drawTypeKdTree(Type.RESIDENTIAL, rect, pixelwidth);
