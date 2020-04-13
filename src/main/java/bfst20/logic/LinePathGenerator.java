@@ -78,7 +78,7 @@ public class LinePathGenerator {
 
                 connectWays(relation, Type.FARMLAND);
 
-            } else if (relation.getName() != null && relation.getName().contains("Region")) {
+            } else if (relation.getName() != null && relation.getName().startsWith("Region ")) {
 
                 if (!appController.getLinePathsFromModel().containsKey(Type.COASTLINE)) {
                     appController.addTypeListToModel(Type.COASTLINE);
