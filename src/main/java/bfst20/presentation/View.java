@@ -1,6 +1,8 @@
 package bfst20.presentation;
 
+import bfst20.data.AddressModel;
 import bfst20.logic.AppController;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.kdtree.Rect;
@@ -13,6 +15,7 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,7 @@ public class View {
     private List<LinePath> coastLine;
     private boolean kd;
     private boolean isColorBlindMode = false;
+    private String addressString;
 
     Label mouseLocationLabel;
 
@@ -139,8 +143,30 @@ public class View {
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
+        drawSearchLocation(pixelwidth);
     }
 
+    public void setSearchString(String addressString){
+        this.addressString = addressString;
+
+        repaint();
+    }
+
+    public void drawSearchLocation(double lineWidth){
+        if(addressString == null) return;
+        AddressModel addressModel = AddressModel.getInstance();
+        Address address = addressModel.search(addressString);
+
+        int bubbleSize = 30;
+
+        gc.strokeOval(address.getLon()-(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize*1.4), lineWidth*bubbleSize, lineWidth*bubbleSize);
+        gc.moveTo(address.getLon()-(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize));
+        gc.lineTo(address.getLon(), address.getLat());
+        gc.moveTo(address.getLon()+(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize));
+        gc.lineTo(address.getLon(), address.getLat());
+        gc.stroke();
+        //gc.strokeRect(address.getLon(), address.getLat(), 1, 1);
+    }
 
     public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
         for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {

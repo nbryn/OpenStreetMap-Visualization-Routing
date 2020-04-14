@@ -12,7 +12,6 @@ public class OSMElementModel {
     private List<Way> OSMWays;
     private Map<Long, Node> nodeMap;
     private List<Relation> OSMRelations;
-    private Map<Long, Address> addresses;
     private Bounds bounds;
     private static boolean isLoaded = false;
     private static OSMElementModel OSMElementModel;
@@ -22,7 +21,6 @@ public class OSMElementModel {
         OSMWays = new ArrayList<>();
         nodeMap = new HashMap<>();
         OSMRelations = new ArrayList<>();
-        addresses = new HashMap<>();
     }
 
     public static OSMElementModel getInstance() {
@@ -32,9 +30,6 @@ public class OSMElementModel {
         }
         return OSMElementModel;
     }
-
-    public void putAddress(long id, Address address) { addresses.put(id, address);}
-
     public void addRelation(Relation relation) {
         OSMRelations.add(relation);
     }
@@ -74,13 +69,10 @@ public class OSMElementModel {
         return OSMRelations;
     }
 
-    public Map<Long, Address> getAddresses(){return addresses;}
-
     public void clearData() {
         OSMWays = null;
         nodeMap = null;
         OSMRelations = null;
-        addresses = null;
         System.gc();
     }
 }
