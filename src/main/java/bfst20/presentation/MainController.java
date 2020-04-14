@@ -6,14 +6,19 @@ import java.io.IOException;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.data.AddressModel;
 import bfst20.logic.AppController;
+import bfst20.logic.entities.Address;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 
@@ -44,6 +49,9 @@ public class MainController {
 
     @FXML
     private Label mouseLocationLabel;
+
+    @FXML private TextField searchAddress;
+    @FXML private Button searchAdressButton;
 
     public MainController() {
         appController = new AppController();
@@ -112,6 +120,16 @@ public class MainController {
 
         canvas.setOnMouseMoved(e -> {
             view.repaint();
+        });
+
+        searchAdressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                String searchText = searchAddress.getText();
+
+                view.setSearchString(searchText);
+
+            }
         });
     }
 

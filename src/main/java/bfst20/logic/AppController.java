@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Map;
 
+import bfst20.data.AddressModel;
 import bfst20.data.KDTreeModel;
 import bfst20.data.LinePathModel;
 import bfst20.data.OSMElementModel;
@@ -62,7 +63,8 @@ public class AppController {
     }
 
     public void putAddressToModel(long id, Address address) {
-        OSMElementModel.putAddress(id, address);
+        AddressModel addressModel = AddressModel.getInstance();
+        addressModel.putAddress(id, address);
     }
 
     public void addRelationToModel(Relation relation) {
@@ -106,7 +108,8 @@ public class AppController {
     }
 
     public Map<Long, Address> getAddresses() {
-        return OSMElementModel.getAddresses();
+        AddressModel addressModel = AddressModel.getInstance();
+        return addressModel.getAddresses();
     }
 
     public Way removeWayFromNodeTo(Type type, Node node) {

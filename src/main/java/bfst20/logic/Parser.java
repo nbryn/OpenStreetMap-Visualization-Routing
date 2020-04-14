@@ -79,7 +79,10 @@ public class Parser {
         OSMElement lastElementParsed = null;
         HashMap<String, String> tags = null;
         String[] firstTag = new String[2];
+
         long lastNodeId = 0;
+        float lat = 0;
+        float lon = 0;
 
         while (reader.hasNext()) {
             reader.next();
@@ -95,6 +98,8 @@ public class Parser {
                             break;
                         case "node":
                             lastNodeId = Long.parseLong(reader.getAttributeValue(null, "id"));
+                            lon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "lon"));
+                            lat = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
                             addNodeToMap(reader);
                             tags = new HashMap<>();
                             break;
@@ -133,7 +138,7 @@ public class Parser {
 
                     switch (tagName) {
                         case "node":
-                            parseTagsAddress(lastNodeId, tags);
+                            parseTagsAddress(lastNodeId, lon, lat, tags);
                             break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
@@ -151,7 +156,7 @@ public class Parser {
         }
     }
 
-    private void parseTagsAddress(long lastNodeId, HashMap<String, String> tags){
+    private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags){
         if(tags.size() == 0) return;
 
         String city = tags.get("addr:city");
@@ -161,7 +166,7 @@ public class Parser {
 
         if(city == null) return;
 
-        Address address = new Address(city, housenumber, postcode, street);
+        Address address = new Address(city, housenumber, postcode, street, lat, lon);
         appController.putAddressToModel(lastNodeId, address);
     }
 
