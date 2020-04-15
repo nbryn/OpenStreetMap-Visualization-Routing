@@ -14,12 +14,10 @@ class AddressModelTest {
 
     @Test
     void search() throws IOException, XMLStreamException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("samsoe.osm").getFile());
-        AppController appController = new AppController();
-        appController.loadFile(file);
 
         AddressModel addressModel = AddressModel.getInstance();
+
+        addressModel.putAddress(1, new Address("Samsoe", "1", "1234", "Smediegyde", 1, 1));
 
         String searchString = "Smediegyde 1";
 
