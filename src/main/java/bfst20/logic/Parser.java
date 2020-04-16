@@ -62,7 +62,7 @@ public class Parser {
             System.out.println("E is: " + e);
         }
 
-        tempOSMRelations = null;
+        tempOSMRelations = new ArrayList<>();
         System.gc();
 
     }
@@ -216,6 +216,7 @@ public class Parser {
         float maxLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
         float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+
 
         appController.setBoundsOnModel(new Bounds(maxLat, minLat, maxLon, minLon));
     }

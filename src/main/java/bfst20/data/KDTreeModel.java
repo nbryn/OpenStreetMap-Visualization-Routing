@@ -49,7 +49,7 @@ public class KDTreeModel {
     }
 
     public void clearData() {
-        kdTrees = null;
+        kdTrees = new HashMap<>();
         System.gc();
     }
 

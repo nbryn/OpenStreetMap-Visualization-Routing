@@ -89,10 +89,10 @@ public class LinePathModel {
     }
 
     public void clearData() {
-        linePaths = null;
-        nodeToCoastline = null;
-        nodeToForest = null;
-        nodeToFarmland = null;
+        linePaths = new HashMap<>();
+        nodeToCoastline = new HashMap<>();
+        nodeToForest = new HashMap<>();
+        nodeToFarmland = new HashMap<>();
         System.gc();
     }
 }
