@@ -48,6 +48,9 @@ public class View {
 
 
     public void initializeData() throws IOException {
+
+        trans = new Affine();
+
         if (!appController.isBinary()) {
             appController.createLinePaths();
             //appController.generateBinary();
@@ -56,6 +59,7 @@ public class View {
         appController.clearLinePathData();
 
         createKDTrees();
+
     }
 
     private void createKDTrees() {
