@@ -20,14 +20,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class MainController {
 
     private AppController appController;
 
     private View view;
-
 
     @FXML
     private MenuItem openFile;
@@ -50,16 +50,18 @@ public class MainController {
     @FXML
     private Label mouseLocationLabel;
 
-    @FXML private TextField searchAddress;
-    @FXML private Button searchAdressButton;
+    @FXML
+    private TextField searchAddress;
+    @FXML
+    private Button searchAdressButton;
 
     public MainController() {
         appController = new AppController();
 
     }
 
-    Point2D lastMouse;
 
+    Point2D lastMouse;
 
     @FXML
     public void initialize() {
@@ -79,30 +81,41 @@ public class MainController {
             routeVBox.setVisible(false);
         });
 
+        openFile.setOnAction(e -> {
+            File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
+            if (file != null) {
+                try {
+                    // Might change our project...
+                    appController.loadFile(file);
+                    view = appController.initialize();
+                } catch (IOException | XMLStreamException | FactoryConfigurationError e1) {
+                    System.out.println("Error loading file");
+                }
+            }
+        });
+
         try {
             ClassLoader classLoader = getClass().getClassLoader();
 
+            //File file = new File(classLoader.getResource("samsoe.osm").getFile());
 
-            File file = new File(classLoader.getResource("samsoe.osm").getFile());
+            // File file = new File(classLoader.getResource("samsoe.bin").getFile());
 
-            //File file = new File(classLoader.getResource("samsoe.bin").getFile());
-
-            //File file = new File("F:\\Projects\\DanmarksKortet\\samsoe.bin");
+             File file = new File("F:\\lolland.osm");
 
             appController.loadFile(file);
             view = appController.initialize();
 
-
         } catch (Exception err) {
-            //err.printStackTrace();
+            // err.printStackTrace();
         }
-       // colorBlindButton.setOnAction(e ->{
-           // view.changeToColorBlindMode(true);
-        //});
+        // colorBlindButton.setOnAction(e ->{
+        // view.changeToColorBlindMode(true);
+        // });
 
-        //normalColorButton.setOnAction(e ->{
-         //   view.changeToColorBlindMode(false);
-        //});
+        // normalColorButton.setOnAction(e ->{
+        // view.changeToColorBlindMode(false);
+        // });
 
         canvas.setOnScroll(e -> {
             double factor = Math.pow(1.001, e.getDeltaY());
