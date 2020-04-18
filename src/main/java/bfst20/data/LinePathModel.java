@@ -38,9 +38,36 @@ public class LinePathModel {
         return linePaths;
     }
 
+    public void addLinePath(Type type, LinePath linePath) {
+        if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
+        linePaths.get(type).add(linePath);
+    }
+
+    public void setLinePaths(Map<Type, List<LinePath>> linePaths) {
+        this.linePaths = linePaths;
+    }
+
+
+    public void addType(Type type) {
+        linePaths.put(type, new ArrayList<>());
+    }
+
 
     public Map<Node, Way> getNodeToCoastline() {
         return nodeToCoastline;
+
+    }
+
+    public void addNodeToForest(Node node, Way way) {
+        nodeToForest.put(node, way);
+    }
+
+    public void addToNodeToFarmland(Node node, Way way) {
+        nodeToFarmland.put(node, way);
+    }
+
+    public void addToNodeToCoastline(Node node, Way way) {
+        nodeToCoastline.put(node, way);
 
     }
 
@@ -64,29 +91,6 @@ public class LinePathModel {
         return nodeToCoastline.remove(node);
     }
 
-    public void addNodeToForest(Node node, Way way) {
-        nodeToForest.put(node, way);
-    }
-
-    public void addToNodeToFarmland(Node node, Way way) {
-        nodeToFarmland.put(node, way);
-    }
-
-    public void addToNodeToCoastline(Node node, Way way) {
-        nodeToCoastline.put(node, way);
-
-    }
-    public void setLinePaths(Map<Type, List<LinePath>> linePaths) {
-        this.linePaths = linePaths;
-    }
-
-    public void addLinePathToList(Type type, LinePath linePath) {
-        linePaths.get(type).add(linePath);
-    }
-
-    public void addTypeList(Type type) {
-        linePaths.put(type, new ArrayList<>());
-    }
 
     public void clearData() {
         linePaths = new HashMap<>();

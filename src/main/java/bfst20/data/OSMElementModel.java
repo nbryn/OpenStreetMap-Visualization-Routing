@@ -30,39 +30,34 @@ public class OSMElementModel {
         }
         return OSMElementModel;
     }
-    public void addRelation(Relation relation) {
-        OSMRelations.add(relation);
-    }
 
     public void setBounds(Bounds bounds) {
-
         this.bounds = new Bounds(bounds.getMaxLat(), bounds.getMinLat(), bounds.getMaxLon(), bounds.getMinLon());
 
-        System.out.println("Hey " + this.bounds.getMaxLat());
     }
 
     public Bounds getBounds() {
         return bounds;
     }
 
-
     public void addToNodeMap(long id, Node node) {
         nodeMap.put(id, node);
+    }
+
+    public Map<Long, Node> getOSMNodes() {
+        return nodeMap;
     }
 
     public void addWay(Way way) {
         OSMWays.add(way);
     }
 
-
-
-
     public List<Way> getOSMWays() {
         return OSMWays;
     }
 
-    public Map<Long, Node> getOSMNodes() {
-        return nodeMap;
+    public void addRelation(Relation relation) {
+        OSMRelations.add(relation);
     }
 
     public List<Relation> getOSMRelations() {
