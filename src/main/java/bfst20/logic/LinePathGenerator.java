@@ -29,9 +29,9 @@ public class LinePathGenerator {
     }
 
     public void clearData() {
-        OSMNodes = null;
-        OSMWays = null;
-        OSMRelations = null;
+        OSMNodes = new HashMap<>();
+        OSMWays = new ArrayList<>();
+        OSMRelations = new ArrayList<>();
 
         System.gc();
     }
