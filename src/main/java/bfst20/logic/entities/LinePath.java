@@ -14,13 +14,14 @@ import bfst20.logic.Type;
 import javafx.scene.paint.Color;
 
 public class LinePath implements Serializable {
-    float[] coords;
-    Type type;
-    boolean fill;
-    float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
-    Bounds bounds;
-    String name;
-    long wayId;
+    private float[] coords;
+    private Type type;
+    private boolean fill;
+    private float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
+    private Bounds bounds;
+    private String name;
+    private long wayId;
+    private Way way;
 
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
@@ -30,6 +31,7 @@ public class LinePath implements Serializable {
     public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
+        this.way = way;
         this.fill = fill;
         List<Long> nodeIds = way.getNodeIds();
 
@@ -98,6 +100,10 @@ public class LinePath implements Serializable {
 
     public Type getType() {
         return type;
+    }
+
+    public Way getWay() {
+        return this.way;
     }
 
     public Long getWayId() {

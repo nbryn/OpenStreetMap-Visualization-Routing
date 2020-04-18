@@ -15,8 +15,6 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,19 +45,12 @@ public class View {
     }
 
 
-    public void initializeData() throws IOException {
-
+    public void initialize() throws IOException {
         trans = new Affine();
-
-        if (!appController.isBinary()) {
-            appController.createLinePaths();
-            //appController.generateBinary();
-        }
         linePaths = appController.getLinePathsFromModel();
         appController.clearLinePathData();
 
         createKDTrees();
-
     }
 
     private void createKDTrees() {
@@ -73,14 +64,9 @@ public class View {
             }
         }
 
-        List<LinePath> allHighways = new ArrayList<>();
-        allHighways.addAll(linePaths.get(Type.HIGHWAY));
-        allHighways.addAll(linePaths.get(Type.TERTIARY));
-        allHighways.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
-        allHighways.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
-        if (linePaths.get(Type.MOTORWAY) != null) allHighways.addAll(linePaths.get(Type.MOTORWAY));
+        List<LinePath> highways = appController.getHighwaysFromModel();
 
-        appController.addKDTreeToModel(Type.HIGHWAY, allHighways);
+        appController.addKDTreeToModel(Type.HIGHWAY, highways);
         appController.addKDTreeToModel(Type.COASTLINE, linePaths.get(Type.COASTLINE));
 
         linePaths = null;
@@ -150,23 +136,23 @@ public class View {
         drawSearchLocation(pixelwidth);
     }
 
-    public void setSearchString(String addressString){
+    public void setSearchString(String addressString) {
         this.addressString = addressString;
 
         repaint();
     }
 
-    public void drawSearchLocation(double lineWidth){
-        if(addressString == null) return;
+    public void drawSearchLocation(double lineWidth) {
+        if (addressString == null) return;
         AddressModel addressModel = AddressModel.getInstance();
         Address address = addressModel.search(addressString);
 
         int bubbleSize = 30;
 
-        gc.strokeOval(address.getLon()-(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize*1.4), lineWidth*bubbleSize, lineWidth*bubbleSize);
-        gc.moveTo(address.getLon()-(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize));
+        gc.strokeOval(address.getLon() - (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
+        gc.moveTo(address.getLon() - (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize));
         gc.lineTo(address.getLon(), address.getLat());
-        gc.moveTo(address.getLon()+(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize));
+        gc.moveTo(address.getLon() + (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize));
         gc.lineTo(address.getLon(), address.getLat());
         gc.stroke();
         //gc.strokeRect(address.getLon(), address.getLat(), 1, 1);

@@ -29,7 +29,6 @@ public class Node implements OSMElement {
         return longitude;
     }
 
-    @Override
     public void setValues() {
         setId();
         setLatitude();

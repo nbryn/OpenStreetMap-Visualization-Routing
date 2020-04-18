@@ -15,6 +15,7 @@ public class LinePathModel {
     private static boolean isLoaded = false;
     private static LinePathModel linePathModel;
     private Map<Type, List<LinePath>> linePaths;
+    private List<LinePath> highWays;
     private Map<Node, Way> nodeToCoastline;
     private Map<Node, Way> nodeToForest;
     private Map<Node, Way> nodeToFarmland;
@@ -24,6 +25,7 @@ public class LinePathModel {
         nodeToCoastline = new HashMap<>();
         nodeToForest = new HashMap<>();
         nodeToFarmland = new HashMap<>();
+        highWays = new ArrayList<>();
     }
 
     public static LinePathModel getInstance() {
@@ -32,6 +34,14 @@ public class LinePathModel {
             linePathModel = new LinePathModel();
         }
         return linePathModel;
+    }
+
+    public void saveHighways(List<LinePath> highways) {
+        this.highWays = highways;
+    }
+
+    public List<LinePath> getHighWays() {
+        return this.highWays;
     }
 
     public Map<Type, List<LinePath>> getLinePaths() {

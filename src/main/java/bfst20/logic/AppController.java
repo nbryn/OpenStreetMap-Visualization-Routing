@@ -1,6 +1,7 @@
 package bfst20.logic;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.pathfinding.PathController;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
@@ -20,11 +22,14 @@ import javax.xml.stream.XMLStreamException;
 
 public class AppController {
 
+    private PathController pathController;
+    private LinePathGenerator linePathGenerator;
     private OSMElementModel OSMElementModel;
     private LinePathModel linePathModel;
     private KDTreeModel kdTreeModel;
+
     private Parser parser;
-    private LinePathGenerator linePathGenerator;
+
     private View view;
     private boolean isBinary = false;
 
@@ -47,9 +52,6 @@ public class AppController {
         parser.parseOSMFile(file);
     }
 
-    public boolean isBinary() {
-        return isBinary;
-    }
 
     public void createView(Canvas canvas, Label mouseLocationLabel) {
         view = new View(canvas);
@@ -57,9 +59,35 @@ public class AppController {
     }
 
     public View initialize() throws IOException {
-        view.initializeData();
-
+        pathController = PathController.getInstance();
+        if (!isBinary) {
+            createLinePaths();
+            //generateBinary();
+        }
+        try {
+            generateHighways();
+            pathController.generateEdges(getHighwaysFromModel(), getOSMNodesFromModel());
+            view.initialize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return view;
+    }
+
+    public List<LinePath> getHighwaysFromModel() {
+        return linePathModel.getHighWays();
+    }
+
+    public void generateHighways() {
+        Map<Type, List<LinePath>> linePaths = linePathModel.getLinePaths();
+        List<LinePath> highWays = new ArrayList<>();
+        highWays.addAll(linePaths.get(Type.HIGHWAY));
+        highWays.addAll(linePaths.get(Type.TERTIARY));
+        highWays.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
+        highWays.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
+        if (linePaths.get(Type.MOTORWAY) != null) highWays.addAll(linePaths.get(Type.MOTORWAY));
+
+        linePathModel.saveHighways(highWays);
     }
 
     public void putAddressToModel(long id, Address address) {
