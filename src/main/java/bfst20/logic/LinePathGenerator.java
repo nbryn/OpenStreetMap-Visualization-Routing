@@ -59,7 +59,7 @@ public class LinePathGenerator {
             Type type = linePath.getType();
 
             if (!appController.getLinePathsFromModel().containsKey(type)) {
-                appController.addTypeListToModel(type);
+                appController.addTypeToModel(type);
             }
 
             if (type != Type.PLACE) {
@@ -81,7 +81,7 @@ public class LinePathGenerator {
             } else if (relation.getName() != null && relation.getName().startsWith("Region ")) {
 
                 if (!appController.getLinePathsFromModel().containsKey(Type.COASTLINE)) {
-                    appController.addTypeListToModel(Type.COASTLINE);
+                    appController.addTypeToModel(Type.COASTLINE);
                 }
 
                 connectWays(relation, Type.COASTLINE);
@@ -115,8 +115,8 @@ public class LinePathGenerator {
 
             way = merge(merge(before, way), after);
 
-            appController.addToMapInModel(type, OSMNodes.get(way.getFirstNodeId()), way);
-            appController.addToMapInModel(type, OSMNodes.get(way.getLastNodeId()), way);
+            appController.addToModel(type, OSMNodes.get(way.getFirstNodeId()), way);
+            appController.addToModel(type, OSMNodes.get(way.getLastNodeId()), way);
         }
     }
 

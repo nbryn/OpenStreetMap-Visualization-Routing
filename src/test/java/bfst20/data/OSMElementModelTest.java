@@ -4,7 +4,6 @@ import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
-import bfst20.logic.kdtree.Rect;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +18,10 @@ class OSMElementModelTest {
         osmElementModel = OSMElementModel.getInstance();
     }
 
+    @Test
+    void getInstance() {
+        assertEquals(osmElementModel, OSMElementModel.getInstance());
+    }
 
     @Test
     void addRelation() {
@@ -31,13 +34,17 @@ class OSMElementModelTest {
 
     @Test
     void getOSMRelations() {
+        osmElementModel.getOSMRelations().clear();
+
         Relation relation = new Relation();
         Relation relation2 = new Relation();
 
         osmElementModel.addRelation(relation);
         osmElementModel.addRelation(relation2);
 
-        assertNotNull(osmElementModel.getOSMRelations());
+
+
+        assertEquals(2, osmElementModel.getOSMRelations().size());
     }
 
     @Test

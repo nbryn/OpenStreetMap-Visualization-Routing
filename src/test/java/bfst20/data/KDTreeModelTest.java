@@ -28,6 +28,11 @@ class KDTreeModelTest {
     }
 
     @Test
+    void getInstance() {
+        assertEquals(kdTreeModel, KDTreeModel.getInstance());
+    }
+
+    @Test
     void getRect() {
         assertNotNull(kdTreeModel.getRect());
     }

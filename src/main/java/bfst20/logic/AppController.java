@@ -121,7 +121,7 @@ public class AppController {
         return way;
     }
 
-    public void addToMapInModel(Type type, Node node, Way way) {
+    public void addToModel(Type type, Node node, Way way) {
         if (type == Type.COASTLINE) linePathModel.addToNodeToCoastline(node, way);
         else if (type == Type.FARMLAND) linePathModel.addToNodeToFarmland(node, way);
         else if (type == Type.FOREST) linePathModel.addNodeToForest(node, way);
@@ -137,11 +137,11 @@ public class AppController {
     }
 
     public void addLinePathToModel(Type type, LinePath linePath) {
-        linePathModel.addLinePathToList(type, linePath);
+        linePathModel.addLinePath(type, linePath);
     }
 
-    public void addTypeListToModel(Type type) {
-        linePathModel.addTypeList(type);
+    public void addTypeToModel(Type type) {
+        linePathModel.addType(type);
     }
 
     public void createLinePaths() {
