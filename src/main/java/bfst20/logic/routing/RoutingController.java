@@ -60,17 +60,14 @@ public class RoutingController {
                 }
 
             }
-
-
         }
-
     }
 
     private void buildGraph() {
         graph = new Graph(nodesInGraph);
 
         for (Edge edge : edges) {
-            graph.addEdge(edge.getSource(), edge.getTarget());
+            graph.addEdge(edge);
         }
 
     }

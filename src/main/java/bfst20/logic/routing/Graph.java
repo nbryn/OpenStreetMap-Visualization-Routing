@@ -10,36 +10,47 @@ import java.util.Map;
 public class Graph {
 
     private final int nodeCount;
-    private int edgeCount;
-    private Map<Node, List<Node>> adj;
+    private List<Edge> edges;
+    private Map<Node, List<Edge>> adj;
+    private List<Node> nodes;
+
 
 
     public Graph(List<Node> nodes) {
-        this.nodeCount = nodes.size();
-        this.edgeCount = 0;
+        this.nodes = nodes;
+        edges = new ArrayList<>();
         adj = new HashMap<>();
+        this.nodeCount = nodes.size();
+
         for (int i = 0; i < nodeCount; i++) {
             adj.put(nodes.get(i), new ArrayList<>());
         }
     }
 
-
-    public int V() {
+    public int nodeCount() {
         return nodeCount;
     }
 
-    public int E() {
-        return edgeCount;
+    public int edgeCount() {
+        return edges.size();
     }
 
-    public void addEdge(Node source, Node target) {
-        edgeCount++;
-        adj.get(source).add(target);
-        adj.get(target).add(source);
+    public Iterable<Edge> getEdges() {
+        return edges;
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
+    public void addEdge(Edge edge) {
+        edges.add(edge);
+        adj.get(edge.getSource()).add(edge);
+
 
     }
 
-    public Iterable<Node> adj(Node node) {
+    public Iterable<Edge> adj(Node node) {
         return adj.get(node);
     }
 
