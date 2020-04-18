@@ -13,7 +13,7 @@ import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.entities.LinePath;
-import bfst20.logic.pathfinding.PathController;
+import bfst20.logic.routing.RoutingController;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class AppController {
 
-    private PathController pathController;
+    private RoutingController routingController;
     private LinePathGenerator linePathGenerator;
     private OSMElementModel OSMElementModel;
     private LinePathModel linePathModel;
@@ -59,14 +59,15 @@ public class AppController {
     }
 
     public View initialize() throws IOException {
-        pathController = PathController.getInstance();
+        routingController = routingController.getInstance();
         if (!isBinary) {
             createLinePaths();
             //generateBinary();
         }
         try {
             generateHighways();
-            pathController.generateEdges(getHighwaysFromModel(), getOSMNodesFromModel());
+            routingController.initialize(getHighwaysFromModel(), getOSMNodesFromModel());
+            clearNodeData();
             view.initialize();
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,6 +130,10 @@ public class AppController {
 
     public void clearOSMData() {
         OSMElementModel.clearData();
+    }
+
+    public void clearNodeData() {
+        OSMElementModel.clearNodeData();
     }
 
     public Map<Type, List<LinePath>> getLinePathsFromModel() {

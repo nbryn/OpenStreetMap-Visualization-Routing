@@ -1,4 +1,4 @@
-package bfst20.logic.pathfinding;
+package bfst20.logic.routing;
 
 import bfst20.logic.entities.Node;
 
@@ -28,11 +28,9 @@ public class Graph {
         return nodeCount;
     }
 
-
     public int E() {
         return edgeCount;
     }
-
 
     public void addEdge(Node source, Node target) {
         edgeCount++;
@@ -41,15 +39,12 @@ public class Graph {
 
     }
 
-
     public Iterable<Node> adj(Node node) {
         return adj.get(node);
     }
 
-
     public int degree(Node node) {
         return adj.get(node).size();
     }
-
 
 }

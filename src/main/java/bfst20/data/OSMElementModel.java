@@ -66,8 +66,13 @@ public class OSMElementModel {
 
     public void clearData() {
         OSMWays = new ArrayList<>();
-        //nodeMap = new HashMap<>();
         OSMRelations = new ArrayList<>();
+
+    }
+
+    public void clearNodeData() {
+        nodeMap = new HashMap<>();
+
         System.gc();
     }
 }

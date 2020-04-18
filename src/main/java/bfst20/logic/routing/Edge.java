@@ -1,4 +1,4 @@
-package bfst20.logic.pathfinding;
+package bfst20.logic.routing;
 
 import bfst20.logic.Type;
 import bfst20.logic.entities.Node;
@@ -26,6 +26,14 @@ public class Edge implements Comparable {
         this.length = length;
         this.speedLimit = speedLimit;
 
+    }
+
+    public Node getSource() {
+        return source;
+    }
+
+    public Node getTarget() {
+        return target;
     }
 
     public double getLength() {

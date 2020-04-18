@@ -1,4 +1,4 @@
-package bfst20.logic.pathfinding;
+package bfst20.logic.routing;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
