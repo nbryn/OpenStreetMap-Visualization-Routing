@@ -19,22 +19,27 @@ class AddressModelTest {
     }
 
     @Test
-    void putAddress() {
-        Address address = new Address("Farum", "21", "3520", "2", 21, 22);
-        addressModel.putAddress(23232, address);
-
-        assertEquals(address, addressModel.getAddresses().get(22));
+    void getInstance() {
+        assertEquals(addressModel, AddressModel.getInstance());
     }
 
     @Test
-    void getAddresses() {
+    void putAddress() {
+        addressModel.getAddresses().clear();
+        Address address = new Address("Farum", "21", "3520", "2", 21, 22);
+        addressModel.putAddress(23232, address);
+
         assertEquals(1, addressModel.getAddresses().size());
     }
 
     @Test
-    void getInstance() {
-        assertEquals(addressModel, AddressModel.getInstance());
+    void getAddresses() {
+        addressModel.getAddresses().clear();
+        addressModel.putAddress(23232, new Address("Farum", "21", "3520", "2", 21, 22));
+
+        assertEquals(1, addressModel.getAddresses().size());
     }
+
 
     @Test
     void search() {
