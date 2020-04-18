@@ -33,6 +33,7 @@ public class OSMElementModel {
 
     public void setBounds(Bounds bounds) {
         this.bounds = new Bounds(bounds.getMaxLat(), bounds.getMinLat(), bounds.getMaxLon(), bounds.getMinLon());
+
     }
 
     public Bounds getBounds() {
@@ -64,9 +65,9 @@ public class OSMElementModel {
     }
 
     public void clearData() {
-        OSMWays = null;
-        nodeMap = null;
-        OSMRelations = null;
+        OSMWays = new ArrayList<>();
+        nodeMap = new HashMap<>();
+        OSMRelations = new ArrayList<>();
         System.gc();
     }
 }
