@@ -26,9 +26,8 @@ public class Dijkstra {
         pq = new MinPQ<>(graph.nodeCount());
         pq.insert(root);
         while (!pq.isEmpty()) {
-            Node node = pq.delMin();
-
-            for (Edge e : graph.adj(node))
+            Node min = pq.delMin();
+            for (Edge e : graph.adj(min))
                 relax(e);
         }
     }
@@ -44,7 +43,6 @@ public class Dijkstra {
         }
     }
 
-
     public double distTo(Node node) {
         return distTo.get(node);
     }
@@ -52,5 +50,4 @@ public class Dijkstra {
     public boolean hasPathTo(Node node) {
         return distTo.get(node) < Double.POSITIVE_INFINITY;
     }
-
 }
