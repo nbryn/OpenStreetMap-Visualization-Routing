@@ -1,10 +1,11 @@
 package bfst20.presentation;
 
-import bfst20.data.AddressModel;
+import bfst20.data.AddressData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.entities.Node;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -15,8 +16,6 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,19 +46,12 @@ public class View {
     }
 
 
-    public void initializeData() throws IOException {
-
+    public void initialize() throws IOException {
         trans = new Affine();
-
-        if (!appController.isBinary()) {
-            appController.createLinePaths();
-            //appController.generateBinary();
-        }
         linePaths = appController.getLinePathsFromModel();
         appController.clearLinePathData();
 
         createKDTrees();
-
     }
 
     private void createKDTrees() {
@@ -73,14 +65,9 @@ public class View {
             }
         }
 
-        List<LinePath> allHighways = new ArrayList<>();
-        allHighways.addAll(linePaths.get(Type.HIGHWAY));
-        allHighways.addAll(linePaths.get(Type.TERTIARY));
-        allHighways.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
-        allHighways.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
-        if (linePaths.get(Type.MOTORWAY) != null) allHighways.addAll(linePaths.get(Type.MOTORWAY));
+        List<LinePath> highways = appController.getHighwaysFromModel();
 
-        appController.addKDTreeToModel(Type.HIGHWAY, allHighways);
+        appController.addKDTreeToModel(Type.HIGHWAY, highways);
         appController.addKDTreeToModel(Type.COASTLINE, linePaths.get(Type.COASTLINE));
 
         linePaths = null;
@@ -96,12 +83,15 @@ public class View {
         pan(-minLon, -minLat);
         zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
 
+
         repaint();
     }
+
 
     public void repaint() {
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
+
 
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
@@ -148,25 +138,41 @@ public class View {
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
+
+        //shortestPath(303870663, 303870677, pixelwidth);
     }
 
-    public void setSearchString(String addressString){
+    private void shortestPath(long sourceID, long targetID, double lineWidth) {
+        Node target = appController.getNodeFromModel(sourceID);
+        Node source = appController.getNodeFromModel(targetID);
+
+        double distance = appController.initializeRouting(source, target);
+        List<LinePath> route = appController.getRouteFromModel();
+
+        for (LinePath linePath : route) {
+            drawRoute(linePath, lineWidth);
+        }
+
+        System.out.println(distance);
+    }
+
+    public void setSearchString(String addressString) {
         this.addressString = addressString;
 
         repaint();
     }
 
-    public void drawSearchLocation(double lineWidth){
-        if(addressString == null) return;
-        AddressModel addressModel = AddressModel.getInstance();
-        Address address = addressModel.search(addressString);
+    public void drawSearchLocation(double lineWidth) {
+        if (addressString == null) return;
+        AddressData addressData = AddressData.getInstance();
+        Address address = addressData.search(addressString);
 
         int bubbleSize = 30;
 
-        gc.strokeOval(address.getLon()-(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize*1.4), lineWidth*bubbleSize, lineWidth*bubbleSize);
-        gc.moveTo(address.getLon()-(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize));
+        gc.strokeOval(address.getLon() - (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
+        gc.moveTo(address.getLon() - (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize));
         gc.lineTo(address.getLon(), address.getLat());
-        gc.moveTo(address.getLon()+(lineWidth*bubbleSize/2), address.getLat()-(lineWidth*bubbleSize));
+        gc.moveTo(address.getLon() + (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize));
         gc.lineTo(address.getLon(), address.getLat());
         gc.stroke();
         //gc.strokeRect(address.getLon(), address.getLat(), 1, 1);
@@ -187,6 +193,19 @@ public class View {
             gc.fill();
         }
     }
+
+    private void drawRoute(LinePath linePath, double lineWidth) {
+        Type type = linePath.getType();
+        gc.setLineWidth(lineWidth);
+        gc.beginPath();
+        gc.setStroke(Color.RED);
+        gc.setFill(Color.RED);
+
+
+        trace(linePath, gc);
+        gc.stroke();
+    }
+
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
         Type type = linePath.getType();

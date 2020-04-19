@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="720" prefWidth="1600" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bfst20.presentation.MainController">
+<AnchorPane prefHeight="720" prefWidth="1600" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bfst20.presentation.ViewController">
 <HBox fx:id="hbox" prefHeight="720" prefWidth="1600">
     <!-- Pane for both the searching of addresses and routing-->
       <Pane fx:id="omniPane" prefHeight="200.0" prefWidth="330.0">

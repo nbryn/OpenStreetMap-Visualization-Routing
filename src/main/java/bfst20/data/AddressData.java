@@ -7,21 +7,21 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddressModel {
+public class AddressData {
 
-    private static AddressModel addressModel;
+    private static AddressData addressData;
     private Map<Long, Address> addresses;
 
-    private AddressModel(){
+    private AddressData(){
         addresses = new HashMap<>();
     }
 
-    public static AddressModel getInstance(){
-        if(addressModel == null){
-            addressModel = new AddressModel();
+    public static AddressData getInstance(){
+        if(addressData == null){
+            addressData = new AddressData();
         }
 
-        return addressModel;
+        return addressData;
     }
 
     public void putAddress(long id, Address address) { addresses.put(id, address);}

@@ -10,6 +10,7 @@ public enum Type {
     HIGHWAY,
     MOTORWAY,
     TERTIARY,
+    ROUTING,
     RESIDENTIAL_HIGHWAY,
     UNCLASSIFIED_HIGHWAY,
     UNCLASSIFIED,
@@ -44,6 +45,7 @@ public enum Type {
         switch (type){
             case COASTLINE:
             case MOTORWAY:
+            case ROUTING:
                 return 1;
             case FOREST:
             case HEATH:
@@ -71,6 +73,7 @@ public enum Type {
             case NATURAL:
             case FARMLAND:
             case FOREST:
+            case ROUTING:
             case WATER:
             case COASTLINE:
             case BUILDING:
@@ -122,9 +125,11 @@ public enum Type {
             case TREE_ROW:
                 return Color.rgb(0, 102, 0, 0.7);
             case PARKING:
-                return Color.RED;
+                return Color.ROYALBLUE;
             case NATURAL:
                 return Color.BLUEVIOLET;
+            case ROUTING:
+                return Color.RED;
             default: //TODO FIX
                 return Color.TRANSPARENT;
         }

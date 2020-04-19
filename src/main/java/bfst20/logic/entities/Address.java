@@ -6,19 +6,21 @@ public class Address {
                     postcode,
                     street;
     private float lat, lon;
+    private long nodeID;
 
     public Address(String city,
                    String housenumber,
                    String postcode,
                    String street,
                    float lat,
-                   float lon){
+                   float lon, long nodeID){
         this.city = city;
         this.street = street;
         this.housenumber = housenumber;
         this.postcode = postcode;
         this.lat = lat;
         this.lon = lon;
+        this.nodeID = nodeID;
     }
 
     public String getStreet(){
@@ -30,6 +32,10 @@ public class Address {
 
     public float getLat(){return lat;}
     public float getLon(){return lon;}
+
+    public long getNodeID() {
+        return nodeID;
+    }
 
     @Override
     public String toString(){

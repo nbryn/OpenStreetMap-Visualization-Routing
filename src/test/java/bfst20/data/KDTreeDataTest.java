@@ -7,7 +7,6 @@ import bfst20.logic.kdtree.Rect;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,36 +14,36 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class KDTreeModelTest {
+class KDTreeDataTest {
 
-    static KDTreeModel kdTreeModel;
+    static KDTreeData kdTreeData;
     static Rect rect;
 
     @BeforeAll
     static void setup() {
-        kdTreeModel = KDTreeModel.getInstance();
+        kdTreeData = KDTreeData.getInstance();
         rect = new Rect();
 
     }
 
     @Test
     void getInstance() {
-        assertEquals(kdTreeModel, KDTreeModel.getInstance());
+        assertEquals(kdTreeData, KDTreeData.getInstance());
     }
 
     @Test
     void getRect() {
-        assertNotNull(kdTreeModel.getRect());
+        assertNotNull(kdTreeData.getRect());
     }
 
     @Test
     void setValuesOnRect() throws NoSuchFieldException {
-        kdTreeModel.setValuesOnRect(10, 15, 20, 25);
+        kdTreeData.setValuesOnRect(10, 15, 20, 25);
 
-        assertEquals(10, kdTreeModel.getRect().getMinLat());
-        assertEquals(15, kdTreeModel.getRect().getMaxLat());
-        assertEquals(20, kdTreeModel.getRect().getMinLon());
-        assertEquals(25, kdTreeModel.getRect().getMaxLon());
+        assertEquals(10, kdTreeData.getRect().getMinLat());
+        assertEquals(15, kdTreeData.getRect().getMaxLat());
+        assertEquals(20, kdTreeData.getRect().getMinLon());
+        assertEquals(25, kdTreeData.getRect().getMaxLon());
     }
 
     @Test
@@ -55,7 +54,7 @@ class KDTreeModelTest {
 
         KDTree kdTree = new KDTree(linePaths, rect);
 
-        kdTreeModel.addKDTree(Type.COASTLINE, kdTree);
+        kdTreeData.addKDTree(Type.COASTLINE, kdTree);
 
      /*   Field kdTrees = KDTreeModel.class.getDeclaredField("kdTrees");
         kdTrees.setAccessible(true);
@@ -65,7 +64,7 @@ class KDTreeModelTest {
 
         KDTree returned = (KDTree) get.invoke(map, Type.COASTLINE);*/
 
-        assertEquals(kdTreeModel.getKDTree(Type.COASTLINE), kdTree);
+        assertEquals(kdTreeData.getKDTree(Type.COASTLINE), kdTree);
 
     }
 
@@ -76,8 +75,8 @@ class KDTreeModelTest {
         linePaths.add(linePath);
 
         KDTree kdTree = new KDTree(linePaths, rect);
-        kdTreeModel.addKDTree(Type.COASTLINE, kdTree);
+        kdTreeData.addKDTree(Type.COASTLINE, kdTree);
 
-        assertEquals(kdTreeModel.getKDTree(Type.COASTLINE), kdTree);
+        assertEquals(kdTreeData.getKDTree(Type.COASTLINE), kdTree);
     }
 }

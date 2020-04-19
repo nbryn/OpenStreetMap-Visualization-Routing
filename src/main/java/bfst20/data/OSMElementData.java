@@ -8,32 +8,36 @@ import java.util.Map;
 import bfst20.logic.entities.*;
 
 
-public class OSMElementModel {
+public class OSMElementData {
     private List<Way> OSMWays;
     private Map<Long, Node> nodeMap;
     private List<Relation> OSMRelations;
     private Bounds bounds;
     private static boolean isLoaded = false;
-    private static OSMElementModel OSMElementModel;
+    private static OSMElementData OSMElementData;
 
 
-    private OSMElementModel() {
+    private OSMElementData() {
         OSMWays = new ArrayList<>();
         nodeMap = new HashMap<>();
         OSMRelations = new ArrayList<>();
     }
 
-    public static OSMElementModel getInstance() {
+    public static OSMElementData getInstance() {
         if (!isLoaded) {
             isLoaded = true;
-            OSMElementModel = new OSMElementModel();
+            OSMElementData = new OSMElementData();
         }
-        return OSMElementModel;
+        return OSMElementData;
     }
 
     public void setBounds(Bounds bounds) {
         this.bounds = new Bounds(bounds.getMaxLat(), bounds.getMinLat(), bounds.getMaxLon(), bounds.getMinLon());
 
+    }
+
+    public Node getNode(long id) {
+        return nodeMap.get(id);
     }
 
     public Bounds getBounds() {
@@ -66,8 +70,13 @@ public class OSMElementModel {
 
     public void clearData() {
         OSMWays = new ArrayList<>();
-        nodeMap = new HashMap<>();
         OSMRelations = new ArrayList<>();
-        System.gc();
+
+    }
+
+    public void clearNodeData() {
+      /*  nodeMap = new HashMap<>();
+
+        System.gc();*/
     }
 }

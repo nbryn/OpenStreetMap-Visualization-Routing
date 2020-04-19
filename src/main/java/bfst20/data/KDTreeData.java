@@ -7,24 +7,24 @@ import bfst20.logic.kdtree.Rect;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KDTreeModel {
+public class KDTreeData {
 
     private static boolean isLoaded = false;
-    private static KDTreeModel kdTreeModel;
+    private static KDTreeData kdTreeData;
     private Map<Type, KDTree> kdTrees;
     private Rect rect;
 
-    private KDTreeModel() {
+    private KDTreeData() {
         kdTrees = new HashMap<>();
         rect = new Rect();
     }
 
-    public static KDTreeModel getInstance() {
+    public static KDTreeData getInstance() {
         if (!isLoaded) {
             isLoaded = true;
-            kdTreeModel = new KDTreeModel();
+            kdTreeData = new KDTreeData();
         }
-        return kdTreeModel;
+        return kdTreeData;
     }
 
     public Rect getRect() {
