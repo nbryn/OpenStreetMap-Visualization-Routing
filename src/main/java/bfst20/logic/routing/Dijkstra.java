@@ -20,16 +20,26 @@ public class Dijkstra {
         for (int i = 0; i < graph.getNodes().size(); i++) {
             distTo.put(graph.getNodes().get(i), Double.POSITIVE_INFINITY);
         }
+        root.setDistTo(0.0);
         distTo.put(root, 0.0);
 
 
         pq = new MinPQ<>(graph.nodeCount());
         pq.insert(root);
         while (!pq.isEmpty()) {
-            Node min = pq.delMin();
-            for (Edge e : graph.adj(min))
-                relax(e);
+            try {
+                Node min = pq.delMin();
+                for (Edge e : graph.adj(min)) {
+                    relax(e);
+                }
+            } catch (Exception es) {
+                es.printStackTrace();
+            }
         }
+    }
+
+    public Map<Node, Double> getDistTo() {
+        return distTo;
     }
 
     private void relax(Edge edge) {

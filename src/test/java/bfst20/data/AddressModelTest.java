@@ -26,7 +26,7 @@ class AddressModelTest {
     @Test
     void putAddress() {
         addressModel.getAddresses().clear();
-        Address address = new Address("Farum", "21", "3520", "2", 21, 22);
+        Address address = new Address("Farum", "21", "3520", "2", 21, 22, 26);
         addressModel.putAddress(23232, address);
 
         assertEquals(1, addressModel.getAddresses().size());
@@ -35,7 +35,7 @@ class AddressModelTest {
     @Test
     void getAddresses() {
         addressModel.getAddresses().clear();
-        addressModel.putAddress(23232, new Address("Farum", "21", "3520", "2", 21, 22));
+        addressModel.putAddress(23232, new Address("Farum", "21", "3520", "2", 21, 22, 25));
 
         assertEquals(1, addressModel.getAddresses().size());
     }
@@ -43,7 +43,7 @@ class AddressModelTest {
 
     @Test
     void search() {
-        addressModel.putAddress(1, new Address("Samsoe", "1", "1234", "Smediegyde", 1, 1));
+        addressModel.putAddress(1, new Address("Samsoe", "1", "1234", "Smediegyde", 1, 1, 321));
         String searchString = "Smediegyde 1";
         Address address = addressModel.search(searchString);
 

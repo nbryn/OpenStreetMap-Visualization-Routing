@@ -166,7 +166,7 @@ public class Parser {
 
         if(city == null) return;
 
-        Address address = new Address(city, housenumber, postcode, street, lat, lon);
+        Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
         appController.putAddressToModel(lastNodeId, address);
     }
 
@@ -225,6 +225,7 @@ public class Parser {
         Node node = new Node();
         node.setReader(reader);
         node.setValues();
+        if (node.getId() == 451770251) System.out.println("suppe");
         appController.addNodeToModel(node.getId(), node);
 
     }

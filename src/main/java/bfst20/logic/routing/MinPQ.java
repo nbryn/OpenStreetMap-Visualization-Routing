@@ -1,7 +1,6 @@
 package bfst20.logic.routing;
 
 import java.util.Comparator;
-import java.util.NoSuchElementException;
 
 public class MinPQ<Key> {
     private Key[] pq;
@@ -39,8 +38,7 @@ public class MinPQ<Key> {
     }
 
 
-    public Key delMin() {
-        if (isEmpty()) throw new NoSuchElementException("Priority queue underflow");
+    public Key delMin() { ;
         Key min = pq[1];
         exch(1, n--);
         sink(1);

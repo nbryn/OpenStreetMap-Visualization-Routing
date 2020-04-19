@@ -36,6 +36,10 @@ public class OSMElementModel {
 
     }
 
+    public Node getNode(long id) {
+        return nodeMap.get(id);
+    }
+
     public Bounds getBounds() {
         return bounds;
     }

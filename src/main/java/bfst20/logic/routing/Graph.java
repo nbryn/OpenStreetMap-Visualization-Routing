@@ -45,6 +45,8 @@ public class Graph {
 
     public void addEdge(Edge edge) {
         edges.add(edge);
+      /*  System.out.println("Source is: " + edge.getSource() );
+        System.out.println(adj.get(edge.getSource()).size());*/
         adj.get(edge.getSource()).add(edge);
 
 

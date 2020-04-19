@@ -26,17 +26,18 @@ public class AppController {
     private LinePathGenerator linePathGenerator;
     private OSMElementModel OSMElementModel;
     private LinePathModel linePathModel;
-    private KDTreeModel kdTreeModel;
-
-    private Parser parser;
-
-    private View view;
+    private AddressModel addressModel;
     private boolean isBinary = false;
+    private KDTreeModel kdTreeModel;
+    private Parser parser;
+    private View view;
+
 
 
     public AppController() {
         OSMElementModel = OSMElementModel.getInstance();
         linePathModel = LinePathModel.getInstance();
+        addressModel = AddressModel.getInstance();
         kdTreeModel = KDTreeModel.getInstance();
         parser = Parser.getInstance();
 
@@ -52,6 +53,9 @@ public class AppController {
         parser.parseOSMFile(file);
     }
 
+    public Node getNodeFromModel(long id) {
+        return OSMElementModel.getNode(id);
+    }
 
     public void createView(Canvas canvas, Label mouseLocationLabel) {
         view = new View(canvas);
@@ -92,8 +96,13 @@ public class AppController {
     }
 
     public void putAddressToModel(long id, Address address) {
-        AddressModel addressModel = AddressModel.getInstance();
         addressModel.putAddress(id, address);
+    }
+
+    public Address findAddress(String query) {
+        Address address = addressModel.search(query);
+
+        return address;
     }
 
     public void addRelationToModel(Relation relation) {

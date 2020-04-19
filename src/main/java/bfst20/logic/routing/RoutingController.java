@@ -2,11 +2,13 @@ package bfst20.logic.routing;
 
 import bfst20.logic.AppController;
 import bfst20.logic.Type;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,16 +16,18 @@ import java.util.Map;
 public class RoutingController {
 
     private static RoutingController routingController;
-    private AppController appController;
-    private List<Edge> edges;
     private static boolean isLoaded = false;
-    private List<Node> nodesInGraph;
+    private Map<Long, Node> nodesInGraph;
+    private AppController appController;
+    private Dijkstra dijkstra;
     private Graph graph;
+    private List<Edge> edges;
+
 
     private RoutingController() {
         appController = new AppController();
         edges = new ArrayList<>();
-        nodesInGraph = new ArrayList<>();
+        nodesInGraph = new HashMap();
 
     }
 
@@ -37,7 +41,53 @@ public class RoutingController {
 
     public void initialize(List<LinePath> highWays, Map<Long, Node> nodes) {
         generateEdges(highWays, nodes);
-        buildGraph();
+        buildGraph(nodes);
+        queryDijkstra(nodes);
+    }
+
+    private void queryDijkstra(Map<Long, Node> nodes) {
+        String sourceQuery = "Kildemosen 2";
+        String targetQuery = "Kildemosen 3";
+
+        Address sourceAddress = appController.findAddress(sourceQuery);
+        Address targetAddress = appController.findAddress(targetQuery);
+/*
+        System.out.println(sourceAddress);
+        System.out.println(targetAddress);
+*/
+
+        if (sourceAddress != null && targetAddress != null) {
+            long sourceNodeID = sourceAddress.getNodeID();
+            long targetNodeID = targetAddress.getNodeID();
+
+            /*System.out.println("SourceID is: " + sourceNodeID);
+            System.out.println("TargetID is: " + targetNodeID);
+
+            Node source = nodes.get(sourceNodeID);
+            Node target = nodes.get(targetNodeID)*/;
+
+            System.out.println(nodes.size());
+
+            Node source = appController.getNodeFromModel(463745263);
+            Node target = appController.getNodeFromModel(454644902);
+
+            System.out.println("Source is :" + source);
+            System.out.println("Target is :" + target);
+
+            dijkstra = new Dijkstra(graph, source);
+
+            Map<Node, Double> distTo = dijkstra.getDistTo();
+
+
+
+            System.out.println(dijkstra.hasPathTo(target));
+            System.out.println(dijkstra.distTo(target));
+
+
+        }
+
+
+
     }
 
     private void generateEdges(List<LinePath> highWays, Map<Long, Node> nodes) {
@@ -49,8 +99,8 @@ public class RoutingController {
                 Node sourceNode = nodes.get(way.getNodeIds().get(i - 1));
                 Node targetNode = nodes.get(way.getNodeIds().get(i));
 
-                nodesInGraph.add(sourceNode);
-                nodesInGraph.add(targetNode);
+                nodesInGraph.put(sourceNode.getId(), sourceNode);
+                nodesInGraph.put(targetNode.getId(), targetNode);
 
                 if (sourceNode != null && targetNode != null) {
                     double length = calculateDistBetween(sourceNode, targetNode);
@@ -63,12 +113,16 @@ public class RoutingController {
         }
     }
 
-    private void buildGraph() {
-        graph = new Graph(nodesInGraph);
+    private void buildGraph(Map<Long, Node> nodes) {
+        graph = new Graph(new ArrayList<>(nodes.values()));
+
+
 
         for (Edge edge : edges) {
+            /*System.out.println(edge);*/
             graph.addEdge(edge);
         }
+
 
     }
 
