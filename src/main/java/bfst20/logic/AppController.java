@@ -24,9 +24,9 @@ public class AppController {
     private LinePathGenerator linePathGenerator;
     private OSMElementData OSMElementData;
     private LinePathData linePathData;
+    private boolean isBinary = false;
     private RoutingData routingData;
     private AddressData addressData;
-    private boolean isBinary = false;
     private KDTreeData kdTreeData;
     private Parser parser;
     private View view;
