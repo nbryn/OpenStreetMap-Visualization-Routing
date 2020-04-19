@@ -9,24 +9,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RoutingModel {
-    private static RoutingModel routingModel;
+public class RoutingData {
+    private static RoutingData routingData;
     private static boolean isLoaded = false;
     private List<LinePath> route;
     private Graph graph;
     private Map<Node, Edge> edgesOnPath;
 
-    private RoutingModel() {
+    private RoutingData() {
         edgesOnPath = new HashMap<>();
 
     }
 
-    public static RoutingModel getInstance() {
+    public static RoutingData getInstance() {
         if(!isLoaded) {
             isLoaded = true;
-            routingModel = new RoutingModel();
+            routingData = new RoutingData();
         }
-        return routingModel;
+        return routingData;
     }
 
     public void saveGraph(Graph graph) {

@@ -22,21 +22,21 @@ import javax.xml.stream.XMLStreamException;
 public class AppController {
     private RoutingController routingController;
     private LinePathGenerator linePathGenerator;
-    private OSMElementModel OSMElementModel;
-    private LinePathModel linePathModel;
-    private RoutingModel routingModel;
-    private AddressModel addressModel;
+    private OSMElementData OSMElementData;
+    private LinePathData linePathData;
+    private RoutingData routingData;
+    private AddressData addressData;
     private boolean isBinary = false;
-    private KDTreeModel kdTreeModel;
+    private KDTreeData kdTreeData;
     private Parser parser;
     private View view;
 
     public AppController() {
-        OSMElementModel = OSMElementModel.getInstance();
-        linePathModel = LinePathModel.getInstance();
-        routingModel = RoutingModel.getInstance();
-        addressModel = AddressModel.getInstance();
-        kdTreeModel = KDTreeModel.getInstance();
+        OSMElementData = OSMElementData.getInstance();
+        linePathData = LinePathData.getInstance();
+        routingData = RoutingData.getInstance();
+        addressData = AddressData.getInstance();
+        kdTreeData = KDTreeData.getInstance();
         parser = Parser.getInstance();
 
     }
@@ -66,7 +66,7 @@ public class AppController {
     }
 
     public void setPathEdgesOnModel(Map<Node, Edge> edges) {
-        routingModel.setEdgesOnPath(edges);
+        routingData.setEdgesOnPath(edges);
     }
 
     public double initializeRouting(Node source, Node target) {
@@ -76,28 +76,28 @@ public class AppController {
     }
 
     public void setRouteOnModel(List<LinePath> route) {
-        routingModel.saveRoute(route);
+        routingData.saveRoute(route);
 
     }
 
     public List<LinePath> getRouteFromModel() {
-        return routingModel.getRoute();
+        return routingData.getRoute();
     }
 
     public Map<Node, Edge> getEdgesOnPathFromModel() {
-        return routingModel.getEdgesOnPath();
+        return routingData.getEdgesOnPath();
     }
 
     public void saveGraphOnModel(Graph graph) {
-        routingModel.saveGraph(graph);
+        routingData.saveGraph(graph);
     }
 
     public Graph getGraphFromModel() {
-        return routingModel.getGraph();
+        return routingData.getGraph();
     }
 
     public Node getNodeFromModel(long id) {
-        return OSMElementModel.getNode(id);
+        return OSMElementData.getNode(id);
     }
 
     public void createView(Canvas canvas, Label mouseLocationLabel) {
@@ -108,11 +108,11 @@ public class AppController {
 
 
     public List<LinePath> getHighwaysFromModel() {
-        return linePathModel.getHighWays();
+        return linePathData.getHighWays();
     }
 
     public void generateHighways() {
-        Map<Type, List<LinePath>> linePaths = linePathModel.getLinePaths();
+        Map<Type, List<LinePath>> linePaths = linePathData.getLinePaths();
         List<LinePath> highWays = new ArrayList<>();
         highWays.addAll(linePaths.get(Type.HIGHWAY));
         highWays.addAll(linePaths.get(Type.TERTIARY));
@@ -120,98 +120,98 @@ public class AppController {
         highWays.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
         if (linePaths.get(Type.MOTORWAY) != null) highWays.addAll(linePaths.get(Type.MOTORWAY));
 
-        linePathModel.saveHighways(highWays);
+        linePathData.saveHighways(highWays);
     }
 
     public void putAddressToModel(long id, Address address) {
-        addressModel.putAddress(id, address);
+        addressData.putAddress(id, address);
     }
 
     public Address findAddress(String query) {
-        Address address = addressModel.search(query);
+        Address address = addressData.search(query);
 
         return address;
     }
 
     public void addRelationToModel(Relation relation) {
-        OSMElementModel.addRelation(relation);
+        OSMElementData.addRelation(relation);
     }
 
     public void setBoundsOnModel(Bounds bounds) {
-        OSMElementModel.setBounds(bounds);
+        OSMElementData.setBounds(bounds);
     }
 
     public Bounds getBoundsFromModel() {
-        return OSMElementModel.getBounds();
+        return OSMElementData.getBounds();
     }
 
     public void addNodeToModel(long id, Node node) {
-        OSMElementModel.addToNodeMap(id, node);
+        OSMElementData.addToNodeMap(id, node);
     }
 
     public void addWayToModel(Way way) {
-        OSMElementModel.addWay(way);
+        OSMElementData.addWay(way);
     }
 
     public List<Way> getOSMWaysFromModel() {
-        return OSMElementModel.getOSMWays();
+        return OSMElementData.getOSMWays();
     }
 
     public Map<Long, Node> getOSMNodesFromModel() {
-        return OSMElementModel.getOSMNodes();
+        return OSMElementData.getOSMNodes();
     }
 
     public List<Relation> getOSMRelationsFromModel() {
-        return OSMElementModel.getOSMRelations();
+        return OSMElementData.getOSMRelations();
     }
 
     public void clearOSMData() {
-        OSMElementModel.clearData();
+        OSMElementData.clearData();
     }
 
     public void clearNodeData() {
-        OSMElementModel.clearNodeData();
+        OSMElementData.clearNodeData();
     }
 
     public Map<Type, List<LinePath>> getLinePathsFromModel() {
-        return linePathModel.getLinePaths();
+        return linePathData.getLinePaths();
     }
 
     public Map<Long, Address> getAddresses() {
-        AddressModel addressModel = AddressModel.getInstance();
-        return addressModel.getAddresses();
+        AddressData addressData = AddressData.getInstance();
+        return addressData.getAddresses();
     }
 
     public Way removeWayFromNodeTo(Type type, Node node) {
         Way way = null;
-        if (type == Type.COASTLINE) way = linePathModel.removeWayFromNodeToCoastline(node);
-        else if (type == Type.FARMLAND) way = linePathModel.removeWayFromNodeToFarmland(node);
-        else if (type == Type.FOREST) way = linePathModel.removeWayFromNodeToForest(node);
+        if (type == Type.COASTLINE) way = linePathData.removeWayFromNodeToCoastline(node);
+        else if (type == Type.FARMLAND) way = linePathData.removeWayFromNodeToFarmland(node);
+        else if (type == Type.FOREST) way = linePathData.removeWayFromNodeToForest(node);
 
         return way;
     }
 
     public void addToModel(Type type, Node node, Way way) {
-        if (type == Type.COASTLINE) linePathModel.addToNodeToCoastline(node, way);
-        else if (type == Type.FARMLAND) linePathModel.addToNodeToFarmland(node, way);
-        else if (type == Type.FOREST) linePathModel.addNodeToForest(node, way);
+        if (type == Type.COASTLINE) linePathData.addToNodeToCoastline(node, way);
+        else if (type == Type.FARMLAND) linePathData.addToNodeToFarmland(node, way);
+        else if (type == Type.FOREST) linePathData.addNodeToForest(node, way);
     }
 
     public Map<Node, Way> getNodeTo(Type type) {
         Map<Node, Way> nodeTo = null;
-        if (type == Type.COASTLINE) nodeTo = linePathModel.getNodeToCoastline();
-        else if (type == Type.FARMLAND) nodeTo = linePathModel.getNodeToFarmland();
-        else if (type == Type.FOREST) nodeTo = linePathModel.getNodeToForest();
+        if (type == Type.COASTLINE) nodeTo = linePathData.getNodeToCoastline();
+        else if (type == Type.FARMLAND) nodeTo = linePathData.getNodeToFarmland();
+        else if (type == Type.FOREST) nodeTo = linePathData.getNodeToForest();
 
         return nodeTo;
     }
 
     public void addLinePathToModel(Type type, LinePath linePath) {
-        linePathModel.addLinePath(type, linePath);
+        linePathData.addLinePath(type, linePath);
     }
 
     public void addTypeToModel(Type type) {
-        linePathModel.addType(type);
+        linePathData.addType(type);
     }
 
     public void createLinePaths() {
@@ -222,29 +222,29 @@ public class AppController {
     public void clearLinePathData() {
         linePathGenerator = LinePathGenerator.getInstance();
         linePathGenerator.clearData();
-        linePathModel.clearData();
+        linePathData.clearData();
     }
 
     public void setLinePathsOnModel(Map<Type, List<LinePath>> drawables) {
-        linePathModel.setLinePaths(drawables);
+        linePathData.setLinePaths(drawables);
     }
 
     public void setupRect() {
         Bounds bounds = getBoundsFromModel();
 
-        kdTreeModel.setValuesOnRect(bounds.getMinLat(), bounds.getMaxLat(), bounds.getMinLon(), bounds.getMaxLon());
+        kdTreeData.setValuesOnRect(bounds.getMinLat(), bounds.getMaxLat(), bounds.getMinLon(), bounds.getMaxLon());
     }
 
     public Rect getRectFromModel() {
-        return kdTreeModel.getRect();
+        return kdTreeData.getRect();
     }
 
     public void addKDTreeToModel(Type type, List<LinePath> linePaths) {
-        kdTreeModel.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
+        kdTreeData.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
     }
 
     public KDTree getKDTreeFromModel(Type type) {
-        return kdTreeModel.getKDTree(type);
+        return kdTreeData.getKDTree(type);
     }
 
     public void generateBinary() throws IOException {

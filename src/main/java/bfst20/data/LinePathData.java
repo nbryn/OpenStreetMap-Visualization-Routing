@@ -10,17 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LinePathModel {
+public class LinePathData {
 
     private static boolean isLoaded = false;
-    private static LinePathModel linePathModel;
+    private static LinePathData linePathData;
     private Map<Type, List<LinePath>> linePaths;
     private List<LinePath> highWays;
     private Map<Node, Way> nodeToCoastline;
     private Map<Node, Way> nodeToForest;
     private Map<Node, Way> nodeToFarmland;
 
-    private LinePathModel() {
+    private LinePathData() {
         linePaths = new HashMap<>();
         nodeToCoastline = new HashMap<>();
         nodeToForest = new HashMap<>();
@@ -28,12 +28,12 @@ public class LinePathModel {
         highWays = new ArrayList<>();
     }
 
-    public static LinePathModel getInstance() {
+    public static LinePathData getInstance() {
         if (!isLoaded) {
             isLoaded = true;
-            linePathModel = new LinePathModel();
+            linePathData = new LinePathData();
         }
-        return linePathModel;
+        return linePathData;
     }
 
     public void saveHighways(List<LinePath> highways) {

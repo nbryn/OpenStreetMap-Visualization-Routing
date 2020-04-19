@@ -1,6 +1,6 @@
 package bfst20.presentation;
 
-import bfst20.data.AddressModel;
+import bfst20.data.AddressData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
@@ -139,7 +139,7 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        shortestPath(303870663, 303870677, pixelwidth);
+        //shortestPath(303870663, 303870677, pixelwidth);
     }
 
     private void shortestPath(long sourceID, long targetID, double lineWidth) {
@@ -164,8 +164,8 @@ public class View {
 
     public void drawSearchLocation(double lineWidth) {
         if (addressString == null) return;
-        AddressModel addressModel = AddressModel.getInstance();
-        Address address = addressModel.search(addressString);
+        AddressData addressData = AddressData.getInstance();
+        Address address = addressData.search(addressString);
 
         int bubbleSize = 30;
 
