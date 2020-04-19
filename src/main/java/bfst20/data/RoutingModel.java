@@ -1,15 +1,18 @@
 package bfst20.data;
 
+import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RoutingModel {
     private static RoutingModel routingModel;
     private static boolean isLoaded = false;
+    private List<LinePath> route;
     private Graph graph;
     private Map<Node, Edge> edgesOnPath;
 
@@ -28,6 +31,14 @@ public class RoutingModel {
 
     public void saveGraph(Graph graph) {
         this.graph = graph;
+    }
+
+    public void saveRoute(List<LinePath> route) {
+        this.route = route;
+    }
+
+    public List<LinePath> getRoute() {
+        return route;
     }
 
     public Graph getGraph() {

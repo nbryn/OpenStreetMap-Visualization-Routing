@@ -22,7 +22,6 @@ public class Dijkstra {
     }
 
     public void initialize(Graph graph, Node root, Node target) {
-        System.out.println(graph.getNodes().size());
         for (int i = 0; i < graph.getNodes().size(); i++) {
             distTo.put(graph.getNodes().get(i), Double.POSITIVE_INFINITY);
         }
@@ -34,9 +33,7 @@ public class Dijkstra {
 
         while (!pq.isEmpty()) {
             Node min = pq.delMin();
-            if (min.getId() == target.getId()) {
-                return;
-            }
+            if (min.getId() == target.getId()) return;
             for (Edge e : graph.adj(min)) {
                 relax(e);
             }

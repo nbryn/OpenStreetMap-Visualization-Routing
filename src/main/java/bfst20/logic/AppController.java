@@ -69,10 +69,19 @@ public class AppController {
         routingModel.setEdgesOnPath(edges);
     }
 
-    public double shortestPath(Node source, Node target) {
+    public double initializeRouting(Node source, Node target) {
         routingController = routingController.getInstance();
 
-        return routingController.findShortestPath(getGraphFromModel(), source, target);
+        return routingController.calculateShortestRoute(getGraphFromModel(), source, target);
+    }
+
+    public void setRouteOnModel(List<LinePath> route) {
+        routingModel.saveRoute(route);
+
+    }
+
+    public List<LinePath> getRouteFromModel() {
+        return routingModel.getRoute();
     }
 
     public Map<Node, Edge> getEdgesOnPathFromModel() {

@@ -7,7 +7,6 @@ import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.kdtree.Rect;
-import bfst20.logic.routing.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,7 +16,6 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -141,32 +139,20 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        //shortestPath(303870663, 303870677, pixelwidth);
+        shortestPath(303870663, 303870677, pixelwidth);
     }
 
-    public void shortestPath(long sourceID, long targetID, double lineWidth) {
+    private void shortestPath(long sourceID, long targetID, double lineWidth) {
         Node target = appController.getNodeFromModel(sourceID);
         Node source = appController.getNodeFromModel(targetID);
 
-        double distance = appController.shortestPath(source, target);
-        Map<Node, Edge> edgesOnPath = appController.getEdgesOnPathFromModel();
+        double distance = appController.initializeRouting(source, target);
+        List<LinePath> route = appController.getRouteFromModel();
 
-        long id = 0;
-        List<LinePath> linePaths = new ArrayList<>();
-
-        if (distance != Double.POSITIVE_INFINITY) {
-            Edge edge = edgesOnPath.get(target);
-
-            while (id != source.getId()) {
-                edge = edgesOnPath.get(edge.getSource());
-                linePaths.add(edge.getLinePath());
-                id = edge.getSource().getId();
-            }
-
-            for (LinePath linePath : linePaths) {
-                drawRoute(linePath, lineWidth);
-            }
+        for (LinePath linePath : route) {
+            drawRoute(linePath, lineWidth);
         }
+
         System.out.println(distance);
     }
 

@@ -37,12 +37,31 @@ public class RoutingController {
         buildGraph(nodes);
     }
 
-    public double findShortestPath(Graph graph, Node source, Node target) {
+    public double calculateShortestRoute(Graph graph, Node source, Node target) {
         dijkstra = new Dijkstra(graph, source, target);
         appController.setPathEdgesOnModel(dijkstra.getEdgeTo());
 
-        return dijkstra.distTo(target);
+        if (dijkstra.distTo(target) != Double.POSITIVE_INFINITY) {
 
+            List<LinePath> route = generateRoute(dijkstra.getEdgeTo(), source, target);
+            appController.setRouteOnModel(route);
+
+        }
+        return dijkstra.distTo(target);
+    }
+
+    private List<LinePath> generateRoute(Map<Node, Edge> edgesOnPath, Node source, Node target) {
+        long id = 0;
+        List<LinePath> linePaths = new ArrayList<>();
+        Edge edge = edgesOnPath.get(target);
+
+        while (id != source.getId()) {
+            edge = edgesOnPath.get(edge.getSource());
+            linePaths.add(edge.getLinePath());
+            id = edge.getSource().getId();
+        }
+
+        return linePaths;
     }
 
     private void generateEdges(List<LinePath> highWays, Map<Long, Node> nodes) {
@@ -54,9 +73,11 @@ public class RoutingController {
                 Node sourceNode = nodes.get(way.getNodeIds().get(i - 1));
                 Node targetNode = nodes.get(way.getNodeIds().get(i));
 
+                LinePath edgeLinePath = new LinePath(sourceNode, targetNode, Type.ROUTING, Type.getFill(Type.BOUNDS));
+
                 if (sourceNode != null && targetNode != null) {
                     double length = calculateDistBetween(sourceNode, targetNode);
-                    Edge edge = new Edge(type, sourceNode, targetNode, length, linePath);
+                    Edge edge = new Edge(type, sourceNode, targetNode, length, edgeLinePath);
 
                     edges.add(edge);
                 }
@@ -65,11 +86,12 @@ public class RoutingController {
     }
 
     private void buildGraph(Map<Long, Node> nodes) {
-       Graph graph = new Graph(new ArrayList<>(nodes.values()));
+        Graph graph = new Graph(new ArrayList<>(nodes.values()));
 
         for (Edge edge : edges) {
             graph.addEdge(edge);
         }
+
         appController.saveGraphOnModel(graph);
     }
 
