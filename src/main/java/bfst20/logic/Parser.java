@@ -17,11 +17,10 @@ import javax.xml.stream.XMLStreamReader;
 import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
-
-    private static boolean isLoaded = false;
-    private static Parser parser;
     private List<Relation> tempOSMRelations;
+    private static boolean isLoaded = false;
     private AppController appController;
+    private static Parser parser;
 
     private Parser() {
         appController = new AppController();
@@ -39,7 +38,6 @@ public class Parser {
     public void parseBinary(File file) throws FileNotFoundException {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             try {
-
                 Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
                 Bounds bounds = drawables.get(Type.BOUNDS).get(0).getBounds();
 
@@ -61,10 +59,8 @@ public class Parser {
             e.printStackTrace();
             System.out.println("E is: " + e);
         }
-
         tempOSMRelations = new ArrayList<>();
         System.gc();
-
     }
 
     public void parseString(String string) throws XMLStreamException {
@@ -88,7 +84,6 @@ public class Parser {
             reader.next();
 
             switch (reader.getEventType()) {
-
                 case START_ELEMENT:
                     String tagName = reader.getLocalName();
 
@@ -156,15 +151,15 @@ public class Parser {
         }
     }
 
-    private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags){
-        if(tags.size() == 0) return;
+    private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
+        if (tags.size() == 0) return;
 
         String city = tags.get("addr:city");
         String housenumber = tags.get("addr:housenumber");
         String postcode = tags.get("addr:postcode");
         String street = tags.get("addr:street");
 
-        if(city == null) return;
+        if (city == null) return;
 
         Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
         appController.putAddressToModel(lastNodeId, address);
@@ -192,15 +187,16 @@ public class Parser {
             } else if (tags.containsKey("highway")) {
                 Type type = Type.HIGHWAY;
 
-                try{
+                try {
                     type = Type.valueOf(tags.get("highway").toUpperCase());
 
-                    if(type == Type.RESIDENTIAL){
+                    if (type == Type.RESIDENTIAL) {
                         type = Type.RESIDENTIAL_HIGHWAY;
-                    }else if(type == Type.UNCLASSIFIED){
+                    } else if (type == Type.UNCLASSIFIED) {
                         type = Type.UNCLASSIFIED_HIGHWAY;
                     }
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
 
                 lastElementParsed.setType(type);
             } else {
@@ -225,7 +221,6 @@ public class Parser {
         Node node = new Node();
         node.setReader(reader);
         node.setValues();
-        if (node.getId() == 451770251) System.out.println("suppe");
         appController.addNodeToModel(node.getId(), node);
 
     }

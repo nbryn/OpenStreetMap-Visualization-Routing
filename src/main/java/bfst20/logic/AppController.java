@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.data.AddressModel;
-import bfst20.data.KDTreeModel;
-import bfst20.data.LinePathModel;
-import bfst20.data.OSMElementModel;
+import bfst20.data.*;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.routing.Edge;
+import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
@@ -21,26 +20,39 @@ import javafx.scene.control.Label;
 import javax.xml.stream.XMLStreamException;
 
 public class AppController {
-
     private RoutingController routingController;
     private LinePathGenerator linePathGenerator;
     private OSMElementModel OSMElementModel;
     private LinePathModel linePathModel;
+    private RoutingModel routingModel;
     private AddressModel addressModel;
     private boolean isBinary = false;
     private KDTreeModel kdTreeModel;
     private Parser parser;
     private View view;
 
-
-
     public AppController() {
         OSMElementModel = OSMElementModel.getInstance();
         linePathModel = LinePathModel.getInstance();
+        routingModel = RoutingModel.getInstance();
         addressModel = AddressModel.getInstance();
         kdTreeModel = KDTreeModel.getInstance();
         parser = Parser.getInstance();
 
+    }
+
+    public View initialize() throws IOException {
+        routingController = routingController.getInstance();
+        if (!isBinary) {
+            createLinePaths();
+            //generateBinary();
+        }
+        generateHighways();
+        routingController.initialize(getHighwaysFromModel(), getOSMNodesFromModel());
+        //clearNodeData();
+        view.initialize();
+
+        return view;
     }
 
     public void loadFile(File file) throws IOException, XMLStreamException {
@@ -53,6 +65,28 @@ public class AppController {
         parser.parseOSMFile(file);
     }
 
+    public void setPathEdgesOnModel(Map<Node, Edge> edges) {
+        routingModel.setEdgesOnPath(edges);
+    }
+
+    public double shortestPath(Node source, Node target) {
+        routingController = routingController.getInstance();
+
+        return routingController.findShortestPath(getGraphFromModel(), source, target);
+    }
+
+    public Map<Node, Edge> getEdgesOnPathFromModel() {
+        return routingModel.getEdgesOnPath();
+    }
+
+    public void saveGraphOnModel(Graph graph) {
+        routingModel.saveGraph(graph);
+    }
+
+    public Graph getGraphFromModel() {
+        return routingModel.getGraph();
+    }
+
     public Node getNodeFromModel(long id) {
         return OSMElementModel.getNode(id);
     }
@@ -62,22 +96,7 @@ public class AppController {
         view.setMouseLocationView(mouseLocationLabel);
     }
 
-    public View initialize() throws IOException {
-        routingController = routingController.getInstance();
-        if (!isBinary) {
-            createLinePaths();
-            //generateBinary();
-        }
-        try {
-            generateHighways();
-            routingController.initialize(getHighwaysFromModel(), getOSMNodesFromModel());
-            clearNodeData();
-            view.initialize();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return view;
-    }
+
 
     public List<LinePath> getHighwaysFromModel() {
         return linePathModel.getHighWays();

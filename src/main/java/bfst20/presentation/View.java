@@ -5,7 +5,9 @@ import bfst20.logic.AppController;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.entities.Node;
 import bfst20.logic.kdtree.Rect;
+import bfst20.logic.routing.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,6 +17,7 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -82,12 +85,15 @@ public class View {
         pan(-minLon, -minLat);
         zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
 
+
         repaint();
     }
+
 
     public void repaint() {
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
+
 
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
@@ -134,6 +140,34 @@ public class View {
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
+
+        //shortestPath(303870663, 303870677, pixelwidth);
+    }
+
+    public void shortestPath(long sourceID, long targetID, double lineWidth) {
+        Node target = appController.getNodeFromModel(sourceID);
+        Node source = appController.getNodeFromModel(targetID);
+
+        double distance = appController.shortestPath(source, target);
+        Map<Node, Edge> edgesOnPath = appController.getEdgesOnPathFromModel();
+
+        long id = 0;
+        List<LinePath> linePaths = new ArrayList<>();
+
+        if (distance != Double.POSITIVE_INFINITY) {
+            Edge edge = edgesOnPath.get(target);
+
+            while (id != source.getId()) {
+                edge = edgesOnPath.get(edge.getSource());
+                linePaths.add(edge.getLinePath());
+                id = edge.getSource().getId();
+            }
+
+            for (LinePath linePath : linePaths) {
+                drawRoute(linePath, lineWidth);
+            }
+        }
+        System.out.println(distance);
     }
 
     public void setSearchString(String addressString) {
@@ -173,6 +207,19 @@ public class View {
             gc.fill();
         }
     }
+
+    private void drawRoute(LinePath linePath, double lineWidth) {
+        Type type = linePath.getType();
+        gc.setLineWidth(lineWidth);
+        gc.beginPath();
+        gc.setStroke(Color.RED);
+        gc.setFill(Color.RED);
+
+
+        trace(linePath, gc);
+        gc.stroke();
+    }
+
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
         Type type = linePath.getType();

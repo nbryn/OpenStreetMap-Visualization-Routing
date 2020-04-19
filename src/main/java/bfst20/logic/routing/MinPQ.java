@@ -3,32 +3,13 @@ package bfst20.logic.routing;
 import java.util.Comparator;
 
 public class MinPQ<Key> {
+    private Comparator<Key> comparator;
     private Key[] pq;
     private int n;
-    private Comparator<Key> comparator;
-
 
     public MinPQ(int initCapacity) {
         pq = (Key[]) new Object[initCapacity + 1];
         n = 0;
-    }
-
-    public boolean isEmpty() {
-        return n == 0;
-    }
-
-
-    public int size() {
-        return n;
-    }
-
-    private void resize(int capacity) {
-        assert capacity > n;
-        Key[] temp = (Key[]) new Object[capacity];
-        for (int i = 1; i <= n; i++) {
-            temp[i] = pq[i];
-        }
-        pq = temp;
     }
 
     public void insert(Key x) {
@@ -37,8 +18,7 @@ public class MinPQ<Key> {
         swim(n);
     }
 
-
-    public Key delMin() { ;
+    public Key delMin() {
         Key min = pq[1];
         exch(1, n--);
         sink(1);
@@ -47,6 +27,9 @@ public class MinPQ<Key> {
         return min;
     }
 
+    public boolean isEmpty() {
+        return n == 0;
+    }
 
     private void swim(int k) {
         while (k > 1 && greater(k / 2, k)) {
@@ -63,6 +46,15 @@ public class MinPQ<Key> {
             exch(k, j);
             k = j;
         }
+    }
+
+    private void resize(int capacity) {
+        assert capacity > n;
+        Key[] temp = (Key[]) new Object[capacity];
+        for (int i = 1; i <= n; i++) {
+            temp[i] = pq[i];
+        }
+        pq = temp;
     }
 
     private boolean greater(int i, int j) {

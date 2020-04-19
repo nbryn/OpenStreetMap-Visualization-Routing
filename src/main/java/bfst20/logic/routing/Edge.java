@@ -1,31 +1,35 @@
 package bfst20.logic.routing;
 
 import bfst20.logic.Type;
+import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 
-public class Edge implements Comparable {
-    private final Node source;
-    private final Node target;
-    private final Type highwayType;
-    private final double length;
+public class Edge {
     private double speedLimit;
+    private LinePath linePath;
+    private Type highwayType;
+    private double length;
+    private Node source;
+    private Node target;
 
-    public Edge(Type highwayType, Node source, Node target, double length) {
+
+
+
+    public Edge(Type highwayType, Node source, Node target, double length, LinePath linePath) {
         this.highwayType = highwayType;
+        this.linePath = linePath;
         this.source = source;
         this.target = target;
         this.length = length;
-
-
     }
 
-    public Edge(Type highwayType, Node source, Node target, double length, int speedLimit ) {
+    public Edge(Type highwayType, Node source, Node target, double length, LinePath linePath, int speedLimit) {
         this.highwayType = highwayType;
+        this.speedLimit = speedLimit;
+        this.linePath = linePath;
         this.source = source;
         this.target = target;
         this.length = length;
-        this.speedLimit = speedLimit;
-
     }
 
     public Node getSource() {
@@ -36,12 +40,12 @@ public class Edge implements Comparable {
         return target;
     }
 
+    public LinePath getLinePath() {
+        return linePath;
+    }
+
     public double getLength() {
         return length;
     }
 
-    @Override
-    public int compareTo(Object other) {
-        return Double.compare(this.length, ((Edge) other).getLength());
-    }
 }

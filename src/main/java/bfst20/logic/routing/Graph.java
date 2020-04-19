@@ -8,13 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Graph {
-
-    private final int nodeCount;
-    private List<Edge> edges;
     private Map<Node, List<Edge>> adj;
+    private int nodeCount;
+    private List<Edge> edges;
     private List<Node> nodes;
-
-
 
     public Graph(List<Node> nodes) {
         this.nodes = nodes;
@@ -45,11 +42,7 @@ public class Graph {
 
     public void addEdge(Edge edge) {
         edges.add(edge);
-      /*  System.out.println("Source is: " + edge.getSource() );
-        System.out.println(adj.get(edge.getSource()).size());*/
         adj.get(edge.getSource()).add(edge);
-
-
     }
 
     public Iterable<Edge> adj(Node node) {

@@ -23,7 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class MainController {
+public class ViewController {
 
     private AppController appController;
 
@@ -55,7 +55,7 @@ public class MainController {
     @FXML
     private Button searchAdressButton;
 
-    public MainController() {
+    public ViewController() {
         appController = new AppController();
 
     }

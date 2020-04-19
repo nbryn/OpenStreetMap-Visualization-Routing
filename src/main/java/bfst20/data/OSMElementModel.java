@@ -75,8 +75,8 @@ public class OSMElementModel {
     }
 
     public void clearNodeData() {
-        nodeMap = new HashMap<>();
+      /*  nodeMap = new HashMap<>();
 
-        System.gc();
+        System.gc();*/
     }
 }
