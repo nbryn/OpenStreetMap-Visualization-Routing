@@ -14,7 +14,6 @@ public class Edge {
 
 
 
-
     public Edge(Type highwayType, Node source, Node target, double length, LinePath linePath) {
         this.highwayType = highwayType;
         this.linePath = linePath;
@@ -31,6 +30,9 @@ public class Edge {
         this.target = target;
         this.length = length;
     }
+
+
+
 
     public Node getSource() {
         return source;

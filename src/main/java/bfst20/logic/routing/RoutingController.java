@@ -35,6 +35,7 @@ public class RoutingController {
     public void initialize(List<LinePath> highWays, Map<Long, Node> nodes) {
         generateEdges(highWays, nodes);
         buildGraph(nodes);
+
     }
 
     public double calculateShortestRoute(Graph graph, Node source, Node target) {
@@ -47,18 +48,23 @@ public class RoutingController {
             appController.setRouteOnModel(route);
 
         }
+
         return dijkstra.distTo(target);
     }
 
     private List<LinePath> generateRoute(Map<Node, Edge> edgesOnPath, Node source, Node target) {
-        long id = 0;
         List<LinePath> linePaths = new ArrayList<>();
         Edge edge = edgesOnPath.get(target);
+        long id = 0;
 
         while (id != source.getId()) {
-            edge = edgesOnPath.get(edge.getSource());
+            edge = edgesOnPath.get(edge.getTarget());
+            long tempID = edge.getTarget().getId();
+
+            edge = id == tempID ? edgesOnPath.get(edge.getTarget()) : edgesOnPath.get(edge.getSource());
+            id = id == tempID ? edge.getSource().getId() : edge.getTarget().getId();
+
             linePaths.add(edge.getLinePath());
-            id = edge.getSource().getId();
         }
 
         return linePaths;
