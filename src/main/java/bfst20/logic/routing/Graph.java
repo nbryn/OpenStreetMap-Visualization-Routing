@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 public class Graph {
     private Map<Node, List<Edge>> adj;
     private int nodeCount;
@@ -42,7 +44,9 @@ public class Graph {
 
     public void addEdge(Edge edge) {
         edges.add(edge);
-        adj.get(edge.getSource()).add(edge);
+        if (!adj.get(edge.getSource()).contains(edge)) adj.get(edge.getSource()).add(edge);
+        if (!adj.get(edge.getTarget()).contains(edge)) adj.get(edge.getTarget()).add(edge);
+
     }
 
     public Iterable<Edge> adj(Node node) {

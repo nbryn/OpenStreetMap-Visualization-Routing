@@ -45,7 +45,6 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-
     public void initialize() throws IOException {
         trans = new Affine();
         linePaths = appController.getLinePathsFromModel();
@@ -82,7 +81,6 @@ public class View {
 
         pan(-minLon, -minLat);
         zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
-
 
         repaint();
     }
@@ -139,21 +137,22 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        //shortestPath(303870663, 303870677, pixelwidth);
+        //shortestPath(4492355568L,5998082893L, pixelwidth);
     }
 
     private void shortestPath(long sourceID, long targetID, double lineWidth) {
-        Node target = appController.getNodeFromModel(sourceID);
-        Node source = appController.getNodeFromModel(targetID);
+        Node source = appController.getNodeFromModel(sourceID);
+        Node target = appController.getNodeFromModel(targetID);
 
         double distance = appController.initializeRouting(source, target);
+
         List<LinePath> route = appController.getRouteFromModel();
 
         for (LinePath linePath : route) {
             drawRoute(linePath, lineWidth);
         }
 
-        System.out.println(distance);
+        //System.out.println(distance);
     }
 
     public void setSearchString(String addressString) {
