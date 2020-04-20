@@ -7,28 +7,28 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddressModel {
+public class AddressData {
 
-    private static AddressModel addressModel;
+    private static AddressData addressData;
     private Map<Long, Address> addresses;
 
-    private AddressModel(){
+    private AddressData(){
         addresses = new HashMap<>();
     }
 
-    public static AddressModel getInstance(){
-        if(addressModel == null){
-            addressModel = new AddressModel();
+    public static AddressData getInstance(){
+        if(addressData == null){
+            addressData = new AddressData();
         }
 
-        return addressModel;
+        return addressData;
     }
 
     public void putAddress(long id, Address address) { addresses.put(id, address);}
     public Map<Long, Address> getAddresses(){return addresses;}
 
+    // TODO: Move this out of model
     static String regexMain = "^ *(?<street>[a-zA-ZæøåÆØÅ ]+)? *(?<house>[0-9]*)?(\\, *| *)(?<floor>[a-zA-Z0-9]?)(\\. *| *|\\.)(?<side>[a-zA-Z0-9.]{0,2})?(\\. *| *)(?<postcode>[0-9]{4})? *(?<city>[a-zA-ZæøåÆØÅ -]+)?$";
-
     public String[] parseAddress(String input){
         Matcher pattern = Pattern.compile(regexMain).matcher(input);
 

@@ -2,15 +2,17 @@ package bfst20.logic.entities;
 
 import bfst20.logic.Type;
 import bfst20.logic.interfaces.OSMElement;
+import bfst20.logic.routing.Edge;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node implements OSMElement {
+public class Node implements OSMElement, Comparable {
     private long id;
     private float latitude;
     private float longitude;
+    private double distTo;
 
     private XMLStreamReader reader;
 
@@ -29,7 +31,6 @@ public class Node implements OSMElement {
         return longitude;
     }
 
-    @Override
     public void setValues() {
         setId();
         setLatitude();
@@ -39,6 +40,14 @@ public class Node implements OSMElement {
     private void setId() {
         id = Long.parseLong(reader.getAttributeValue(null, "id"));
 
+    }
+
+    public void setDistTo(double distTo) {
+        this.distTo = distTo;
+    }
+
+    public double getDistTo() {
+        return distTo;
     }
 
     private void setLatitude() {
@@ -68,4 +77,8 @@ public class Node implements OSMElement {
 
     }
 
+    @Override
+    public int compareTo(Object other) {
+        return Double.compare(this.distTo, ((Node) other).getDistTo());
+    }
 }

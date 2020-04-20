@@ -6,9 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
-import bfst20.data.AddressModel;
 import bfst20.logic.AppController;
-import bfst20.logic.entities.Address;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,9 +19,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
-public class MainController {
+public class ViewController {
 
     private AppController appController;
 
@@ -55,7 +52,7 @@ public class MainController {
     @FXML
     private Button searchAdressButton;
 
-    public MainController() {
+    public ViewController() {
         appController = new AppController();
 
     }
@@ -97,11 +94,11 @@ public class MainController {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
 
-            //File file = new File(classLoader.getResource("samsoe.osm").getFile());
+            File file = new File(classLoader.getResource("samsoe.osm").getFile());
 
             // File file = new File(classLoader.getResource("samsoe.bin").getFile());
 
-             File file = new File("F:\\lolland.osm");
+             //File file = new File("F:\\lolland.osm");
 
             appController.loadFile(file);
             view = appController.initialize();
