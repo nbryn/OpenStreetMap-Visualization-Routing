@@ -7,6 +7,8 @@ import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.kdtree.Rect;
+import bfst20.logic.routing.Edge;
+import bfst20.logic.routing.Graph;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -16,6 +18,7 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,7 @@ public class View {
     private boolean kd;
     private boolean isColorBlindMode = false;
     private String addressString;
+
 
     Label mouseLocationLabel;
 
@@ -137,10 +141,38 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        //shortestPath(4492355568L,5998082893L, pixelwidth);
+        shortestPath(4492355568L,5998082893L, pixelwidth);
     }
 
     private void shortestPath(long sourceID, long targetID, double lineWidth) {
+        String searh = "Skolevænget 2";
+
+        Address address = appController.findAddress(searh);
+
+        Graph graph = appController.getGraphFromModel();
+
+        Iterable<Edge> edges = graph.getEdges();
+
+        List<LinePath> highways = appController.getHighwaysFromModel();
+
+        try {
+
+            for (Iterator<Edge> it = edges.iterator(); it.hasNext(); ) {
+                Edge edge = it.next();
+                if(edge.getName() != null) {
+                    if (edge.getName().equals(address.getStreet())) {
+                        System.out.println(edge.getName());
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*System.out.println(address.getStreet());
+        System.out.println(highways.size());*/
+
+
         Node source = appController.getNodeFromModel(sourceID);
         Node target = appController.getNodeFromModel(targetID);
 

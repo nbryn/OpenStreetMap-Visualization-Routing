@@ -83,7 +83,7 @@ public class RoutingController {
 
                 if (sourceNode != null && targetNode != null) {
                     double length = calculateDistBetween(sourceNode, targetNode);
-                    Edge edge = new Edge(type, sourceNode, targetNode, length, edgeLinePath);
+                    Edge edge = new Edge(type, sourceNode, targetNode, length, edgeLinePath, way.getName());
 
                     edges.add(edge);
                 }

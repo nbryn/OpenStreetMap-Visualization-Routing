@@ -29,6 +29,7 @@ public class AddressData {
 
     // TODO: Move this out of model
     static String regexMain = "^ *(?<street>[a-zA-ZæøåÆØÅ ]+)? *(?<house>[0-9]*)?(\\, *| *)(?<floor>[a-zA-Z0-9]?)(\\. *| *|\\.)(?<side>[a-zA-Z0-9.]{0,2})?(\\. *| *)(?<postcode>[0-9]{4})? *(?<city>[a-zA-ZæøåÆØÅ -]+)?$";
+
     public String[] parseAddress(String input){
         Matcher pattern = Pattern.compile(regexMain).matcher(input);
 

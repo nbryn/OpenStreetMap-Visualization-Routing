@@ -21,11 +21,11 @@ public class Way implements OSMElement {
 
     public Way() {
         drawColor = Color.BLACK;
-        nodeIds = new ArrayList<Long>();
+        nodeIds = new ArrayList<>();
     }
 
     public Way(Way way) {
-        this.nodeIds = new ArrayList<Long>(way.getNodeIds());
+        this.nodeIds = new ArrayList<>(way.getNodeIds());
         this.id = way.getId();
         drawColor = Color.BLACK;
     }
