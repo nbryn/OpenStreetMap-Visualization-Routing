@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.canvas.Canvas?>
 <AnchorPane prefHeight="720" prefWidth="1600" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bfst20.presentation.ViewController">
 <HBox fx:id="hbox" prefHeight="720" prefWidth="1600">
     <!-- Pane for both the searching of addresses and routing-->
@@ -85,6 +86,7 @@
                      </Menu>
               </menus>
           </MenuBar>
+              <Canvas fx:id="canvas" width="1270" height="720"></Canvas>
       </VBox>
          </children>
       </Pane>

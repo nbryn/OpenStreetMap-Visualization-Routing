@@ -33,10 +33,12 @@ public class View {
     private boolean kd;
     private boolean isColorBlindMode = false;
     private String addressString;
+    private Point2D mousePos;
 
     Label mouseLocationLabel;
 
     public View(Canvas canvas) {
+        mousePos = new Point2D(0,0);
         appController = new AppController();
         kd = false;
         this.canvas = canvas;
@@ -51,6 +53,10 @@ public class View {
         appController.clearLinePathData();
 
         createKDTrees();
+    }
+
+    public void setMousePos(Point2D mousePos){
+        this.mousePos = mousePos;
     }
 
     private void createKDTrees() {
@@ -102,12 +108,9 @@ public class View {
         Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
         Rect rect = new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
 
-
-        // I still don't know why these constants are needed.
         Point2D mouse = toModelCoords(
-                MouseInfo.getPointerInfo().getLocation().getX() - 490,
-                MouseInfo.getPointerInfo().getLocation().getY() - 140);
-
+                mousePos.getX(),
+                mousePos.getY());
 
         drawTypeKdTree(Type.COASTLINE, rect, pixelwidth);
 
@@ -132,7 +135,7 @@ public class View {
         mouseLocationLabel.setText(appController.getKDTreeFromModel(Type.HIGHWAY).getClosetsLinepath().getName());
 
         gc.setStroke(Color.PURPLE);
-        //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
+        gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);

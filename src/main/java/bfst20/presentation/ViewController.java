@@ -52,6 +52,9 @@ public class ViewController {
     @FXML
     private Button searchAdressButton;
 
+    @FXML
+    private Canvas canvas;
+
     public ViewController() {
         appController = new AppController();
 
@@ -62,11 +65,10 @@ public class ViewController {
 
     @FXML
     public void initialize() {
-        Canvas canvas = new Canvas(1270, 720);
+
+
 
         appController.createView(canvas, mouseLocationLabel);
-
-        vbox.getChildren().add(canvas);
 
         toRouteButton.setOnAction(e -> {
             addressVBox.setVisible(false);
@@ -129,6 +131,7 @@ public class ViewController {
         });
 
         canvas.setOnMouseMoved(e -> {
+            view.setMousePos(new Point2D(e.getX(), e.getY()));
             view.repaint();
         });
 
