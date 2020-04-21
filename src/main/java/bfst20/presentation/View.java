@@ -1,6 +1,7 @@
 package bfst20.presentation;
 
 import bfst20.data.AddressData;
+import bfst20.data.IntrestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
@@ -32,11 +33,14 @@ public class View {
     private boolean kd;
     private boolean isColorBlindMode = false;
     private String addressString;
+    private Point2D mousePos;
+    private
 
 
     Label mouseLocationLabel;
 
     public View(Canvas canvas) {
+        mousePos = new Point2D(0,0);
         appController = new AppController();
         kd = false;
         this.canvas = canvas;
@@ -51,6 +55,10 @@ public class View {
         appController.clearLinePathData();
 
         createKDTrees();
+    }
+
+    public void setMousePos(Point2D mousePos){
+        this.mousePos = mousePos;
     }
 
     private void createKDTrees() {
@@ -102,12 +110,9 @@ public class View {
         Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
         Rect rect = new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
 
-
-        // I still don't know why these constants are needed.
         Point2D mouse = toModelCoords(
-                MouseInfo.getPointerInfo().getLocation().getX() - 490,
-                MouseInfo.getPointerInfo().getLocation().getY() - 140);
-
+                mousePos.getX(),
+                mousePos.getY());
 
         drawTypeKdTree(Type.COASTLINE, rect, pixelwidth);
 
@@ -131,9 +136,9 @@ public class View {
 
         mouseLocationLabel.setText(appController.getKDTreeFromModel(Type.HIGHWAY).getClosetsLinepath().getName());
 
-        gc.setStroke(Color.PURPLE);
+        //gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
-        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
+        //gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
 
@@ -178,6 +183,30 @@ public class View {
     }
 
     private void shortestPath(String source, String target, double lineWidth) {
+        drawIntrestPoints(pixelwidth);
+
+        //shortestPath(4492355568L,5998082893L, pixelwidth);
+    }
+
+    private void drawIntrestPoints(double lineWidth){
+        IntrestPointData intrestPointData = IntrestPointData.getInstance();
+
+        for(IntrestPoint intrestPoint : intrestPointData.iterate()){
+            int bubbleSize = 30;
+
+            gc.strokeOval(intrestPoint.getLongitude() - (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
+            gc.moveTo(intrestPoint.getLongitude() - (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize));
+            gc.lineTo(intrestPoint.getLongitude(), intrestPoint.getLatitude());
+            gc.moveTo(intrestPoint.getLongitude() + (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize));
+            gc.lineTo(intrestPoint.getLongitude(), intrestPoint.getLatitude());
+            gc.stroke();
+        }
+    }
+
+    private void shortestPath(long sourceID, long targetID, double lineWidth) {
+        Node source = appController.getNodeFromModel(sourceID);
+        Node target = appController.getNodeFromModel(targetID);
+
 
         try {
             
@@ -229,6 +258,11 @@ public class View {
         if (addressString == null) return;
         AddressData addressData = AddressData.getInstance();
         Address address = addressData.search(addressString);
+
+        if(address == null){
+            System.out.println("Missing");
+            return;
+        }
 
         int bubbleSize = 30;
 
@@ -299,7 +333,7 @@ public class View {
         }
     }
 
-    private Point2D toModelCoords(double x, double y) {
+    public Point2D toModelCoords(double x, double y) {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
