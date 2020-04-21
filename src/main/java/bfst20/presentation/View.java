@@ -137,13 +137,11 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        shortestPath(4492355568L, 5998082893L, pixelwidth);
+        shortestPath("Besservej 1", "Kaasenvejen 1", pixelwidth);
     }
 
-    private void shortestPath(long sourceID, long targetID, double lineWidth) {
-        String searh = "Skolevænget 2";
-
-        Address address = appController.findAddress(searh);
+    private Node etellerandet(String street){
+        Address address = appController.findAddress(street);
 
         Graph graph = appController.getGraphFromModel();
 
@@ -162,70 +160,42 @@ public class View {
         }
 
 
-        System.out.println("Address: Lat" + address.getLat());
-        System.out.println("Adrress Lon :" + address.getLon());
-
-        Node closestLat = null;
-        Node closetsLon = null;
-        float shortestLatDist = 0;
-        float shortestLonDist = 0;
+        Node closestNode = null;
+        float shortestDistance = Float.POSITIVE_INFINITY;
 
         for (Edge e : closestEdges) {
 
-            float latDistSource = address.getLat() - e.getSource().getLatitude();
-            float lonDistSource = address.getLon() - e.getSource().getLongitude();
-
-            System.out.println(latDistSource);
+            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLon(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLat(), 2));
 
 
-            float latDistTarget = address.getLat() - e.getTarget().getLatitude();
-            float lonDistTarget = address.getLon() - e.getTarget().getLongitude();
-
-            if (latDistSource < 1.6) {
-                System.out.println("hej");
-                   if (latDistSource > -1.6) {
-                       shortestLatDist = latDistSource;
-                       closestLat = e.getSource();
-                   }
+            if(distance < shortestDistance){
+                closestNode = e.getTarget();
+                shortestDistance = distance;
             }
-            if (lonDistSource < 1.6) {
-                if (lonDistSource > -1.6) {
-                    shortestLonDist = lonDistSource;
-                    closetsLon = e.getSource();
-                }
-            }
-
-            if (latDistTarget < 1.6) {
-                if (latDistTarget > -1.6) {
-                    shortestLatDist = latDistTarget;
-                    closestLat = e.getTarget();
-                }
-            }
-            if (lonDistTarget < 1.6) {
-                if (lonDistTarget > -1.6) {
-                    closetsLon = e.getTarget();
-                    shortestLonDist = latDistTarget;
-                }
-            }
-
         }
 
-        System.out.println(closestLat);
-        System.out.println(closetsLon);
+        return closestNode;
+    }
 
+    private void shortestPath(String source, String target, double lineWidth) {
 
-        Node source = appController.getNodeFromModel(sourceID);
-        Node target = appController.getNodeFromModel(targetID);
+        try {
+            
+            Node sourceNode = etellerandet(source);
+            Node targetNode = etellerandet(target);
+            
+            double distance = appController.initializeRouting(sourceNode, targetNode);
 
-        double distance = appController.initializeRouting(source, target);
+            List<LinePath> route = appController.getRouteFromModel();
 
-        List<LinePath> route = appController.getRouteFromModel();
-
-        for (LinePath linePath : route) {
-            drawRoute(linePath, lineWidth);
+            for (LinePath linePath : route) {
+                drawRoute(linePath, lineWidth);
+            }
+        }catch(Exception e){
+            //e.printStackTrace();
         }
 
-        //System.out.println(distance);
+
     }
 
 
