@@ -135,7 +135,7 @@ public class View {
         mouseLocationLabel.setText(appController.getKDTreeFromModel(Type.HIGHWAY).getClosetsLinepath().getName());
 
         gc.setStroke(Color.PURPLE);
-        gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
+        //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
@@ -168,6 +168,11 @@ public class View {
         if (addressString == null) return;
         AddressData addressData = AddressData.getInstance();
         Address address = addressData.search(addressString);
+
+        if(address == null){
+            System.out.println("Missing");
+            return;
+        }
 
         int bubbleSize = 30;
 
