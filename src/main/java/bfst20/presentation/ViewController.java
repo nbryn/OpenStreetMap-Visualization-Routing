@@ -6,7 +6,9 @@ import java.io.IOException;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.data.IntrestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.entities.IntrestPoint;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -16,6 +18,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -65,8 +69,6 @@ public class ViewController {
 
     @FXML
     public void initialize() {
-
-
 
         appController.createView(canvas, mouseLocationLabel);
 
@@ -123,6 +125,15 @@ public class ViewController {
 
         canvas.setOnMousePressed(e -> {
             lastMouse = new Point2D(e.getX(), e.getY());
+
+            if(e.isControlDown()){
+                Point2D converted = view.toModelCoords(e.getX(), e.getY());
+
+                IntrestPointData intrestPointData = IntrestPointData.getInstance();
+                intrestPointData.addIntrestPoint(new IntrestPoint((float) converted.getY(),(float) converted.getX()));
+            }
+
+            view.repaint();
         });
 
         canvas.setOnMouseDragged(e -> {
@@ -145,6 +156,8 @@ public class ViewController {
             }
         });
     }
+
+
 
     public static void main(String[] args) {
         Launcher.main(args);

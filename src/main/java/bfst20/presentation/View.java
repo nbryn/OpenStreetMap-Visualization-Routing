@@ -1,11 +1,9 @@
 package bfst20.presentation;
 
 import bfst20.data.AddressData;
+import bfst20.data.IntrestPointData;
 import bfst20.logic.AppController;
-import bfst20.logic.entities.Address;
-import bfst20.logic.entities.Bounds;
-import bfst20.logic.entities.LinePath;
-import bfst20.logic.entities.Node;
+import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -34,6 +32,7 @@ public class View {
     private boolean isColorBlindMode = false;
     private String addressString;
     private Point2D mousePos;
+    private
 
     Label mouseLocationLabel;
 
@@ -134,13 +133,30 @@ public class View {
 
         mouseLocationLabel.setText(appController.getKDTreeFromModel(Type.HIGHWAY).getClosetsLinepath().getName());
 
-        gc.setStroke(Color.PURPLE);
+        //gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
-        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
+        //gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
 
+        drawIntrestPoints(pixelwidth);
+
         //shortestPath(4492355568L,5998082893L, pixelwidth);
+    }
+
+    private void drawIntrestPoints(double lineWidth){
+        IntrestPointData intrestPointData = IntrestPointData.getInstance();
+
+        for(IntrestPoint intrestPoint : intrestPointData.iterate()){
+            int bubbleSize = 30;
+
+            gc.strokeOval(intrestPoint.getLongitude() - (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
+            gc.moveTo(intrestPoint.getLongitude() - (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize));
+            gc.lineTo(intrestPoint.getLongitude(), intrestPoint.getLatitude());
+            gc.moveTo(intrestPoint.getLongitude() + (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize));
+            gc.lineTo(intrestPoint.getLongitude(), intrestPoint.getLatitude());
+            gc.stroke();
+        }
     }
 
     private void shortestPath(long sourceID, long targetID, double lineWidth) {
@@ -243,7 +259,7 @@ public class View {
         }
     }
 
-    private Point2D toModelCoords(double x, double y) {
+    public Point2D toModelCoords(double x, double y) {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
