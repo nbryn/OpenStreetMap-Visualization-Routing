@@ -27,7 +27,7 @@ public class AddressData {
     public void putAddress(long id, Address address) { addresses.put(id, address);}
     public Map<Long, Address> getAddresses(){return addresses;}
 
-    // TODO: Move this out of model
+
     private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,.\\V ]*";
 
     public String[] parseAddress(String input){

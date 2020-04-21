@@ -5,6 +5,8 @@ import bfst20.data.IntrestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
+import bfst20.logic.routing.Edge;
+import bfst20.logic.routing.Graph;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -14,8 +16,8 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import bfst20.logic.Type;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -33,6 +35,7 @@ public class View {
     private String addressString;
     private Point2D mousePos;
     private
+
 
     Label mouseLocationLabel;
 
@@ -139,6 +142,47 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
+        shortestPath("Besservej 1", "Kaasenvejen 1", pixelwidth);
+    }
+
+    private Node etellerandet(String street){
+        Address address = appController.findAddress(street);
+
+        Graph graph = appController.getGraphFromModel();
+
+        List<Edge> edges = graph.getEdges();
+
+        edges.sort(Comparator.comparing(Edge::getName));
+
+        int addressIndex = binarySearch(edges, address.getStreet());
+
+        List<Edge> closestEdges = new ArrayList<>();
+
+        for (int i = addressIndex - 100; i < addressIndex + 100; i++) {
+            if (edges.get(i).getName().equals(address.getStreet())) {
+                closestEdges.add(edges.get(i));
+            }
+        }
+
+
+        Node closestNode = null;
+        float shortestDistance = Float.POSITIVE_INFINITY;
+
+        for (Edge e : closestEdges) {
+
+            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLon(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLat(), 2));
+
+
+            if(distance < shortestDistance){
+                closestNode = e.getTarget();
+                shortestDistance = distance;
+            }
+        }
+
+        return closestNode;
+    }
+
+    private void shortestPath(String source, String target, double lineWidth) {
         drawIntrestPoints(pixelwidth);
 
         //shortestPath(4492355568L,5998082893L, pixelwidth);
@@ -163,15 +207,45 @@ public class View {
         Node source = appController.getNodeFromModel(sourceID);
         Node target = appController.getNodeFromModel(targetID);
 
-        double distance = appController.initializeRouting(source, target);
 
-        List<LinePath> route = appController.getRouteFromModel();
+        try {
+            
+            Node sourceNode = etellerandet(source);
+            Node targetNode = etellerandet(target);
+            
+            double distance = appController.initializeRouting(sourceNode, targetNode);
 
-        for (LinePath linePath : route) {
-            drawRoute(linePath, lineWidth);
+            List<LinePath> route = appController.getRouteFromModel();
+
+            for (LinePath linePath : route) {
+                drawRoute(linePath, lineWidth);
+            }
+        }catch(Exception e){
+            //e.printStackTrace();
         }
 
-        //System.out.println(distance);
+
+    }
+
+
+    private int binarySearch(List<Edge> list, String address) {
+        int low = 0;
+        int high = list.size() - 1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            Edge midElement = list.get(mid);
+            String midID = midElement.getName();
+
+            if (midID.compareTo(address) < 0) {
+                low = mid + 1;
+            } else if (midID.compareTo(address) > 0) {
+                high = mid - 1;
+            } else {
+                return low;
+            }
+        }
+        return 0;
     }
 
     public void setSearchString(String addressString) {

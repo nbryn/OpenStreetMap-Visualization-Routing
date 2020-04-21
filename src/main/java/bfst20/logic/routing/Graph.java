@@ -34,7 +34,7 @@ public class Graph {
         return edges.size();
     }
 
-    public Iterable<Edge> getEdges() {
+    public List<Edge> getEdges() {
         return edges;
     }
 

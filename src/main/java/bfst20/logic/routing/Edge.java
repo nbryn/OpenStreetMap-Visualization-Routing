@@ -11,15 +11,16 @@ public class Edge {
     private double length;
     private Node source;
     private Node target;
+    private String name;
 
 
-
-    public Edge(Type highwayType, Node source, Node target, double length, LinePath linePath) {
+    public Edge(Type highwayType, Node source, Node target, double length, LinePath linePath, String name) {
         this.highwayType = highwayType;
         this.linePath = linePath;
         this.source = source;
         this.target = target;
         this.length = length;
+        this.name = name == null ? "ååååå" : name;
     }
 
     public Edge(Type highwayType, Node source, Node target, double length, LinePath linePath, int speedLimit) {
@@ -32,7 +33,9 @@ public class Edge {
     }
 
 
-
+    public String getName() {
+        return name;
+    }
 
     public Node getSource() {
         return source;

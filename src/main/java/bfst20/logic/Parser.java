@@ -198,6 +198,8 @@ public class Parser {
                 } catch (Exception e) {
                 }
 
+
+
                 lastElementParsed.setType(type);
             } else {
                 lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
