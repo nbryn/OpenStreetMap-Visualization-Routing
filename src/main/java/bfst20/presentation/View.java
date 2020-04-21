@@ -149,7 +149,6 @@ public class View {
 
         List<Edge> edges = graph.getEdges();
 
-
         edges.sort(Comparator.comparing(Edge::getName));
 
         int addressIndex = binarySearch(edges, address.getStreet());
@@ -163,13 +162,56 @@ public class View {
         }
 
 
-        System.out.println(address.getLat());
-        System.out.println(address.getLon());
+        System.out.println("Address: Lat" + address.getLat());
+        System.out.println("Adrress Lon :" + address.getLon());
+
+        Node closestLat = null;
+        Node closetsLon = null;
+        float shortestLatDist = 0;
+        float shortestLonDist = 0;
 
         for (Edge e : closestEdges) {
-            System.out.println(e.getTarget().getLatitude());
-            System.out.println(e.getSource().getLatitude());
+
+            float latDistSource = address.getLat() - e.getSource().getLatitude();
+            float lonDistSource = address.getLon() - e.getSource().getLongitude();
+
+            System.out.println(latDistSource);
+
+
+            float latDistTarget = address.getLat() - e.getTarget().getLatitude();
+            float lonDistTarget = address.getLon() - e.getTarget().getLongitude();
+
+            if (latDistSource < 1.6) {
+                System.out.println("hej");
+                   if (latDistSource > -1.6) {
+                       shortestLatDist = latDistSource;
+                       closestLat = e.getSource();
+                   }
+            }
+            if (lonDistSource < 1.6) {
+                if (lonDistSource > -1.6) {
+                    shortestLonDist = lonDistSource;
+                    closetsLon = e.getSource();
+                }
+            }
+
+            if (latDistTarget < 1.6) {
+                if (latDistTarget > -1.6) {
+                    shortestLatDist = latDistTarget;
+                    closestLat = e.getTarget();
+                }
+            }
+            if (lonDistTarget < 1.6) {
+                if (lonDistTarget > -1.6) {
+                    closetsLon = e.getTarget();
+                    shortestLonDist = latDistTarget;
+                }
+            }
+
         }
+
+        System.out.println(closestLat);
+        System.out.println(closetsLon);
 
 
         Node source = appController.getNodeFromModel(sourceID);
