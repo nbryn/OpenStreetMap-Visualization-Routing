@@ -10,14 +10,15 @@ import java.util.List;
 
 public class Node implements OSMElement, Comparable {
     private long id;
-    private float latitude;
-    private float longitude;
+    protected float latitude;
+    protected float longitude;
     private double distTo;
 
     private XMLStreamReader reader;
 
     public Node() {
     }
+
 
     public long getId() {
         return id;
@@ -52,7 +53,6 @@ public class Node implements OSMElement, Comparable {
 
     private void setLatitude() {
         latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
-
     }
 
     private void setLongitude() {
