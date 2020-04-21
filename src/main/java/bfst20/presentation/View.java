@@ -2,10 +2,7 @@ package bfst20.presentation;
 
 import bfst20.data.AddressData;
 import bfst20.logic.AppController;
-import bfst20.logic.entities.Address;
-import bfst20.logic.entities.Bounds;
-import bfst20.logic.entities.LinePath;
-import bfst20.logic.entities.Node;
+import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
@@ -18,9 +15,8 @@ import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import bfst20.logic.Type;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -141,7 +137,7 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        shortestPath(4492355568L,5998082893L, pixelwidth);
+        shortestPath(4492355568L, 5998082893L, pixelwidth);
     }
 
     private void shortestPath(long sourceID, long targetID, double lineWidth) {
@@ -151,26 +147,29 @@ public class View {
 
         Graph graph = appController.getGraphFromModel();
 
-        Iterable<Edge> edges = graph.getEdges();
+        List<Edge> edges = graph.getEdges();
 
-        List<LinePath> highways = appController.getHighwaysFromModel();
 
-        try {
+        edges.sort(Comparator.comparing(Edge::getName));
 
-            for (Iterator<Edge> it = edges.iterator(); it.hasNext(); ) {
-                Edge edge = it.next();
-                if(edge.getName() != null) {
-                    if (edge.getName().equals(address.getStreet())) {
-                        System.out.println(edge.getName());
-                    }
-                }
+        int addressIndex = binarySearch(edges, address.getStreet());
+
+        List<Edge> closestEdges = new ArrayList<>();
+
+        for (int i = addressIndex - 100; i < addressIndex + 100; i++) {
+            if (edges.get(i).getName().equals(address.getStreet())) {
+                closestEdges.add(edges.get(i));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        /*System.out.println(address.getStreet());
-        System.out.println(highways.size());*/
+
+
+        System.out.println(address.getLat());
+        System.out.println(address.getLon());
+
+        for (Edge e : closestEdges) {
+            System.out.println(e.getTarget().getLatitude());
+            System.out.println(e.getSource().getLatitude());
+        }
 
 
         Node source = appController.getNodeFromModel(sourceID);
@@ -185,6 +184,27 @@ public class View {
         }
 
         //System.out.println(distance);
+    }
+
+
+    private int binarySearch(List<Edge> list, String address) {
+        int low = 0;
+        int high = list.size() - 1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            Edge midElement = list.get(mid);
+            String midID = midElement.getName();
+
+            if (midID.compareTo(address) < 0) {
+                low = mid + 1;
+            } else if (midID.compareTo(address) > 0) {
+                high = mid - 1;
+            } else {
+                return low;
+            }
+        }
+        return 0;
     }
 
     public void setSearchString(String addressString) {

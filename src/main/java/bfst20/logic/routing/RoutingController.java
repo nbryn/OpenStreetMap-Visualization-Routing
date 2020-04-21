@@ -34,7 +34,6 @@ public class RoutingController {
 
     public void initialize(List<LinePath> highWays, Map<Long, Node> nodes) {
         generateEdges(highWays, nodes);
-        buildGraph(nodes);
 
     }
 
@@ -61,6 +60,7 @@ public class RoutingController {
             edge = edgesOnPath.get(edge.getTarget());
             long tempID = edge.getTarget().getId();
 
+            // Follow either target or source node
             edge = id == tempID ? edgesOnPath.get(edge.getTarget()) : edgesOnPath.get(edge.getSource());
             id = id == tempID ? edge.getSource().getId() : edge.getTarget().getId();
 
@@ -71,6 +71,7 @@ public class RoutingController {
     }
 
     private void generateEdges(List<LinePath> highWays, Map<Long, Node> nodes) {
+        Graph graph = new Graph(new ArrayList<>(nodes.values()));
         for (LinePath linePath : highWays) {
             Way way = linePath.getWay();
             Type type = linePath.getType();
@@ -86,20 +87,13 @@ public class RoutingController {
                     Edge edge = new Edge(type, sourceNode, targetNode, length, edgeLinePath, way.getName());
 
                     edges.add(edge);
+                    graph.addEdge(edge);
                 }
             }
         }
-    }
-
-    private void buildGraph(Map<Long, Node> nodes) {
-        Graph graph = new Graph(new ArrayList<>(nodes.values()));
-
-        for (Edge edge : edges) {
-            graph.addEdge(edge);
-        }
-
         appController.saveGraphOnModel(graph);
     }
+
 
     private double calculateDistBetween(Node source, Node target) {
         double sourceLat = source.getLatitude();

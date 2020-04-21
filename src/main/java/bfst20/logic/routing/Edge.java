@@ -20,7 +20,7 @@ public class Edge {
         this.source = source;
         this.target = target;
         this.length = length;
-        this.name = name;
+        this.name = name == null ? "ååååå" : name;
     }
 
     public Edge(Type highwayType, Node source, Node target, double length, LinePath linePath, int speedLimit) {
