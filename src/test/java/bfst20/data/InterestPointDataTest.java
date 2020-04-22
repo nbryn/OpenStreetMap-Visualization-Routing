@@ -12,13 +12,13 @@ public class InterestPointDataTest {
 
     @BeforeAll
     static void setup() {
-        interestPointData = interestPointData.getInstance();
+        interestPointData = InterestPointData.getInstance();
         interestPoint = new InterestPoint(9999,8888);
     }
 
     @Test
     void getInstance() {
-        assertEquals(interestPointData, interestPointData.getInstance());
+        assertEquals(interestPointData, InterestPointData.getInstance());
     }
 
     @Test
