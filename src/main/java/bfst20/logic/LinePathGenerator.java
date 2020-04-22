@@ -21,10 +21,10 @@ public class LinePathGenerator {
 
     private LinePathGenerator() {
         appController = new AppController();
-        OSMWays = appController.getOSMWaysFromModel();
-        OSMNodes = appController.getOSMNodesFromModel();
-        OSMRelations = appController.getOSMRelationsFromModel();
-        addresses = appController.getAddresses();
+        OSMWays = appController.getWaysFromModel();
+        OSMNodes = appController.getNodesFromModel();
+        OSMRelations = appController.getRelationsFromModel();
+        addresses = appController.getAddressesFromModel();
         appController.clearOSMData();
     }
 
@@ -59,11 +59,11 @@ public class LinePathGenerator {
             Type type = linePath.getType();
 
             if (!appController.getLinePathsFromModel().containsKey(type)) {
-                appController.addTypeToModel(type);
+                appController.addToModel(type);
             }
 
             if (type != Type.PLACE) {
-                appController.addLinePathToModel(type, linePath);
+                appController.addToModel(type, linePath);
             }
         }
     }
@@ -81,7 +81,7 @@ public class LinePathGenerator {
             } else if (relation.getName() != null && relation.getName().startsWith("Region ")) {
 
                 if (!appController.getLinePathsFromModel().containsKey(Type.COASTLINE)) {
-                    appController.addTypeToModel(Type.COASTLINE);
+                    appController.addToModel(Type.COASTLINE);
                 }
 
                 connectWays(relation, Type.COASTLINE);
@@ -98,7 +98,7 @@ public class LinePathGenerator {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
 
-                appController.addLinePathToModel(type, new LinePath(entry.getValue(), type, OSMNodes, addresses, true));
+                appController.addToModel(type, new LinePath(entry.getValue(), type, OSMNodes, addresses, true));
             }
         }
     }

@@ -2,13 +2,11 @@ package bfst20.logic;
 
 import bfst20.logic.entities.*;
 import bfst20.logic.interfaces.OSMElement;
-import bfst20.logic.entities.LinePath;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -35,21 +33,6 @@ public class Parser {
         return parser;
     }
 
-    public void parseBinary(File file) throws FileNotFoundException {
-        try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            try {
-                Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
-                Bounds bounds = drawables.get(Type.BOUNDS).get(0).getBounds();
-
-                appController.setBoundsOnModel(bounds);
-                appController.setLinePathsOnModel(drawables);
-            } catch (ClassNotFoundException | IOException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
@@ -137,7 +120,7 @@ public class Parser {
                             break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
-                            appController.addRelationToModel(relation);
+                            appController.addToModel(relation);
                             parseTags(reader, lastElementParsed, tags, firstTag);
                             break;
                         case "way":
@@ -162,7 +145,7 @@ public class Parser {
         if (city == null) return;
 
         Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
-        appController.putAddressToModel(lastNodeId, address);
+        appController.addToModel(lastNodeId, address);
     }
 
     private void parseTags(XMLStreamReader reader,
@@ -216,14 +199,14 @@ public class Parser {
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
 
-        appController.setBoundsOnModel(new Bounds(maxLat, minLat, maxLon, minLon));
+        appController.addToModel(new Bounds(maxLat, minLat, maxLon, minLon));
     }
 
     private void addNodeToMap(XMLStreamReader reader) {
         Node node = new Node();
         node.setReader(reader);
         node.setValues();
-        appController.addNodeToModel(node.getId(), node);
+        appController.addToModel(node.getId(), node);
 
     }
 
@@ -252,7 +235,7 @@ public class Parser {
         Way way = new Way();
         way.setReader(reader);
         way.setValues();
-        appController.addWayToModel(way);
+        appController.addToModel(way);
 
         return way;
     }

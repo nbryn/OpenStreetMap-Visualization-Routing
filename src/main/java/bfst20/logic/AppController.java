@@ -2,6 +2,7 @@ package bfst20.logic;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class AppController {
             //generateBinary();
         }
         generateHighways();
-        routingController.initialize(getHighwaysFromModel(), getOSMNodesFromModel());
+        routingController.buildRoutingGraph();
         //clearNodeData();
         view.initialize();
 
@@ -65,10 +66,6 @@ public class AppController {
         parser.parseOSMFile(file);
     }
 
-    public void setPathEdgesOnModel(Map<Node, Edge> edges) {
-        routingData.setEdgesOnPath(edges);
-    }
-
     public double initializeRouting(Node source, Node target) {
         routingController = routingController.getInstance();
 
@@ -80,6 +77,24 @@ public class AppController {
 
     }
 
+    public void startStringParsing(String string) throws XMLStreamException {
+        parser.parseString(string);
+    }
+
+    public Node[] getNodesFromSearchQuery(String sourceQuery, String targetQuery) {
+        Graph graph = getGraphFromModel();
+        List<Edge> edges = graph.getEdges();
+        edges.sort(Comparator.comparing(Edge::getName));
+
+        Address source = findAddress(sourceQuery);
+        Address target = findAddress(targetQuery);
+
+        Node srcNode = routingController.getInstance().findClosestNode(source, edges);
+        Node trgNode = routingController.getInstance().findClosestNode(target, edges);
+
+        return new Node[] {srcNode, trgNode};
+    }
+
     public List<LinePath> getRouteFromModel() {
         return routingData.getRoute();
     }
@@ -88,7 +103,7 @@ public class AppController {
         return routingData.getEdgesOnPath();
     }
 
-    public void saveGraphOnModel(Graph graph) {
+    public void addToModel(Graph graph) {
         routingData.saveGraph(graph);
     }
 
@@ -104,7 +119,6 @@ public class AppController {
         view = new View(canvas);
         view.setMouseLocationView(mouseLocationLabel);
     }
-
 
 
     public List<LinePath> getHighwaysFromModel() {
@@ -123,7 +137,7 @@ public class AppController {
         linePathData.saveHighways(highWays);
     }
 
-    public void putAddressToModel(long id, Address address) {
+    public void addToModel(long id, Address address) {
         addressData.putAddress(id, address);
     }
 
@@ -133,11 +147,11 @@ public class AppController {
         return address;
     }
 
-    public void addRelationToModel(Relation relation) {
+    public void addToModel(Relation relation) {
         OSMElementData.addRelation(relation);
     }
 
-    public void setBoundsOnModel(Bounds bounds) {
+    public void addToModel(Bounds bounds) {
         OSMElementData.setBounds(bounds);
     }
 
@@ -145,23 +159,23 @@ public class AppController {
         return OSMElementData.getBounds();
     }
 
-    public void addNodeToModel(long id, Node node) {
+    public void addToModel(long id, Node node) {
         OSMElementData.addToNodeMap(id, node);
     }
 
-    public void addWayToModel(Way way) {
+    public void addToModel(Way way) {
         OSMElementData.addWay(way);
     }
 
-    public List<Way> getOSMWaysFromModel() {
+    public List<Way> getWaysFromModel() {
         return OSMElementData.getOSMWays();
     }
 
-    public Map<Long, Node> getOSMNodesFromModel() {
+    public Map<Long, Node> getNodesFromModel() {
         return OSMElementData.getOSMNodes();
     }
 
-    public List<Relation> getOSMRelationsFromModel() {
+    public List<Relation> getRelationsFromModel() {
         return OSMElementData.getOSMRelations();
     }
 
@@ -177,7 +191,7 @@ public class AppController {
         return linePathData.getLinePaths();
     }
 
-    public Map<Long, Address> getAddresses() {
+    public Map<Long, Address> getAddressesFromModel() {
         AddressData addressData = AddressData.getInstance();
         return addressData.getAddresses();
     }
@@ -206,11 +220,11 @@ public class AppController {
         return nodeTo;
     }
 
-    public void addLinePathToModel(Type type, LinePath linePath) {
+    public void addToModel(Type type, LinePath linePath) {
         linePathData.addLinePath(type, linePath);
     }
 
-    public void addTypeToModel(Type type) {
+    public void addToModel(Type type) {
         linePathData.addType(type);
     }
 
@@ -225,8 +239,8 @@ public class AppController {
         linePathData.clearData();
     }
 
-    public void setLinePathsOnModel(Map<Type, List<LinePath>> drawables) {
-        linePathData.setLinePaths(drawables);
+    public void addToModel(Map<Type, List<LinePath>> linePaths) {
+        linePathData.setLinePaths(linePaths);
     }
 
     public void setupRect() {
