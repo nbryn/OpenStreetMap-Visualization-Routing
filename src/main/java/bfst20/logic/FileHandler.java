@@ -14,10 +14,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileHandler {
-
-    private AppController appController;
     private static boolean isLoaded = false;
     private static FileHandler fileHandler;
+    private AppController appController;
 
     private FileHandler() {
         appController = new AppController();
@@ -37,7 +36,6 @@ public class FileHandler {
         String fileExt = filename.substring(filename.lastIndexOf("."));
         switch (fileExt) {
             case ".bin":
-                System.out.println("hej");
                 loadBinary(file);
                 break;
             case ".txt":
@@ -46,7 +44,6 @@ public class FileHandler {
             case ".osm":
                 appController.parseOSM(file);
                 break;
-
             case ".zip":
                 loadZip(file);
                 break;
@@ -67,6 +64,10 @@ public class FileHandler {
         drawables.get(Type.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
 
 
+        writeToFile(file, drawables);
+    }
+
+    private void writeToFile(File file, Map<Type, List<LinePath>> drawables) {
         try {
             FileOutputStream fileOut = new FileOutputStream(file, false);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
@@ -78,15 +79,15 @@ public class FileHandler {
         }
     }
 
-    public void loadBinary(File file) throws FileNotFoundException {
+    public void loadBinary(File file)  {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             try {
 
-                Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
-                Bounds bounds = drawables.get(Type.BOUNDS).get(0).getBounds();
+                Map<Type, List<LinePath>> linePaths = (Map<Type, List<LinePath>>) in.readObject();
+                Bounds bounds = linePaths.get(Type.BOUNDS).get(0).getBounds();
 
-                appController.setBoundsOnModel(bounds);
-                appController.setLinePathsOnModel(drawables);
+                appController.addToModel(bounds);
+                appController.addToModel(linePaths);
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
@@ -98,7 +99,6 @@ public class FileHandler {
     private void loadZip(File file) {
         try {
             ZipFile zipFile = new ZipFile(file.toString());
-
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
             while (entries.hasMoreElements()) {
@@ -107,18 +107,15 @@ public class FileHandler {
 
                 if (name.endsWith(".osm")) {
                     InputStream stream = zipFile.getInputStream(entry);
-                    Parser parser = Parser.getInstance();
-                    parser.parseString(new String(stream.readAllBytes()));
+                    String toBeParsed = new String(stream.readAllBytes());
+                    appController.startStringParsing(toBeParsed);
                 }
             }
 
             zipFile.close();
 
-
         } catch (IOException | XMLStreamException ex) {
             System.out.println(ex);
         }
-
     }
-
 }
