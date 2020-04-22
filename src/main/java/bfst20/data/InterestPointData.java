@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InterestPointData {
+    int amount = 0;
 
     private Map<Integer, InterestPoint> intrestPoints;
     private static InterestPointData interestPointData;
@@ -23,11 +24,11 @@ public class InterestPointData {
     }
 
     public void addIntrestPoint(InterestPoint interestPoint){
-        intrestPoints.put(intrestPoints.size(), interestPoint);
+        intrestPoints.put(amount++, interestPoint);
     }
 
-    public void removeIntrestPoint(int id){
-        intrestPoints.remove(id);
+    public void removeIntrestPoint(int key){
+        intrestPoints.remove(key);
     }
 
     public Map<Integer, InterestPoint> getAllIntrestPoints(){
