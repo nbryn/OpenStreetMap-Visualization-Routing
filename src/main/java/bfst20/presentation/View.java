@@ -142,7 +142,7 @@ public class View {
         shortestPath("Sygehusvej 21", "Skolegyde 3", Vehicle.CAR, pixelwidth);
 
         if(!address1.equals("") && !address2.equals("")){
-            shortestPath(address1, address2, pixelwidth);
+            shortestPath(address1, address2,Vehicle.CAR, pixelwidth);
         }
 
         drawInterestPoints(pixelwidth);
