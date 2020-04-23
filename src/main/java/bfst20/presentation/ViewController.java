@@ -57,6 +57,12 @@ public class ViewController {
     @FXML
     private Canvas canvas;
 
+    @FXML private TextField searchbar;
+    @FXML private TextField yesbar;
+
+    @FXML private Button bikeButton;
+    @FXML private Button carButton;
+
     public ViewController() {
         appController = new AppController();
 
@@ -78,6 +84,10 @@ public class ViewController {
         toAddressButton.setOnAction(e -> {
             addressVBox.setVisible(true);
             routeVBox.setVisible(false);
+            yesbar.setText("");
+            searchbar.setText("");
+            view.setAddress("", "");
+            view.repaint();
         });
 
         setupFileHandling();
@@ -108,6 +118,8 @@ public class ViewController {
         setupCanvas();
 
         setupSearchButton();
+
+        setupRouteButtons();
     }
 
     private void setupFileHandling() {
@@ -167,6 +179,23 @@ public class ViewController {
         });
     }
 
+    private void setupRouteButtons(){
+        bikeButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                //System.out.println("HEY");
+                //TODO: Bike not implemented yet.
+            }
+        });
+
+        carButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                view.setAddress(searchbar.getText(), yesbar.getText());
+                view.repaint();
+            }
+        });
+    }
 
     public static void main(String[] args) {
         Launcher.main(args);

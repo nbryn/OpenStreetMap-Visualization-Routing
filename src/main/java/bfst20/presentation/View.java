@@ -31,12 +31,14 @@ public class View {
     private boolean isColorBlindMode = false;
     private String addressString;
     private Point2D mousePos;
-    private
+    private String address1, address2;
 
 
     Label mouseLocationLabel;
 
     public View(Canvas canvas) {
+        address1 = "";
+        address2 = "";
         mousePos = new Point2D(0, 0);
         appController = new AppController();
         kd = false;
@@ -135,8 +137,16 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        shortestPath("Besservej 1", "Kaasenvejen 1", pixelwidth);
+        if(!address1.equals("") && !address2.equals("")){
+            shortestPath(address1, address2, pixelwidth);
+        }
+
         drawInterestPoints(pixelwidth);
+    }
+
+    public void setAddress(String address1, String address2){
+        this.address2 = address2;
+        this.address1 = address1;
     }
 
     private Rect createRect(int boxSize) {
