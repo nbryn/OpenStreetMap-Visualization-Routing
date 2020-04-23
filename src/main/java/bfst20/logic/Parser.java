@@ -1,7 +1,8 @@
 package bfst20.logic;
 
 import bfst20.logic.entities.*;
-import bfst20.logic.interfaces.OSMElement;
+import bfst20.logic.misc.OSMElement;
+import bfst20.logic.misc.OSMType;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -161,35 +162,55 @@ public class Parser {
 
             if (tags.containsKey("landuse") || tags.containsKey("natural")) {
                 if (tags.containsKey("natural")) {
-                    lastElementParsed.setType(Type.valueOf(tags.get("natural").toUpperCase()));
+                    lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));
                 } else {
-                    lastElementParsed.setType(Type.valueOf(tags.get("landuse").toUpperCase()));
+                    lastElementParsed.setOSMType(OSMType.valueOf(tags.get("landuse").toUpperCase()));
                 }
             } else if (tags.containsKey("building")) {
-                lastElementParsed.setType(Type.BUILDING);
+                lastElementParsed.setOSMType(OSMType.BUILDING);
             } else if (tags.containsKey("highway")) {
-                Type type = Type.HIGHWAY;
-
-                try {
-                    type = Type.valueOf(tags.get("highway").toUpperCase());
-
-                    if (type == Type.RESIDENTIAL) {
-                        type = Type.RESIDENTIAL_HIGHWAY;
-                    } else if (type == Type.UNCLASSIFIED) {
-                        type = Type.UNCLASSIFIED_HIGHWAY;
-                    }
-                } catch (Exception e) {
-                }
-
-
-
-                lastElementParsed.setType(type);
+                parseHighway(lastElementParsed, tags);
             } else {
-                lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
+                lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
             }
 
         } catch (Exception err) {
         }
+    }
+
+    private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
+        Way way = (Way) lastElementParsed;
+        if (tags.containsKey("maxspeed")) {
+            way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
+        }
+
+        if (tags.containsKey("oneway")) {
+            if (tags.get("oneway").equals("yes")) {
+
+                way.setOneWay(true);
+            } else {
+                way.setOneWay(false);
+            }
+        }
+
+        OSMType type = OSMType.HIGHWAY;
+
+        try {
+            type = OSMType.valueOf(tags.get("highway").toUpperCase());
+
+            if (type == OSMType.RESIDENTIAL) {
+                type = OSMType.RESIDENTIAL_HIGHWAY;
+            } else if (type == OSMType.UNCLASSIFIED) {
+                type = OSMType.UNCLASSIFIED_HIGHWAY;
+            } else if (type == OSMType.FOOTWAY) {
+
+                type = OSMType.FOOTWAY;
+            }
+        } catch (Exception e) {
+        }
+
+
+        lastElementParsed.setOSMType(type);
     }
 
     private void setBounds(XMLStreamReader reader) {

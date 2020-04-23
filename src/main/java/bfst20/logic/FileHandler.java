@@ -2,6 +2,7 @@ package bfst20.logic;
 
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.misc.OSMType;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -57,17 +58,17 @@ public class FileHandler {
         File file = new File("samsoe.bin");
         file.createNewFile();
 
-        Map<Type, List<LinePath>> drawables = appController.getLinePathsFromModel();
+        Map<OSMType, List<LinePath>> drawables = appController.getLinePathsFromModel();
         Bounds bounds = appController.getBoundsFromModel();
 
-        drawables.put(Type.BOUNDS, new ArrayList<>());
-        drawables.get(Type.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
+        drawables.put(OSMType.BOUNDS, new ArrayList<>());
+        drawables.get(OSMType.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
 
 
         writeToFile(file, drawables);
     }
 
-    private void writeToFile(File file, Map<Type, List<LinePath>> drawables) {
+    private void writeToFile(File file, Map<OSMType, List<LinePath>> drawables) {
         try {
             FileOutputStream fileOut = new FileOutputStream(file, false);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
@@ -83,8 +84,8 @@ public class FileHandler {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             try {
 
-                Map<Type, List<LinePath>> linePaths = (Map<Type, List<LinePath>>) in.readObject();
-                Bounds bounds = linePaths.get(Type.BOUNDS).get(0).getBounds();
+                Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
+                Bounds bounds = linePaths.get(OSMType.BOUNDS).get(0).getBounds();
 
                 appController.addToModel(bounds);
                 appController.addToModel(linePaths);
