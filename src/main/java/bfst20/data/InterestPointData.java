@@ -2,17 +2,16 @@ package bfst20.data;
 
 import bfst20.logic.entities.InterestPoint;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 public class InterestPointData {
-    int amount = 0;
 
-    private Map<Integer, InterestPoint> intrestPoints;
+    private List<InterestPoint> intrestPoints;
     private static InterestPointData interestPointData;
 
     private InterestPointData(){
-        intrestPoints = new HashMap<>();
+        intrestPoints = new LinkedList<>();
     }
 
     public static InterestPointData getInstance(){
@@ -24,18 +23,15 @@ public class InterestPointData {
     }
 
     public void addIntrestPoint(InterestPoint interestPoint){
-        intrestPoints.put(amount++, interestPoint);
+        intrestPoints.add(interestPoint);
     }
 
     public void removeIntrestPoint(int key){
         intrestPoints.remove(key);
     }
 
-    public Map<Integer, InterestPoint> getAllIntrestPoints(){
+    public List<InterestPoint> getAllIntrestPoints(){
         return intrestPoints;
     }
 
-    public Iterable<InterestPoint> iterate(){
-        return intrestPoints.values();
-    }
 }

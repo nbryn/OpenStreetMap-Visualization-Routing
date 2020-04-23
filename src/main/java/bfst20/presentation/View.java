@@ -162,7 +162,7 @@ public class View {
     private void drawInterestPoints(double lineWidth) {
         InterestPointData interestPointData = InterestPointData.getInstance();
 
-        for (InterestPoint interestPoint : interestPointData.iterate()) {
+        for (InterestPoint interestPoint : interestPointData.getAllIntrestPoints()) {
             int bubbleSize = 30;
 
             drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude());

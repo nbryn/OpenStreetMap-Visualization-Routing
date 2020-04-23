@@ -10,13 +10,12 @@ import java.util.ArrayList;
 public class Relation implements OSMElement {
 
     private long id;
-    private XMLStreamReader reader;
     private ArrayList<Long> members;
-
     private String name;
     private OSMType OSMType;
 
-    public Relation(){
+    public Relation(long id){
+        this.id = id;
         members = new ArrayList<>();
     }
 
@@ -48,16 +47,6 @@ public class Relation implements OSMElement {
 
     public long getId() {
         return id;
-    }
-
-    @Override
-    public void setReader(XMLStreamReader reader) {
-        this.reader = reader;
-    }
-
-    @Override
-    public void setValues() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
     }
 
 }

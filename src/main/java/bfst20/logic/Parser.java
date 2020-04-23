@@ -223,9 +223,10 @@ public class Parser {
     }
 
     private void addNodeToMap(XMLStreamReader reader) {
-        Node node = new Node();
-        node.setReader(reader);
-        node.setValues();
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        float latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
+        float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
+        Node node = new Node(id, latitude, longitude);
         appController.addToModel(node.getId(), node);
 
     }
@@ -235,9 +236,8 @@ public class Parser {
     //3. Adding final relation to the real realtions list.
     //Why: to have all sub elements in the final relations.
     private Relation addRelationToList(XMLStreamReader reader) {
-        Relation relation = new Relation();
-        relation.setReader(reader);
-        relation.setValues();
+       long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Relation relation = new Relation(id);
 
         tempOSMRelations.add(relation);
 
@@ -252,9 +252,9 @@ public class Parser {
     }
 
     private Way addWayToList(XMLStreamReader reader) {
-        Way way = new Way();
-        way.setReader(reader);
-        way.setValues();
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Way way = new Way(id);
+
         appController.addToModel(way);
 
         return way;

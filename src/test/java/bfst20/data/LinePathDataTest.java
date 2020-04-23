@@ -24,7 +24,7 @@ class LinePathDataTest {
     @BeforeAll
     static void setup() {
         linePathData = LinePathData.getInstance();
-        node = new Node();
+       // node = new Node();
 
     }
 

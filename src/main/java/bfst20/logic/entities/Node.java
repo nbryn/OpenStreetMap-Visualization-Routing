@@ -11,9 +11,15 @@ public class Node implements OSMElement, Comparable {
     protected float longitude;
     private double distTo;
 
-    private XMLStreamReader reader;
 
-    public Node() {
+    public Node(long id, float latitude, float longitude) {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+    public Node(float latitude, float longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
 
@@ -29,16 +35,6 @@ public class Node implements OSMElement, Comparable {
         return longitude;
     }
 
-    public void setValues() {
-        setId();
-        setLatitude();
-        setLongitude();
-    }
-
-    private void setId() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
-
-    }
 
     public void setDistTo(double distTo) {
         this.distTo = distTo;
@@ -48,19 +44,6 @@ public class Node implements OSMElement, Comparable {
         return distTo;
     }
 
-    private void setLatitude() {
-        latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
-    }
-
-    private void setLongitude() {
-        longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
-
-    }
-
-    @Override
-    public void setReader(XMLStreamReader reader) {
-        this.reader = reader;
-    }
 
     @Override
     public void setName(String name) {

@@ -24,6 +24,11 @@ public class Way implements OSMElement {
         drawColor = Color.BLACK;
         nodeIds = new ArrayList<>();
     }
+    public Way(long id) {
+        this.id = id;
+        drawColor = Color.BLACK;
+        nodeIds = new ArrayList<>();
+    }
 
     public Way(Way way) {
         this.nodeIds = new ArrayList<>(way.getNodeIds());
@@ -73,16 +78,6 @@ public class Way implements OSMElement {
 
     public void addNodeId(long nodeid) {
         nodeIds.add(nodeid);
-    }
-
-    @Override
-    public void setValues() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
-    }
-
-    @Override
-    public void setReader(XMLStreamReader reader) {
-        this.reader = reader;
     }
 
     public long getFirstNodeId() {
