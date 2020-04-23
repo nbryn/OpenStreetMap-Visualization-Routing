@@ -93,8 +93,11 @@ public class View {
         repaint();
     }
 
+    int i = 0;
 
     public void repaint() {
+        i++;
+        System.out.println(i);
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
@@ -141,6 +144,7 @@ public class View {
         //gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
+        drawIntrestPoints(pixelwidth);
 
         shortestPath("Besservej 1", "Kaasenvejen 1", pixelwidth);
     }
@@ -182,12 +186,6 @@ public class View {
         return closestNode;
     }
 
-    private void shortestPath(String source, String target, double lineWidth) {
-        drawIntrestPoints(pixelwidth);
-
-        //shortestPath(4492355568L,5998082893L, pixelwidth);
-    }
-
     private void drawIntrestPoints(double lineWidth){
         IntrestPointData intrestPointData = IntrestPointData.getInstance();
 
@@ -203,10 +201,7 @@ public class View {
         }
     }
 
-    private void shortestPath(long sourceID, long targetID, double lineWidth) {
-        Node source = appController.getNodeFromModel(sourceID);
-        Node target = appController.getNodeFromModel(targetID);
-
+    private void shortestPath(String source, String target, double lineWidth) {
 
         try {
             

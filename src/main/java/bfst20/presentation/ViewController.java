@@ -64,7 +64,6 @@ public class ViewController {
 
     }
 
-
     Point2D lastMouse;
 
     @FXML

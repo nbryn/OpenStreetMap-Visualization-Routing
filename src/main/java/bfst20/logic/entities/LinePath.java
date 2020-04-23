@@ -25,7 +25,12 @@ public class LinePath implements Serializable {
 
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
-
+        minY = minLon;
+        maxY = maxLon;
+        minX = minLat;
+        maxX = maxLat;
+        centerLatitude = (maxX - minX) / 2 + minX;
+        centerLongitude = (maxY - minY) / 2 + minY;
     }
 
     // This constructor is for Edges used in the Graph for routing

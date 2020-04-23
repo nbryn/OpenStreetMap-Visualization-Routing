@@ -27,6 +27,9 @@ public class KDTree {
         }
     }
 
+    public KDNode getRoot(){
+        return root;
+    }
 
     public Iterable<LinePath> query(Rect rect, double zoomLevel){
         List<LinePath> list = new ArrayList<>();
