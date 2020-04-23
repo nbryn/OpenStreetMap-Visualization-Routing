@@ -1,7 +1,8 @@
 package bfst20.logic;
 
 import bfst20.logic.entities.*;
-import bfst20.logic.interfaces.OSMElement;
+import bfst20.logic.misc.OSMElement;
+import bfst20.logic.misc.OSMType;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -161,35 +162,54 @@ public class Parser {
 
             if (tags.containsKey("landuse") || tags.containsKey("natural")) {
                 if (tags.containsKey("natural")) {
-                    lastElementParsed.setType(Type.valueOf(tags.get("natural").toUpperCase()));
+                    lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));
                 } else {
-                    lastElementParsed.setType(Type.valueOf(tags.get("landuse").toUpperCase()));
+                    lastElementParsed.setOSMType(OSMType.valueOf(tags.get("landuse").toUpperCase()));
                 }
             } else if (tags.containsKey("building")) {
-                lastElementParsed.setType(Type.BUILDING);
+                lastElementParsed.setOSMType(OSMType.BUILDING);
             } else if (tags.containsKey("highway")) {
-                Type type = Type.HIGHWAY;
-
-                try {
-                    type = Type.valueOf(tags.get("highway").toUpperCase());
-
-                    if (type == Type.RESIDENTIAL) {
-                        type = Type.RESIDENTIAL_HIGHWAY;
-                    } else if (type == Type.UNCLASSIFIED) {
-                        type = Type.UNCLASSIFIED_HIGHWAY;
-                    }
-                } catch (Exception e) {
-                }
-
-
-
-                lastElementParsed.setType(type);
+                parseHighway(lastElementParsed, tags);
             } else {
-                lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
+                lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
             }
 
         } catch (Exception err) {
         }
+    }
+
+    private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
+        Way way = (Way) lastElementParsed;
+        if (tags.containsKey("maxspeed")) {
+            way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
+        }
+
+        if (tags.containsKey("oneway")) {
+            if (tags.get("oneway").equals("yes")) {
+                way.setOneWay(true);
+            } else {
+                way.setOneWay(false);
+            }
+        }
+
+        OSMType type = OSMType.HIGHWAY;
+
+        try {
+            type = OSMType.valueOf(tags.get("highway").toUpperCase());
+
+            if (type == OSMType.RESIDENTIAL) {
+                type = OSMType.RESIDENTIAL_HIGHWAY;
+            } else if (type == OSMType.UNCLASSIFIED) {
+                type = OSMType.UNCLASSIFIED_HIGHWAY;
+            } else if (type == OSMType.FOOTWAY) {
+
+                type = OSMType.FOOTWAY;
+            }
+        } catch (Exception e) {
+        }
+
+
+        lastElementParsed.setOSMType(type);
     }
 
     private void setBounds(XMLStreamReader reader) {
@@ -203,9 +223,10 @@ public class Parser {
     }
 
     private void addNodeToMap(XMLStreamReader reader) {
-        Node node = new Node();
-        node.setReader(reader);
-        node.setValues();
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        float latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
+        float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
+        Node node = new Node(id, latitude, longitude);
         appController.addToModel(node.getId(), node);
 
     }
@@ -215,9 +236,8 @@ public class Parser {
     //3. Adding final relation to the real realtions list.
     //Why: to have all sub elements in the final relations.
     private Relation addRelationToList(XMLStreamReader reader) {
-        Relation relation = new Relation();
-        relation.setReader(reader);
-        relation.setValues();
+       long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Relation relation = new Relation(id);
 
         tempOSMRelations.add(relation);
 
@@ -232,9 +252,9 @@ public class Parser {
     }
 
     private Way addWayToList(XMLStreamReader reader) {
-        Way way = new Way();
-        way.setReader(reader);
-        way.setValues();
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Way way = new Way(id);
+
         appController.addToModel(way);
 
         return way;

@@ -1,6 +1,6 @@
 package bfst20.data;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
@@ -54,7 +54,7 @@ class KDTreeDataTest {
 
         KDTree kdTree = new KDTree(linePaths, rect);
 
-        kdTreeData.addKDTree(Type.COASTLINE, kdTree);
+        kdTreeData.addKDTree(OSMType.COASTLINE, kdTree);
 
      /*   Field kdTrees = KDTreeModel.class.getDeclaredField("kdTrees");
         kdTrees.setAccessible(true);
@@ -64,7 +64,7 @@ class KDTreeDataTest {
 
         KDTree returned = (KDTree) get.invoke(map, Type.COASTLINE);*/
 
-        assertEquals(kdTreeData.getKDTree(Type.COASTLINE), kdTree);
+        assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), kdTree);
 
     }
 
@@ -75,8 +75,8 @@ class KDTreeDataTest {
         linePaths.add(linePath);
 
         KDTree kdTree = new KDTree(linePaths, rect);
-        kdTreeData.addKDTree(Type.COASTLINE, kdTree);
+        kdTreeData.addKDTree(OSMType.COASTLINE, kdTree);
 
-        assertEquals(kdTreeData.getKDTree(Type.COASTLINE), kdTree);
+        assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), kdTree);
     }
 }
