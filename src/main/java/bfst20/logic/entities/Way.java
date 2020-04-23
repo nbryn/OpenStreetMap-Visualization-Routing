@@ -44,7 +44,7 @@ public class Way implements OSMElement {
     }
 
     public void setOneWay(boolean oneWay) {
-        isOneWay = oneWay;
+        this.isOneWay = oneWay;
     }
 
     public String getName() {

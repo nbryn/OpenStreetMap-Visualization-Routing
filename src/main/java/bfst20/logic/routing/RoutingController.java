@@ -68,7 +68,7 @@ public class RoutingController {
         Node closestNode = null;
 
         for (Edge e : closestEdges) {
-            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLon(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLat(), 2));
+            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
 
             if (distance < shortestDistance) {
                 closestNode = e.getTarget();

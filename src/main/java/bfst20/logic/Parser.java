@@ -186,7 +186,6 @@ public class Parser {
 
         if (tags.containsKey("oneway")) {
             if (tags.get("oneway").equals("yes")) {
-
                 way.setOneWay(true);
             } else {
                 way.setOneWay(false);

@@ -136,7 +136,7 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-        shortestPath("Skolegyde 3","Sygehusvej 21" , Vehicle.CAR, pixelwidth);
+        shortestPath("Sygehusvej 21", "Skolegyde 3", Vehicle.CAR, pixelwidth);
         drawInterestPoints(pixelwidth);
     }
 
