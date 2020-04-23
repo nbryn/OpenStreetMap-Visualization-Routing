@@ -1,12 +1,9 @@
 package bfst20.logic.entities;
 
-import bfst20.logic.Type;
-import bfst20.logic.interfaces.OSMElement;
-import bfst20.logic.routing.Edge;
+import bfst20.logic.misc.OSMType;
+import bfst20.logic.misc.OSMElement;
 
 import javax.xml.stream.XMLStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Node implements OSMElement, Comparable {
     private long id;
@@ -72,7 +69,7 @@ public class Node implements OSMElement, Comparable {
     }
 
     @Override
-    public void setType(Type type) {
+    public void setOSMType(OSMType OSMType) {
         // TODO Auto-generated method stub
 
     }
