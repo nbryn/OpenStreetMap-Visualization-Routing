@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.awt.*;
+
 public class Launcher extends Application {
     public static Window primaryStage;
 
@@ -14,12 +16,14 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
 
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         FXMLLoader MainLoader = new FXMLLoader(getClass().getResource("/Main.fxml"));
-        Scene sceneMain = new Scene(MainLoader.load());
+        Scene sceneMain = new Scene(MainLoader.load(), gd.getDisplayMode().getWidth() - 100, gd.getDisplayMode().getHeight() - 100);
 
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.setTitle("Map");
         primaryStage.setScene(sceneMain);
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
