@@ -2,7 +2,6 @@ package bfst20.logic;
 
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
-import bfst20.presentation.ErrorMessenger;
 import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMType;
 
@@ -69,7 +68,7 @@ public class FileHandler {
         writeToFile(file, drawables);
     }
 
-    private void writeToFile(File file, Map<Type, List<LinePath>> drawables) throws FileNotFoundException, IOException {
+    private void writeToFile(File file, Map<OSMType, List<LinePath>> drawables) throws FileNotFoundException, IOException {
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(drawables);
@@ -78,16 +77,16 @@ public class FileHandler {
 
     public void loadBinary(File file)  {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            Map<Type, List<LinePath>> linePaths = (Map<Type, List<LinePath>>) in.readObject();
-            Bounds bounds = linePaths.get(Type.BOUNDS).get(0).getBounds();
+            Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
+            Bounds bounds = linePaths.get(OSMType.BOUNDS).get(0).getBounds();
 
             appController.addToModel(bounds);
             appController.addToModel(linePaths);
         } catch (IOException e) {
-            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
             System.exit(1);
         } catch (ClassNotFoundException e){
-            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.");
             System.exit(1);
         }
     }
@@ -111,7 +110,7 @@ public class FileHandler {
             zipFile.close();
 
         } catch (IOException | XMLStreamException ex) {
-            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.");
             System.exit(1);
         }
     }
