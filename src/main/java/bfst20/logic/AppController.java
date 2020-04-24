@@ -73,7 +73,7 @@ public class AppController {
         }
     }
 
-    public void parseOSM(File file) throws FileNotFoundException, XMLStreamException {
+    public void parseOSM(File file) throws IOException, XMLStreamException {
         parser.parseOSMFile(file);
     }
 
