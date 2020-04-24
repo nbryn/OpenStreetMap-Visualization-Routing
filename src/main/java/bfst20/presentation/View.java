@@ -3,6 +3,7 @@ package bfst20.presentation;
 import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
@@ -17,13 +18,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 
-import java.io.IOException;
+
 import java.util.*;
 import java.util.List;
 
 import javafx.scene.transform.NonInvertibleTransformException;
 
-import javax.sound.sampled.Line;
 
 public class View {
 
@@ -115,6 +115,7 @@ public class View {
         Point2D mouse = toModelCoords(
                 mousePos.getX(),
                 mousePos.getY());
+
 
         drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
 
