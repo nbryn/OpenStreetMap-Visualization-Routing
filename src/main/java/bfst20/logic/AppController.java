@@ -16,7 +16,6 @@ import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
-import bfst20.presentation.ErrorMessenger;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
@@ -66,10 +65,10 @@ public class AppController {
             if (file.getName().endsWith(".bin")) isBinary = true;
             fileHandler.load(file);
         } catch (IOException ioException) {
-            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error loading file, exiting.");
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
             System.exit(1);
         } catch (XMLStreamException xmlStreamException) {
-            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
             System.exit(1);
         }
     }
@@ -274,6 +273,10 @@ public class AppController {
 
     public KDTree getKDTreeFromModel(OSMType OSMType) {
         return kdTreeData.getKDTree(OSMType);
+    }
+
+    public void alertOK(Alert.AlertType type, String text){
+        view.displayError(type, text);
     }
 
     //TODO: NOT BEING USED?

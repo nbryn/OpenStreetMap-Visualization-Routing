@@ -1,10 +1,8 @@
 package bfst20.logic;
 
 import bfst20.logic.entities.*;
-import bfst20.logic.interfaces.OSMElement;
-import bfst20.presentation.ErrorMessenger;
-import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMElement;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.OSMType;
 
 import java.io.*;
@@ -168,22 +166,22 @@ public class Parser {
                 lastElementParsed.setOSMType(OSMType.BUILDING);
             } else if (tags.containsKey("highway")) {
 
-                Type type = Type.HIGHWAY;
+                OSMType type = OSMType.HIGHWAY;
 
                 try {
-                    type = Type.valueOf(tags.get("highway").toUpperCase());
+                    type = OSMType.valueOf(tags.get("highway").toUpperCase());
 
-                    if (type == Type.RESIDENTIAL) {
-                        type = Type.RESIDENTIAL_HIGHWAY;
-                    } else if (type == Type.UNCLASSIFIED) {
-                        type = Type.UNCLASSIFIED_HIGHWAY;
+                    if (type == OSMType.RESIDENTIAL) {
+                        type = OSMType.RESIDENTIAL_HIGHWAY;
+                    } else if (type == OSMType.UNCLASSIFIED) {
+                        type = OSMType.UNCLASSIFIED_HIGHWAY;
                     }
                 }catch (Exception e){
                     //This catch is here to check if the current highway type exists in the Type enum, if it does, that will be used,
                     //If it dosen't this will throw, and the program will use Type.HIGHWAY
                 }
 
-                lastElementParsed.setType(type);
+                lastElementParsed.setOSMType(type);
                 parseHighway(lastElementParsed, tags);
             } else {
                 lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
@@ -191,7 +189,7 @@ public class Parser {
 
         } catch (Exception err) {
              //This exception is getting throwen a lot, because of all the missing Enum Types.
-            //ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags, exiting.");
+            //appController.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags, exiting.");
             //System.exit(1);
         }
     }
