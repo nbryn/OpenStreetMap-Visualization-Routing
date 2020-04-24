@@ -27,6 +27,7 @@ public enum OSMType {
     LANDUSE,
     RESIDENTIAL,
     WOOD,
+    MULTIPOLYGON,
     PLACE;
 
     public static double getLineWidth(OSMType OSMType, double lineWidth) {
@@ -65,6 +66,7 @@ public enum OSMType {
             case RESIDENTIAL:
             case BUILDING:
             case RESIDENTIAL_HIGHWAY:
+            case MULTIPOLYGON:
             case FOOTWAY:
                 return 2.8945867784311756E7;
             default:
@@ -81,6 +83,7 @@ public enum OSMType {
             case WATER:
             case COASTLINE:
             case BUILDING:
+            case MULTIPOLYGON:
             case RESIDENTIAL:
             case WOOD:
             case TREE_ROW:
@@ -108,6 +111,7 @@ public enum OSMType {
             case WATER:
                 return Color.BLUE;
             case BUILDING:
+            case MULTIPOLYGON:
                 return Color.BROWN;
             case RESIDENTIAL_HIGHWAY:
                 return Color.rgb(92, 92, 92, 1);
@@ -151,6 +155,7 @@ public enum OSMType {
             case WATER:
                 return Color.RED;
             case BUILDING:
+            case MULTIPOLYGON:
                 return Color.YELLOW;
             case HIGHWAY:
                 return Color.BURLYWOOD;

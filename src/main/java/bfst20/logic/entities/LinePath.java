@@ -15,6 +15,7 @@ public class LinePath implements Serializable {
     private String name;
     private long wayId;
     private Way way;
+    private boolean multiploygon;
 
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
@@ -65,13 +66,19 @@ public class LinePath implements Serializable {
 
         coords = new float[nodeIds.size() * 2];
         for (int i = 0; i < nodeIds.size(); i++) {
-            coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
-            coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
+            if(nodeIds.get(i) == -99999){
+                coords[i * 2] = -99999;
+                coords[i * 2 + 1] = -99999;
+            }else{
+                coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
+                coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
 
-            if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
-            if (minY > coords[i * 2]) minY = coords[i * 2];
-            if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
-            if (maxY < coords[i * 2]) maxY = coords[i * 2];
+                if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
+                if (minY > coords[i * 2]) minY = coords[i * 2];
+                if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
+                if (maxY < coords[i * 2]) maxY = coords[i * 2];
+            }
+
 
         }
 
@@ -79,6 +86,10 @@ public class LinePath implements Serializable {
         centerLongitude = (maxY - minY) / 2 + minY;
 
     }
+
+    public boolean isMultiploygon(){return multiploygon;}
+
+    public void setMultiploygon(boolean multiploygon){this.multiploygon = multiploygon;}
 
     public Bounds getBounds() {
         return this.bounds;

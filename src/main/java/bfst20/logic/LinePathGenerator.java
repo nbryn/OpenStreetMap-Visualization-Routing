@@ -9,6 +9,8 @@ import bfst20.logic.entities.Way;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.misc.OSMType;
 
+import javax.sound.sampled.Line;
+
 
 public class LinePathGenerator {
 
@@ -71,6 +73,7 @@ public class LinePathGenerator {
 
     private void createRelations() {
         for (Relation relation : OSMRelations) {
+
             if (relation.getOSMType() == OSMType.FOREST) {
 
                 connectWays(relation, OSMType.FOREST);
@@ -86,10 +89,14 @@ public class LinePathGenerator {
                 }
 
                 connectWays(relation, OSMType.COASTLINE);
+            }else if(relation.getOSMType() == OSMType.BUILDING){
+                //connectWays(relation, OSMType.BUILDING);
+                connectMultipolygon(relation, OSMType.BUILDING);
             }
 
 
         }
+        addRelation(OSMType.BUILDING, appController.getNodeTo(OSMType.BUILDING));
         addRelation(OSMType.FOREST, appController.getNodeTo(OSMType.FOREST));
         addRelation(OSMType.FARMLAND, appController.getNodeTo(OSMType.FARMLAND));
         addRelation(OSMType.COASTLINE, appController.getNodeTo(OSMType.COASTLINE));
@@ -99,15 +106,51 @@ public class LinePathGenerator {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
 
-                appController.addToModel(OSMType, new LinePath(entry.getValue(), OSMType, OSMNodes, addresses, true));
+                LinePath path = new LinePath(entry.getValue(), OSMType, OSMNodes, addresses, true);
+
+                if(entry.getValue().isMultipolygon()){
+                    path.setMultiploygon(true);
+                }
+
+                appController.addToModel(OSMType, path);
             }
         }
     }
 
+    private void connectMultipolygon(Relation relation, OSMType osmType){
+        if(!relation.isMultipolygon()) return;
+        //if(relation.getId() != 2853841) return;
+
+        Collections.sort(relation.getMembers());
+
+        Way way = null;
+
+        for (long entry : relation.getMembers()) {
+
+            if(way == null){
+                way = (binarySearch(OSMWays, entry));
+            }else{
+                Way newWay = (binarySearch(OSMWays, entry));
+                way = combine(way, newWay);
+            }
+        }
+
+        way.setMultipolygon(true);
+
+        appController.addToModel(osmType, OSMNodes.get(way.getFirstNodeId()), way);
+        appController.addToModel(osmType, OSMNodes.get(way.getLastNodeId()), way);
+    }
+
     private void connectWays(Relation relation, OSMType OSMType) {
         Collections.sort(relation.getMembers());
+
         for (long entry : relation.getMembers()) {
+
             Way way = (binarySearch(OSMWays, entry));
+
+            if(relation.isMultipolygon()){
+                way.setMultipolygon(true);
+            }
 
             if (way == null) continue;
 
@@ -163,6 +206,18 @@ public class LinePathGenerator {
         return new LinePath(way, type, OSMNodes, addresses, fill);
     }
 
+    private Way combine(Way before, Way after){
+        if (before == null) return after;
+        if (after == null) return before;
+
+        Way way = new Way();
+        way.addAllNodeIds(before);
+        way.addNodeId(-99999);
+        way.addNodeId(-99999);
+        way.addAllNodeIds(after);
+
+        return way;
+    }
 
     private Way merge(Way before, Way after) {
         if (before == null) return after;

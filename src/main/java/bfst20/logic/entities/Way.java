@@ -17,6 +17,7 @@ public class Way implements OSMElement {
     private int maxSpeed;
     private String name;
     private OSMType OSMType;
+    private boolean multipolygon;
     private long id;
 
 
@@ -58,6 +59,15 @@ public class Way implements OSMElement {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void setMultipolygon(boolean multipolygon) {
+        this.multipolygon = multipolygon;
+    }
+
+    public boolean isMultipolygon(){
+        return multipolygon;
     }
 
     public void setOSMType(OSMType OSMType) {

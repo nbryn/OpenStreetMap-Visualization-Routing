@@ -52,6 +52,11 @@ public class Node implements OSMElement, Comparable {
     }
 
     @Override
+    public void setMultipolygon(boolean multipolygon) {
+
+    }
+
+    @Override
     public void setOSMType(OSMType OSMType) {
         // TODO Auto-generated method stub
 
