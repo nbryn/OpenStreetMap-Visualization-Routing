@@ -1,6 +1,6 @@
 package bfst20.data;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
@@ -24,7 +24,7 @@ class LinePathDataTest {
     @BeforeAll
     static void setup() {
         linePathData = LinePathData.getInstance();
-        node = new Node();
+       // node = new Node();
 
     }
 
@@ -35,40 +35,40 @@ class LinePathDataTest {
 
     @Test
     void getLinePaths() {
-        LinePath linePath = new LinePath(new Way(), Type.COASTLINE, new HashMap<>(), new HashMap<>(), true);
+        LinePath linePath = new LinePath(new Way(), OSMType.COASTLINE, new HashMap<>(), new HashMap<>(), true);
 
-        linePathData.addLinePath(Type.COASTLINE, linePath);
+        linePathData.addLinePath(OSMType.COASTLINE, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(Type.COASTLINE).get(0));
+        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.COASTLINE).get(0));
     }
 
     @Test
     void addLinePath() {
-        LinePath linePath = new LinePath(new Way(), Type.HIGHWAY, new HashMap<>(), new HashMap<>(), true);
+        LinePath linePath = new LinePath(new Way(), OSMType.HIGHWAY, new HashMap<>(), new HashMap<>(), true);
 
-        linePathData.addLinePath(Type.HIGHWAY, linePath);
+        linePathData.addLinePath(OSMType.HIGHWAY, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(Type.HIGHWAY).get(0));
+        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.HIGHWAY).get(0));
     }
 
     @Test
     void setLinePaths() {
-        LinePath linePath = new LinePath(new Way(), Type.MOTORWAY, new HashMap<>(), new HashMap<>(), true);
+        LinePath linePath = new LinePath(new Way(), OSMType.MOTORWAY, new HashMap<>(), new HashMap<>(), true);
         List<LinePath> motorWays = new ArrayList<>();
         motorWays.add(linePath);
 
-        Map<Type, List<LinePath>> linePaths = new HashMap<>();
-        linePaths.put(Type.MOTORWAY, motorWays);
+        Map<OSMType, List<LinePath>> linePaths = new HashMap<>();
+        linePaths.put(OSMType.MOTORWAY, motorWays);
         linePathData.setLinePaths(linePaths);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(Type.MOTORWAY).get(0));
+        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.MOTORWAY).get(0));
     }
 
     @Test
     void addType() {
-        linePathData.addType(Type.FOREST);
+        linePathData.addType(OSMType.FOREST);
 
-        assertNotNull(linePathData.getLinePaths().get(Type.FOREST));
+        assertNotNull(linePathData.getLinePaths().get(OSMType.FOREST));
     }
 
     @Test

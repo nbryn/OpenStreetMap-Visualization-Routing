@@ -4,6 +4,7 @@ import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import bfst20.presentation.ErrorMessenger;
 import javafx.scene.control.Alert;
+import bfst20.logic.misc.OSMType;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -59,11 +60,11 @@ public class FileHandler {
         File file = new File("samsoe.bin");
         file.createNewFile();
 
-        Map<Type, List<LinePath>> drawables = appController.getLinePathsFromModel();
+        Map<OSMType, List<LinePath>> drawables = appController.getLinePathsFromModel();
         Bounds bounds = appController.getBoundsFromModel();
 
-        drawables.put(Type.BOUNDS, new ArrayList<>());
-        drawables.get(Type.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
+        drawables.put(OSMType.BOUNDS, new ArrayList<>());
+        drawables.get(OSMType.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
 
         writeToFile(file, drawables);
     }

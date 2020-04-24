@@ -3,8 +3,10 @@ package bfst20.presentation;
 import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
+import bfst20.logic.misc.Vehicle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,7 +19,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-import bfst20.logic.Type;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
@@ -26,7 +27,7 @@ public class View {
     private Affine trans = new Affine();
     private Canvas canvas;
     private GraphicsContext gc;
-    private Map<Type, List<LinePath>> linePaths;
+    private Map<OSMType, List<LinePath>> linePaths;
     private List<LinePath> coastLine;
     private boolean kd;
     private boolean isColorBlindMode = false;
@@ -64,8 +65,8 @@ public class View {
     private void createKDTrees() {
         appController.setupRect();
 
-        for (Map.Entry<Type, List<LinePath>> entry : linePaths.entrySet()) {
-            if (entry.getKey() == Type.HIGHWAY || entry.getKey() == Type.RESIDENTIAL_HIGHWAY || entry.getKey() == Type.TERTIARY || entry.getKey() == Type.UNCLASSIFIED_HIGHWAY)
+        for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
+            if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
                 continue;
             if (entry.getValue().size() != 0) {
                 appController.addKDTreeToModel(entry.getKey(), entry.getValue());
@@ -74,8 +75,8 @@ public class View {
 
         List<LinePath> highways = appController.getHighwaysFromModel();
 
-        appController.addKDTreeToModel(Type.HIGHWAY, highways);
-        appController.addKDTreeToModel(Type.COASTLINE, linePaths.get(Type.COASTLINE));
+        appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
+        appController.addKDTreeToModel(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
 
         linePaths = null;
         System.gc();
@@ -111,18 +112,18 @@ public class View {
                 mousePos.getX(),
                 mousePos.getY());
 
-        drawTypeKdTree(Type.COASTLINE, rect, pixelwidth);
+        drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
 
-        drawTypeKdTree(Type.FARMLAND, rect, pixelwidth);
-        drawTypeKdTree(Type.RESIDENTIAL, rect, pixelwidth);
-        drawTypeKdTree(Type.HEATH, rect, pixelwidth);
-        drawTypeKdTree(Type.WOOD, rect, pixelwidth);
-        drawTypeKdTree(Type.TREE_ROW, rect, pixelwidth);
-        drawTypeKdTree(Type.WATER, rect, pixelwidth);
-        drawTypeKdTree(Type.FOREST, rect, pixelwidth);
-        drawTypeKdTree(Type.BUILDING, rect, pixelwidth);
+        drawTypeKdTree(OSMType.FARMLAND, rect, pixelwidth);
+        drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
+        drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
+        drawTypeKdTree(OSMType.WOOD, rect, pixelwidth);
+        drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
+        drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
+        drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
+        drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
 
-        drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
 
         /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
@@ -131,7 +132,7 @@ public class View {
 
         //mouseLocationLabel.setText(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getName());
 
-        mouseLocationLabel.setText(appController.getKDTreeFromModel(Type.HIGHWAY).getClosetsLinepath().getName());
+        mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
 
         //gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
@@ -139,8 +140,11 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
+
+        shortestPath("Sygehusvej 21", "Skolegyde 3", Vehicle.CAR, pixelwidth);
+
         if(!address1.equals("") && !address2.equals("")){
-            shortestPath(address1, address2, pixelwidth);
+            shortestPath(address1, address2,Vehicle.CAR, pixelwidth);
         }
 
         drawInterestPoints(pixelwidth);
@@ -160,7 +164,7 @@ public class View {
     private void drawInterestPoints(double lineWidth) {
         InterestPointData interestPointData = InterestPointData.getInstance();
 
-        for (InterestPoint interestPoint : interestPointData.iterate()) {
+        for (InterestPoint interestPoint : interestPointData.getAllIntrestPoints()) {
             int bubbleSize = 30;
 
             drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude());
@@ -168,9 +172,9 @@ public class View {
     }
 
 
-    private void shortestPath(String sourceQuery, String targetQuery, double lineWidth) {
+    private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle, double lineWidth ) {
         Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);
-        double distance = appController.initializeRouting(nodes[0], nodes[1]);
+        double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
 
         List<LinePath> route = appController.getRouteFromModel();
 
@@ -210,16 +214,16 @@ public class View {
         gc.stroke();
     }
 
-    public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
-        for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {
+    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
+        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant())) {
 
             drawLinePath(linePath, lineWidth);
             gc.fill();
         }
     }
 
-    public void drawTypeKdTree(Type type, Rect rect, double lineWidth, Point2D point) {
-        for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant(), point)) {
+    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth, Point2D point) {
+        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
             gc.fill();
@@ -227,11 +231,11 @@ public class View {
     }
 
     private void drawRoute(LinePath linePath, double lineWidth) {
-        Type type = linePath.getType();
+        OSMType OSMType = linePath.getOSMType();
         gc.setLineWidth(lineWidth);
         gc.beginPath();
-        gc.setStroke(Color.RED);
-        gc.setFill(Color.RED);
+        gc.setStroke(OSMType.getColor(OSMType, false));
+        gc.setStroke(OSMType.getColor(OSMType, false));
 
 
         trace(linePath, gc);
@@ -240,11 +244,11 @@ public class View {
 
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
-        Type type = linePath.getType();
-        gc.setLineWidth(Type.getLineWidth(type, lineWidth));
+        OSMType OSMType = linePath.getOSMType();
+        gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
         gc.beginPath();
-        gc.setStroke(Type.getColor(type, isColorBlindMode));
-        gc.setFill(linePath.getFill() ? Type.getColor(type, isColorBlindMode) : Color.TRANSPARENT);
+        gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
+        gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
 
         /*if(way.getTagValue("name") != null){
             gc.setFill(Color.BLACK);

@@ -4,18 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.logic.entities.Address;
-import bfst20.logic.entities.Bounds;
-import bfst20.logic.entities.Node;
-import bfst20.logic.entities.Way;
-
-import javafx.scene.canvas.GraphicsContext;
-import bfst20.logic.Type;
-import javafx.scene.paint.Color;
+import bfst20.logic.misc.OSMType;
 
 public class LinePath implements Serializable {
     private float[] coords;
-    private Type type;
+    private OSMType OSMType;
     private boolean fill;
     private float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
     private Bounds bounds;
@@ -29,9 +22,9 @@ public class LinePath implements Serializable {
     }
 
     // This constructor is for Edges used in the Graph for routing
-    public LinePath(Node sourceNode, Node targetNode, Type type, Boolean fill) {
+    public LinePath(Node sourceNode, Node targetNode, OSMType OSMType, Boolean fill) {
         this.fill = fill;
-        this.type = type;
+        this.OSMType = OSMType;
 
         minY = Float.POSITIVE_INFINITY;
         minX = Float.POSITIVE_INFINITY;
@@ -57,12 +50,12 @@ public class LinePath implements Serializable {
 
     }
 
-    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
+    public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
         this.way = way;
         this.fill = fill;
-        this.type = type;
+        this.OSMType = OSMType;
         List<Long> nodeIds = way.getNodeIds();
 
         minY = Float.POSITIVE_INFINITY;
@@ -127,8 +120,8 @@ public class LinePath implements Serializable {
         return name;
     }
 
-    public Type getType() {
-        return type;
+    public OSMType getOSMType() {
+        return OSMType;
     }
 
     public Way getWay() {

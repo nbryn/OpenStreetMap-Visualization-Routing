@@ -1,6 +1,6 @@
 package bfst20.data;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.LinePath;
@@ -14,7 +14,7 @@ public class LinePathData {
 
     private static boolean isLoaded = false;
     private static LinePathData linePathData;
-    private Map<Type, List<LinePath>> linePaths;
+    private Map<OSMType, List<LinePath>> linePaths;
     private List<LinePath> highWays;
     private Map<Node, Way> nodeToCoastline;
     private Map<Node, Way> nodeToForest;
@@ -44,22 +44,22 @@ public class LinePathData {
         return this.highWays;
     }
 
-    public Map<Type, List<LinePath>> getLinePaths() {
+    public Map<OSMType, List<LinePath>> getLinePaths() {
         return linePaths;
     }
 
-    public void addLinePath(Type type, LinePath linePath) {
-        if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
-        linePaths.get(type).add(linePath);
+    public void addLinePath(OSMType OSMType, LinePath linePath) {
+        if (linePaths.get(OSMType) == null) linePaths.put(OSMType, new ArrayList<>());
+        linePaths.get(OSMType).add(linePath);
     }
 
-    public void setLinePaths(Map<Type, List<LinePath>> linePaths) {
+    public void setLinePaths(Map<OSMType, List<LinePath>> linePaths) {
         this.linePaths = linePaths;
     }
 
 
-    public void addType(Type type) {
-        linePaths.put(type, new ArrayList<>());
+    public void addType(OSMType OSMType) {
+        linePaths.put(OSMType, new ArrayList<>());
     }
 
 

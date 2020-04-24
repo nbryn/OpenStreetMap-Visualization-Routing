@@ -1,5 +1,6 @@
 package bfst20.presentation;
 
+
 import java.io.File;
 import java.io.IOException;
 
@@ -28,21 +29,6 @@ public class ViewController {
 
     @FXML
     private MenuItem openFile;
-
-    @FXML
-    private VBox vbox;
-
-    @FXML
-    private VBox addressVBox;
-
-    @FXML
-    private VBox routeVBox;
-
-    @FXML
-    private Button toAddressButton;
-
-    @FXML
-    private Button toRouteButton;
 
     @FXML
     private Label mouseLocationLabel;
@@ -74,19 +60,6 @@ public class ViewController {
 
         appController.createView(canvas, mouseLocationLabel);
 
-        toRouteButton.setOnAction(e -> {
-            addressVBox.setVisible(false);
-            routeVBox.setVisible(true);
-        });
-
-        toAddressButton.setOnAction(e -> {
-            addressVBox.setVisible(true);
-            routeVBox.setVisible(false);
-            yesbar.setText("");
-            searchbar.setText("");
-            view.setAddress("", "");
-            view.repaint();
-        });
 
         setupFileHandling();
 

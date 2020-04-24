@@ -3,7 +3,7 @@ package bfst20.logic.kdtree;
 import java.util.ArrayList;
 import java.util.List;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
 import javafx.geometry.Point2D;
 
@@ -46,7 +46,7 @@ public class KDTree {
     private void range(KDNode node, Rect rect , double zoomLevel, List<LinePath> list){
         if (node == null) return;
 
-        if (rect.contains(node) && Type.getZoomLevel(node.getLinePath().getType()) <= zoomLevel) {
+        if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
         }
@@ -61,7 +61,7 @@ public class KDTree {
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point){
         if (node == null) return;
 
-        if (rect.contains(node) && Type.getZoomLevel(node.getLinePath().getType()) <= zoomLevel) {
+        if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
             float[] coords = node.getLinePath().getCoords();

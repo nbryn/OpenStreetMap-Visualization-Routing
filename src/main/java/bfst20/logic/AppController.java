@@ -11,6 +11,8 @@ import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.misc.OSMType;
+import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
@@ -76,10 +78,10 @@ public class AppController {
         parser.parseOSMFile(file);
     }
 
-    public double initializeRouting(Node source, Node target) {
+    public double initializeRouting(Node source, Node target, Vehicle vehicle) {
         routingController = routingController.getInstance();
 
-        return routingController.calculateShortestRoute(getGraphFromModel(), source, target);
+        return routingController.calculateShortestRoute(getGraphFromModel(), source, target, vehicle);
     }
 
     public void setRouteOnModel(List<LinePath> route) {
@@ -98,6 +100,9 @@ public class AppController {
 
         Address source = findAddress(sourceQuery);
         Address target = findAddress(targetQuery);
+
+        System.out.println(source.getStreet() + source.getHousenumber());
+        System.out.println(target.getStreet() + target.getHousenumber());
 
         Node srcNode = routingController.getInstance().findClosestNode(source, edges);
         Node trgNode = routingController.getInstance().findClosestNode(target, edges);
@@ -136,13 +141,13 @@ public class AppController {
     }
 
     public void generateHighways() {
-        Map<Type, List<LinePath>> linePaths = linePathData.getLinePaths();
+        Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
         List<LinePath> highWays = new ArrayList<>();
-        highWays.addAll(linePaths.get(Type.HIGHWAY));
-        highWays.addAll(linePaths.get(Type.TERTIARY));
-        highWays.addAll(linePaths.get(Type.UNCLASSIFIED_HIGHWAY));
-        highWays.addAll(linePaths.get(Type.RESIDENTIAL_HIGHWAY));
-        if (linePaths.get(Type.MOTORWAY) != null) highWays.addAll(linePaths.get(Type.MOTORWAY));
+        highWays.addAll(linePaths.get(OSMType.HIGHWAY));
+        highWays.addAll(linePaths.get(OSMType.TERTIARY));
+        highWays.addAll(linePaths.get(OSMType.UNCLASSIFIED_HIGHWAY));
+        highWays.addAll(linePaths.get(OSMType.RESIDENTIAL_HIGHWAY));
+        if (linePaths.get(OSMType.MOTORWAY) != null) highWays.addAll(linePaths.get(OSMType.MOTORWAY));
 
         linePathData.saveHighways(highWays);
     }
@@ -197,7 +202,7 @@ public class AppController {
         OSMElementData.clearNodeData();
     }
 
-    public Map<Type, List<LinePath>> getLinePathsFromModel() {
+    public Map<OSMType, List<LinePath>> getLinePathsFromModel() {
         return linePathData.getLinePaths();
     }
 
@@ -206,36 +211,36 @@ public class AppController {
         return addressData.getAddresses();
     }
 
-    public Way removeWayFromNodeTo(Type type, Node node) {
+    public Way removeWayFromNodeTo(OSMType OSMType, Node node) {
         Way way = null;
-        if (type == Type.COASTLINE) way = linePathData.removeWayFromNodeToCoastline(node);
-        else if (type == Type.FARMLAND) way = linePathData.removeWayFromNodeToFarmland(node);
-        else if (type == Type.FOREST) way = linePathData.removeWayFromNodeToForest(node);
+        if (OSMType == OSMType.COASTLINE) way = linePathData.removeWayFromNodeToCoastline(node);
+        else if (OSMType == OSMType.FARMLAND) way = linePathData.removeWayFromNodeToFarmland(node);
+        else if (OSMType == OSMType.FOREST) way = linePathData.removeWayFromNodeToForest(node);
 
         return way;
     }
 
-    public void addToModel(Type type, Node node, Way way) {
-        if (type == Type.COASTLINE) linePathData.addToNodeToCoastline(node, way);
-        else if (type == Type.FARMLAND) linePathData.addToNodeToFarmland(node, way);
-        else if (type == Type.FOREST) linePathData.addNodeToForest(node, way);
+    public void addToModel(OSMType OSMType, Node node, Way way) {
+        if (OSMType == OSMType.COASTLINE) linePathData.addToNodeToCoastline(node, way);
+        else if (OSMType == OSMType.FARMLAND) linePathData.addToNodeToFarmland(node, way);
+        else if (OSMType == OSMType.FOREST) linePathData.addNodeToForest(node, way);
     }
 
-    public Map<Node, Way> getNodeTo(Type type) {
+    public Map<Node, Way> getNodeTo(OSMType OSMType) {
         Map<Node, Way> nodeTo = null;
-        if (type == Type.COASTLINE) nodeTo = linePathData.getNodeToCoastline();
-        else if (type == Type.FARMLAND) nodeTo = linePathData.getNodeToFarmland();
-        else if (type == Type.FOREST) nodeTo = linePathData.getNodeToForest();
+        if (OSMType == OSMType.COASTLINE) nodeTo = linePathData.getNodeToCoastline();
+        else if (OSMType == OSMType.FARMLAND) nodeTo = linePathData.getNodeToFarmland();
+        else if (OSMType == OSMType.FOREST) nodeTo = linePathData.getNodeToForest();
 
         return nodeTo;
     }
 
-    public void addToModel(Type type, LinePath linePath) {
-        linePathData.addLinePath(type, linePath);
+    public void addToModel(OSMType OSMType, LinePath linePath) {
+        linePathData.addLinePath(OSMType, linePath);
     }
 
-    public void addToModel(Type type) {
-        linePathData.addType(type);
+    public void addToModel(OSMType OSMType) {
+        linePathData.addType(OSMType);
     }
 
     public void createLinePaths() {
@@ -249,7 +254,7 @@ public class AppController {
         linePathData.clearData();
     }
 
-    public void addToModel(Map<Type, List<LinePath>> linePaths) {
+    public void addToModel(Map<OSMType, List<LinePath>> linePaths) {
         linePathData.setLinePaths(linePaths);
     }
 
@@ -263,12 +268,12 @@ public class AppController {
         return kdTreeData.getRect();
     }
 
-    public void addKDTreeToModel(Type type, List<LinePath> linePaths) {
-        kdTreeData.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
+    public void addKDTreeToModel(OSMType OSMType, List<LinePath> linePaths) {
+        kdTreeData.addKDTree(OSMType, new KDTree(linePaths, getRectFromModel()));
     }
 
-    public KDTree getKDTreeFromModel(Type type) {
-        return kdTreeData.getKDTree(type);
+    public KDTree getKDTreeFromModel(OSMType OSMType) {
+        return kdTreeData.getKDTree(OSMType);
     }
 
     //TODO: NOT BEING USED?

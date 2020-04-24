@@ -1,11 +1,12 @@
 package bfst20.logic.routing;
 
 import bfst20.logic.AppController;
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
+import bfst20.logic.misc.Vehicle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +35,15 @@ public class RoutingController {
 
     public void buildRoutingGraph() {
         List<LinePath> highWays = appController.getHighwaysFromModel();
-        Map<Long, Node> nodes  = appController.getNodesFromModel();
+        Map<Long, Node> nodes = appController.getNodesFromModel();
         Graph graph = new Graph(new ArrayList<>(nodes.values()));
 
         generateGraphEdges(highWays, nodes, graph);
         appController.addToModel(graph);
     }
 
-    public double calculateShortestRoute(Graph graph, Node source, Node target) {
-        dijkstra = new Dijkstra(graph, source, target);
+    public double calculateShortestRoute(Graph graph, Node source, Node target, Vehicle vehicle) {
+        dijkstra = new Dijkstra(graph, source, target, vehicle);
 
         if (dijkstra.distTo(target) != Double.POSITIVE_INFINITY) {
 
@@ -74,6 +75,7 @@ public class RoutingController {
                 shortestDistance = distance;
             }
         }
+
         return closestNode;
     }
 
@@ -92,17 +94,18 @@ public class RoutingController {
     private void generateGraphEdges(List<LinePath> highWays, Map<Long, Node> nodes, Graph graph) {
         for (LinePath linePath : highWays) {
             Way way = linePath.getWay();
-            Type type = linePath.getType();
+            OSMType OSMType = linePath.getOSMType();
 
             for (int i = 1; i < way.getNodeIds().size(); i++) {
                 Node sourceNode = nodes.get(way.getNodeIds().get(i - 1));
                 Node targetNode = nodes.get(way.getNodeIds().get(i));
 
-                LinePath edgeLinePath = new LinePath(sourceNode, targetNode, Type.ROUTING, Type.getFill(Type.BOUNDS));
+                LinePath edgeLinePath = new LinePath(sourceNode, targetNode, OSMType.ROUTING, OSMType.getFill(OSMType.BOUNDS));
 
                 if (sourceNode != null && targetNode != null) {
                     double length = calculateDistBetween(sourceNode, targetNode);
-                    Edge edge = new Edge(type, sourceNode, targetNode, length, edgeLinePath, way.getName());
+
+                    Edge edge = new Edge(OSMType, sourceNode, targetNode, length, edgeLinePath, way.getName(), way.getMaxSpeed(), way.isOneWay());
 
                     graph.addEdge(edge);
                 }
