@@ -2,6 +2,8 @@ package bfst20.logic;
 
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import bfst20.presentation.ErrorMessenger;
+import javafx.scene.control.Alert;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -63,36 +65,29 @@ public class FileHandler {
         drawables.put(Type.BOUNDS, new ArrayList<>());
         drawables.get(Type.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
 
-
         writeToFile(file, drawables);
     }
 
-    private void writeToFile(File file, Map<Type, List<LinePath>> drawables) {
-        try {
-            FileOutputStream fileOut = new FileOutputStream(file, false);
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            objectOut.writeObject(drawables);
-            objectOut.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void writeToFile(File file, Map<Type, List<LinePath>> drawables) throws FileNotFoundException, IOException {
+        FileOutputStream fileOut = new FileOutputStream(file, false);
+        ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+        objectOut.writeObject(drawables);
+        objectOut.close();
     }
 
     public void loadBinary(File file)  {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            try {
+            Map<Type, List<LinePath>> linePaths = (Map<Type, List<LinePath>>) in.readObject();
+            Bounds bounds = linePaths.get(Type.BOUNDS).get(0).getBounds();
 
-                Map<Type, List<LinePath>> linePaths = (Map<Type, List<LinePath>>) in.readObject();
-                Bounds bounds = linePaths.get(Type.BOUNDS).get(0).getBounds();
-
-                appController.addToModel(bounds);
-                appController.addToModel(linePaths);
-            } catch (ClassNotFoundException | IOException e) {
-                e.printStackTrace();
-            }
+            appController.addToModel(bounds);
+            appController.addToModel(linePaths);
         } catch (IOException e) {
-            e.printStackTrace();
+            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
+            System.exit(1);
+        } catch (ClassNotFoundException e){
+            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.");
+            System.exit(1);
         }
     }
 
@@ -115,7 +110,8 @@ public class FileHandler {
             zipFile.close();
 
         } catch (IOException | XMLStreamException ex) {
-            System.out.println(ex);
+            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.");
+            System.exit(1);
         }
     }
 }

@@ -153,8 +153,8 @@ public class LinePathGenerator {
         try {
             type = way.getType();
         } catch (Exception e) {
-            //TODO: handle exception
-            e.printStackTrace();
+            //This catch is here to check if the current way type exists in the Type enum, if it does, that will be used,
+            //If it dosen't this will throw, and the program will use Type.UNKNOWN
         }
         Boolean fill = Type.getFill(type);
 

@@ -2,6 +2,8 @@ package bfst20.logic;
 
 import bfst20.logic.entities.*;
 import bfst20.logic.interfaces.OSMElement;
+import bfst20.presentation.ErrorMessenger;
+import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -36,12 +38,7 @@ public class Parser {
 
     public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
-        try {
-            parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("E is: " + e);
-        }
+        parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
         tempOSMRelations = new ArrayList<>();
         System.gc();
     }
@@ -170,18 +167,13 @@ public class Parser {
             } else if (tags.containsKey("highway")) {
                 Type type = Type.HIGHWAY;
 
-                try {
-                    type = Type.valueOf(tags.get("highway").toUpperCase());
+                type = Type.valueOf(tags.get("highway").toUpperCase());
 
-                    if (type == Type.RESIDENTIAL) {
-                        type = Type.RESIDENTIAL_HIGHWAY;
-                    } else if (type == Type.UNCLASSIFIED) {
-                        type = Type.UNCLASSIFIED_HIGHWAY;
-                    }
-                } catch (Exception e) {
+                if (type == Type.RESIDENTIAL) {
+                    type = Type.RESIDENTIAL_HIGHWAY;
+                } else if (type == Type.UNCLASSIFIED) {
+                    type = Type.UNCLASSIFIED_HIGHWAY;
                 }
-
-
 
                 lastElementParsed.setType(type);
             } else {
@@ -189,6 +181,9 @@ public class Parser {
             }
 
         } catch (Exception err) {
+            //If this exception throws, Something terrible have happend.
+            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags, exiting.");
+            System.exit(1);
         }
     }
 

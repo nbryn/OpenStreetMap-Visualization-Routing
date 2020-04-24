@@ -9,15 +9,13 @@ import javax.xml.stream.XMLStreamException;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.InterestPoint;
+import com.sun.glass.ui.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -92,28 +90,19 @@ public class ViewController {
 
         setupFileHandling();
 
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
+        ClassLoader classLoader = getClass().getClassLoader();
 
-            File file = new File(classLoader.getResource("samsoe.osm").getFile());
+        File file = null;
 
-            // File file = new File(classLoader.getResource("samsoe.bin").getFile());
-
-             //File file = new File("F:\\lolland.osm");
-
-            appController.loadFile(file);
-            view = appController.initialize();
-
-        } catch (Exception err) {
-            // err.printStackTrace();
+        try{
+            file = new File(classLoader.getResource("samsoe.osm").getFile());
+        }catch (NullPointerException e){
+            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
+            System.exit(1);
         }
-        // colorBlindButton.setOnAction(e ->{
-        // view.changeToColorBlindMode(true);
-        // });
 
-        // normalColorButton.setOnAction(e ->{
-        // view.changeToColorBlindMode(false);
-        // });
+        appController.loadFile(file);
+        view = appController.initialize();
 
         setupCanvas();
 
@@ -126,13 +115,8 @@ public class ViewController {
         openFile.setOnAction(e -> {
             File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
             if (file != null) {
-                try {
-                    // Might change our project...
-                    appController.loadFile(file);
-                    view = appController.initialize();
-                } catch (IOException | XMLStreamException | FactoryConfigurationError e1) {
-                    System.out.println("Error loading file");
-                }
+                appController.loadFile(file);
+                view = appController.initialize();
             }
         });
     }

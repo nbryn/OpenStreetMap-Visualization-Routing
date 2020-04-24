@@ -67,7 +67,7 @@ public class RoutingController {
         Node closestNode = null;
 
         for (Edge e : closestEdges) {
-            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLon(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLat(), 2));
+            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
 
             if (distance < shortestDistance) {
                 closestNode = e.getTarget();
@@ -80,7 +80,9 @@ public class RoutingController {
     private void findClosestEdges(Address address, List<Edge> edges, List<Edge> closestEdges) {
         int addressIndex = binarySearch(edges, address.getStreet());
 
-        for (int i = addressIndex - 100; i < addressIndex + 100; i++) {
+        int val = 100;
+
+        for (int i = addressIndex - val; i < addressIndex + val; i++) {
             if (edges.get(i).getName().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
             }
