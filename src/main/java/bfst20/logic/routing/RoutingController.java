@@ -82,7 +82,9 @@ public class RoutingController {
     private void findClosestEdges(Address address, List<Edge> edges, List<Edge> closestEdges) {
         int addressIndex = binarySearch(edges, address.getStreet());
 
-        for (int i = addressIndex - 100; i < addressIndex + 100; i++) {
+        int val = 100;
+
+        for (int i = addressIndex - val; i < addressIndex + val; i++) {
             if (edges.get(i).getName().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
             }

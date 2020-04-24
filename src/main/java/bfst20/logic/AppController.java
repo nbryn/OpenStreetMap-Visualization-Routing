@@ -16,8 +16,10 @@ import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
+import bfst20.presentation.ErrorMessenger;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import javax.xml.stream.XMLStreamException;
@@ -44,7 +46,7 @@ public class AppController {
 
     }
 
-    public View initialize() throws IOException {
+    public View initialize() {
         routingController = routingController.getInstance();
         if (!isBinary) {
             createLinePaths();
@@ -58,10 +60,18 @@ public class AppController {
         return view;
     }
 
-    public void loadFile(File file) throws IOException, XMLStreamException {
-        FileHandler fileHandler = FileHandler.getInstance();
-        if (file.getName().endsWith(".bin")) isBinary = true;
-        fileHandler.load(file);
+    public void loadFile(File file) {
+        try {
+            FileHandler fileHandler = FileHandler.getInstance();
+            if (file.getName().endsWith(".bin")) isBinary = true;
+            fileHandler.load(file);
+        } catch (IOException ioException) {
+            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error loading file, exiting.");
+            System.exit(1);
+        } catch (XMLStreamException xmlStreamException) {
+            ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
+            System.exit(1);
+        }
     }
 
     public void parseOSM(File file) throws FileNotFoundException, XMLStreamException {
@@ -266,6 +276,7 @@ public class AppController {
         return kdTreeData.getKDTree(OSMType);
     }
 
+    //TODO: NOT BEING USED?
     public void generateBinary() throws IOException {
         FileHandler fileHandler = FileHandler.getInstance();
         fileHandler.generateBinary();

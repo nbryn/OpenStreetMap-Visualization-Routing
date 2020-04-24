@@ -1,6 +1,9 @@
 package bfst20.logic;
 
 import bfst20.logic.entities.*;
+import bfst20.logic.interfaces.OSMElement;
+import bfst20.presentation.ErrorMessenger;
+import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMElement;
 import bfst20.logic.misc.OSMType;
 
@@ -37,12 +40,7 @@ public class Parser {
 
     public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
 
-        try {
-            parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("E is: " + e);
-        }
+        parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
         tempOSMRelations = new ArrayList<>();
         System.gc();
     }
@@ -169,12 +167,32 @@ public class Parser {
             } else if (tags.containsKey("building")) {
                 lastElementParsed.setOSMType(OSMType.BUILDING);
             } else if (tags.containsKey("highway")) {
+
+                Type type = Type.HIGHWAY;
+
+                try {
+                    type = Type.valueOf(tags.get("highway").toUpperCase());
+
+                    if (type == Type.RESIDENTIAL) {
+                        type = Type.RESIDENTIAL_HIGHWAY;
+                    } else if (type == Type.UNCLASSIFIED) {
+                        type = Type.UNCLASSIFIED_HIGHWAY;
+                    }
+                }catch (Exception e){
+                    //This catch is here to check if the current highway type exists in the Type enum, if it does, that will be used,
+                    //If it dosen't this will throw, and the program will use Type.HIGHWAY
+                }
+
+                lastElementParsed.setType(type);
                 parseHighway(lastElementParsed, tags);
             } else {
                 lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
             }
 
         } catch (Exception err) {
+             //This exception is getting throwen a lot, because of all the missing Enum Types.
+            //ErrorMessenger.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags, exiting.");
+            //System.exit(1);
         }
     }
 
@@ -207,7 +225,6 @@ public class Parser {
             }
         } catch (Exception e) {
         }
-
 
         lastElementParsed.setOSMType(type);
     }

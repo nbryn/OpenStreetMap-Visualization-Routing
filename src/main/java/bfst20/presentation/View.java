@@ -10,6 +10,7 @@ import bfst20.logic.misc.Vehicle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -49,7 +50,7 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    public void initialize() throws IOException {
+    public void initialize() {
         trans = new Affine();
         linePaths = appController.getLinePathsFromModel();
         appController.clearLinePathData();
@@ -98,6 +99,7 @@ public class View {
         gc.setFill(Color.LIGHTBLUE);
 
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.strokeRect(0,0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
@@ -172,17 +174,12 @@ public class View {
 
     private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle, double lineWidth ) {
         Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);
-        try {
+        double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
 
-            double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
+        List<LinePath> route = appController.getRouteFromModel();
 
-            List<LinePath> route = appController.getRouteFromModel();
-
-            for (LinePath linePath : route) {
-                drawRoute(linePath, lineWidth);
-            }
-        } catch (Exception e) {
-            //e.printStackTrace();
+        for (LinePath linePath : route) {
+            drawRoute(linePath, lineWidth);
         }
     }
 
@@ -279,8 +276,8 @@ public class View {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
+            //It is not possible for java to throw this exeption, but the try/catch is needed anyways.
             // Troels siger at det her ikke kan ske
-            e.printStackTrace();
             return null;
         }
     }
