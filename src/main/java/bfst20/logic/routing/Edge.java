@@ -6,7 +6,6 @@ import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
 public class Edge {
-    private boolean isCarAllowed;
     private OSMType highwayType;
     private LinePath linePath;
     private boolean isOneWay;
@@ -38,13 +37,12 @@ public class Edge {
     public boolean isVehicleAllowed(Vehicle vehicle) {
         if (vehicle == Vehicle.BICYCLE && highwayType == OSMType.MOTORWAY || vehicle == Vehicle.WALK && highwayType == OSMType.MOTORWAY) {
             return false;
-        } else if (vehicle == Vehicle.CAR && highwayType == OSMType.FOOTWAY) {
+        } else if (vehicle == Vehicle.CAR && highwayType == OSMType.FOOTWAY || vehicle == Vehicle.CAR && highwayType == OSMType.PATH) {
             return false;
         }
 
         return true;
     }
-
 
     public String getName() {
         return name;
@@ -56,6 +54,10 @@ public class Edge {
 
     public Node getTarget() {
         return target;
+    }
+
+    public int getMaxSpeed() {
+        return maxSpeed;
     }
 
     public LinePath getLinePath() {

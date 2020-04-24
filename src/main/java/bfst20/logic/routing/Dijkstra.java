@@ -1,6 +1,7 @@
 package bfst20.logic.routing;
 
 import bfst20.logic.entities.Node;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.Vehicle;
 
 import java.util.HashMap;
@@ -61,14 +62,21 @@ public class Dijkstra {
         if (min == edge.getSource()) {
             current = edge.getTarget();
             if (edge.isVehicleAllowed(vehicle)) {
-                setDistTo(edge, min, current);
+                if (vehicle == Vehicle.CAR) {
+                    setDistToCar(edge, min, current);
+                } else {
+                    setDistTo(edge, min, current);
+                }
             }
         } else {
             current = edge.getSource();
             if (!edge.isOneWay(vehicle)) {
                 if (edge.isVehicleAllowed(vehicle)) {
-
-                    setDistTo(edge, min, current);
+                    if (vehicle == Vehicle.CAR) {
+                        setDistToCar(edge, min, current);
+                    } else {
+                        setDistTo(edge, min, current);
+                    }
                 }
             }
         }
@@ -77,10 +85,21 @@ public class Dijkstra {
     private void setDistTo(Edge edge, Node min, Node current) {
         if (distTo.get(current) > distTo.get(min) + edge.getLength()) {
             distTo.put(current, distTo.get(min) + edge.getLength());
-            edgeTo.put(current, edge);
-            current.setDistTo(distTo.get(current));
-
-            pq.insert(current);
+            insertNodeInPQ(edge, current);
         }
+    }
+
+    private void setDistToCar(Edge edge, Node min, Node current) {
+        if (distTo.get(current) > distTo.get(min) + (edge.getLength() / edge.getMaxSpeed())) {
+            distTo.put(current, distTo.get(min) + (edge.getLength() / edge.getMaxSpeed()));
+            insertNodeInPQ(edge, current);
+        }
+    }
+
+    private void insertNodeInPQ(Edge edge, Node current) {
+        edgeTo.put(current, edge);
+        current.setDistTo(distTo.get(current));
+
+        pq.insert(current);
     }
 }

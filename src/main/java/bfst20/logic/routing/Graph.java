@@ -7,13 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
 public class Graph {
     private Map<Node, List<Edge>> adj;
-    private int nodeCount;
     private List<Edge> edges;
     private List<Node> nodes;
+    private int nodeCount;
+
 
     public Graph(List<Node> nodes) {
         this.nodes = nodes;
@@ -28,10 +27,6 @@ public class Graph {
 
     public int nodeCount() {
         return nodeCount;
-    }
-
-    public int edgeCount() {
-        return edges.size();
     }
 
     public List<Edge> getEdges() {
@@ -51,10 +46,6 @@ public class Graph {
 
     public Iterable<Edge> adj(Node node) {
         return adj.get(node);
-    }
-
-    public int degree(Node node) {
-        return adj.get(node).size();
     }
 
 }

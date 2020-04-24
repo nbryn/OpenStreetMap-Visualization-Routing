@@ -144,8 +144,7 @@ public class View {
 
         drawSearchLocation(pixelwidth);
 
-
-        shortestPath("Sygehusvej 21", "Skolegyde 3", Vehicle.CAR, pixelwidth);
+        shortestPath("Strandbakkevej 9","Vesborgvej 18" , Vehicle.CAR, pixelwidth);
 
         if(!address1.equals("") && !address2.equals("")){
             shortestPath(address1, address2,Vehicle.CAR, pixelwidth);

@@ -223,9 +223,13 @@ public class Parser {
             } else if (type == OSMType.UNCLASSIFIED) {
                 type = OSMType.UNCLASSIFIED_HIGHWAY;
             } else if (type == OSMType.FOOTWAY) {
-
                 type = OSMType.FOOTWAY;
+            } else if (type == OSMType.PATH) {
+                type = OSMType.PATH;
+            } else if (type == OSMType.TRACK) {
+                type = OSMType.TRACK;
             }
+
         } catch (Exception e) {
         }
 
