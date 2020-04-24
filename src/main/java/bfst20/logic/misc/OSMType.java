@@ -3,6 +3,8 @@ package bfst20.logic.misc;
 import javafx.scene.paint.Color;
 
 
+
+
 public enum OSMType {
     UNKNOWN,
     BOUNDS,
@@ -197,7 +199,7 @@ public enum OSMType {
             case UNCLASSIFIED_HIGHWAY:
                 return 80;
             case TRACK:
-                return 20;
+                return 15;
             default:
                 return 60;
         }

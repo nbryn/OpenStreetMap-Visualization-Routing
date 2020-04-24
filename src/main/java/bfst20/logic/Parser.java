@@ -3,7 +3,6 @@ package bfst20.logic;
 import bfst20.logic.entities.*;
 import bfst20.logic.misc.OSMElement;
 import bfst20.logic.misc.OSMType;
-import bfst20.logic.misc.OSMType;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -36,9 +35,7 @@ public class Parser {
         return parser;
     }
 
-
     public void parseOSMFile(File file) throws IOException, XMLStreamException {
-
         parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file, Charset.forName("UTF-8"))));
         tempOSMRelations = new ArrayList<>();
         System.gc();
@@ -50,7 +47,6 @@ public class Parser {
         XMLStreamReader reader = factory.createXMLStreamReader(stringReader);
         parse(reader);
     }
-
 
     private void parse(XMLStreamReader reader) throws XMLStreamException {
         OSMElement lastElementParsed = null;
@@ -119,10 +115,10 @@ public class Parser {
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
                             appController.addToModel(relation);
-                            parseTags(reader, lastElementParsed, tags, firstTag);
+                            parseTags(lastElementParsed, tags, firstTag);
                             break;
                         case "way":
-                            parseTags(reader, lastElementParsed, tags, firstTag);
+                            parseTags(lastElementParsed, tags, firstTag);
                             break;
                         default:
                             break;
@@ -146,21 +142,19 @@ public class Parser {
         appController.addToModel(lastNodeId, address);
     }
 
-    private void parseTags(XMLStreamReader reader,
-                           OSMElement lastElementParsed,
-                           HashMap<String,
-                                   String> tags,
-                           String[] firstTag) {
+    private void parseTags(
+            OSMElement lastElementParsed,
+            HashMap<String,
+                    String> tags,
+            String[] firstTag) {
 
         try {
             if (tags.containsKey("name")) {
                 lastElementParsed.setName(tags.get("name"));
             }
-
-            if(tags.containsKey("type") && tags.get("type").equals("multipolygon")){
+            if (tags.containsKey("type") && tags.get("type").equals("multipolygon")) {
                 lastElementParsed.setMultipolygon(true);
             }
-
             if (tags.containsKey("landuse") || tags.containsKey("natural")) {
                 if (tags.containsKey("natural")) {
                     lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));
@@ -173,30 +167,33 @@ public class Parser {
 
                 OSMType type = OSMType.HIGHWAY;
 
-                try {
-                    type = OSMType.valueOf(tags.get("highway").toUpperCase());
-
-                    if (type == OSMType.RESIDENTIAL) {
-                        type = OSMType.RESIDENTIAL_HIGHWAY;
-                    } else if (type == OSMType.UNCLASSIFIED) {
-                        type = OSMType.UNCLASSIFIED_HIGHWAY;
-                    }
-                }catch (Exception e){
-                    //This catch is here to check if the current highway type exists in the Type enum, if it does, that will be used,
-                    //If it dosen't this will throw, and the program will use Type.HIGHWAY
-                }
-
-                lastElementParsed.setOSMType(type);
-                parseHighway(lastElementParsed, tags);
+                setHighway(lastElementParsed, tags, type);
             } else {
                 lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
             }
 
         } catch (Exception err) {
-             //This exception is getting throwen a lot, because of all the missing Enum Types.
+            //This exception is getting throwen a lot, because of all the missing Enum Types.
             //appController.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags, exiting.");
             //System.exit(1);
         }
+    }
+
+    private void setHighway(OSMElement lastElementParsed, HashMap<String, String> tags, OSMType type) {
+        try {
+            type = OSMType.valueOf(tags.get("highway").toUpperCase());
+
+            if (type == OSMType.RESIDENTIAL) {
+                type = OSMType.RESIDENTIAL_HIGHWAY;
+            } else if (type == OSMType.UNCLASSIFIED) {
+                type = OSMType.UNCLASSIFIED_HIGHWAY;
+            }
+        } catch (Exception e) {
+            //This catch is here to check if the current highway type exists in the Type enum, if it does, that will be used,
+            //If it dosen't this will throw, and the program will use Type.HIGHWAY
+        }
+        lastElementParsed.setOSMType(type);
+        parseHighway(lastElementParsed, tags);
     }
 
     private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
@@ -205,6 +202,14 @@ public class Parser {
             way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
         }
 
+        setOneWay(tags, way);
+        OSMType type = OSMType.HIGHWAY;
+
+        type = setHighwayType(tags, type);
+        lastElementParsed.setOSMType(type);
+    }
+
+    private void setOneWay(HashMap<String, String> tags, Way way) {
         if (tags.containsKey("oneway")) {
             if (tags.get("oneway").equals("yes")) {
                 way.setOneWay(true);
@@ -212,9 +217,9 @@ public class Parser {
                 way.setOneWay(false);
             }
         }
+    }
 
-        OSMType type = OSMType.HIGHWAY;
-
+    private OSMType setHighwayType(HashMap<String, String> tags, OSMType type) {
         try {
             type = OSMType.valueOf(tags.get("highway").toUpperCase());
 
@@ -232,8 +237,7 @@ public class Parser {
 
         } catch (Exception e) {
         }
-
-        lastElementParsed.setOSMType(type);
+        return type;
     }
 
     private void setBounds(XMLStreamReader reader) {
@@ -260,7 +264,7 @@ public class Parser {
     //3. Adding final relation to the real realtions list.
     //Why: to have all sub elements in the final relations.
     private Relation addRelationToList(XMLStreamReader reader) {
-       long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
         Relation relation = new Relation(id);
 
         tempOSMRelations.add(relation);
