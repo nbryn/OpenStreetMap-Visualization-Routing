@@ -156,6 +156,10 @@ public class Parser {
                 lastElementParsed.setName(tags.get("name"));
             }
 
+            if(tags.containsKey("type") && tags.get("type").equals("multipolygon")){
+                lastElementParsed.setMultipolygon(true);
+            }
+
             if (tags.containsKey("landuse") || tags.containsKey("natural")) {
                 if (tags.containsKey("natural")) {
                     lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));

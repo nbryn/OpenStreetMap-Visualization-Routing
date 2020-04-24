@@ -13,6 +13,7 @@ public class Relation implements OSMElement {
     private ArrayList<Long> members;
     private String name;
     private OSMType OSMType;
+    private boolean multipolygon;
 
     public Relation(long id){
         this.id = id;
@@ -21,6 +22,15 @@ public class Relation implements OSMElement {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void setMultipolygon(boolean multipolygon) {
+        this.multipolygon = multipolygon;
+    }
+
+    public boolean isMultipolygon(){
+        return multipolygon;
     }
 
     public void setOSMType(OSMType OSMType){

@@ -19,12 +19,14 @@ public class LinePathData {
     private Map<Node, Way> nodeToCoastline;
     private Map<Node, Way> nodeToForest;
     private Map<Node, Way> nodeToFarmland;
+    private Map<Node, Way> nodeToBuilding;
 
     private LinePathData() {
         linePaths = new HashMap<>();
         nodeToCoastline = new HashMap<>();
         nodeToForest = new HashMap<>();
         nodeToFarmland = new HashMap<>();
+        nodeToBuilding = new HashMap<>();
         highWays = new ArrayList<>();
     }
 
@@ -68,6 +70,10 @@ public class LinePathData {
 
     }
 
+    public void addNodeToBuilding(Node node, Way way) {
+        nodeToBuilding.put(node, way);
+    }
+
     public void addNodeToForest(Node node, Way way) {
         nodeToForest.put(node, way);
     }
@@ -79,6 +85,10 @@ public class LinePathData {
     public void addToNodeToCoastline(Node node, Way way) {
         nodeToCoastline.put(node, way);
 
+    }
+
+    public Map<Node, Way> getNodeToBuilding() {
+        return nodeToBuilding;
     }
 
     public Map<Node, Way> getNodeToForest() {
@@ -101,12 +111,16 @@ public class LinePathData {
         return nodeToCoastline.remove(node);
     }
 
-
+    public Way removewayfromNodeToBuilding(Node node) {
+        return nodeToBuilding.remove(node);
+    }
     public void clearData() {
         linePaths = new HashMap<>();
         nodeToCoastline = new HashMap<>();
         nodeToForest = new HashMap<>();
         nodeToFarmland = new HashMap<>();
+        nodeToBuilding = new HashMap<>();
         System.gc();
     }
+
 }

@@ -14,6 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ import java.util.*;
 import java.util.List;
 
 import javafx.scene.transform.NonInvertibleTransformException;
+
+import javax.sound.sampled.Line;
 
 public class View {
 
@@ -217,9 +220,7 @@ public class View {
 
     public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
         for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant())) {
-
             drawLinePath(linePath, lineWidth);
-            gc.fill();
         }
     }
 
@@ -227,7 +228,6 @@ public class View {
         for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
-            gc.fill();
         }
     }
 
@@ -245,24 +245,54 @@ public class View {
 
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
+
         OSMType OSMType = linePath.getOSMType();
         gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
         gc.beginPath();
         gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
         gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
 
-        /*if(way.getTagValue("name") != null){
-            gc.setFill(Color.BLACK);
-            gc.setFont(new Font(0.00022));
-            gc.fillText(way.getTagValue("name"), coords[0], coords[1]);
-            gc.setFill(fill ? color : Color.TRANSPARENT);
-        }*/
-        //gc.setStroke(Color.BLUE);
-        //gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
-        //  gc.setStroke(color);
+        if(linePath.isMultiploygon()){
+            traceTest(linePath, gc);
+        }else{
+            trace(linePath, gc);
+            gc.stroke();
+            gc.fill();
+        }
 
-        trace(linePath, gc);
-        gc.stroke();
+    }
+
+    private void traceTest(LinePath linePath, GraphicsContext gc) {
+        gc.setFillRule(FillRule.EVEN_ODD);
+        float[] coords = linePath.getCoords();
+        gc.moveTo(coords[0], coords[1]);
+        for (int i = 2; i <= coords.length; i += 2) {
+            if(coords[i-2] == -99999.0){
+                gc.moveTo(coords[i-1], coords[i]);
+            }else{
+                gc.lineTo(coords[i - 2], coords[i - 1]);
+            }
+        }
+        gc.fill();
+    }
+
+    private void traceMultipoly(LinePath linePath, GraphicsContext gc){
+        gc.setFillRule(FillRule.EVEN_ODD);
+        float[] coords = linePath.getCoords();
+
+        double[] xCord = new double[coords.length];
+        double[] yCord = new double[coords.length];
+        int l = 0;
+        for (int i = 2; i <= coords.length; i += 2) {
+            //gc.moveTo(coords[0], coords[1]);
+            xCord[l] = (double) coords[i-2];
+            yCord[l] = (double) coords[i-1];
+            l++;
+        }
+
+        gc.strokePolyline(xCord, yCord, coords.length/2);
+        //gc.fill();
+
     }
 
     private void trace(LinePath linePath, GraphicsContext gc) {

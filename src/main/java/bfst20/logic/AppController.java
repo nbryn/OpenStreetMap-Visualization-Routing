@@ -100,9 +100,6 @@ public class AppController {
         Address source = findAddress(sourceQuery);
         Address target = findAddress(targetQuery);
 
-        System.out.println(source.getStreet() + source.getHousenumber());
-        System.out.println(target.getStreet() + target.getHousenumber());
-
         Node srcNode = routingController.getInstance().findClosestNode(source, edges);
         Node trgNode = routingController.getInstance().findClosestNode(target, edges);
 
@@ -215,6 +212,7 @@ public class AppController {
         if (OSMType == OSMType.COASTLINE) way = linePathData.removeWayFromNodeToCoastline(node);
         else if (OSMType == OSMType.FARMLAND) way = linePathData.removeWayFromNodeToFarmland(node);
         else if (OSMType == OSMType.FOREST) way = linePathData.removeWayFromNodeToForest(node);
+        else if (OSMType == OSMType.BUILDING) way = linePathData.removewayfromNodeToBuilding(node);
 
         return way;
     }
@@ -223,6 +221,7 @@ public class AppController {
         if (OSMType == OSMType.COASTLINE) linePathData.addToNodeToCoastline(node, way);
         else if (OSMType == OSMType.FARMLAND) linePathData.addToNodeToFarmland(node, way);
         else if (OSMType == OSMType.FOREST) linePathData.addNodeToForest(node, way);
+        else if (OSMType == OSMType.BUILDING) linePathData.addNodeToBuilding(node, way);
     }
 
     public Map<Node, Way> getNodeTo(OSMType OSMType) {
@@ -230,6 +229,7 @@ public class AppController {
         if (OSMType == OSMType.COASTLINE) nodeTo = linePathData.getNodeToCoastline();
         else if (OSMType == OSMType.FARMLAND) nodeTo = linePathData.getNodeToFarmland();
         else if (OSMType == OSMType.FOREST) nodeTo = linePathData.getNodeToForest();
+        else if (OSMType == OSMType.BUILDING) nodeTo = linePathData.getNodeToBuilding();
 
         return nodeTo;
     }
