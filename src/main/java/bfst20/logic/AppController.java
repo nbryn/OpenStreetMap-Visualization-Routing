@@ -104,9 +104,6 @@ public class AppController {
         return routingData.getRoute();
     }
 
-    public Map<Node, Edge> getEdgesOnPathFromModel() {
-        return routingData.getEdgesOnPath();
-    }
 
     public void addToModel(Graph graph) {
         routingData.saveGraph(graph);
@@ -116,9 +113,6 @@ public class AppController {
         return routingData.getGraph();
     }
 
-    public Node getNodeFromModel(long id) {
-        return OSMElementData.getNode(id);
-    }
 
     public void createView(Canvas canvas, Label mouseLocationLabel) {
         view = new View(canvas);
@@ -137,6 +131,10 @@ public class AppController {
         highWays.addAll(linePaths.get(OSMType.TERTIARY));
         highWays.addAll(linePaths.get(OSMType.UNCLASSIFIED_HIGHWAY));
         highWays.addAll(linePaths.get(OSMType.RESIDENTIAL_HIGHWAY));
+        highWays.addAll(linePaths.get(OSMType.PATH));
+        highWays.addAll(linePaths.get(OSMType.FOOTWAY));
+        highWays.addAll(linePaths.get(OSMType.TRACK));
+
         if (linePaths.get(OSMType.MOTORWAY) != null) highWays.addAll(linePaths.get(OSMType.MOTORWAY));
 
         linePathData.saveHighways(highWays);
