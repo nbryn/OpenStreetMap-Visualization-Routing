@@ -119,6 +119,7 @@ public class View {
 
         drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
 
+        drawTypeKdTree(OSMType.BEACH, rect, pixelwidth);
         drawTypeKdTree(OSMType.FARMLAND, rect, pixelwidth);
         drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
         drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
@@ -127,6 +128,7 @@ public class View {
         drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
         drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
         drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
+        drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
 
@@ -251,6 +253,8 @@ public class View {
         gc.beginPath();
         gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
         gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
+
+        //System.out.println(linePath.getOSMType());
 
         if(linePath.isMultiploygon()){
             traceTest(linePath, gc);

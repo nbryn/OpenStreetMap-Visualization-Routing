@@ -159,7 +159,14 @@ public class Parser {
                 if (tags.containsKey("natural")) {
                     lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));
                 } else {
-                    lastElementParsed.setOSMType(OSMType.valueOf(tags.get("landuse").toUpperCase()));
+
+                    OSMType type = OSMType.LANDUSE;
+
+                    try{
+                        type = OSMType.valueOf(tags.get("landuse").toUpperCase());
+                    }catch (Exception e){}
+
+                    lastElementParsed.setOSMType(type);
                 }
             } else if (tags.containsKey("building")) {
                 lastElementParsed.setOSMType(OSMType.BUILDING);

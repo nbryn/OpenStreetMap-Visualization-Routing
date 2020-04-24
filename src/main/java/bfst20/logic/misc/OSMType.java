@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 
 public enum OSMType {
     UNKNOWN,
+    BEACH,
     BOUNDS,
     BUILDING,
     HIGHWAY,
@@ -28,6 +29,7 @@ public enum OSMType {
     NATURAL,
     FARMLAND,
     TREE_ROW,
+    MEADOW,
     LANDUSE,
     RESIDENTIAL,
     WOOD,
@@ -64,9 +66,11 @@ public enum OSMType {
             case NATURAL:
             case WOOD:
             case TREE_ROW:
+            case BEACH:
             case GREEN:
             case HIGHWAY:
             case TERTIARY:
+            case MEADOW:
             case UNCLASSIFIED_HIGHWAY:
                 return 1.3011416847239474E7;
             case RESIDENTIAL:
@@ -97,6 +101,8 @@ public enum OSMType {
             case TREE_ROW:
             case HEATH:
             case GREEN:
+            case BEACH:
+            case MEADOW:
                 return true;
             default: //TODO FIX
                 return false;
@@ -111,13 +117,19 @@ public enum OSMType {
 
     public static Color getNormalColor(OSMType OSMType) {
         switch (OSMType) {
-            case PLACE:
+            case BEACH:
+                return Color.rgb(255, 241, 186, 1);
+            case MEADOW:
+                return Color.rgb(205, 235, 176, 1);
             case COASTLINE:
+                return Color.WHITE;
+            case PLACE:
             case GREEN:
                 return Color.LIGHTGREEN;
             case WATER:
-                return Color.BLUE;
+                return Color.rgb(170, 211, 223, 1);
             case BUILDING:
+                return Color.rgb(187, 170, 157, 1);
             case MULTIPOLYGON:
                 return Color.BROWN;
             case RESIDENTIAL_HIGHWAY:
@@ -130,13 +142,14 @@ public enum OSMType {
             case UNCLASSIFIED_HIGHWAY:
                 return Color.rgb(79, 79, 79, 1);
             case HEATH:
-                return Color.rgb(255, 178, 102, 0.6);
+                return Color.rgb(214, 217, 159, 0.9);
             case RESIDENTIAL:
-                return Color.rgb(128, 128, 128, 0.6);
+                return Color.rgb(218, 218, 218, 0.9);
             case FARMLAND:
-                return Color.rgb(238, 240, 213, 0.6);
+                return Color.rgb(238, 240, 213, 0.9);
             case WOOD:
             case FOREST:
+                return Color.rgb(157, 202, 138, 0.9);
             case TREE_ROW:
                 return Color.rgb(0, 102, 0, 0.7);
             case PARKING:

@@ -211,7 +211,7 @@ public class AppController {
         else if (OSMType == OSMType.FARMLAND) way = linePathData.removeWayFromNodeToFarmland(node);
         else if (OSMType == OSMType.FOREST) way = linePathData.removeWayFromNodeToForest(node);
         else if (OSMType == OSMType.BUILDING) way = linePathData.removewayfromNodeToBuilding(node);
-
+        else if (OSMType == OSMType.MEADOW) way = linePathData.removeWayFromNodeToMeadow(node);
         return way;
     }
 
@@ -220,6 +220,7 @@ public class AppController {
         else if (OSMType == OSMType.FARMLAND) linePathData.addToNodeToFarmland(node, way);
         else if (OSMType == OSMType.FOREST) linePathData.addNodeToForest(node, way);
         else if (OSMType == OSMType.BUILDING) linePathData.addNodeToBuilding(node, way);
+        else if (OSMType == OSMType.MEADOW) linePathData.addToNodeToMeadow(node, way);
     }
 
     public Map<Node, Way> getNodeTo(OSMType OSMType) {
@@ -228,7 +229,7 @@ public class AppController {
         else if (OSMType == OSMType.FARMLAND) nodeTo = linePathData.getNodeToFarmland();
         else if (OSMType == OSMType.FOREST) nodeTo = linePathData.getNodeToForest();
         else if (OSMType == OSMType.BUILDING) nodeTo = linePathData.getNodeToBuilding();
-
+        else if (OSMType == OSMType.MEADOW) nodeTo = linePathData.getNodeToMeadow();
         return nodeTo;
     }
 
