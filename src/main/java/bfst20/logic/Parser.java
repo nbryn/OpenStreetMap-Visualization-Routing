@@ -6,6 +6,7 @@ import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.OSMType;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +37,9 @@ public class Parser {
     }
 
 
-    public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
+    public void parseOSMFile(File file) throws IOException, XMLStreamException {
 
-        parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
+        parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file, Charset.forName("UTF-8"))));
         tempOSMRelations = new ArrayList<>();
         System.gc();
     }
