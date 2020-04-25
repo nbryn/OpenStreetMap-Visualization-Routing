@@ -21,14 +21,16 @@ public class LinePathData {
     private Map<Node, Way> nodeToFarmland;
     private Map<Node, Way> nodeToMeadow;
     private Map<Node, Way> nodeToBuilding;
+    private Map<OSMType, Map<Node, Way>> nodeTo;
 
     private LinePathData() {
         linePaths = new HashMap<>();
-        nodeToCoastline = new HashMap<>();
-        nodeToForest = new HashMap<>();
-        nodeToFarmland = new HashMap<>();
-        nodeToBuilding = new HashMap<>();
-        nodeToMeadow = new HashMap<>();
+        //nodeToCoastline = new HashMap<>();
+        //nodeToForest = new HashMap<>();
+        //nodeToFarmland = new HashMap<>();
+        //nodeToBuilding = new HashMap<>();
+        //nodeToMeadow = new HashMap<>();
+        nodeTo = new HashMap<>();
         highWays = new ArrayList<>();
     }
 
@@ -72,6 +74,15 @@ public class LinePathData {
 
     }
 
+    public void addNodeTo(OSMType osmType, Node node, Way way){
+
+        if(nodeTo.get(osmType) == null){
+            nodeTo.put(osmType, new HashMap<>());
+        }
+
+        nodeTo.get(osmType).put(node, way);
+    }
+
     public void addNodeToBuilding(Node node, Way way) {
         nodeToBuilding.put(node, way);
     }
@@ -91,6 +102,8 @@ public class LinePathData {
     public void addToNodeToMeadow(Node node, Way way) {
         nodeToMeadow.put(node, way);
     }
+
+    public Map<Node, Way> getNodeTo(OSMType osmType){return nodeTo.get(osmType);}
 
     public Map<Node, Way> getNodeToBuilding() {
         return nodeToBuilding;
@@ -129,14 +142,20 @@ public class LinePathData {
         return nodeToMeadow.remove(node);
     }
 
+    public Way removeWayFromNodeTo(OSMType osmType, Node node) {
+        if(nodeTo.get(osmType) == null) return null;
+        return nodeTo.get(osmType).remove(node);
+    }
+
 
     public void clearData() {
         linePaths = new HashMap<>();
-        nodeToCoastline = new HashMap<>();
-        nodeToForest = new HashMap<>();
-        nodeToFarmland = new HashMap<>();
-        nodeToBuilding = new HashMap<>();
-        nodeToMeadow = new HashMap<>();
+        //nodeToCoastline = new HashMap<>();
+        //nodeToForest = new HashMap<>();
+        //nodeToFarmland = new HashMap<>();
+        //nodeToBuilding = new HashMap<>();
+        //nodeToMeadow = new HashMap<>();
+        nodeTo = new HashMap<>();
         System.gc();
     }
 

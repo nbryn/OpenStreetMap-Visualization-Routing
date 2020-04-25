@@ -95,10 +95,14 @@ public class LinePathGenerator {
             }else if(relation.getOSMType() == OSMType.MEADOW){
                 //connectWays(relation, OSMType.BUILDING);
                 connectMultipolygon(relation, OSMType.MEADOW);
+            }else if(relation.getOSMType() == OSMType.HEATH){
+                //connectWays(relation, OSMType.BUILDING);
+                connectMultipolygon(relation, OSMType.HEATH);
             }
 
 
         }
+        addRelation(OSMType.HEATH, appController.getNodeTo(OSMType.HEATH));
         addRelation(OSMType.MEADOW, appController.getNodeTo(OSMType.MEADOW));
         addRelation(OSMType.BUILDING, appController.getNodeTo(OSMType.BUILDING));
         addRelation(OSMType.FOREST, appController.getNodeTo(OSMType.FOREST));
@@ -124,6 +128,7 @@ public class LinePathGenerator {
     private void connectMultipolygon(Relation relation, OSMType osmType){
         if(!relation.isMultipolygon()) return;
         //if(relation.getId() != 2853841) return;
+
 
         Collections.sort(relation.getMembers());
 
