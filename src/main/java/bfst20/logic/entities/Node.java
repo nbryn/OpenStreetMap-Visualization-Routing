@@ -22,12 +22,6 @@ public class Node implements OSMElement, Comparable {
         this.longitude = longitude;
     }
 
-    public Node(long id,float lat,float lon) {
-        this.id = id;
-        latitude = lat;
-        longitude = lon;
-
-    }
 
 
     public long getId() {

@@ -99,7 +99,6 @@ public class View {
     }
 
     public void repaint() {
-        System.out.println(i);
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
@@ -147,7 +146,7 @@ public class View {
         //gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
-        drawIntrestPoints(pixelwidth);
+        drawInterestPoints(pixelwidth);
 
         shortestPath("Strandbakkevej 9","Vesborgvej 18" , Vehicle.CAR, pixelwidth);
 
