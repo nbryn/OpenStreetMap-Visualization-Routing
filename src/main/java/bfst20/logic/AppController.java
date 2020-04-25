@@ -206,6 +206,18 @@ public class AppController {
     }
 
     public Way removeWayFromNodeTo(OSMType OSMType, Node node) {
+        return linePathData.removeWayFromNodeTo(OSMType, node);
+    }
+
+    public void addToModel(OSMType OSMType, Node node, Way way) {
+        linePathData.addNodeTo(OSMType, node, way);
+    }
+
+    public Map<Node, Way> getNodeTo(OSMType osmType){
+        return linePathData.getNodeTo(osmType);
+    }
+
+    /*public Way removeWayFromNodeTo(OSMType OSMType, Node node) {
         Way way = null;
         if (OSMType == OSMType.COASTLINE) way = linePathData.removeWayFromNodeToCoastline(node);
         else if (OSMType == OSMType.FARMLAND) way = linePathData.removeWayFromNodeToFarmland(node);
@@ -231,7 +243,7 @@ public class AppController {
         else if (OSMType == OSMType.BUILDING) nodeTo = linePathData.getNodeToBuilding();
         else if (OSMType == OSMType.MEADOW) nodeTo = linePathData.getNodeToMeadow();
         return nodeTo;
-    }
+    }*/
 
     public void addToModel(OSMType OSMType, LinePath linePath) {
         linePathData.addLinePath(OSMType, linePath);
