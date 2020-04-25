@@ -1,12 +1,9 @@
 package bfst20.logic.entities;
 
-import bfst20.logic.Type;
-import bfst20.logic.interfaces.OSMElement;
-import bfst20.logic.routing.Edge;
+import bfst20.logic.misc.OSMType;
+import bfst20.logic.misc.OSMElement;
 
 import javax.xml.stream.XMLStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Node implements OSMElement, Comparable {
     private long id;
@@ -14,9 +11,15 @@ public class Node implements OSMElement, Comparable {
     protected float longitude;
     private double distTo;
 
-    private XMLStreamReader reader;
 
-    public Node() {
+    public Node(long id, float latitude, float longitude) {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+    public Node(float latitude, float longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Node(long id,float lat,float lon) {
@@ -39,16 +42,6 @@ public class Node implements OSMElement, Comparable {
         return longitude;
     }
 
-    public void setValues() {
-        setId();
-        setLatitude();
-        setLongitude();
-    }
-
-    private void setId() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
-
-    }
 
     public void setDistTo(double distTo) {
         this.distTo = distTo;
@@ -58,19 +51,6 @@ public class Node implements OSMElement, Comparable {
         return distTo;
     }
 
-    private void setLatitude() {
-        latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
-    }
-
-    private void setLongitude() {
-        longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
-
-    }
-
-    @Override
-    public void setReader(XMLStreamReader reader) {
-        this.reader = reader;
-    }
 
     @Override
     public void setName(String name) {
@@ -79,7 +59,12 @@ public class Node implements OSMElement, Comparable {
     }
 
     @Override
-    public void setType(Type type) {
+    public void setMultipolygon(boolean multipolygon) {
+
+    }
+
+    @Override
+    public void setOSMType(OSMType OSMType) {
         // TODO Auto-generated method stub
 
     }

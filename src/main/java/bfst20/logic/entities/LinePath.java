@@ -4,24 +4,18 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import bfst20.logic.entities.Address;
-import bfst20.logic.entities.Bounds;
-import bfst20.logic.entities.Node;
-import bfst20.logic.entities.Way;
-
-import javafx.scene.canvas.GraphicsContext;
-import bfst20.logic.Type;
-import javafx.scene.paint.Color;
+import bfst20.logic.misc.OSMType;
 
 public class LinePath implements Serializable {
     private float[] coords;
-    private Type type;
+    private OSMType OSMType;
     private boolean fill;
     private float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
     private Bounds bounds;
     private String name;
     private long wayId;
     private Way way;
+    private boolean multiploygon;
 
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
@@ -34,9 +28,9 @@ public class LinePath implements Serializable {
     }
 
     // This constructor is for Edges used in the Graph for routing
-    public LinePath(Node sourceNode, Node targetNode, Type type, Boolean fill) {
+    public LinePath(Node sourceNode, Node targetNode, OSMType OSMType, Boolean fill) {
         this.fill = fill;
-        this.type = type;
+        this.OSMType = OSMType;
 
         minY = Float.POSITIVE_INFINITY;
         minX = Float.POSITIVE_INFINITY;
@@ -62,12 +56,12 @@ public class LinePath implements Serializable {
 
     }
 
-    public LinePath(Way way, Type type, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
+    public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
         this.way = way;
         this.fill = fill;
-        this.type = type;
+        this.OSMType = OSMType;
         List<Long> nodeIds = way.getNodeIds();
 
         minY = Float.POSITIVE_INFINITY;
@@ -77,13 +71,19 @@ public class LinePath implements Serializable {
 
         coords = new float[nodeIds.size() * 2];
         for (int i = 0; i < nodeIds.size(); i++) {
-            coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
-            coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
+            if(nodeIds.get(i) == -99999){
+                coords[i * 2] = -99999;
+                coords[i * 2 + 1] = -99999;
+            }else{
+                coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
+                coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
 
-            if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
-            if (minY > coords[i * 2]) minY = coords[i * 2];
-            if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
-            if (maxY < coords[i * 2]) maxY = coords[i * 2];
+                if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
+                if (minY > coords[i * 2]) minY = coords[i * 2];
+                if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
+                if (maxY < coords[i * 2]) maxY = coords[i * 2];
+            }
+
 
         }
 
@@ -91,6 +91,10 @@ public class LinePath implements Serializable {
         centerLongitude = (maxY - minY) / 2 + minY;
 
     }
+
+    public boolean isMultiploygon(){return multiploygon;}
+
+    public void setMultiploygon(boolean multiploygon){this.multiploygon = multiploygon;}
 
     public Bounds getBounds() {
         return this.bounds;
@@ -132,8 +136,8 @@ public class LinePath implements Serializable {
         return name;
     }
 
-    public Type getType() {
-        return type;
+    public OSMType getOSMType() {
+        return OSMType;
     }
 
     public Way getWay() {

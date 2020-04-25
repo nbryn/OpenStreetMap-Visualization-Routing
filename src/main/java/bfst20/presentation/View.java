@@ -1,26 +1,29 @@
 package bfst20.presentation;
 
 import bfst20.data.AddressData;
-import bfst20.data.IntrestPointData;
+import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.kdtree.KDTree;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
-import bfst20.logic.routing.Edge;
-import bfst20.logic.routing.Graph;
+import bfst20.logic.misc.Vehicle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.FillRule;
 import javafx.scene.transform.Affine;
 
-import java.awt.*;
-import java.io.IOException;
+
 import java.util.*;
 import java.util.List;
 
-import bfst20.logic.Type;
 import javafx.scene.transform.NonInvertibleTransformException;
+
 
 public class View {
 
@@ -28,19 +31,21 @@ public class View {
     private Affine trans = new Affine();
     private Canvas canvas;
     private GraphicsContext gc;
-    private Map<Type, List<LinePath>> linePaths;
+    private Map<OSMType, List<LinePath>> linePaths;
     private List<LinePath> coastLine;
     private boolean kd;
     private boolean isColorBlindMode = false;
     private String addressString;
     private Point2D mousePos;
-    private
+    private String address1, address2;
 
 
     Label mouseLocationLabel;
 
     public View(Canvas canvas) {
-        mousePos = new Point2D(0,0);
+        address1 = "";
+        address2 = "";
+        mousePos = new Point2D(0, 0);
         appController = new AppController();
         kd = false;
         this.canvas = canvas;
@@ -49,7 +54,7 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    public void initialize() throws IOException {
+    public void initialize() {
         trans = new Affine();
         linePaths = appController.getLinePathsFromModel();
         appController.clearLinePathData();
@@ -57,15 +62,15 @@ public class View {
         createKDTrees();
     }
 
-    public void setMousePos(Point2D mousePos){
+    public void setMousePos(Point2D mousePos) {
         this.mousePos = mousePos;
     }
 
     private void createKDTrees() {
         appController.setupRect();
 
-        for (Map.Entry<Type, List<LinePath>> entry : linePaths.entrySet()) {
-            if (entry.getKey() == Type.HIGHWAY || entry.getKey() == Type.RESIDENTIAL_HIGHWAY || entry.getKey() == Type.TERTIARY || entry.getKey() == Type.UNCLASSIFIED_HIGHWAY)
+        for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
+            if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
                 continue;
             if (entry.getValue().size() != 0) {
                 appController.addKDTreeToModel(entry.getKey(), entry.getValue());
@@ -74,8 +79,8 @@ public class View {
 
         List<LinePath> highways = appController.getHighwaysFromModel();
 
-        appController.addKDTreeToModel(Type.HIGHWAY, highways);
-        appController.addKDTreeToModel(Type.COASTLINE, linePaths.get(Type.COASTLINE));
+        appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
+        appController.addKDTreeToModel(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
 
         linePaths = null;
         System.gc();
@@ -93,42 +98,40 @@ public class View {
         repaint();
     }
 
-    int i = 0;
-
     public void repaint() {
-        i++;
         System.out.println(i);
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
-
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.strokeRect(0,0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
         double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
         int boxSize = 300;
 
-        Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
-        Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
-        Rect rect = new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
+        Rect rect = createRect(boxSize);
 
         Point2D mouse = toModelCoords(
                 mousePos.getX(),
                 mousePos.getY());
 
-        drawTypeKdTree(Type.COASTLINE, rect, pixelwidth);
 
-        drawTypeKdTree(Type.FARMLAND, rect, pixelwidth);
-        drawTypeKdTree(Type.RESIDENTIAL, rect, pixelwidth);
-        drawTypeKdTree(Type.HEATH, rect, pixelwidth);
-        drawTypeKdTree(Type.WOOD, rect, pixelwidth);
-        drawTypeKdTree(Type.TREE_ROW, rect, pixelwidth);
-        drawTypeKdTree(Type.WATER, rect, pixelwidth);
-        drawTypeKdTree(Type.FOREST, rect, pixelwidth);
-        drawTypeKdTree(Type.BUILDING, rect, pixelwidth);
+        drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
 
-        drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(OSMType.BEACH, rect, pixelwidth);
+        drawTypeKdTree(OSMType.FARMLAND, rect, pixelwidth);
+        drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
+        drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
+        drawTypeKdTree(OSMType.WOOD, rect, pixelwidth);
+        drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
+        drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
+        drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
+        drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
+        drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
+
+        drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
 
         /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
@@ -137,7 +140,7 @@ public class View {
 
         //mouseLocationLabel.setText(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getName());
 
-        mouseLocationLabel.setText(appController.getKDTreeFromModel(Type.HIGHWAY).getClosetsLinepath().getName());
+        mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
 
         //gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
@@ -146,101 +149,46 @@ public class View {
         drawSearchLocation(pixelwidth);
         drawIntrestPoints(pixelwidth);
 
-        shortestPath("Besservej 1", "Kaasenvejen 1", pixelwidth);
-    }
+        shortestPath("Strandbakkevej 9","Vesborgvej 18" , Vehicle.CAR, pixelwidth);
 
-    private Node etellerandet(String street){
-        Address address = appController.findAddress(street);
-
-        Graph graph = appController.getGraphFromModel();
-
-        List<Edge> edges = graph.getEdges();
-
-        edges.sort(Comparator.comparing(Edge::getName));
-
-        int addressIndex = binarySearch(edges, address.getStreet());
-
-        List<Edge> closestEdges = new ArrayList<>();
-
-        for (int i = addressIndex - 100; i < addressIndex + 100; i++) {
-            if (edges.get(i).getName().equals(address.getStreet())) {
-                closestEdges.add(edges.get(i));
-            }
+        if(!address1.equals("") && !address2.equals("")){
+            shortestPath(address1, address2,Vehicle.CAR, pixelwidth);
         }
 
-
-        Node closestNode = null;
-        float shortestDistance = Float.POSITIVE_INFINITY;
-
-        for (Edge e : closestEdges) {
-
-            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLon(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLat(), 2));
-
-
-            if(distance < shortestDistance){
-                closestNode = e.getTarget();
-                shortestDistance = distance;
-            }
-        }
-
-        return closestNode;
+        drawInterestPoints(pixelwidth);
     }
 
-    private void drawIntrestPoints(double lineWidth){
-        IntrestPointData intrestPointData = IntrestPointData.getInstance();
 
-        for(IntrestPoint intrestPoint : intrestPointData.iterate()){
+    public void setAddress(String address1, String address2){
+        this.address2 = address2;
+        this.address1 = address1;
+    }
+
+    private Rect createRect(int boxSize) {
+        Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
+        Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
+        return new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
+    }
+
+    private void drawInterestPoints(double lineWidth) {
+        InterestPointData interestPointData = InterestPointData.getInstance();
+
+        for (InterestPoint interestPoint : interestPointData.getAllIntrestPoints()) {
             int bubbleSize = 30;
 
-            gc.strokeOval(intrestPoint.getLongitude() - (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
-            gc.moveTo(intrestPoint.getLongitude() - (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize));
-            gc.lineTo(intrestPoint.getLongitude(), intrestPoint.getLatitude());
-            gc.moveTo(intrestPoint.getLongitude() + (lineWidth * bubbleSize / 2), intrestPoint.getLatitude() - (lineWidth * bubbleSize));
-            gc.lineTo(intrestPoint.getLongitude(), intrestPoint.getLatitude());
-            gc.stroke();
+            drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude());
         }
     }
 
-    private void shortestPath(String source, String target, double lineWidth) {
+    private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle, double lineWidth ) {
+        Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);
+        double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
 
-        try {
-            
-            Node sourceNode = etellerandet(source);
-            Node targetNode = etellerandet(target);
-            
-            double distance = appController.initializeRouting(sourceNode, targetNode);
+        List<LinePath> route = appController.getRouteFromModel();
 
-            List<LinePath> route = appController.getRouteFromModel();
-
-            for (LinePath linePath : route) {
-                drawRoute(linePath, lineWidth);
-            }
-        }catch(Exception e){
-            //e.printStackTrace();
+        for (LinePath linePath : route) {
+            drawRoute(linePath, lineWidth);
         }
-
-
-    }
-
-
-    private int binarySearch(List<Edge> list, String address) {
-        int low = 0;
-        int high = list.size() - 1;
-
-        while (low <= high) {
-            int mid = (low + high) / 2;
-            Edge midElement = list.get(mid);
-            String midID = midElement.getName();
-
-            if (midID.compareTo(address) < 0) {
-                low = mid + 1;
-            } else if (midID.compareTo(address) > 0) {
-                high = mid - 1;
-            } else {
-                return low;
-            }
-        }
-        return 0;
     }
 
     public void setSearchString(String addressString) {
@@ -254,44 +202,45 @@ public class View {
         AddressData addressData = AddressData.getInstance();
         Address address = addressData.search(addressString);
 
-        if(address == null){
+        if (address == null) {
             System.out.println("Missing");
             return;
         }
 
         int bubbleSize = 30;
 
-        gc.strokeOval(address.getLon() - (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
-        gc.moveTo(address.getLon() - (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize));
-        gc.lineTo(address.getLon(), address.getLat());
-        gc.moveTo(address.getLon() + (lineWidth * bubbleSize / 2), address.getLat() - (lineWidth * bubbleSize));
-        gc.lineTo(address.getLon(), address.getLat());
-        gc.stroke();
+        drawLocation(lineWidth, bubbleSize, address.getLon(), address.getLat());
         //gc.strokeRect(address.getLon(), address.getLat(), 1, 1);
     }
 
-    public void drawTypeKdTree(Type type, Rect rect, double lineWidth) {
-        for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {
+    private void drawLocation(double lineWidth, int bubbleSize, float lon, float lat) {
+        gc.strokeOval(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
+        gc.moveTo(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
+        gc.lineTo(lon, lat);
+        gc.moveTo(lon + (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
+        gc.lineTo(lon, lat);
+        gc.stroke();
+    }
 
+    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
+        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant())) {
             drawLinePath(linePath, lineWidth);
-            gc.fill();
         }
     }
 
-    public void drawTypeKdTree(Type type, Rect rect, double lineWidth, Point2D point) {
-        for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant(), point)) {
+    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth, Point2D point) {
+        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
-            gc.fill();
         }
     }
 
     private void drawRoute(LinePath linePath, double lineWidth) {
-        Type type = linePath.getType();
+        OSMType OSMType = linePath.getOSMType();
         gc.setLineWidth(lineWidth);
         gc.beginPath();
-        gc.setStroke(Color.RED);
-        gc.setFill(Color.RED);
+        gc.setStroke(OSMType.getColor(OSMType, false));
+        gc.setStroke(OSMType.getColor(OSMType, false));
 
 
         trace(linePath, gc);
@@ -300,24 +249,56 @@ public class View {
 
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
-        Type type = linePath.getType();
-        gc.setLineWidth(Type.getLineWidth(type, lineWidth));
+
+        OSMType OSMType = linePath.getOSMType();
+        gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
         gc.beginPath();
-        gc.setStroke(Type.getColor(type, isColorBlindMode));
-        gc.setFill(linePath.getFill() ? Type.getColor(type, isColorBlindMode) : Color.TRANSPARENT);
+        gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
+        gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
 
-        /*if(way.getTagValue("name") != null){
-            gc.setFill(Color.BLACK);
-            gc.setFont(new Font(0.00022));
-            gc.fillText(way.getTagValue("name"), coords[0], coords[1]);
-            gc.setFill(fill ? color : Color.TRANSPARENT);
-        }*/
-        //gc.setStroke(Color.BLUE);
-        //gc.strokeRect(minY, minX, maxY-minY, maxX-minX);
-        //  gc.setStroke(color);
+        //System.out.println(linePath.getOSMType());
 
-        trace(linePath, gc);
-        gc.stroke();
+        if(linePath.isMultiploygon()){
+            traceTest(linePath, gc);
+        }else{
+            trace(linePath, gc);
+            gc.stroke();
+            gc.fill();
+        }
+
+    }
+
+    private void traceTest(LinePath linePath, GraphicsContext gc) {
+        gc.setFillRule(FillRule.EVEN_ODD);
+        float[] coords = linePath.getCoords();
+        gc.moveTo(coords[0], coords[1]);
+        for (int i = 2; i <= coords.length; i += 2) {
+            if(coords[i-2] == -99999.0){
+                gc.moveTo(coords[i-1], coords[i]);
+            }else{
+                gc.lineTo(coords[i - 2], coords[i - 1]);
+            }
+        }
+        gc.fill();
+    }
+
+    private void traceMultipoly(LinePath linePath, GraphicsContext gc){
+        gc.setFillRule(FillRule.EVEN_ODD);
+        float[] coords = linePath.getCoords();
+
+        double[] xCord = new double[coords.length];
+        double[] yCord = new double[coords.length];
+        int l = 0;
+        for (int i = 2; i <= coords.length; i += 2) {
+            //gc.moveTo(coords[0], coords[1]);
+            xCord[l] = (double) coords[i-2];
+            yCord[l] = (double) coords[i-1];
+            l++;
+        }
+
+        gc.strokePolyline(xCord, yCord, coords.length/2);
+        //gc.fill();
+
     }
 
     private void trace(LinePath linePath, GraphicsContext gc) {
@@ -332,8 +313,8 @@ public class View {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
+            //It is not possible for java to throw this exeption, but the try/catch is needed anyways.
             // Troels siger at det her ikke kan ske
-            e.printStackTrace();
             return null;
         }
     }
@@ -347,6 +328,11 @@ public class View {
     public void pan(double dx, double dy) {
         trans.prependTranslation(dx, dy);
         repaint();
+    }
+
+    public void displayError(Alert.AlertType type, String text){
+        Alert alert = new Alert(type, text, ButtonType.OK);
+        alert.showAndWait();
     }
 
     public void changeToColorBlindMode(boolean isColorBlindMode) {

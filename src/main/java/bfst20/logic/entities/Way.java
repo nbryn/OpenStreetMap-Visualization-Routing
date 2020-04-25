@@ -1,7 +1,7 @@
 package bfst20.logic.entities;
 
-import bfst20.logic.Type;
-import bfst20.logic.interfaces.OSMElement;
+import bfst20.logic.misc.OSMType;
+import bfst20.logic.misc.OSMElement;
 import javafx.scene.paint.Color;
 
 import javax.xml.stream.XMLStreamReader;
@@ -10,16 +10,23 @@ import java.util.List;
 
 
 public class Way implements OSMElement {
-
-
-    private long id;
-    private List<Long> nodeIds;
     private XMLStreamReader reader;
+    private List<Long> nodeIds;
+    private boolean isOneWay;
     private Color drawColor;
+    private int maxSpeed;
     private String name;
-    private Type type;
+    private OSMType OSMType;
+    private boolean multipolygon;
+    private long id;
+
 
     public Way() {
+        drawColor = Color.BLACK;
+        nodeIds = new ArrayList<>();
+    }
+    public Way(long id) {
+        this.id = id;
         drawColor = Color.BLACK;
         nodeIds = new ArrayList<>();
     }
@@ -30,18 +37,45 @@ public class Way implements OSMElement {
         drawColor = Color.BLACK;
     }
 
-    public String getName() {return name;}
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public boolean isOneWay() {
+        return isOneWay;
+    }
+
+    public void setOneWay(boolean oneWay) {
+        this.isOneWay = oneWay;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setType(Type type){
-        this.type = type;
+    @Override
+    public void setMultipolygon(boolean multipolygon) {
+        this.multipolygon = multipolygon;
     }
-    
-    public Type getType(){
-        return type;
+
+    public boolean isMultipolygon(){
+        return multipolygon;
+    }
+
+    public void setOSMType(OSMType OSMType) {
+        this.OSMType = OSMType;
+    }
+
+    public OSMType getOSMType() {
+        return OSMType;
     }
 
     public List<Long> getNodeIds() {
@@ -54,16 +88,6 @@ public class Way implements OSMElement {
 
     public void addNodeId(long nodeid) {
         nodeIds.add(nodeid);
-    }
-
-    @Override
-    public void setValues() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
-    }
-
-    @Override
-    public void setReader(XMLStreamReader reader) {
-        this.reader = reader;
     }
 
     public long getFirstNodeId() {
