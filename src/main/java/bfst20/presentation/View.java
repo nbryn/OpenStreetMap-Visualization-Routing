@@ -99,6 +99,7 @@ public class View {
     }
 
     public void repaint() {
+        System.out.println(i);
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
@@ -146,6 +147,7 @@ public class View {
         //gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
+        drawIntrestPoints(pixelwidth);
 
         shortestPath("Strandbakkevej 9","Vesborgvej 18" , Vehicle.CAR, pixelwidth);
 
@@ -155,6 +157,7 @@ public class View {
 
         drawInterestPoints(pixelwidth);
     }
+
 
     public void setAddress(String address1, String address2){
         this.address2 = address2;
@@ -176,7 +179,6 @@ public class View {
             drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude());
         }
     }
-
 
     private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle, double lineWidth ) {
         Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);

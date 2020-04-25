@@ -2,6 +2,7 @@ package bfst20.data;
 
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.kdtree.Direction;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 import org.junit.jupiter.api.BeforeAll;
