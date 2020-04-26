@@ -221,7 +221,7 @@ public class View {
 
     public void searchRoute(){
        //ItshortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
-       shortestPath("Sommerbyen 93", "Oven Bæltet 13" , Vehicle.CAR);
+       shortestPath("Oven Bæltet 1", "Oven Bæltet 13" , Vehicle.CAR);
     }
 
     List<Edge> route = null;
@@ -230,6 +230,7 @@ public class View {
     private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
 
         Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);
+
         double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
 
         route = appController.getRouteFromModel();

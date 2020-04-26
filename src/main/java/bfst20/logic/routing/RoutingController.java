@@ -91,7 +91,7 @@ public class RoutingController {
         System.out.println(address);
         int addressIndex = binarySearch(edges, address.getStreet());
 
-        int val = 100;
+        int val = 500;
 
         for (int i = addressIndex - val; i < addressIndex + val; i++) {
             if (edges.get(i).getName().equals(address.getStreet())) {
@@ -107,23 +107,19 @@ public class RoutingController {
 
             if (way != null) {
 
-               try{
-                   for (int i = 1; i < way.getNodeIds().size(); i++) {
-                       Node sourceNode = way.getNodes().get(i - 1);
-                       Node targetNode = way.getNodes().get(i);
+                for (int i = 1; i < way.getNodes().size(); i++) {
+                    Node sourceNode = way.getNodes().get(i - 1);
+                    Node targetNode = way.getNodes().get(i);
 
-                       if (sourceNode != null && targetNode != null) {
-                           double length = calculateDistBetween(sourceNode, targetNode);
+                    if (sourceNode != null && targetNode != null) {
+                        double length = calculateDistBetween(sourceNode, targetNode);
 
-                           Edge edge = new Edge(OSMType, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
-                                   way.isOneWay());
+                        Edge edge = new Edge(OSMType, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
+                                way.isOneWay());
 
-                           graph.addEdge(edge);
-                       }
-                   }
-               }catch(Exception e){
-                    String i = "";
-               }
+                        graph.addEdge(edge);
+                    }
+                }
             }
         }
     }
