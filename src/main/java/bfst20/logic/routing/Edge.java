@@ -1,7 +1,6 @@
 package bfst20.logic.routing;
 
 import bfst20.logic.misc.OSMType;
-import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
@@ -59,13 +58,9 @@ public class Edge {
     }
 
 
-
     public double getLength() {
         return length;
     }
 
-    public OSMType getType() {
-        return highwayType;
-    }
 
 }

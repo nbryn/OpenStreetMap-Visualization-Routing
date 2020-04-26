@@ -84,11 +84,6 @@ public class AppController {
         parser.parseOSMFile(file);
     }
 
-    public double initializeRouting(Node source, Node target, Vehicle vehicle) {
-        routingController = routingController.getInstance();
-
-        return routingController.calculateShortestRoute(getGraphFromModel(), source, target, vehicle);
-    }
 
     public void setRouteOnModel(List<Edge> route) {
         routingData.saveRoute(route);
@@ -98,25 +93,23 @@ public class AppController {
     public void startStringParsing(String string) throws XMLStreamException {
         parser.parseString(string);
     }
-    
-    public void addToModelHighways(List<LinePath> highways){
+
+    public void addToModelHighways(List<LinePath> highways) {
         linePathData.saveHighways(highways);
     }
 
-    public Node[] getNodesFromSearchQuery(String sourceQuery, String targetQuery) {
-        Graph graph = getGraphFromModel();
-        List<Edge> edges = graph.getEdges();
-        edges.sort(Comparator.comparing(Edge::getName));
+
+    public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
+        routingController = routingController.getInstance();
 
         Address source = findAddress(sourceQuery);
         Address target = findAddress(targetQuery);
 
-        System.out.println(source);
+        Graph graph = getGraphFromModel();
+        List<Edge> edges = graph.getEdges();
+        edges.sort(Comparator.comparing(Edge::getName));
 
-        Node srcNode = routingController.getInstance().findClosestNode(source, edges);
-        Node trgNode = routingController.getInstance().findClosestNode(target, edges);
-
-        return new Node[] {srcNode, trgNode};
+        return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
     }
 
     public List<Edge> getRouteFromModel() {
@@ -159,7 +152,7 @@ public class AppController {
         linePathData.saveHighways(highWays);
     }
 
-    public void addToModelAddresses(Map<Long, Address> addresses){
+    public void addToModelAddresses(Map<Long, Address> addresses) {
         addressData.setAddresses(addresses);
     }
 
@@ -227,15 +220,11 @@ public class AppController {
         return linePathData.removeWayFromNodeTo(OSMType, node);
     }
 
-    public void addToModelNodes(Map<Long, Node> nodes){
-        OSMElementData.setNodes(nodes);
-    }
-
     public void addToModel(OSMType OSMType, Node node, Way way) {
         linePathData.addNodeTo(OSMType, node, way);
     }
 
-    public Map<Node, Way> getNodeTo(OSMType osmType){
+    public Map<Node, Way> getNodeTo(OSMType osmType) {
         return linePathData.getNodeTo(osmType);
     }
 
@@ -257,7 +246,6 @@ public class AppController {
     }
 
     public void clearLinePathData() {
-        System.out.println("HELLO :D");
         LinePathGenerator.getInstance().clearData();
         linePathData.clearData();
     }
@@ -280,16 +268,16 @@ public class AppController {
         return kdTreeData.getKDTree(OSMType);
     }
 
-    public void alertOK(Alert.AlertType type, String text){
+    public void alertOK(Alert.AlertType type, String text) {
         view.displayError(type, text);
     }
 
     //TODO: NOT BEING USED?
     public void generateBinary() throws IOException {
-        try{
+        try {
             FileHandler fileHandler = FileHandler.getInstance();
             fileHandler.generateBinary();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

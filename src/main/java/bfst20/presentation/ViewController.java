@@ -10,7 +10,6 @@ import javax.xml.stream.XMLStreamException;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.InterestPoint;
-import com.sun.glass.ui.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,7 +17,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 public class ViewController {
@@ -69,8 +67,8 @@ public class ViewController {
         File file = null;
 
         try{
-            //file = new File(classLoader.getResource("samsoe.osm").getFile());
-            file = new File("D:\\Projects\\Java\\BFST20Gruppe17\\danmark.bin");
+            file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //file = new File("/home/nbryn/Desktop/ITU/2.Semester/BFST20Gruppe17/danmark.bin");
         }catch (NullPointerException e){
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
             System.exit(1);

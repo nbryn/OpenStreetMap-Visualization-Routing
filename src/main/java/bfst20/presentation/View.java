@@ -221,7 +221,8 @@ public class View {
 
     public void searchRoute(){
        //ItshortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
-       shortestPath("Oven Bæltet 1", "Oven Bæltet 13" , Vehicle.CAR);
+       //shortestPath("Oven Bæltet 13", "Sommerbyen 93", Vehicle.CAR);
+        shortestPath("Sølyst 3", "Vestergade 37", Vehicle.CAR);
     }
 
     List<Edge> route = null;
@@ -229,9 +230,7 @@ public class View {
 
     private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
 
-        Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);
-
-        double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
+        double distance = appController.initializeRouting(sourceQuery, targetQuery, vehicle);
 
         route = appController.getRouteFromModel();
 
@@ -293,11 +292,10 @@ public class View {
     }
 
     private void drawRoute(Edge edge, double lineWidth) {
-        OSMType OSMType = edge.getType();
         gc.setLineWidth(lineWidth);
         gc.beginPath();
-        gc.setStroke(OSMType.getColor(OSMType, false));
-        gc.setStroke(OSMType.getColor(OSMType, false));
+        gc.setStroke(OSMType.getColor(OSMType.ROUTING, false));
+
 
 
         traceEdge(edge, gc);
