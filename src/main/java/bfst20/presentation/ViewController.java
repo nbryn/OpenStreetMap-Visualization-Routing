@@ -15,15 +15,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 public class ViewController {
+
 
     private AppController appController;
 
@@ -44,10 +42,10 @@ public class ViewController {
     private Canvas canvas;
 
     @FXML private TextField searchbar;
-    @FXML private TextField yesbar;
+    @FXML private TextField destinationBar;
 
-    @FXML private Button bikeButton;
-    @FXML private Button carButton;
+    @FXML private ToggleButton bikeButton;
+    @FXML private ToggleButton carButton;
 
     public ViewController() {
         appController = new AppController();
@@ -164,7 +162,7 @@ public class ViewController {
         carButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                view.setAddress(searchbar.getText(), yesbar.getText());
+                view.setAddress(searchbar.getText(), destinationBar.getText());
                 view.repaint();
             }
         });
