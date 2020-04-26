@@ -9,6 +9,7 @@ import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.misc.Vehicle;
+import bfst20.logic.routing.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -153,11 +154,11 @@ public class View {
         drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
         drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
         drawTypeKdTree(OSMType.WOOD, rect, pixelwidth);
-        drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
         drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
         drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
         drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
-        drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
         //drawKdTest();
@@ -190,8 +191,8 @@ public class View {
         drawInterestPoints(pixelwidth);
 
         if(route != null){
-            for (LinePath linePath : route) {
-                drawRoute(linePath, pixelwidth);
+            for (Edge edge : route) {
+                drawRoute(edge, pixelwidth);
             }
         }
     }
@@ -219,11 +220,11 @@ public class View {
     }
 
     public void searchRoute(){
-       // shortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
+       //ItshortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
        shortestPath("Sommerbyen 93", "Oven Bæltet 13" , Vehicle.CAR);
     }
 
-    List<LinePath> route = null;
+    List<Edge> route = null;
 
 
     private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
@@ -290,16 +291,28 @@ public class View {
         gc.stroke();
     }
 
-    private void drawRoute(LinePath linePath, double lineWidth) {
-        OSMType OSMType = linePath.getOSMType();
+    private void drawRoute(Edge edge, double lineWidth) {
+        OSMType OSMType = edge.getType();
         gc.setLineWidth(lineWidth);
         gc.beginPath();
         gc.setStroke(OSMType.getColor(OSMType, false));
         gc.setStroke(OSMType.getColor(OSMType, false));
 
 
-        trace(linePath, gc);
+        traceEdge(edge, gc);
         gc.stroke();
+    }
+
+    private void traceEdge(Edge edge, GraphicsContext gc) {          
+        Node sourceNode = edge.getSource();
+        Node targetNode = edge.getTarget();
+
+        float[] coords = new float[]{sourceNode.getLongitude(), sourceNode.getLatitude(), targetNode.getLongitude(), targetNode.getLatitude()};
+        gc.setStroke(OSMType.getColor(OSMType.ROUTING, false));
+        gc.moveTo(coords[0], coords[1]);
+        for (int i = 2; i <= coords.length; i += 2) {
+            gc.lineTo(coords[i - 2], coords[i - 1]);
+        }
     }
 
 
@@ -344,6 +357,8 @@ public class View {
         }
         gc.fill();
     }
+
+ 
 
     private void trace(LinePath linePath, GraphicsContext gc) {
         float[] coords = linePath.getCoords();

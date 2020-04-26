@@ -72,15 +72,11 @@ public class OSMElementData {
         return OSMRelations;
     }
 
-    public void clearData() {
-        OSMWays = new ArrayList<>();
-        OSMRelations = new ArrayList<>();
-
-    }
 
     public void clearNodeData() {
-      /*  nodeMap = new HashMap<>();
-
-        System.gc();*/
+        OSMWays = new ArrayList<>();
+        OSMRelations = new ArrayList<>();
+        nodeMap = new HashMap<>();
+        System.gc();
     }
 }

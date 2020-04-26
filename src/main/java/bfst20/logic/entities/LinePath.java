@@ -27,6 +27,11 @@ public class LinePath implements Serializable {
         centerLongitude = (maxY - minY) / 2 + minY;
     }
 
+    public void setWayNull(){
+        way = null;
+        wayId = 0;
+    }
+
     // This constructor is for Edges used in the Graph for routing
     public LinePath(Node sourceNode, Node targetNode, OSMType OSMType, Boolean fill) {
         this.fill = fill;
@@ -56,7 +61,7 @@ public class LinePath implements Serializable {
 
     }
 
-    public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
+    public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
         this.way = way;

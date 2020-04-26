@@ -25,6 +25,8 @@ public class KDTree {
 
             insert(root, path);
         }
+
+        System.gc();
     }
 
     public KDNode getRoot(){
@@ -128,7 +130,9 @@ public class KDTree {
         }else{
             node.setSplit(path.getCenterLongitude());
         }
+        path.setWayNull();
         node.setLinePath(path);
+        
 
         return node;
     }

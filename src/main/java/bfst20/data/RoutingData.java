@@ -12,7 +12,7 @@ import java.util.Map;
 public class RoutingData {
     private static RoutingData routingData;
     private static boolean isLoaded = false;
-    private List<LinePath> route;
+    private List<Edge> route;
     private Graph graph;
     private Map<Node, Edge> edgesOnPath;
 
@@ -33,11 +33,12 @@ public class RoutingData {
         this.graph = graph;
     }
 
-    public void saveRoute(List<LinePath> route) {
+    public void saveRoute(List<Edge> route) {
         this.route = route;
+        System.out.println("HEY");
     }
 
-    public List<LinePath> getRoute() {
+    public List<Edge> getRoute() {
         return route;
     }
 
@@ -47,6 +48,7 @@ public class RoutingData {
 
     public void setEdgesOnPath(Map<Node, Edge> edgesOnPath) {
         this.edgesOnPath = edgesOnPath;
+        System.out.println("HEY");
     }
 
     public Map<Node, Edge> getEdgesOnPath() {

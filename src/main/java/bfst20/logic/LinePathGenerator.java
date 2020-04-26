@@ -16,7 +16,7 @@ public class LinePathGenerator {
 
     private List<Way> OSMWays;
     private Map<Long, Node> OSMNodes;
-    private Map<Long, Address> addresses;
+
     private List<Relation> OSMRelations;
     private static boolean loaded = false;
     private static LinePathGenerator linePathGenerator;
@@ -27,8 +27,6 @@ public class LinePathGenerator {
         OSMWays = appController.getWaysFromModel();
         OSMNodes = appController.getNodesFromModel();
         OSMRelations = appController.getRelationsFromModel();
-        addresses = appController.getAddressesFromModel();
-        appController.clearOSMData();
     }
 
     public void clearData() {
@@ -59,6 +57,7 @@ public class LinePathGenerator {
             if (way.getOSMType() == OSMType.COASTLINE || way.getOSMType() == null) continue;
 
             LinePath linePath = createLinePath(way);
+
             OSMType OSMType = linePath.getOSMType();
 
             if (!appController.getLinePathsFromModel().containsKey(OSMType)) {
@@ -68,6 +67,7 @@ public class LinePathGenerator {
             if (OSMType != OSMType.PLACE) {
                 appController.addToModel(OSMType, linePath);
             }
+            
         }
     }
 
@@ -114,7 +114,7 @@ public class LinePathGenerator {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
             if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
 
-                LinePath path = new LinePath(entry.getValue(), OSMType, OSMNodes, addresses, true);
+                LinePath path = new LinePath(entry.getValue(), OSMType, OSMNodes, true);
 
                 if(entry.getValue().isMultipolygon()){
                     path.setMultiploygon(true);
@@ -212,7 +212,7 @@ public class LinePathGenerator {
         Boolean fill = OSMType.getFill(type);
 
         // TODO: Does every LinePath need all nodes?
-        return new LinePath(way, type, OSMNodes, addresses, fill);
+        return new LinePath(way, type, OSMNodes, fill);
     }
 
     private Way combine(Way before, Way after){

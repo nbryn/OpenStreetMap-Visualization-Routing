@@ -5,6 +5,7 @@ import bfst20.logic.misc.OSMElement;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -16,19 +17,25 @@ public class Way implements OSMElement, Serializable {
     private OSMType OSMType;
     private boolean multipolygon;
     private long id;
+    private List<Node> nodes;
 
 
     public Way() {
         nodeIds = new ArrayList<>();
+        nodes = new ArrayList<>();
     }
     public Way(long id) {
         this.id = id;
         nodeIds = new ArrayList<>();
+        nodes = new ArrayList<>();
     }
 
     public Way(Way way) {
+        nodes = way.getNodes();
+        //this.nodes = way.getNodes();
         this.nodeIds = new ArrayList<>(way.getNodeIds());
         this.id = way.getId();
+        //nodes = new ArrayList<>();
     }
 
     public int getMaxSpeed() {
@@ -96,5 +103,12 @@ public class Way implements OSMElement, Serializable {
         nodeIds.addAll(way.getNodeIds());
     }
 
+    public void addNode(Node node) {
+        nodes.add(node);
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
 
 }

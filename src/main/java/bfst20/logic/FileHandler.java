@@ -73,7 +73,7 @@ public class FileHandler {
         objectOut.writeObject(appController.getBoundsFromModel());
         objectOut.writeObject(linePaths);
         objectOut.writeObject(appController.getAddressesFromModel());
-        objectOut.writeObject(appController.getNodesFromModel());
+        objectOut.writeObject(appController.getHighwaysFromModel());
         objectOut.close();
     }
 
@@ -82,12 +82,12 @@ public class FileHandler {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
             Map<Long, Address> addresses = (Map<Long, Address>) in.readObject();
-            Map<Long, Node> nodesFromModel = (Map<Long, Node>) in.readObject();
+            List<LinePath> highWays = (List<LinePath>) in.readObject();
 
             appController.addToModel(bounds);
             appController.addToModel(linePaths);
             appController.addToModelAddresses(addresses);
-            appController.addToModelNodes(nodesFromModel);
+            appController.addToModelHighways(highWays);
         } catch (IOException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
             System.exit(1);

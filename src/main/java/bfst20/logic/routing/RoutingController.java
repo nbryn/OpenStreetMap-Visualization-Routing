@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class RoutingController {
     private static RoutingController routingController;
     private static boolean isLoaded = false;
@@ -35,10 +34,15 @@ public class RoutingController {
 
     public void buildRoutingGraph() {
         List<LinePath> highWays = appController.getHighwaysFromModel();
-        Map<Long, Node> nodes = appController.getNodesFromModel();
-        Graph graph = new Graph(new ArrayList<>(nodes.values()));
+        List<Node> nodes = new ArrayList<>();
 
-        generateGraphEdges(highWays, nodes, graph);
+        for (LinePath lp : highWays) {
+            nodes.addAll(lp.getWay().getNodes());
+        }
+
+        Graph graph = new Graph(new ArrayList<>(nodes));
+
+        generateGraphEdges(highWays, graph);
         appController.addToModel(graph);
     }
 
@@ -47,7 +51,7 @@ public class RoutingController {
 
         if (dijkstra.distTo(target) != Double.POSITIVE_INFINITY) {
 
-            List<LinePath> route = extractEdgesOnRoute(dijkstra.getEdgeTo(), source, target);
+            List<Edge> route = extractEdgesOnRoute(dijkstra.getEdgeTo(), source, target);
             appController.setRouteOnModel(route);
         }
 
@@ -62,7 +66,6 @@ public class RoutingController {
 
         Node closestNode = calculateDistanceBetween(address, closestEdges);
 
-
         return closestNode;
     }
 
@@ -71,7 +74,8 @@ public class RoutingController {
         Node closestNode = null;
 
         for (Edge e : closestEdges) {
-            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2) + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
+            float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2)
+                    + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
 
             if (distance < shortestDistance) {
                 closestNode = e.getTarget();
@@ -96,30 +100,36 @@ public class RoutingController {
         }
     }
 
-    private void generateGraphEdges(List<LinePath> highWays, Map<Long, Node> nodes, Graph graph) {
+    private void generateGraphEdges(List<LinePath> highWays, Graph graph) {
         for (LinePath linePath : highWays) {
             Way way = linePath.getWay();
             OSMType OSMType = linePath.getOSMType();
 
-            for (int i = 1; i < way.getNodeIds().size(); i++) {
-                Node sourceNode = nodes.get(way.getNodeIds().get(i - 1));
-                Node targetNode = nodes.get(way.getNodeIds().get(i));
+            if (way != null) {
 
-                LinePath edgeLinePath = new LinePath(sourceNode, targetNode, OSMType.ROUTING, OSMType.getFill(OSMType.BOUNDS));
+               try{
+                   for (int i = 1; i < way.getNodeIds().size(); i++) {
+                       Node sourceNode = way.getNodes().get(i - 1);
+                       Node targetNode = way.getNodes().get(i);
 
-                if (sourceNode != null && targetNode != null) {
-                    double length = calculateDistBetween(sourceNode, targetNode);
+                       if (sourceNode != null && targetNode != null) {
+                           double length = calculateDistBetween(sourceNode, targetNode);
 
-                    Edge edge = new Edge(OSMType, sourceNode, targetNode, length, edgeLinePath, way.getName(), way.getMaxSpeed(), way.isOneWay());
+                           Edge edge = new Edge(OSMType, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
+                                   way.isOneWay());
 
-                    graph.addEdge(edge);
-                }
+                           graph.addEdge(edge);
+                       }
+                   }
+               }catch(Exception e){
+                    String i = "";
+               }
             }
         }
     }
 
-    private List<LinePath> extractEdgesOnRoute(Map<Node, Edge> edgesFromDijkstra, Node source, Node target) {
-        List<LinePath> linePaths = new ArrayList<>();
+    private List<Edge> extractEdgesOnRoute(Map<Node, Edge> edgesFromDijkstra, Node source, Node target) {
+        List<Edge> edges = new ArrayList<>();
         Edge edge = edgesFromDijkstra.get(target);
         long id = 0;
 
@@ -131,10 +141,10 @@ public class RoutingController {
             edge = id == tempID ? edgesFromDijkstra.get(edge.getTarget()) : edgesFromDijkstra.get(edge.getSource());
             id = id == tempID ? edge.getSource().getId() : edge.getTarget().getId();
 
-            linePaths.add(edge.getLinePath());
+            edges.add(edge);
         }
 
-        return linePaths;
+        return edges;
     }
 
     private int binarySearch(List<Edge> list, String address) {
@@ -170,8 +180,8 @@ public class RoutingController {
 
         double sindLat = Math.sin(dLat / 2);
         double sindLng = Math.sin(dLng / 2);
-        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
-                * Math.cos(Math.toRadians(sourceLat)) * Math.cos(Math.toRadians(targetLat));
+        double a = Math.pow(sindLat, 2)
+                + Math.pow(sindLng, 2) * Math.cos(Math.toRadians(sourceLat)) * Math.cos(Math.toRadians(targetLat));
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double dist = earthRadius * c;

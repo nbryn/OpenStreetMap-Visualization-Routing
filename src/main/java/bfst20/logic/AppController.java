@@ -50,11 +50,18 @@ public class AppController {
         if (!isBinary) {
             createLinePaths();
             //generateBinary();
+            clearNodeData();
         }
+        System.out.println("Generate Highways");
         generateHighways();
+        System.out.println("Done, building graph");
         routingController.buildRoutingGraph();
-        clearNodeData();
+        System.out.println("Done");
         view.initialize();
+        OSMElementData = null;
+        linePathData = null;
+        linePathGenerator = null;
+        System.gc();
 
         return view;
     }
@@ -83,13 +90,17 @@ public class AppController {
         return routingController.calculateShortestRoute(getGraphFromModel(), source, target, vehicle);
     }
 
-    public void setRouteOnModel(List<LinePath> route) {
+    public void setRouteOnModel(List<Edge> route) {
         routingData.saveRoute(route);
 
     }
 
     public void startStringParsing(String string) throws XMLStreamException {
         parser.parseString(string);
+    }
+    
+    public void addToModelHighways(List<LinePath> highways){
+        linePathData.saveHighways(highways);
     }
 
     public Node[] getNodesFromSearchQuery(String sourceQuery, String targetQuery) {
@@ -108,7 +119,7 @@ public class AppController {
         return new Node[] {srcNode, trgNode};
     }
 
-    public List<LinePath> getRouteFromModel() {
+    public List<Edge> getRouteFromModel() {
         return routingData.getRoute();
     }
 
@@ -186,6 +197,10 @@ public class AppController {
         return OSMElementData.getOSMWays();
     }
 
+    public Node getNodeFromModel(long id) {
+        return OSMElementData.getNode(id);
+    }
+
     public Map<Long, Node> getNodesFromModel() {
         return OSMElementData.getOSMNodes();
     }
@@ -194,9 +209,6 @@ public class AppController {
         return OSMElementData.getOSMRelations();
     }
 
-    public void clearOSMData() {
-        OSMElementData.clearData();
-    }
 
     public void clearNodeData() {
         OSMElementData.clearNodeData();
@@ -245,11 +257,10 @@ public class AppController {
     }
 
     public void clearLinePathData() {
-        linePathGenerator = LinePathGenerator.getInstance();
-        linePathGenerator.clearData();
+        System.out.println("HELLO :D");
+        LinePathGenerator.getInstance().clearData();
         linePathData.clearData();
     }
-
 
     public void setupRect() {
         Bounds bounds = getBoundsFromModel();

@@ -24,6 +24,9 @@ public class Node implements OSMElement, Comparable, Serializable {
         this.longitude = longitude;
     }
 
+    public Node() {
+
+    }
 
 
     public long getId() {

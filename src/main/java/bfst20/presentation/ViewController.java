@@ -69,8 +69,8 @@ public class ViewController {
         File file = null;
 
         try{
-            file = new File(classLoader.getResource("samsoe.bin").getFile());
-            //file = new File("C:\\Users\\Sam\\Downloads\\fyn.osm");
+            // TODOfile = new File(classLoader.getResource("samsoe.bin").getFile());
+        file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
         }catch (NullPointerException e){
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
             System.exit(1);
