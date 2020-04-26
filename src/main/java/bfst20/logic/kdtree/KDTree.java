@@ -46,23 +46,42 @@ public class KDTree {
         return list;
     }
 
+    private int i = 0;
+
     private void range(KDNode node, Rect rect , double zoomLevel, List<LinePath> list){
         if (node == null) return;
 
         if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
-
         }
 
-        if(rect.intersects(node)){
+        /*if(rect.intersects(node)){
             range(node.getRightNode(), rect, zoomLevel, list);
             range(node.getLeftNode(), rect, zoomLevel, list);
+        }else{
+            System.out.println("FALSE " + "HEY");
+        }*/
+
+        if (rect.intersectsRight(node)) {
+            range(node.getRightNode(), rect, zoomLevel, list);
+        }else{
+            System.out.println("FALSE RIGHT");
+        }
+
+        if(rect.intersectsLeft(node)){
+            range(node.getLeftNode(), rect, zoomLevel, list);
+        }else{
+            System.out.println("FALSE LEFT");
         }
 
     }
 
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point){
         if (node == null) return;
+
+        if(node.getLinePath().getWayId() == 27674116){
+            String i = "";
+        }
 
         if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
@@ -83,9 +102,23 @@ public class KDTree {
 
         }
 
-        if(rect.intersects(node)){
+        /*if(rect.intersects(node)){
             range(node.getRightNode(), rect, list, zoomLevel, point);
             range(node.getLeftNode(), rect, list, zoomLevel, point);
+        }else{
+            System.out.println("FALSE " + "HEY");
+        }*/
+
+        if (rect.intersectsRight(node)) {
+            range(node.getRightNode(), rect, list, zoomLevel, point);
+        }else{
+            System.out.println("FALSE RIGHT");
+        }
+
+        if(rect.intersectsLeft(node)){
+            range(node.getLeftNode(), rect, list, zoomLevel, point);
+        }else{
+            System.out.println("FALSE LEFT");
         }
     }
 

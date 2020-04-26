@@ -3,6 +3,7 @@ package bfst20.presentation;
 import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.kdtree.KDNode;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
@@ -81,7 +82,7 @@ public class View {
 
         appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
         appController.addKDTreeToModel(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
-
+        coastLine = linePaths.get(OSMType.COASTLINE);
         linePaths = null;
         System.gc();
 
@@ -117,7 +118,11 @@ public class View {
                 mousePos.getY());
 
 
-        drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
+
+        for(LinePath path : coastLine){
+            drawLinePath(path, pixelwidth);
+        }
 
         drawTypeKdTree(OSMType.BEACH, rect, pixelwidth);
         drawTypeKdTree(OSMType.FARMLAND, rect, pixelwidth);
@@ -131,6 +136,7 @@ public class View {
         drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
+        drawKdTest();
 
         /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
@@ -141,9 +147,12 @@ public class View {
 
         mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
 
+        Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
+        Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
+
         //gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
-        //gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
+        gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
 
         drawSearchLocation(pixelwidth);
         drawInterestPoints(pixelwidth);
@@ -234,6 +243,16 @@ public class View {
         }
     }
 
+    public void drawKdTest(){
+        KDNode root = appController.getKDTreeFromModel(OSMType.HIGHWAY).getRoot();
+
+        gc.setStroke(Color.BLUE);
+        gc.moveTo(appController.getRectFromModel().getMinLon(), root.getSplit());
+        gc.lineTo(appController.getRectFromModel().getMaxLon(), root.getSplit());
+        //System.out.println(root.getSplit());
+        gc.stroke();
+    }
+
     private void drawRoute(LinePath linePath, double lineWidth) {
         OSMType OSMType = linePath.getOSMType();
         gc.setLineWidth(lineWidth);
@@ -249,6 +268,11 @@ public class View {
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
 
+        if(linePath.getOSMType() == OSMType.TREE_ROW && linePath.getWayId() == 165460372){
+            String i = "";
+        }
+
+
         OSMType OSMType = linePath.getOSMType();
         gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
         gc.beginPath();
@@ -258,16 +282,19 @@ public class View {
         //System.out.println(linePath.getOSMType());
 
         if(linePath.isMultiploygon()){
-            traceTest(linePath, gc);
+            traceMultipolygon(linePath, gc);
         }else{
             trace(linePath, gc);
             gc.stroke();
-            gc.fill();
+
+            if(OSMType.getFill(linePath.getOSMType())){
+                gc.fill();
+            }
         }
 
     }
 
-    private void traceTest(LinePath linePath, GraphicsContext gc) {
+    private void traceMultipolygon(LinePath linePath, GraphicsContext gc) {
         gc.setFillRule(FillRule.EVEN_ODD);
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
@@ -279,25 +306,6 @@ public class View {
             }
         }
         gc.fill();
-    }
-
-    private void traceMultipoly(LinePath linePath, GraphicsContext gc){
-        gc.setFillRule(FillRule.EVEN_ODD);
-        float[] coords = linePath.getCoords();
-
-        double[] xCord = new double[coords.length];
-        double[] yCord = new double[coords.length];
-        int l = 0;
-        for (int i = 2; i <= coords.length; i += 2) {
-            //gc.moveTo(coords[0], coords[1]);
-            xCord[l] = (double) coords[i-2];
-            yCord[l] = (double) coords[i-1];
-            l++;
-        }
-
-        gc.strokePolyline(xCord, yCord, coords.length/2);
-        //gc.fill();
-
     }
 
     private void trace(LinePath linePath, GraphicsContext gc) {

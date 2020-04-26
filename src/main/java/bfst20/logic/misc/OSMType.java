@@ -98,7 +98,6 @@ public enum OSMType {
             case MULTIPOLYGON:
             case RESIDENTIAL:
             case WOOD:
-            case TREE_ROW:
             case HEATH:
             case GREEN:
             case BEACH:
@@ -212,7 +211,7 @@ public enum OSMType {
             case UNCLASSIFIED_HIGHWAY:
                 return 80;
             case TRACK:
-                return 15;
+                return 100;
             default:
                 return 60;
         }
