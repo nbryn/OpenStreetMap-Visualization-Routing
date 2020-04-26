@@ -1,7 +1,9 @@
 package bfst20.logic;
 
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.entities.Node;
 import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMType;
 
@@ -59,29 +61,33 @@ public class FileHandler {
         File file = new File("samsoe.bin");
         file.createNewFile();
 
-        Map<OSMType, List<LinePath>> drawables = appController.getLinePathsFromModel();
-        Bounds bounds = appController.getBoundsFromModel();
+        Map<OSMType, List<LinePath>> linePaths = appController.getLinePathsFromModel();
 
-        drawables.put(OSMType.BOUNDS, new ArrayList<>());
-        drawables.get(OSMType.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
 
-        writeToFile(file, drawables);
+        writeToFile(file, linePaths);
     }
 
-    private void writeToFile(File file, Map<OSMType, List<LinePath>> drawables) throws FileNotFoundException, IOException {
+    private void writeToFile(File file, Map<OSMType, List<LinePath>> linePaths) throws FileNotFoundException, IOException {
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-        objectOut.writeObject(drawables);
+        objectOut.writeObject(appController.getBoundsFromModel());
+        objectOut.writeObject(linePaths);
+        objectOut.writeObject(appController.getAddressesFromModel());
+        objectOut.writeObject(appController.getNodesFromModel());
         objectOut.close();
     }
 
     public void loadBinary(File file)  {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
-            Bounds bounds = linePaths.get(OSMType.BOUNDS).get(0).getBounds();
+            Map<Long, Address> addresses = (Map<Long, Address>) in.readObject();
+            Map<Long, Node> nodesFromModel = (Map<Long, Node>) in.readObject();
 
             appController.addToModel(bounds);
             appController.addToModel(linePaths);
+            appController.addToModelAddresses(addresses);
+            appController.addToModelNodes(nodesFromModel);
         } catch (IOException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
             System.exit(1);

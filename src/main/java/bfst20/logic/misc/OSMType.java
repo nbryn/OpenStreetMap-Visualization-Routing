@@ -2,9 +2,6 @@ package bfst20.logic.misc;
 
 import javafx.scene.paint.Color;
 
-
-
-
 public enum OSMType {
     UNKNOWN,
     BEACH,

@@ -46,6 +46,8 @@ public class ViewController {
 
     @FXML private Button bikeButton;
     @FXML private Button carButton;
+    
+    @FXML private Button toAddressButton;
 
     public ViewController() {
         appController = new AppController();
@@ -67,28 +69,46 @@ public class ViewController {
         File file = null;
 
         try{
-            file = new File(classLoader.getResource("samsoe.osm").getFile());
+            file = new File(classLoader.getResource("samsoe.bin").getFile());
+            //file = new File("C:\\Users\\Sam\\Downloads\\fyn.osm");
         }catch (NullPointerException e){
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
             System.exit(1);
         }
 
         appController.loadFile(file);
-        view = appController.initialize();
+        try {
+            view = appController.initialize();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         setupCanvas();
 
         setupSearchButton();
 
         setupRouteButtons();
+
+        toAddressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                view.searchRoute();
+
+            }
+        });
     }
 
     private void setupFileHandling() {
         openFile.setOnAction(e -> {
-            File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
-            if (file != null) {
-                appController.loadFile(file);
-                view = appController.initialize();
+            try{
+                File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
+                if (file != null) {
+                    appController.loadFile(file);
+                    view = appController.initialize();
+                }
+            }catch(Exception err){
+                err.printStackTrace();
             }
         });
     }

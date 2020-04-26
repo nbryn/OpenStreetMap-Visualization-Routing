@@ -156,12 +156,12 @@ public class LinePathGenerator {
         for (long entry : relation.getMembers()) {
 
             Way way = (binarySearch(OSMWays, entry));
+            if (way == null) continue;
 
             if(relation.isMultipolygon()){
                 way.setMultipolygon(true);
             }
 
-            if (way == null) continue;
 
             Way before = removeWayBefore(way, OSMType);
             Way after = removeWayAfter(way, OSMType);

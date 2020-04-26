@@ -99,7 +99,31 @@ public class View {
         repaint();
     }
 
+    private long lastTime = 0;
+
+    private boolean fps(){
+        Date date = new Date();
+
+        if(lastTime == 0){
+            lastTime = date.getTime();
+            return false;
+        }else{
+            if((date.getTime() - 30) < lastTime){
+                return true;
+            }
+        }
+
+        lastTime = date.getTime();
+
+        return false;
+    }
+
+    double pixelwidth;
+
     public void repaint() {
+
+        if(fps()) return;
+
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
@@ -107,7 +131,7 @@ public class View {
         gc.strokeRect(0,0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
-        double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
+        pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
         int boxSize = 300;
 
@@ -136,7 +160,7 @@ public class View {
         drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
-        drawKdTest();
+        //drawKdTest();
 
         /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
@@ -157,13 +181,19 @@ public class View {
         drawSearchLocation(pixelwidth);
         drawInterestPoints(pixelwidth);
 
-        shortestPath("Strandbakkevej 9","Vesborgvej 18" , Vehicle.CAR, pixelwidth);
+        /*shortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR, pixelwidth);
 
         if(!address1.equals("") && !address2.equals("")){
             shortestPath(address1, address2,Vehicle.CAR, pixelwidth);
-        }
+        }*/
 
         drawInterestPoints(pixelwidth);
+
+        if(route != null){
+            for (LinePath linePath : route) {
+                drawRoute(linePath, pixelwidth);
+            }
+        }
     }
 
 
@@ -188,15 +218,22 @@ public class View {
         }
     }
 
-    private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle, double lineWidth ) {
+    public void searchRoute(){
+       // shortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
+       shortestPath("Sommerbyen 93", "Oven Bæltet 13" , Vehicle.CAR);
+    }
+
+    List<LinePath> route = null;
+
+
+    private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
+
         Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);
         double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
 
-        List<LinePath> route = appController.getRouteFromModel();
+        route = appController.getRouteFromModel();
 
-        for (LinePath linePath : route) {
-            drawRoute(linePath, lineWidth);
-        }
+        repaint();
     }
 
     public void setSearchString(String addressString) {
@@ -327,7 +364,6 @@ public class View {
     }
 
     public void zoom(double factor, double x, double y) {
-
         trans.prependScale(factor, factor, x, y);
         repaint();
     }

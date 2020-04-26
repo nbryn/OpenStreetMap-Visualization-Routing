@@ -45,7 +45,7 @@ public class AppController {
 
     }
 
-    public View initialize() {
+    public View initialize() throws IOException {
         routingController = routingController.getInstance();
         if (!isBinary) {
             createLinePaths();
@@ -53,7 +53,7 @@ public class AppController {
         }
         generateHighways();
         routingController.buildRoutingGraph();
-        //clearNodeData();
+        clearNodeData();
         view.initialize();
 
         return view;
@@ -100,6 +100,8 @@ public class AppController {
         Address source = findAddress(sourceQuery);
         Address target = findAddress(targetQuery);
 
+        System.out.println(source);
+
         Node srcNode = routingController.getInstance().findClosestNode(source, edges);
         Node trgNode = routingController.getInstance().findClosestNode(target, edges);
 
@@ -144,6 +146,10 @@ public class AppController {
         if (linePaths.get(OSMType.MOTORWAY) != null) highWays.addAll(linePaths.get(OSMType.MOTORWAY));
 
         linePathData.saveHighways(highWays);
+    }
+
+    public void addToModelAddresses(Map<Long, Address> addresses){
+        addressData.setAddresses(addresses);
     }
 
     public void addToModel(long id, Address address) {
@@ -209,6 +215,10 @@ public class AppController {
         return linePathData.removeWayFromNodeTo(OSMType, node);
     }
 
+    public void addToModelNodes(Map<Long, Node> nodes){
+        OSMElementData.setNodes(nodes);
+    }
+
     public void addToModel(OSMType OSMType, Node node, Way way) {
         linePathData.addNodeTo(OSMType, node, way);
     }
@@ -217,40 +227,16 @@ public class AppController {
         return linePathData.getNodeTo(osmType);
     }
 
-    /*public Way removeWayFromNodeTo(OSMType OSMType, Node node) {
-        Way way = null;
-        if (OSMType == OSMType.COASTLINE) way = linePathData.removeWayFromNodeToCoastline(node);
-        else if (OSMType == OSMType.FARMLAND) way = linePathData.removeWayFromNodeToFarmland(node);
-        else if (OSMType == OSMType.FOREST) way = linePathData.removeWayFromNodeToForest(node);
-        else if (OSMType == OSMType.BUILDING) way = linePathData.removewayfromNodeToBuilding(node);
-        else if (OSMType == OSMType.MEADOW) way = linePathData.removeWayFromNodeToMeadow(node);
-        return way;
-    }
-
-    public void addToModel(OSMType OSMType, Node node, Way way) {
-        if (OSMType == OSMType.COASTLINE) linePathData.addToNodeToCoastline(node, way);
-        else if (OSMType == OSMType.FARMLAND) linePathData.addToNodeToFarmland(node, way);
-        else if (OSMType == OSMType.FOREST) linePathData.addNodeToForest(node, way);
-        else if (OSMType == OSMType.BUILDING) linePathData.addNodeToBuilding(node, way);
-        else if (OSMType == OSMType.MEADOW) linePathData.addToNodeToMeadow(node, way);
-    }
-
-    public Map<Node, Way> getNodeTo(OSMType OSMType) {
-        Map<Node, Way> nodeTo = null;
-        if (OSMType == OSMType.COASTLINE) nodeTo = linePathData.getNodeToCoastline();
-        else if (OSMType == OSMType.FARMLAND) nodeTo = linePathData.getNodeToFarmland();
-        else if (OSMType == OSMType.FOREST) nodeTo = linePathData.getNodeToForest();
-        else if (OSMType == OSMType.BUILDING) nodeTo = linePathData.getNodeToBuilding();
-        else if (OSMType == OSMType.MEADOW) nodeTo = linePathData.getNodeToMeadow();
-        return nodeTo;
-    }*/
-
     public void addToModel(OSMType OSMType, LinePath linePath) {
         linePathData.addLinePath(OSMType, linePath);
     }
 
     public void addToModel(OSMType OSMType) {
         linePathData.addType(OSMType);
+    }
+
+    public void addToModel(Map<OSMType, List<LinePath>> linePaths) {
+        linePathData.setLinePaths(linePaths);
     }
 
     public void createLinePaths() {
@@ -264,9 +250,6 @@ public class AppController {
         linePathData.clearData();
     }
 
-    public void addToModel(Map<OSMType, List<LinePath>> linePaths) {
-        linePathData.setLinePaths(linePaths);
-    }
 
     public void setupRect() {
         Bounds bounds = getBoundsFromModel();
@@ -292,7 +275,11 @@ public class AppController {
 
     //TODO: NOT BEING USED?
     public void generateBinary() throws IOException {
-        FileHandler fileHandler = FileHandler.getInstance();
-        fileHandler.generateBinary();
+        try{
+            FileHandler fileHandler = FileHandler.getInstance();
+            fileHandler.generateBinary();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

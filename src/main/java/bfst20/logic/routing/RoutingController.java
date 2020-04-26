@@ -51,7 +51,9 @@ public class RoutingController {
             appController.setRouteOnModel(route);
         }
 
-        return dijkstra.distTo(target);
+        double dist = dijkstra.distTo(target);
+        dijkstra.clearData();
+        return dist;
     }
 
     public Node findClosestNode(Address address, List<Edge> edges) {
@@ -59,6 +61,7 @@ public class RoutingController {
         findClosestEdges(address, edges, closestEdges);
 
         Node closestNode = calculateDistanceBetween(address, closestEdges);
+
 
         return closestNode;
     }
@@ -80,6 +83,8 @@ public class RoutingController {
     }
 
     private void findClosestEdges(Address address, List<Edge> edges, List<Edge> closestEdges) {
+        System.out.println("HERE");
+        System.out.println(address);
         int addressIndex = binarySearch(edges, address.getStreet());
 
         int val = 100;

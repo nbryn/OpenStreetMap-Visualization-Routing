@@ -23,6 +23,10 @@ public class OSMElementData {
         OSMRelations = new ArrayList<>();
     }
 
+    public void setNodes(Map<Long, Node> nodes){
+        nodeMap = nodes;
+    }
+
     public static OSMElementData getInstance() {
         if (!isLoaded) {
             isLoaded = true;
