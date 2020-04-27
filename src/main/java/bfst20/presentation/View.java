@@ -44,6 +44,10 @@ public class View {
 
     Label mouseLocationLabel;
 
+    double zoomLevel = 1.0;
+    double timesZoomed = 0.0;
+    double sliderValue = 0;
+
     public View(Canvas canvas) {
         address1 = "";
         address2 = "";
@@ -95,7 +99,7 @@ public class View {
         float maxLat = bounds.getMaxLat();
 
         pan(-minLon, -minLat);
-        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
+        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0,1);
 
         repaint();
     }
@@ -270,7 +274,9 @@ public class View {
 
     public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
         for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant())) {
+
             drawLinePath(linePath, lineWidth);
+            gc.fill();
         }
     }
 
@@ -278,6 +284,7 @@ public class View {
         for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
+            gc.fill();
         }
     }
 
@@ -302,7 +309,7 @@ public class View {
         gc.stroke();
     }
 
-    private void traceEdge(Edge edge, GraphicsContext gc) {          
+    private void traceEdge(Edge edge, GraphicsContext gc) {
         Node sourceNode = edge.getSource();
         Node targetNode = edge.getTarget();
 
@@ -357,7 +364,7 @@ public class View {
         gc.fill();
     }
 
- 
+
 
     private void trace(LinePath linePath, GraphicsContext gc) {
         float[] coords = linePath.getCoords();
@@ -377,9 +384,40 @@ public class View {
         }
     }
 
-    public void zoom(double factor, double x, double y) {
+    public void zoom(double factor, double x, double y, double deltaY) {
+        if (deltaY<0 && zoomLevel > 1.0)
+        {
+            scale(factor,x,y,deltaY);
+        }
+        if (deltaY>0 && zoomLevel <= 150) {
+            scale(factor,x,y,deltaY);
+        }
+        reduceZoomLevel();
+        reduceTimesZoomed();
+    }
+
+
+    public void scale(double factor, double x, double y, double deltaY)
+    {
         trans.prependScale(factor, factor, x, y);
+        zoomLevel *= factor;
+        timesZoomed += deltaY/40;
         repaint();
+    }
+
+    public void reduceZoomLevel() {
+        if (zoomLevel > 2500)
+        {
+            zoomLevel = zoomLevel/2517.0648374271736;
+        }
+    }
+
+    public void reduceTimesZoomed()
+    {
+        if (timesZoomed>126)
+        {
+            timesZoomed = 126;
+        }
     }
 
     public void pan(double dx, double dy) {
@@ -398,5 +436,20 @@ public class View {
 
     public void setMouseLocationView(Label mouseLocationLabel) {
         this.mouseLocationLabel = mouseLocationLabel;
+    }
+
+
+    public double getTimesZoomed() {
+        return  timesZoomed;
+    }
+
+    public void setSliderValue(double value)
+    {
+        sliderValue = value;
+    }
+
+    public double getSliderValue()
+    {
+        return sliderValue;
     }
 }

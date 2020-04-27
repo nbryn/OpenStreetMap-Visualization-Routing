@@ -10,6 +10,8 @@ import javax.xml.stream.XMLStreamException;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.InterestPoint;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,31 +23,28 @@ import javafx.stage.FileChooser;
 
 public class ViewController {
 
+
     private AppController appController;
 
     private View view;
 
-    @FXML
-    private MenuItem openFile;
-
-    @FXML
-    private Label mouseLocationLabel;
-
-    @FXML
-    private TextField searchAddress;
-    @FXML
-    private Button searchAdressButton;
-
-    @FXML
-    private Canvas canvas;
-
+    @FXML private MenuItem openFile;
+    @FXML private Label mouseLocationLabel;
+    @FXML private TextField searchAddress;
+    @FXML private Button searchAdressButton;
+    @FXML private Canvas canvas;
     @FXML private TextField searchbar;
     @FXML private TextField yesbar;
 
     @FXML private Button bikeButton;
     @FXML private Button carButton;
-    
+
     @FXML private Button toAddressButton;
+    @FXML private TextField destinationBar;
+    @FXML private ToggleButton bikeButton;
+    @FXML private ToggleButton carButton;
+    @FXML private Slider zoomSlider;
+    private boolean scrollTrigger;
 
     public ViewController() {
         appController = new AppController();
@@ -61,6 +60,9 @@ public class ViewController {
 
 
         setupFileHandling();
+        zoomSlider.setMax(128);
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
 
         ClassLoader classLoader = getClass().getClassLoader();
 
@@ -81,6 +83,22 @@ public class ViewController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
+
+                if (!scrollTrigger)
+                {
+                    double deltaValue = zoomSlider.getValue() - view.getSliderValue();
+                    double factor = Math.pow(1.001, 40*deltaValue);
+
+                    view.zoom(factor, canvas.getWidth()/2, canvas.getHeight()/2, 40*deltaValue);
+                }
+                view.setSliderValue(zoomSlider.getValue());
+            }
+
+        });
 
         setupCanvas();
 
@@ -111,10 +129,14 @@ public class ViewController {
         });
     }
 
-    private void setupCanvas() {
+    private void setupCanvas(){
         canvas.setOnScroll(e -> {
             double factor = Math.pow(1.001, e.getDeltaY());
-            view.zoom(factor, e.getX(), e.getY());
+            view.zoom(factor, e.getX(), e.getY(),e.getDeltaY());
+
+            scrollTrigger = true;
+            zoomSlider.setValue(view.getTimesZoomed());
+            scrollTrigger = false;
         });
 
         canvas.setOnMousePressed(e -> {
@@ -165,7 +187,7 @@ public class ViewController {
         carButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                view.setAddress(searchbar.getText(), yesbar.getText());
+                view.setAddress(searchbar.getText(), destinationBar.getText());
                 view.repaint();
             }
         });
