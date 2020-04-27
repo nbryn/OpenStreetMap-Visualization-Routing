@@ -223,6 +223,7 @@ public class View {
         }
     }
 
+    
     public void searchRoute(){
        //ItshortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
        //shortestPath("Oven Bæltet 13", "Sommerbyen 93", Vehicle.CAR);
