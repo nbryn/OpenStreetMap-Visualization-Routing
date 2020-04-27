@@ -20,6 +20,10 @@ public class Relation implements OSMElement {
         members = new ArrayList<>();
     }
 
+    public Relation() {
+
+    }
+
     public void setName(String name) {
         this.name = name;
     }

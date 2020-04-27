@@ -23,6 +23,7 @@ public class Address {
         this.nodeID = nodeID;
     }
 
+
     public String getStreet(){
         return street;
     }
