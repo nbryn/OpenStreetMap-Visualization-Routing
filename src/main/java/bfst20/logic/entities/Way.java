@@ -2,39 +2,40 @@ package bfst20.logic.entities;
 
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.OSMElement;
-import javafx.scene.paint.Color;
 
-import javax.xml.stream.XMLStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
-public class Way implements OSMElement {
-    private XMLStreamReader reader;
+public class Way implements OSMElement, Serializable {
     private List<Long> nodeIds;
     private boolean isOneWay;
-    private Color drawColor;
     private int maxSpeed;
     private String name;
     private OSMType OSMType;
     private boolean multipolygon;
     private long id;
+    private List<Node> nodes;
 
 
     public Way() {
-        drawColor = Color.BLACK;
         nodeIds = new ArrayList<>();
+        nodes = new ArrayList<>();
     }
     public Way(long id) {
         this.id = id;
-        drawColor = Color.BLACK;
         nodeIds = new ArrayList<>();
+        nodes = new ArrayList<>();
     }
 
     public Way(Way way) {
+        nodes = way.getNodes();
+        //this.nodes = way.getNodes();
         this.nodeIds = new ArrayList<>(way.getNodeIds());
         this.id = way.getId();
-        drawColor = Color.BLACK;
+        //nodes = new ArrayList<>();
     }
 
     public int getMaxSpeed() {
@@ -102,5 +103,12 @@ public class Way implements OSMElement {
         nodeIds.addAll(way.getNodeIds());
     }
 
+    public void addNode(Node node) {
+        nodes.add(node);
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
 
 }

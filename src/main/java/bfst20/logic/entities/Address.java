@@ -1,6 +1,8 @@
 package bfst20.logic.entities;
 
-public class Address {
+import java.io.Serializable;
+
+public class Address implements Serializable {
     private String  city,
                     housenumber,
                     postcode,

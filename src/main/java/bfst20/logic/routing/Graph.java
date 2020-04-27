@@ -21,13 +21,15 @@ public class Graph {
         this.nodeCount = nodes.size();
 
         for (int i = 0; i < nodeCount; i++) {
+
             adj.put(nodes.get(i), new ArrayList<>());
         }
+
     }
 
     public int nodeCount() {
         return nodeCount;
-    }
+    } 
 
     public List<Edge> getEdges() {
         return edges;

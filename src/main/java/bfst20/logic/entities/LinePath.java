@@ -27,36 +27,12 @@ public class LinePath implements Serializable {
         centerLongitude = (maxY - minY) / 2 + minY;
     }
 
-    // This constructor is for Edges used in the Graph for routing
-    public LinePath(Node sourceNode, Node targetNode, OSMType OSMType, Boolean fill) {
-        this.fill = fill;
-        this.OSMType = OSMType;
-
-        minY = Float.POSITIVE_INFINITY;
-        minX = Float.POSITIVE_INFINITY;
-        maxY = Float.NEGATIVE_INFINITY;
-        maxX = Float.NEGATIVE_INFINITY;
-
-        coords = new float[]{sourceNode.getLongitude(), sourceNode.getLatitude(), targetNode.getLongitude(), targetNode.getLatitude()};
-
-        if (minX > coords[1]) minX = coords[1];
-        if (minY > coords[0]) minY = coords[0];
-        if (maxX < coords[1]) maxX = coords[1];
-        if (maxY < coords[0]) maxY = coords[0];
-
-        if (minX > coords[3]) minX = coords[3];
-        if (minY > coords[2]) minY = coords[2];
-        if (maxX < coords[3]) maxX = coords[3];
-        if (maxY < coords[2]) maxY = coords[2];
-
-
-        centerLatitude = (maxX - minX) / 2 + minX;
-
-        centerLongitude = (maxY - minY) / 2 + minY;
-
+    public void setWayNull(){
+        way = null;
+        wayId = 0;
     }
 
-    public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Map<Long, Address> addresses, Boolean fill) {
+    public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
         this.way = way;

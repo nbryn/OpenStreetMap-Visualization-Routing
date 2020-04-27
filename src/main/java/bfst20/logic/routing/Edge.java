@@ -1,13 +1,11 @@
 package bfst20.logic.routing;
 
 import bfst20.logic.misc.OSMType;
-import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
 public class Edge {
     private OSMType highwayType;
-    private LinePath linePath;
     private boolean isOneWay;
     private double length;
     private int maxSpeed;
@@ -16,10 +14,9 @@ public class Edge {
     private String name;
 
 
-    public Edge(OSMType highwayType, Node source, Node target, double length, LinePath linePath, String name, int maxSpeed, boolean isOneWay) {
+    public Edge(OSMType highwayType, Node source, Node target, double length, String name, int maxSpeed, boolean isOneWay) {
         this.maxSpeed = maxSpeed != 0 ? maxSpeed : OSMType.getMaxSpeed(highwayType);
         this.highwayType = highwayType;
-        this.linePath = linePath;
         this.isOneWay = isOneWay;
         this.source = source;
         this.target = target;
@@ -60,12 +57,10 @@ public class Edge {
         return maxSpeed;
     }
 
-    public LinePath getLinePath() {
-        return linePath;
-    }
 
     public double getLength() {
         return length;
     }
+
 
 }

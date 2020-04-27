@@ -9,6 +9,7 @@ import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.misc.Vehicle;
+import bfst20.logic.routing.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -42,6 +43,10 @@ public class View {
 
 
     Label mouseLocationLabel;
+
+    double zoomLevel = 1.0;
+    double timesZoomed = 0.0;
+    double sliderValue = 0;
 
     public View(Canvas canvas) {
         address1 = "";
@@ -94,12 +99,36 @@ public class View {
         float maxLat = bounds.getMaxLat();
 
         pan(-minLon, -minLat);
-        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0);
+        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0,1);
 
         repaint();
     }
 
+    private long lastTime = 0;
+
+    private boolean fps(){
+        Date date = new Date();
+
+        if(lastTime == 0){
+            lastTime = date.getTime();
+            return false;
+        }else{
+            if((date.getTime() - 30) < lastTime){
+                return true;
+            }
+        }
+
+        lastTime = date.getTime();
+
+        return false;
+    }
+
+    double pixelwidth;
+
     public void repaint() {
+
+        if(fps()) return;
+
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
@@ -107,7 +136,7 @@ public class View {
         gc.strokeRect(0,0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
-        double pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
+        pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
         int boxSize = 300;
 
@@ -129,14 +158,14 @@ public class View {
         drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
         drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
         drawTypeKdTree(OSMType.WOOD, rect, pixelwidth);
-        drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
         drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
         drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
         drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
-        drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
-        drawKdTest();
+        //drawKdTest();
 
         /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
@@ -157,13 +186,19 @@ public class View {
         drawSearchLocation(pixelwidth);
         drawInterestPoints(pixelwidth);
 
-        shortestPath("Strandbakkevej 9","Vesborgvej 18" , Vehicle.CAR, pixelwidth);
+        /*shortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR, pixelwidth);
 
         if(!address1.equals("") && !address2.equals("")){
             shortestPath(address1, address2,Vehicle.CAR, pixelwidth);
-        }
+        }*/
 
         drawInterestPoints(pixelwidth);
+
+        if(route != null){
+            for (Edge edge : route) {
+                drawRoute(edge, pixelwidth);
+            }
+        }
     }
 
 
@@ -188,15 +223,23 @@ public class View {
         }
     }
 
-    private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle, double lineWidth ) {
-        Node[] nodes = appController.getNodesFromSearchQuery(sourceQuery, targetQuery);
-        double distance = appController.initializeRouting(nodes[0], nodes[1], vehicle);
+    
+    public void searchRoute(){
+       //ItshortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
+       //shortestPath("Oven Bæltet 13", "Sommerbyen 93", Vehicle.CAR);
+        shortestPath("Sølyst 3", "Vestergade 37", Vehicle.CAR);
+    }
 
-        List<LinePath> route = appController.getRouteFromModel();
+    List<Edge> route = null;
 
-        for (LinePath linePath : route) {
-            drawRoute(linePath, lineWidth);
-        }
+
+    private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
+
+        double distance = appController.initializeRouting(sourceQuery, targetQuery, vehicle);
+
+        route = appController.getRouteFromModel();
+
+        repaint();
     }
 
     public void setSearchString(String addressString) {
@@ -232,7 +275,9 @@ public class View {
 
     public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
         for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant())) {
+
             drawLinePath(linePath, lineWidth);
+            gc.fill();
         }
     }
 
@@ -240,6 +285,7 @@ public class View {
         for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
+            gc.fill();
         }
     }
 
@@ -253,16 +299,27 @@ public class View {
         gc.stroke();
     }
 
-    private void drawRoute(LinePath linePath, double lineWidth) {
-        OSMType OSMType = linePath.getOSMType();
+    private void drawRoute(Edge edge, double lineWidth) {
         gc.setLineWidth(lineWidth);
         gc.beginPath();
-        gc.setStroke(OSMType.getColor(OSMType, false));
-        gc.setStroke(OSMType.getColor(OSMType, false));
+        gc.setStroke(OSMType.getColor(OSMType.ROUTING, false));
 
 
-        trace(linePath, gc);
+
+        traceEdge(edge, gc);
         gc.stroke();
+    }
+
+    private void traceEdge(Edge edge, GraphicsContext gc) {
+        Node sourceNode = edge.getSource();
+        Node targetNode = edge.getTarget();
+
+        float[] coords = new float[]{sourceNode.getLongitude(), sourceNode.getLatitude(), targetNode.getLongitude(), targetNode.getLatitude()};
+        gc.setStroke(OSMType.getColor(OSMType.ROUTING, false));
+        gc.moveTo(coords[0], coords[1]);
+        for (int i = 2; i <= coords.length; i += 2) {
+            gc.lineTo(coords[i - 2], coords[i - 1]);
+        }
     }
 
 
@@ -308,6 +365,8 @@ public class View {
         gc.fill();
     }
 
+
+
     private void trace(LinePath linePath, GraphicsContext gc) {
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
@@ -326,10 +385,40 @@ public class View {
         }
     }
 
-    public void zoom(double factor, double x, double y) {
+    public void zoom(double factor, double x, double y, double deltaY) {
+        if (deltaY<0 && zoomLevel > 1.0)
+        {
+            scale(factor,x,y,deltaY);
+        }
+        if (deltaY>0 && zoomLevel <= 150) {
+            scale(factor,x,y,deltaY);
+        }
+        reduceZoomLevel();
+        reduceTimesZoomed();
+    }
 
+
+    public void scale(double factor, double x, double y, double deltaY)
+    {
         trans.prependScale(factor, factor, x, y);
+        zoomLevel *= factor;
+        timesZoomed += deltaY/40;
         repaint();
+    }
+
+    public void reduceZoomLevel() {
+        if (zoomLevel > 2500)
+        {
+            zoomLevel = zoomLevel/2517.0648374271736;
+        }
+    }
+
+    public void reduceTimesZoomed()
+    {
+        if (timesZoomed>126)
+        {
+            timesZoomed = 126;
+        }
     }
 
     public void pan(double dx, double dy) {
@@ -348,5 +437,20 @@ public class View {
 
     public void setMouseLocationView(Label mouseLocationLabel) {
         this.mouseLocationLabel = mouseLocationLabel;
+    }
+
+
+    public double getTimesZoomed() {
+        return  timesZoomed;
+    }
+
+    public void setSliderValue(double value)
+    {
+        sliderValue = value;
+    }
+
+    public double getSliderValue()
+    {
+        return sliderValue;
     }
 }

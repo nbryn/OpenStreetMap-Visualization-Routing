@@ -125,7 +125,7 @@ public class KDTree {
         way1.addNodeId(1);
         way1.addNodeId(2);
 
-        linePaths.add(new LinePath(way1, OSMType.BUILDING, nodes1,null,true));
+        linePaths.add(new LinePath(way1, OSMType.BUILDING, nodes1,true));
 
         bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
 
@@ -151,7 +151,7 @@ public class KDTree {
         way1.addNodeId(1);
         way1.addNodeId(2);
 
-        linePaths.add(new LinePath(way1, OSMType.BUILDING, nodes1,null,true));
+        linePaths.add(new LinePath(way1, OSMType.BUILDING, nodes1,true));
 
         bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
 

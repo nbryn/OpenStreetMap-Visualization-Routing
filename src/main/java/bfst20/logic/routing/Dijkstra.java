@@ -18,7 +18,14 @@ public class Dijkstra {
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
 
-        findShortestPath(graph, source, target, vehicle);
+        findShortestPath(graph, source, target, vehicle);  
+    }
+
+    public void clearData(){
+        distTo = null;
+        edgeTo = null;
+        pq = null;
+        System.gc();
     }
 
     public void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
