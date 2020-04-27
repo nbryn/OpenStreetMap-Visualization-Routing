@@ -2,15 +2,17 @@ package bfst20.logic.ternary;
 
 import bfst20.logic.entities.Address;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class TST {
     private class Node{
         private Node left, mid, right;
         private char key;
         private Address value;
 
-        public Node(char key, Address value){
+        public Node(char key){
             this.key = key;
-            this.value = value;
         }
 
         public Node getLeft()               {return left;}
@@ -24,8 +26,10 @@ public class TST {
         public void setLeft(Node left)      {this.left = left;}
         public void setMid(Node mid)        {this.mid = mid;}
         public void setRight(Node right)    {this.right = right;}
+        public void setValue(Address address) {this.value = address;}
     }
 
+    private int R = 29;
     private Node root;
     private int size;
 
@@ -39,15 +43,21 @@ public class TST {
 
         if(parent == null){
             size++;
-            parent = new Node(charecter, value);
+            parent = new Node(charecter);
         }
 
-        if(charecter > parent.getKey()){
-            parent.setRight(put(parent.getRight(), key, value, index));
-        }else if(charecter < parent.getKey()){
+        if(charecter == 'l'){
+            String i = "";
+        }
+
+        if(charecter < parent.getKey()){
             parent.setLeft(put(parent.getLeft(), key, value, index));
+        }else if(charecter > parent.getKey()){
+            parent.setRight(put(parent.getRight(), key, value, index));
         }else if(index < key.length() - 1){
             parent.setMid(put(parent.getMid(), key, value, index+1));
+        }else{
+            parent.setValue(value);
         }
 
         return parent;
@@ -75,6 +85,28 @@ public class TST {
 
     public int getSize(){
         return size;
+    }
+
+    public Queue<Address> keysWithPrefix(String prefix){
+        Queue<Address> queue = new LinkedList<>();
+
+        Node startNode = get(root, prefix, 0);
+
+        if(startNode == null) return queue;
+        if(startNode.getValue() != null) queue.add(startNode.getValue());
+
+        collect(startNode.getMid(),new StringBuilder(prefix), queue);
+
+        return queue;
+    }
+
+    private void collect(Node parent,StringBuilder prefix,  Queue<Address> queue){
+        if (parent == null) return;
+        collect(parent.getLeft(),  prefix, queue);
+        if (parent.getValue() != null) queue.add(parent.getValue());
+        collect(parent.getMid(),   prefix.append(parent.getKey()), queue);
+        prefix.deleteCharAt(prefix.length() - 1);
+        collect(parent.getRight(), prefix, queue);
     }
 
 }
