@@ -8,26 +8,27 @@ import java.io.Serializable;
 import javax.xml.stream.XMLStreamReader;
 
 public class Node implements OSMElement, Comparable, Serializable {
-    private long id;
-    protected float latitude;
+    //TODO: Protected?
     protected float longitude;
+    protected float latitude;
     private double distTo;
-
+    private long id;
 
     public Node(long id, float latitude, float longitude) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
     public Node(float latitude, float longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
+    //TODO: Only used in test
     public Node() {
 
     }
-
 
     public long getId() {
         return id;
@@ -49,7 +50,6 @@ public class Node implements OSMElement, Comparable, Serializable {
     public double getDistTo() {
         return distTo;
     }
-
 
     @Override
     public void setName(String name) {

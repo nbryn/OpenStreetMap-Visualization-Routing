@@ -11,17 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 public class LinePathData {
-
-    private static boolean isLoaded = false;
-    private static LinePathData linePathData;
     private Map<OSMType, List<LinePath>> linePaths;
-    private List<LinePath> highWays;
-
     private Map<OSMType, Map<Node, Way>> nodeTo;
+    private static LinePathData linePathData;
+    private static boolean isLoaded = false;
+    private List<LinePath> highWays;
 
     private LinePathData() {
         linePaths = new HashMap<>();
-
         nodeTo = new HashMap<>();
         highWays = new ArrayList<>();
     }
@@ -31,6 +28,7 @@ public class LinePathData {
             isLoaded = true;
             linePathData = new LinePathData();
         }
+
         return linePathData;
     }
 
@@ -51,39 +49,36 @@ public class LinePathData {
         linePaths.get(OSMType).add(linePath);
     }
 
-    public void setLinePaths(Map<OSMType, List<LinePath>> linePaths) {
+    public void saveLinePaths(Map<OSMType, List<LinePath>> linePaths) {
         this.linePaths = linePaths;
     }
 
-
-    public void addType(OSMType OSMType) {
-        linePaths.put(OSMType, new ArrayList<>());
+    public void addType(OSMType type) {
+        linePaths.put(type, new ArrayList<>());
     }
 
-    public void addNodeTo(OSMType osmType, Node node, Way way){
-
-        if(nodeTo.get(osmType) == null){
-            nodeTo.put(osmType, new HashMap<>());
+    public void addNodeTo(OSMType type, Node node, Way way) {
+        if (nodeTo.get(type) == null) {
+            nodeTo.put(type, new HashMap<>());
         }
 
-        nodeTo.get(osmType).put(node, way);
+        nodeTo.get(type).put(node, way);
     }
 
-
-    public Map<Node, Way> getNodeTo(OSMType osmType){return nodeTo.get(osmType);}
-
-
-    public Way removeWayFromNodeTo(OSMType osmType, Node node) {
-        if(nodeTo.get(osmType) == null) return null;
-        return nodeTo.get(osmType).remove(node);
+    public Map<Node, Way> getNodeTo(OSMType type) {
+        return nodeTo.get(type);
     }
 
+    public Way removeWayFromNodeTo(OSMType type, Node node) {
+        if (nodeTo.get(type) == null) return null;
+
+        return nodeTo.get(type).remove(node);
+    }
 
     public void clearData() {
         linePaths = new HashMap<>();
-            
         nodeTo = new HashMap<>();
+
         System.gc();
     }
-
 }

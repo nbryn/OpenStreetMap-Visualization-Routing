@@ -3,19 +3,18 @@ package bfst20.logic.entities;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.OSMElement;
 
-import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 
 //TODO: FIX
 public class Relation implements OSMElement {
-
-    private long id;
     private ArrayList<Long> members;
-    private String name;
-    private OSMType OSMType;
     private boolean multipolygon;
+    private OSMType OSMType;
+    private String name;
+    private long id;
 
-    public Relation(long id){
+
+    public Relation(long id) {
         this.id = id;
         members = new ArrayList<>();
     }
@@ -29,29 +28,29 @@ public class Relation implements OSMElement {
         this.multipolygon = multipolygon;
     }
 
-    public boolean isMultipolygon(){
+    public boolean isMultipolygon() {
         return multipolygon;
     }
 
-    public void setOSMType(OSMType OSMType){
-        this.OSMType = OSMType;
+    public void setOSMType(OSMType type) {
+        this.OSMType = type;
     }
 
-    public OSMType getOSMType(){
+    public OSMType getOSMType() {
         return OSMType;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
 
-    public void addMember(long member, String type){
-        if(!type.equals("way")) return;
+    public void addMember(long member, String type) {
+        if (!type.equals("way")) return;
         members.add(member);
     }
 
-    public ArrayList<Long> getMembers(){
+    public ArrayList<Long> getMembers() {
         return members;
     }
 

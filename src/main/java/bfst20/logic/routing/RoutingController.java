@@ -81,7 +81,7 @@ public class RoutingController {
 
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
             List<Edge> route = extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode);
-            appController.setRouteOnModel(route);
+            appController.addToModel(route);
         }
 
         double dist = dijkstra.distTo(trgNode);

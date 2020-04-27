@@ -10,20 +10,21 @@ import java.util.List;
 
 
 public class Way implements OSMElement, Serializable {
+    private boolean multipolygon;
     private List<Long> nodeIds;
     private boolean isOneWay;
+    private List<Node> nodes;
+    private OSMType OSMType;
     private int maxSpeed;
     private String name;
-    private OSMType OSMType;
-    private boolean multipolygon;
     private long id;
-    private List<Node> nodes;
 
-
+    //TODO: To many constructors?
     public Way() {
         nodeIds = new ArrayList<>();
         nodes = new ArrayList<>();
     }
+
     public Way(long id) {
         this.id = id;
         nodeIds = new ArrayList<>();
@@ -67,12 +68,12 @@ public class Way implements OSMElement, Serializable {
         this.multipolygon = multipolygon;
     }
 
-    public boolean isMultipolygon(){
+    public boolean isMultipolygon() {
         return multipolygon;
     }
 
-    public void setOSMType(OSMType OSMType) {
-        this.OSMType = OSMType;
+    public void setOSMType(OSMType type) {
+        this.OSMType = type;
     }
 
     public OSMType getOSMType() {
@@ -87,8 +88,8 @@ public class Way implements OSMElement, Serializable {
         return id;
     }
 
-    public void addNodeId(long nodeid) {
-        nodeIds.add(nodeid);
+    public void addNodeId(long id) {
+        nodeIds.add(id);
     }
 
     public long getFirstNodeId() {

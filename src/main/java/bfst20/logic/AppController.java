@@ -66,74 +66,9 @@ public class AppController {
         return view;
     }
 
-    public void loadFile(File file) {
-        try {
-            FileHandler fileHandler = FileHandler.getInstance();
-            if (file.getName().endsWith(".bin")) isBinary = true;
-            fileHandler.load(file);
-        } catch (IOException ioException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
-            System.exit(1);
-        } catch (XMLStreamException xmlStreamException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
-            System.exit(1);
-        }
-    }
-
-    public void parseOSM(File file) throws IOException, XMLStreamException {
-        parser.parseOSMFile(file);
-    }
-
-
-    public void setRouteOnModel(List<Edge> route) {
-        routingData.saveRoute(route);
-
-    }
-
-    public void startStringParsing(String string) throws XMLStreamException {
-        parser.parseString(string);
-    }
-
-    public void addToModelHighways(List<LinePath> highways) {
-        linePathData.saveHighways(highways);
-    }
-
-
-    public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
-        routingController = routingController.getInstance();
-
-        Address source = findAddress(sourceQuery);
-        Address target = findAddress(targetQuery);
-
-        Graph graph = getGraphFromModel();
-        List<Edge> edges = graph.getEdges();
-        edges.sort(Comparator.comparing(Edge::getName));
-
-        return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
-    }
-
-    public List<Edge> getRouteFromModel() {
-        return routingData.getRoute();
-    }
-
-
-    public void addToModel(Graph graph) {
-        routingData.saveGraph(graph);
-    }
-
-    public Graph getGraphFromModel() {
-        return routingData.getGraph();
-    }
-
-
-    public void createView(Canvas canvas, Label mouseLocationLabel) {
-        view = new View(canvas);
-        view.setMouseLocationView(mouseLocationLabel);
-    }
-
-
-    public List<LinePath> getHighwaysFromModel() {
-        return linePathData.getHighWays();
+    public void createLinePaths() {
+        linePathGenerator = LinePathGenerator.getInstance();
+        linePathGenerator.createLinePaths();
     }
 
     public void generateHighways() {
@@ -152,12 +87,74 @@ public class AppController {
         linePathData.saveHighways(highWays);
     }
 
-    public void addToModelAddresses(Map<Long, Address> addresses) {
-        addressData.setAddresses(addresses);
+    public List<LinePath> getHighwaysFromModel() {
+        return linePathData.getHighWays();
+    }
+
+
+    public void addHighwaysToModel(List<LinePath> highways) {
+        linePathData.saveHighways(highways);
+    }
+
+    public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
+        routingController = routingController.getInstance();
+
+        Address source = findAddress(sourceQuery);
+        Address target = findAddress(targetQuery);
+
+        Graph graph = getGraphFromModel();
+        List<Edge> edges = graph.getEdges();
+        edges.sort(Comparator.comparing(Edge::getName));
+
+        return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
+    }
+
+    public Graph getGraphFromModel() {
+        return routingData.getGraph();
+    }
+
+    public void addToModel(Graph graph) {
+        routingData.saveGraph(graph);
+    }
+
+    public List<Edge> getRouteFromModel() {
+        return routingData.getRoute();
+    }
+
+    public void addToModel(List<Edge> route) {
+        routingData.saveRoute(route);
+    }
+
+    public void loadFile(File file) {
+        try {
+            FileHandler fileHandler = FileHandler.getInstance();
+            if (file.getName().endsWith(".bin")) isBinary = true;
+            fileHandler.load(file);
+        } catch (IOException ioException) {
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
+            System.exit(1);
+        } catch (XMLStreamException xmlStreamException) {
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
+            System.exit(1);
+        }
+    }
+
+    public void parseOSM(File file) throws IOException, XMLStreamException {
+        parser.parseOSMFile(file);
+    }
+
+    public void parseString(String string) throws XMLStreamException {
+        parser.parseString(string);
+    }
+
+
+
+    public void addAddressesToModel(Map<Long, Address> addresses) {
+        addressData.saveAddresses(addresses);
     }
 
     public void addToModel(long id, Address address) {
-        addressData.putAddress(id, address);
+        addressData.addAddress(id, address);
     }
 
     public Address findAddress(String query) {
@@ -168,6 +165,10 @@ public class AppController {
 
     public void addToModel(Relation relation) {
         OSMElementData.addRelation(relation);
+    }
+
+    public List<Relation> getRelationsFromModel() {
+        return OSMElementData.getRelations();
     }
 
     public void addToModel(Bounds bounds) {
@@ -195,11 +196,7 @@ public class AppController {
     }
 
     public Map<Long, Node> getNodesFromModel() {
-        return OSMElementData.getOSMNodes();
-    }
-
-    public List<Relation> getRelationsFromModel() {
-        return OSMElementData.getOSMRelations();
+        return OSMElementData.getNodes();
     }
 
 
@@ -216,33 +213,28 @@ public class AppController {
         return addressData.getAddresses();
     }
 
-    public Way removeWayFromNodeTo(OSMType OSMType, Node node) {
-        return linePathData.removeWayFromNodeTo(OSMType, node);
+    public Way removeWayFromNodeTo(OSMType type, Node node) {
+        return linePathData.removeWayFromNodeTo(type, node);
     }
 
-    public void addToModel(OSMType OSMType, Node node, Way way) {
-        linePathData.addNodeTo(OSMType, node, way);
+    public void addToModel(OSMType type, Node node, Way way) {
+        linePathData.addNodeTo(type, node, way);
     }
 
-    public Map<Node, Way> getNodeTo(OSMType osmType) {
-        return linePathData.getNodeTo(osmType);
+    public Map<Node, Way> getNodeTo(OSMType type) {
+        return linePathData.getNodeTo(type);
     }
 
-    public void addToModel(OSMType OSMType, LinePath linePath) {
-        linePathData.addLinePath(OSMType, linePath);
+    public void addToModel(OSMType type, LinePath linePath) {
+        linePathData.addLinePath(type, linePath);
     }
 
-    public void addToModel(OSMType OSMType) {
-        linePathData.addType(OSMType);
+    public void addToModel(OSMType type) {
+        linePathData.addType(type);
     }
 
     public void addToModel(Map<OSMType, List<LinePath>> linePaths) {
-        linePathData.setLinePaths(linePaths);
-    }
-
-    public void createLinePaths() {
-        linePathGenerator = LinePathGenerator.getInstance();
-        linePathGenerator.createLinePaths();
+        linePathData.saveLinePaths(linePaths);
     }
 
     public void clearLinePathData() {
@@ -266,6 +258,11 @@ public class AppController {
 
     public KDTree getKDTreeFromModel(OSMType OSMType) {
         return kdTreeData.getKDTree(OSMType);
+    }
+
+    public void createView(Canvas canvas, Label mouseLocationLabel) {
+        view = new View(canvas);
+        view.setMouseLocationView(mouseLocationLabel);
     }
 
     public void alertOK(Alert.AlertType type, String text) {

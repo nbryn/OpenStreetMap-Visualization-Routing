@@ -59,7 +59,7 @@ class LinePathDataTest {
 
         Map<OSMType, List<LinePath>> linePaths = new HashMap<>();
         linePaths.put(OSMType.MOTORWAY, motorWays);
-        linePathData.setLinePaths(linePaths);
+        linePathData.saveLinePaths(linePaths);
 
         assertEquals(linePath, linePathData.getLinePaths().get(OSMType.MOTORWAY).get(0));
     }

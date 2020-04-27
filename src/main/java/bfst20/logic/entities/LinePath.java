@@ -7,16 +7,18 @@ import java.util.Map;
 import bfst20.logic.misc.OSMType;
 
 public class LinePath implements Serializable {
-    private float[] coords;
-    private OSMType OSMType;
-    private boolean fill;
     private float minY, minX, maxY, maxX, centerLatitude, centerLongitude;
+    private boolean multipolygon;
+    private OSMType OSMType;
+    private float[] coords;
     private Bounds bounds;
+    private boolean fill;
     private String name;
     private long wayId;
     private Way way;
-    private boolean multiploygon;
 
+
+    //TODO: This is only used in tests atm
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
         minY = minLon;
@@ -27,11 +29,8 @@ public class LinePath implements Serializable {
         centerLongitude = (maxY - minY) / 2 + minY;
     }
 
-    public void setWayNull(){
-        way = null;
-        wayId = 0;
-    }
 
+    //TODO: To much logic in constructor?
     public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
@@ -47,10 +46,10 @@ public class LinePath implements Serializable {
 
         coords = new float[nodeIds.size() * 2];
         for (int i = 0; i < nodeIds.size(); i++) {
-            if(nodeIds.get(i) == -99999){
+            if (nodeIds.get(i) == -99999) {
                 coords[i * 2] = -99999;
                 coords[i * 2 + 1] = -99999;
-            }else{
+            } else {
                 coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
                 coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
 
@@ -59,18 +58,19 @@ public class LinePath implements Serializable {
                 if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
                 if (maxY < coords[i * 2]) maxY = coords[i * 2];
             }
-
-
         }
 
         centerLatitude = (maxX - minX) / 2 + minX;
         centerLongitude = (maxY - minY) / 2 + minY;
-
     }
 
-    public boolean isMultiploygon(){return multiploygon;}
+    public boolean isMultipolygon() {
+        return multipolygon;
+    }
 
-    public void setMultiploygon(boolean multiploygon){this.multiploygon = multiploygon;}
+    public void setMultipolygon(boolean multipolygon) {
+        this.multipolygon = multipolygon;
+    }
 
     public Bounds getBounds() {
         return this.bounds;
@@ -123,5 +123,12 @@ public class LinePath implements Serializable {
     public Long getWayId() {
         return wayId;
     }
+
+    //TODO: Better name
+    public void setWayNull() {
+        way = null;
+        wayId = 0;
+    }
+
 
 }

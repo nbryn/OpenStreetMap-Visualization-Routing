@@ -1,6 +1,5 @@
 package bfst20.data;
 
-import bfst20.data.InterestPointData;
 import bfst20.logic.entities.InterestPoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,12 +30,12 @@ public class InterestPointDataTest {
     }
     @Test
     void addIntrestPoint(){
-        interestPointData.addIntrestPoint(interestPoint);
+        interestPointData.addInterestPoint(interestPoint);
     }
     @Test
     void removeIntrestPoint(){
-        interestPointData.addIntrestPoint(interestPoint);
-        interestPointData.removeIntrestPoint(0);
+        interestPointData.addInterestPoint(interestPoint);
+        interestPointData.removeInterestPoint(0);
     }
 
 }
