@@ -31,7 +31,7 @@ dependencies {
 
 application {
     mainClassName = 'bfst20.presentation.ViewController'
-    applicationDefaultJvmArgs = ["-Xmx8096m"]
+    applicationDefaultJvmArgs = ["-Xmx12140m"]
 
 }
 

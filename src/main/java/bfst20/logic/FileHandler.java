@@ -1,12 +1,14 @@
 package bfst20.logic;
 
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import javafx.scene.control.Alert;
+import bfst20.logic.misc.OSMType;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +16,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileHandler {
-
-    private AppController appController;
     private static boolean isLoaded = false;
     private static FileHandler fileHandler;
+    private AppController appController;
 
     private FileHandler() {
         appController = new AppController();
@@ -37,7 +38,6 @@ public class FileHandler {
         String fileExt = filename.substring(filename.lastIndexOf("."));
         switch (fileExt) {
             case ".bin":
-                System.out.println("hej");
                 loadBinary(file);
                 break;
             case ".txt":
@@ -46,7 +46,6 @@ public class FileHandler {
             case ".osm":
                 appController.parseOSM(file);
                 break;
-
             case ".zip":
                 loadZip(file);
                 break;
@@ -56,49 +55,29 @@ public class FileHandler {
 
     }
 
-    public void generateBinary() throws IOException {
-        File file = new File("samsoe.bin");
-        file.createNewFile();
-
-        Map<Type, List<LinePath>> drawables = appController.getLinePathsFromModel();
-        Bounds bounds = appController.getBoundsFromModel();
-
-        drawables.put(Type.BOUNDS, new ArrayList<>());
-        drawables.get(Type.BOUNDS).add(new LinePath(bounds.getMaxLat(), bounds.getMaxLon(), bounds.getMinLat(), bounds.getMinLon()));
-
-
-        try {
-            FileOutputStream fileOut = new FileOutputStream(file, false);
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            objectOut.writeObject(drawables);
-            objectOut.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void loadBinary(File file) throws FileNotFoundException {
+    public void loadBinary(File file) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            try {
+            Bounds bounds = (Bounds) in.readObject();
+            Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
+            Map<Long, Address> addresses = (Map<Long, Address>) in.readObject();
+            List<LinePath> highways = (List<LinePath>) in.readObject();
 
-                Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
-                Bounds bounds = drawables.get(Type.BOUNDS).get(0).getBounds();
-
-                appController.setBoundsOnModel(bounds);
-                appController.setLinePathsOnModel(drawables);
-            } catch (ClassNotFoundException | IOException e) {
-                e.printStackTrace();
-            }
+            appController.addToModel(bounds);
+            appController.addToModel(linePaths);
+            appController.addAddressesToModel(addresses);
+            appController.addHighwaysToModel(highways);
         } catch (IOException e) {
-            e.printStackTrace();
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
+            System.exit(1);
+        } catch (ClassNotFoundException e) {
+            appController.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.");
+            System.exit(1);
         }
     }
 
     private void loadZip(File file) {
         try {
             ZipFile zipFile = new ZipFile(file.toString());
-
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
             while (entries.hasMoreElements()) {
@@ -107,18 +86,32 @@ public class FileHandler {
 
                 if (name.endsWith(".osm")) {
                     InputStream stream = zipFile.getInputStream(entry);
-                    Parser parser = Parser.getInstance();
-                    parser.parseString(new String(stream.readAllBytes()));
+                    String toBeParsed = new String(stream.readAllBytes());
+                    appController.parseString(toBeParsed);
                 }
             }
 
             zipFile.close();
 
-
         } catch (IOException | XMLStreamException ex) {
-            System.out.println(ex);
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.");
+            System.exit(1);
         }
-
     }
 
+    public void generateBinary() throws IOException {
+        File file = new File("samsoe.bin");
+        file.createNewFile();
+        writeToFile(file);
+    }
+
+    private void writeToFile(File file) throws FileNotFoundException, IOException {
+        FileOutputStream fileOut = new FileOutputStream(file, false);
+        ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+        objectOut.writeObject(appController.getBoundsFromModel());
+        objectOut.writeObject(appController.getLinePathsFromModel());
+        objectOut.writeObject(appController.getAddressesFromModel());
+        objectOut.writeObject(appController.getHighwaysFromModel());
+        objectOut.close();
+    }
 }

@@ -1,23 +1,24 @@
 package bfst20.presentation;
 
+
 import java.io.File;
 import java.io.IOException;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.entities.InterestPoint;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 public class ViewController {
@@ -28,99 +29,129 @@ public class ViewController {
 
     @FXML
     private MenuItem openFile;
-
-    @FXML
-    private VBox vbox;
-
-    @FXML
-    private VBox addressVBox;
-
-    @FXML
-    private VBox routeVBox;
-
-    @FXML
-    private Button toAddressButton;
-
-    @FXML
-    private Button toRouteButton;
-
     @FXML
     private Label mouseLocationLabel;
-
     @FXML
     private TextField searchAddress;
     @FXML
     private Button searchAdressButton;
 
+    @FXML
+    private Button searchRouteButton;
+    @FXML
+    private Canvas canvas;
+    @FXML
+    private TextField searchbar;
+
+    @FXML
+    private TextField destinationBar;
+    @FXML
+    private ToggleButton bikeButton;
+    @FXML
+    private ToggleButton carButton;
+    @FXML
+    private Slider zoomSlider;
+    private boolean scrollTrigger;
+
     public ViewController() {
         appController = new AppController();
-
     }
-
 
     Point2D lastMouse;
 
     @FXML
     public void initialize() {
-        Canvas canvas = new Canvas(1270, 720);
 
         appController.createView(canvas, mouseLocationLabel);
 
-        vbox.getChildren().add(canvas);
+        setupFileHandling();
 
-        toRouteButton.setOnAction(e -> {
-            addressVBox.setVisible(false);
-            routeVBox.setVisible(true);
-        });
+        ClassLoader classLoader = getClass().getClassLoader();
 
-        toAddressButton.setOnAction(e -> {
-            addressVBox.setVisible(true);
-            routeVBox.setVisible(false);
-        });
-
-        openFile.setOnAction(e -> {
-            File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
-            if (file != null) {
-                try {
-                    // Might change our project...
-                    appController.loadFile(file);
-                    view = appController.initialize();
-                } catch (IOException | XMLStreamException | FactoryConfigurationError e1) {
-                    System.out.println("Error loading file");
-                }
-            }
-        });
+        File file = null;
 
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-
-            File file = new File(classLoader.getResource("samsoe.osm").getFile());
-
-            // File file = new File(classLoader.getResource("samsoe.bin").getFile());
-
-             //File file = new File("F:\\lolland.osm");
-
-            appController.loadFile(file);
-            view = appController.initialize();
-
-        } catch (Exception err) {
-            // err.printStackTrace();
+            file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //file = new File("/home/nbryn/Desktop/ITU/2.Semester/BFST20Gruppe17/danmark.bin");
+        } catch (NullPointerException e) {
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
+            System.exit(1);
         }
-        // colorBlindButton.setOnAction(e ->{
-        // view.changeToColorBlindMode(true);
-        // });
 
-        // normalColorButton.setOnAction(e ->{
-        // view.changeToColorBlindMode(false);
-        // });
+        appController.loadFile(file);
+        try {
+            view = appController.initialize();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
+        zoomSlider.setMax(128);
+        zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
+
+                if (!scrollTrigger) {
+                    double deltaValue = zoomSlider.getValue() - view.getSliderValue();
+                    double factor = Math.pow(1.001, 40 * deltaValue);
+
+                    view.zoom(factor, canvas.getWidth() / 2, canvas.getHeight() / 2, 40 * deltaValue);
+                }
+                view.setSliderValue(zoomSlider.getValue());
+            }
+
+        });
+
+        setupCanvas();
+
+        setupSearchButton();
+
+        setupRouteButtons();
+
+        searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                view.searchRoute();
+
+            }
+        });
+    }
+
+    private void setupFileHandling() {
+        openFile.setOnAction(e -> {
+            try {
+                File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
+                if (file != null) {
+                    appController.loadFile(file);
+                    view = appController.initialize();
+                }
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+        });
+    }
+
+    private void setupCanvas() {
         canvas.setOnScroll(e -> {
             double factor = Math.pow(1.001, e.getDeltaY());
-            view.zoom(factor, e.getX(), e.getY());
+            view.zoom(factor, e.getX(), e.getY(), e.getDeltaY());
+
+            scrollTrigger = true;
+            zoomSlider.setValue(view.getTimesZoomed());
+            scrollTrigger = false;
         });
 
         canvas.setOnMousePressed(e -> {
             lastMouse = new Point2D(e.getX(), e.getY());
+
+            if (e.isControlDown()) {
+                Point2D converted = view.toModelCoords(e.getX(), e.getY());
+
+                InterestPointData interestPointData = InterestPointData.getInstance();
+                interestPointData.addInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
+            }
+
+            view.repaint();
         });
 
         canvas.setOnMouseDragged(e -> {
@@ -129,9 +160,12 @@ public class ViewController {
         });
 
         canvas.setOnMouseMoved(e -> {
+            view.setMousePos(new Point2D(e.getX(), e.getY()));
             view.repaint();
         });
+    }
 
+    private void setupSearchButton() {
         searchAdressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -139,6 +173,24 @@ public class ViewController {
 
                 view.setSearchString(searchText);
 
+            }
+        });
+    }
+
+    private void setupRouteButtons() {
+        bikeButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                //System.out.println("HEY");
+                //TODO: Bike not implemented yet.
+            }
+        });
+
+        carButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                view.setAddress(searchbar.getText(), destinationBar.getText());
+                view.repaint();
             }
         });
     }

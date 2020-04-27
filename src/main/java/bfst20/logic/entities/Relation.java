@@ -1,65 +1,65 @@
 package bfst20.logic.entities;
 
-import bfst20.logic.Type;
-import bfst20.logic.interfaces.OSMElement;
+import bfst20.logic.misc.OSMType;
+import bfst20.logic.misc.OSMElement;
 
-import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+
 //TODO: FIX
 public class Relation implements OSMElement {
-
-    private long id;
-    private XMLStreamReader reader;
     private ArrayList<Long> members;
-
+    private boolean multipolygon;
+    private OSMType OSMType;
     private String name;
-    private Type type;
+    private long id;
 
-    public Relation(){
+
+    public Relation(long id) {
+        this.id = id;
         members = new ArrayList<>();
+    }
+
+    public Relation() {
+
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setType(Type type){
-        this.type = type;
+    @Override
+    public void setMultipolygon(boolean multipolygon) {
+        this.multipolygon = multipolygon;
     }
 
-    public Type getType(){
-        return type;
+    public boolean isMultipolygon() {
+        return multipolygon;
     }
 
-    public String getName(){
+    public void setOSMType(OSMType type) {
+        this.OSMType = type;
+    }
+
+    public OSMType getOSMType() {
+        return OSMType;
+    }
+
+    public String getName() {
         return name;
     }
 
 
-    public void addMember(long member, String type){
-        if(!type.equals("way")) return;
+    public void addMember(long member, String type) {
+        if (!type.equals("way")) return;
         members.add(member);
     }
 
-    public ArrayList<Long> getMembers(){
+    public ArrayList<Long> getMembers() {
         return members;
     }
 
     public long getId() {
         return id;
-    }
-
-    @Override
-    public void setReader(XMLStreamReader reader) {
-        this.reader = reader;
-    }
-
-    @Override
-    public void setValues() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
     }
 
 }

@@ -1,47 +1,83 @@
 package bfst20.logic.entities;
 
-import bfst20.logic.Type;
-import bfst20.logic.interfaces.OSMElement;
-import javafx.scene.paint.Color;
+import bfst20.logic.misc.OSMType;
+import bfst20.logic.misc.OSMElement;
 
-import javax.xml.stream.XMLStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
-public class Way implements OSMElement {
-
-
-    private long id;
+public class Way implements OSMElement, Serializable {
+    private boolean multipolygon;
     private List<Long> nodeIds;
-    private XMLStreamReader reader;
-    private Color drawColor;
+    private boolean isOneWay;
+    private List<Node> nodes;
+    private OSMType OSMType;
+    private int maxSpeed;
     private String name;
-    private Type type;
+    private long id;
 
+    //TODO: To many constructors?
     public Way() {
-        drawColor = Color.BLACK;
-        nodeIds = new ArrayList<Long>();
+        nodeIds = new ArrayList<>();
+        nodes = new ArrayList<>();
+    }
+
+    public Way(long id) {
+        this.id = id;
+        nodeIds = new ArrayList<>();
+        nodes = new ArrayList<>();
     }
 
     public Way(Way way) {
-        this.nodeIds = new ArrayList<Long>(way.getNodeIds());
+        nodes = way.getNodes();
+        //this.nodes = way.getNodes();
+        this.nodeIds = new ArrayList<>(way.getNodeIds());
         this.id = way.getId();
-        drawColor = Color.BLACK;
+        //nodes = new ArrayList<>();
     }
 
-    public String getName() {return name;}
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public boolean isOneWay() {
+        return isOneWay;
+    }
+
+    public void setOneWay(boolean oneWay) {
+        this.isOneWay = oneWay;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setType(Type type){
-        this.type = type;
+    @Override
+    public void setMultipolygon(boolean multipolygon) {
+        this.multipolygon = multipolygon;
     }
-    
-    public Type getType(){
-        return type;
+
+    public boolean isMultipolygon() {
+        return multipolygon;
+    }
+
+    public void setOSMType(OSMType type) {
+        this.OSMType = type;
+    }
+
+    public OSMType getOSMType() {
+        return OSMType;
     }
 
     public List<Long> getNodeIds() {
@@ -52,18 +88,8 @@ public class Way implements OSMElement {
         return id;
     }
 
-    public void addNodeId(long nodeid) {
-        nodeIds.add(nodeid);
-    }
-
-    @Override
-    public void setValues() {
-        id = Long.parseLong(reader.getAttributeValue(null, "id"));
-    }
-
-    @Override
-    public void setReader(XMLStreamReader reader) {
-        this.reader = reader;
+    public void addNodeId(long id) {
+        nodeIds.add(id);
     }
 
     public long getFirstNodeId() {
@@ -78,5 +104,12 @@ public class Way implements OSMElement {
         nodeIds.addAll(way.getNodeIds());
     }
 
+    public void addNode(Node node) {
+        nodes.add(node);
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
 
 }

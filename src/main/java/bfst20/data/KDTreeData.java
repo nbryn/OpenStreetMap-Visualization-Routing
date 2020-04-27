@@ -1,6 +1,6 @@
 package bfst20.data;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 
@@ -11,7 +11,7 @@ public class KDTreeData {
 
     private static boolean isLoaded = false;
     private static KDTreeData kdTreeData;
-    private Map<Type, KDTree> kdTrees;
+    private Map<OSMType, KDTree> kdTrees;
     private Rect rect;
 
     private KDTreeData() {
@@ -24,13 +24,13 @@ public class KDTreeData {
             isLoaded = true;
             kdTreeData = new KDTreeData();
         }
+
         return kdTreeData;
     }
 
     public Rect getRect() {
         return this.rect;
     }
-
 
     public void setValuesOnRect(float minLat, float maxLat, float minLon, float maxLon) {
         rect.setMinLat(minLat);
@@ -39,21 +39,17 @@ public class KDTreeData {
         rect.setMaxLon(maxLon);
     }
 
-    public void addKDTree(Type type, KDTree kdTree) {
-        kdTrees.put(type, kdTree);
-
+    public void addKDTree(OSMType OSMType, KDTree kdTree) {
+        kdTrees.put(OSMType, kdTree);
     }
 
-    public KDTree getKDTree(Type type) {
-        return kdTrees.get(type);
+    public KDTree getKDTree(OSMType OSMType) {
+        return kdTrees.get(OSMType);
     }
 
     public void clearData() {
         kdTrees = new HashMap<>();
         System.gc();
     }
-
-
-
 
 }

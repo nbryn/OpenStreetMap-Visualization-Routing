@@ -1,14 +1,14 @@
 package bfst20.logic;
 
 import bfst20.logic.entities.*;
-import bfst20.logic.interfaces.OSMElement;
-import bfst20.logic.entities.LinePath;
+import bfst20.logic.misc.OSMElement;
+import bfst20.logic.misc.OSMType;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -35,30 +35,8 @@ public class Parser {
         return parser;
     }
 
-    public void parseBinary(File file) throws FileNotFoundException {
-        try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            try {
-                Map<Type, List<LinePath>> drawables = (Map<Type, List<LinePath>>) in.readObject();
-                Bounds bounds = drawables.get(Type.BOUNDS).get(0).getBounds();
-
-                appController.setBoundsOnModel(bounds);
-                appController.setLinePathsOnModel(drawables);
-            } catch (ClassNotFoundException | IOException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void parseOSMFile(File file) throws FileNotFoundException, XMLStreamException {
-
-        try {
-            parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file)));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("E is: " + e);
-        }
+    public void parseOSMFile(File file) throws IOException, XMLStreamException {
+        parse(XMLInputFactory.newFactory().createXMLStreamReader(new FileReader(file, Charset.forName("UTF-8"))));
         tempOSMRelations = new ArrayList<>();
         System.gc();
     }
@@ -69,7 +47,6 @@ public class Parser {
         XMLStreamReader reader = factory.createXMLStreamReader(stringReader);
         parse(reader);
     }
-
 
     private void parse(XMLStreamReader reader) throws XMLStreamException {
         OSMElement lastElementParsed = null;
@@ -112,7 +89,8 @@ public class Parser {
                             tags = new HashMap<>();
                             break;
                         case "tag":
-                            if (tags == null) break;
+                            if (tags == null)
+                                break;
 
                             String key = reader.getAttributeValue(null, "k");
                             String value = reader.getAttributeValue(null, "v");
@@ -137,11 +115,11 @@ public class Parser {
                             break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
-                            appController.addRelationToModel(relation);
-                            parseTags(reader, lastElementParsed, tags, firstTag);
+                            appController.addToModel(relation);
+                            parseTags(lastElementParsed, tags, firstTag);
                             break;
                         case "way":
-                            parseTags(reader, lastElementParsed, tags, firstTag);
+                            parseTags(lastElementParsed, tags, firstTag);
                             break;
                         default:
                             break;
@@ -149,62 +127,7 @@ public class Parser {
                     break;
             }
         }
-    }
 
-    private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
-        if (tags.size() == 0) return;
-
-        String city = tags.get("addr:city");
-        String housenumber = tags.get("addr:housenumber");
-        String postcode = tags.get("addr:postcode");
-        String street = tags.get("addr:street");
-
-        if (city == null) return;
-
-        Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
-        appController.putAddressToModel(lastNodeId, address);
-    }
-
-    private void parseTags(XMLStreamReader reader,
-                           OSMElement lastElementParsed,
-                           HashMap<String,
-                                   String> tags,
-                           String[] firstTag) {
-
-        try {
-            if (tags.containsKey("name")) {
-                lastElementParsed.setName(tags.get("name"));
-            }
-
-            if (tags.containsKey("landuse") || tags.containsKey("natural")) {
-                if (tags.containsKey("natural")) {
-                    lastElementParsed.setType(Type.valueOf(tags.get("natural").toUpperCase()));
-                } else {
-                    lastElementParsed.setType(Type.valueOf(tags.get("landuse").toUpperCase()));
-                }
-            } else if (tags.containsKey("building")) {
-                lastElementParsed.setType(Type.BUILDING);
-            } else if (tags.containsKey("highway")) {
-                Type type = Type.HIGHWAY;
-
-                try {
-                    type = Type.valueOf(tags.get("highway").toUpperCase());
-
-                    if (type == Type.RESIDENTIAL) {
-                        type = Type.RESIDENTIAL_HIGHWAY;
-                    } else if (type == Type.UNCLASSIFIED) {
-                        type = Type.UNCLASSIFIED_HIGHWAY;
-                    }
-                } catch (Exception e) {
-                }
-
-                lastElementParsed.setType(type);
-            } else {
-                lastElementParsed.setType(Type.valueOf(firstTag[0].toUpperCase()));
-            }
-
-        } catch (Exception err) {
-        }
     }
 
     private void setBounds(XMLStreamReader reader) {
@@ -213,31 +136,48 @@ public class Parser {
         float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-
-        appController.setBoundsOnModel(new Bounds(maxLat, minLat, maxLon, minLon));
+        appController.addToModel(new Bounds(maxLat, minLat, maxLon, minLon));
     }
+
 
     private void addNodeToMap(XMLStreamReader reader) {
-        Node node = new Node();
-        node.setReader(reader);
-        node.setValues();
-        appController.addNodeToModel(node.getId(), node);
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        float latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
+        float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
+
+        Node node = new Node(id, latitude, longitude);
+        appController.addToModel(node.getId(), node);
 
     }
 
-    //1. Adding relation to temp
-    //2. Adding sub elements to the temp relation
-    //3. Adding final relation to the real realtions list.
-    //Why: to have all sub elements in the final relations.
-    private Relation addRelationToList(XMLStreamReader reader) {
-        Relation relation = new Relation();
-        relation.setReader(reader);
-        relation.setValues();
+    private Way addWayToList(XMLStreamReader reader) {
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Way way = new Way(id);
 
+        appController.addToModel(way);
+
+        return way;
+    }
+
+    private void addSubElementToWay(XMLStreamReader reader, Way lastWay) {
+        long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
+
+        lastWay.addNodeId(id);
+
+    }
+
+    // 1. Adding relation to temp
+    // 2. Adding sub elements to the temp relation
+    // 3. Adding final relation to the real realtions list.
+    // Why: to have all sub elements in the final relations.
+    private Relation addRelationToList(XMLStreamReader reader) {
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Relation relation = new Relation(id);
         tempOSMRelations.add(relation);
 
         return relation;
     }
+
 
     private void addMemberToRelation(XMLStreamReader reader) {
         Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
@@ -246,17 +186,100 @@ public class Parser {
         relation.addMember(member, type);
     }
 
-    private Way addWayToList(XMLStreamReader reader) {
-        Way way = new Way();
-        way.setReader(reader);
-        way.setValues();
-        appController.addWayToModel(way);
 
-        return way;
+    private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
+        if (tags.size() == 0)
+            return;
+
+        String city = tags.get("addr:city");
+        String housenumber = tags.get("addr:housenumber");
+        String postcode = tags.get("addr:postcode");
+        String street = tags.get("addr:street");
+
+        if (city == null)
+            return;
+
+        Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
+        appController.addToModel(lastNodeId, address);
     }
 
-    private void addSubElementToWay(XMLStreamReader reader, Way lastWay) {
-        long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
-        lastWay.addNodeId(id);
+    private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
+        try {
+            if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name"));
+
+            if (tags.containsKey("type") && tags.get("type").equals("multipolygon")) {
+                lastElementParsed.setMultipolygon(true);
+            }
+
+            if (tags.containsKey("landuse") || tags.containsKey("natural")) {
+                if (tags.containsKey("natural")) {
+
+                    lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));
+                } else {
+
+                    OSMType type = OSMType.LANDUSE;
+
+                    try {
+                        type = OSMType.valueOf(tags.get("landuse").toUpperCase());
+                    } catch (Exception e) {
+                    }
+
+                    lastElementParsed.setOSMType(type);
+                }
+            } else if (tags.containsKey("building")) lastElementParsed.setOSMType(OSMType.BUILDING);
+
+            else if (tags.containsKey("highway")) {
+
+                parseHighway(lastElementParsed, tags);
+            } else {
+                lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
+            }
+
+        } catch (Exception err) {
+            // This exception is getting throwen a lot, because of all the missing Enum
+            // Types.
+            // appController.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags,
+            // exiting.");
+            // System.exit(1);
+        }
+    }
+
+    private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
+        Way way = (Way) lastElementParsed;
+
+        for (long id : way.getNodeIds()) {
+            Node node = appController.getNodeFromModel(id);
+            way.addNode(node);
+        }
+
+        if (tags.containsKey("maxspeed")) way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
+
+        if (tags.containsKey("oneway")) {
+            if (tags.get("oneway").equals("yes")) way.setOneWay(true);
+            else way.setOneWay(false);
+        }
+        OSMType type = OSMType.HIGHWAY;
+
+        type = setHighwayType(tags, type);
+        lastElementParsed.setOSMType(type);
+    }
+
+    private OSMType setHighwayType(HashMap<String, String> tags, OSMType type) {
+        try {
+            type = OSMType.valueOf(tags.get("highway").toUpperCase());
+
+            if (type == OSMType.RESIDENTIAL) type = OSMType.RESIDENTIAL_HIGHWAY;
+
+            else if (type == OSMType.UNCLASSIFIED) type = OSMType.UNCLASSIFIED_HIGHWAY;
+
+            else if (type == OSMType.FOOTWAY) type = OSMType.FOOTWAY;
+
+            else if (type == OSMType.PATH) type = OSMType.PATH;
+
+            else if (type == OSMType.TRACK) type = OSMType.TRACK;
+
+        } catch (Exception e) {
+        }
+        return type;
     }
 }

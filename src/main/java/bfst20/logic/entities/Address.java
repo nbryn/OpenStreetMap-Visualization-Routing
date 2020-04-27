@@ -1,10 +1,12 @@
 package bfst20.logic.entities;
 
-public class Address {
-    private String  city,
-                    housenumber,
-                    postcode,
-                    street;
+import java.io.Serializable;
+
+public class Address implements Serializable {
+    private String city,
+            housenumber,
+            postcode,
+            street;
     private float lat, lon;
     private long nodeID;
 
@@ -13,7 +15,7 @@ public class Address {
                    String postcode,
                    String street,
                    float lat,
-                   float lon, long nodeID){
+                   float lon, long nodeID) {
         this.city = city;
         this.street = street;
         this.housenumber = housenumber;
@@ -23,22 +25,39 @@ public class Address {
         this.nodeID = nodeID;
     }
 
+
+
     public String getStreet(){
         return street;
     }
-    public String getHousenumber() {return housenumber;}
-    public String getPostcode() {return postcode;}
-    public String getCity() {return city;}
 
-    public float getLat(){return lat;}
-    public float getLon(){return lon;}
+    public String getHousenumber() {
+        return housenumber;
+    }
 
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public float getLat() {
+        return lat;
+    }
+
+    public float getLon() {
+        return lon;
+    }
+
+    //TODO: Remove?
     public long getNodeID() {
         return nodeID;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return street + " " + housenumber + " " + city + " " + postcode;
     }
 }

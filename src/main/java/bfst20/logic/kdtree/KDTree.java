@@ -3,7 +3,7 @@ package bfst20.logic.kdtree;
 import java.util.ArrayList;
 import java.util.List;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
 import javafx.geometry.Point2D;
 
@@ -25,8 +25,13 @@ public class KDTree {
 
             insert(root, path);
         }
+
+        System.gc();
     }
 
+    public KDNode getRoot(){
+        return root;
+    }
 
     public Iterable<LinePath> query(Rect rect, double zoomLevel){
         List<LinePath> list = new ArrayList<>();
@@ -43,16 +48,27 @@ public class KDTree {
         return list;
     }
 
+    private int i = 0;
+
     private void range(KDNode node, Rect rect , double zoomLevel, List<LinePath> list){
         if (node == null) return;
 
-        if (rect.contains(node) && Type.getZoomLevel(node.getLinePath().getType()) <= zoomLevel) {
+        if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
-
         }
 
-        if(rect.intersects(node)){
+        /*if(rect.intersects(node)){
             range(node.getRightNode(), rect, zoomLevel, list);
+            range(node.getLeftNode(), rect, zoomLevel, list);
+        }else{
+            System.out.println("FALSE " + "HEY");
+        }*/
+
+        if (rect.intersectsRight(node)) {
+            range(node.getRightNode(), rect, zoomLevel, list);
+        }
+
+        if(rect.intersectsLeft(node)){
             range(node.getLeftNode(), rect, zoomLevel, list);
         }
 
@@ -61,7 +77,11 @@ public class KDTree {
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point){
         if (node == null) return;
 
-        if (rect.contains(node) && Type.getZoomLevel(node.getLinePath().getType()) <= zoomLevel) {
+        if(node.getLinePath().getWayId() == 27674116){
+            String i = "";
+        }
+
+        if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
             float[] coords = node.getLinePath().getCoords();
@@ -80,8 +100,18 @@ public class KDTree {
 
         }
 
-        if(rect.intersects(node)){
+        /*if(rect.intersects(node)){
             range(node.getRightNode(), rect, list, zoomLevel, point);
+            range(node.getLeftNode(), rect, list, zoomLevel, point);
+        }else{
+            System.out.println("FALSE " + "HEY");
+        }*/
+
+        if (rect.intersectsRight(node)) {
+            range(node.getRightNode(), rect, list, zoomLevel, point);
+        }
+
+        if(rect.intersectsLeft(node)){
             range(node.getLeftNode(), rect, list, zoomLevel, point);
         }
     }
@@ -100,7 +130,9 @@ public class KDTree {
         }else{
             node.setSplit(path.getCenterLongitude());
         }
+        path.setWayNull();
         node.setLinePath(path);
+        
 
         return node;
     }

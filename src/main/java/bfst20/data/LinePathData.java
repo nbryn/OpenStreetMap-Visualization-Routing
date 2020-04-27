@@ -1,6 +1,6 @@
 package bfst20.data;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.entities.LinePath;
@@ -11,20 +11,15 @@ import java.util.List;
 import java.util.Map;
 
 public class LinePathData {
-
-    private static boolean isLoaded = false;
+    private Map<OSMType, List<LinePath>> linePaths;
+    private Map<OSMType, Map<Node, Way>> nodeTo;
     private static LinePathData linePathData;
-    private Map<Type, List<LinePath>> linePaths;
+    private static boolean isLoaded = false;
     private List<LinePath> highWays;
-    private Map<Node, Way> nodeToCoastline;
-    private Map<Node, Way> nodeToForest;
-    private Map<Node, Way> nodeToFarmland;
 
     private LinePathData() {
         linePaths = new HashMap<>();
-        nodeToCoastline = new HashMap<>();
-        nodeToForest = new HashMap<>();
-        nodeToFarmland = new HashMap<>();
+        nodeTo = new HashMap<>();
         highWays = new ArrayList<>();
     }
 
@@ -33,6 +28,7 @@ public class LinePathData {
             isLoaded = true;
             linePathData = new LinePathData();
         }
+
         return linePathData;
     }
 
@@ -44,69 +40,45 @@ public class LinePathData {
         return this.highWays;
     }
 
-    public Map<Type, List<LinePath>> getLinePaths() {
+    public Map<OSMType, List<LinePath>> getLinePaths() {
         return linePaths;
     }
 
-    public void addLinePath(Type type, LinePath linePath) {
-        if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
-        linePaths.get(type).add(linePath);
+    public void addLinePath(OSMType OSMType, LinePath linePath) {
+        if (linePaths.get(OSMType) == null) linePaths.put(OSMType, new ArrayList<>());
+        linePaths.get(OSMType).add(linePath);
     }
 
-    public void setLinePaths(Map<Type, List<LinePath>> linePaths) {
+    public void saveLinePaths(Map<OSMType, List<LinePath>> linePaths) {
         this.linePaths = linePaths;
     }
 
-
-    public void addType(Type type) {
+    public void addType(OSMType type) {
         linePaths.put(type, new ArrayList<>());
     }
 
+    public void addNodeTo(OSMType type, Node node, Way way) {
+        if (nodeTo.get(type) == null) {
+            nodeTo.put(type, new HashMap<>());
+        }
 
-    public Map<Node, Way> getNodeToCoastline() {
-        return nodeToCoastline;
-
+        nodeTo.get(type).put(node, way);
     }
 
-    public void addNodeToForest(Node node, Way way) {
-        nodeToForest.put(node, way);
+    public Map<Node, Way> getNodeTo(OSMType type) {
+        return nodeTo.get(type);
     }
 
-    public void addToNodeToFarmland(Node node, Way way) {
-        nodeToFarmland.put(node, way);
+    public Way removeWayFromNodeTo(OSMType type, Node node) {
+        if (nodeTo.get(type) == null) return null;
+
+        return nodeTo.get(type).remove(node);
     }
-
-    public void addToNodeToCoastline(Node node, Way way) {
-        nodeToCoastline.put(node, way);
-
-    }
-
-    public Map<Node, Way> getNodeToForest() {
-        return nodeToForest;
-    }
-
-    public Map<Node, Way> getNodeToFarmland() {
-        return nodeToFarmland;
-    }
-
-    public Way removeWayFromNodeToForest(Node node) {
-        return nodeToForest.remove(node);
-    }
-
-    public Way removeWayFromNodeToFarmland(Node node) {
-        return nodeToFarmland.remove(node);
-    }
-
-    public Way removeWayFromNodeToCoastline(Node node) {
-        return nodeToCoastline.remove(node);
-    }
-
 
     public void clearData() {
         linePaths = new HashMap<>();
-        nodeToCoastline = new HashMap<>();
-        nodeToForest = new HashMap<>();
-        nodeToFarmland = new HashMap<>();
+        nodeTo = new HashMap<>();
+
         System.gc();
     }
 }

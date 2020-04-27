@@ -25,26 +25,26 @@ class OSMElementDataTest {
 
     @Test
     void addRelation() {
-        Relation relation = new Relation();
+        Relation relation = new Relation(23232);
 
         osmElementData.addRelation(relation);
 
-        assertEquals(relation, osmElementData.getOSMRelations().get(0));
+        assertEquals(relation, osmElementData.getRelations().get(0));
     }
 
     @Test
     void getOSMRelations() {
-        osmElementData.getOSMRelations().clear();
+        osmElementData.getRelations().clear();
 
-        Relation relation = new Relation();
-        Relation relation2 = new Relation();
+        Relation relation = new Relation(1123);
+        Relation relation2 = new Relation(23322);
 
         osmElementData.addRelation(relation);
         osmElementData.addRelation(relation2);
 
 
 
-        assertEquals(2, osmElementData.getOSMRelations().size());
+        assertEquals(2, osmElementData.getRelations().size());
     }
 
     @Test
@@ -75,7 +75,7 @@ class OSMElementDataTest {
 
         osmElementData.addToNodeMap(id, node);
 
-        assertNotNull(osmElementData.getOSMNodes().get(id));
+        assertNotNull(osmElementData.getNodes().get(id));
     }
 
     @Test
@@ -85,8 +85,8 @@ class OSMElementDataTest {
 
         osmElementData.addToNodeMap(id, node);
 
-        assertEquals(node, osmElementData.getOSMNodes().get(id));
-        assertNotNull(osmElementData.getOSMNodes());
+        assertEquals(node, osmElementData.getNodes().get(id));
+        assertNotNull(osmElementData.getNodes());
     }
 
     @Test

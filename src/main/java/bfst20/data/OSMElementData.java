@@ -9,12 +9,12 @@ import bfst20.logic.entities.*;
 
 
 public class OSMElementData {
-    private List<Way> OSMWays;
-    private Map<Long, Node> nodeMap;
-    private List<Relation> OSMRelations;
-    private Bounds bounds;
-    private static boolean isLoaded = false;
     private static OSMElementData OSMElementData;
+    private static boolean isLoaded = false;
+    private List<Relation> OSMRelations;
+    private Map<Long, Node> nodeMap;
+    private List<Way> OSMWays;
+    private Bounds bounds;
 
 
     private OSMElementData() {
@@ -33,23 +33,22 @@ public class OSMElementData {
 
     public void setBounds(Bounds bounds) {
         this.bounds = new Bounds(bounds.getMaxLat(), bounds.getMinLat(), bounds.getMaxLon(), bounds.getMinLon());
-
-    }
-
-    public Node getNode(long id) {
-        return nodeMap.get(id);
     }
 
     public Bounds getBounds() {
         return bounds;
     }
 
-    public void addToNodeMap(long id, Node node) {
-        nodeMap.put(id, node);
+    public Node getNode(long id) {
+        return nodeMap.get(id);
     }
 
-    public Map<Long, Node> getOSMNodes() {
+    public Map<Long, Node> getNodes() {
         return nodeMap;
+    }
+
+    public void addToNodeMap(long id, Node node) {
+        nodeMap.put(id, node);
     }
 
     public void addWay(Way way) {
@@ -64,19 +63,15 @@ public class OSMElementData {
         OSMRelations.add(relation);
     }
 
-    public List<Relation> getOSMRelations() {
+    public List<Relation> getRelations() {
         return OSMRelations;
     }
 
-    public void clearData() {
-        OSMWays = new ArrayList<>();
-        OSMRelations = new ArrayList<>();
-
-    }
-
     public void clearNodeData() {
-      /*  nodeMap = new HashMap<>();
+        OSMRelations = new ArrayList<>();
+        OSMWays = new ArrayList<>();
+        nodeMap = new HashMap<>();
 
-        System.gc();*/
+        System.gc();
     }
 }

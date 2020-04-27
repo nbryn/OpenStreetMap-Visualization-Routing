@@ -6,7 +6,7 @@ public class Bounds implements Serializable {
 
     float maxLat, minLat, maxLon, minLon;
 
-    public Bounds (float maxLat, float minLat, float maxLon, float minLon) {
+    public Bounds(float maxLat, float minLat, float maxLon, float minLon) {
         this.maxLat = maxLat;
         this.minLat = minLat;
         this.maxLon = maxLon;

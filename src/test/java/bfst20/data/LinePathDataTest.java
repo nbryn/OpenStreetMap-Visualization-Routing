@@ -1,6 +1,6 @@
 package bfst20.data;
 
-import bfst20.logic.Type;
+import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
@@ -24,7 +24,7 @@ class LinePathDataTest {
     @BeforeAll
     static void setup() {
         linePathData = LinePathData.getInstance();
-        node = new Node();
+       // node = new Node();
 
     }
 
@@ -35,103 +35,74 @@ class LinePathDataTest {
 
     @Test
     void getLinePaths() {
-        LinePath linePath = new LinePath(new Way(), Type.COASTLINE, new HashMap<>(), new HashMap<>(), true);
+        LinePath linePath = new LinePath(new Way(), OSMType.COASTLINE, new HashMap<>(), true);
 
-        linePathData.addLinePath(Type.COASTLINE, linePath);
+        linePathData.addLinePath(OSMType.COASTLINE, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(Type.COASTLINE).get(0));
+        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.COASTLINE).get(0));
     }
 
     @Test
     void addLinePath() {
-        LinePath linePath = new LinePath(new Way(), Type.HIGHWAY, new HashMap<>(), new HashMap<>(), true);
+        LinePath linePath = new LinePath(new Way(), OSMType.HIGHWAY, new HashMap<>(), true);
 
-        linePathData.addLinePath(Type.HIGHWAY, linePath);
+        linePathData.addLinePath(OSMType.HIGHWAY, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(Type.HIGHWAY).get(0));
+        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.HIGHWAY).get(0));
     }
 
     @Test
     void setLinePaths() {
-        LinePath linePath = new LinePath(new Way(), Type.MOTORWAY, new HashMap<>(), new HashMap<>(), true);
+        LinePath linePath = new LinePath(new Way(), OSMType.MOTORWAY, new HashMap<>(), true);
         List<LinePath> motorWays = new ArrayList<>();
         motorWays.add(linePath);
 
-        Map<Type, List<LinePath>> linePaths = new HashMap<>();
-        linePaths.put(Type.MOTORWAY, motorWays);
-        linePathData.setLinePaths(linePaths);
+        Map<OSMType, List<LinePath>> linePaths = new HashMap<>();
+        linePaths.put(OSMType.MOTORWAY, motorWays);
+        linePathData.saveLinePaths(linePaths);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(Type.MOTORWAY).get(0));
+        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.MOTORWAY).get(0));
     }
 
     @Test
     void addType() {
-        linePathData.addType(Type.FOREST);
+        linePathData.addType(OSMType.FOREST);
 
-        assertNotNull(linePathData.getLinePaths().get(Type.FOREST));
+        assertNotNull(linePathData.getLinePaths().get(OSMType.FOREST));
     }
 
     @Test
-    void addNodeToForest() {
-        linePathData.addNodeToForest(node, new Way());
+    void addNodeTo() {
+        linePathData.addNodeTo(OSMType.FOREST, node, new Way());
 
-        assertEquals(1, linePathData.getNodeToForest().size());
+        assertEquals(1, linePathData.getNodeTo(OSMType.FOREST).size());
     }
 
     @Test
-    void addToNodeToFarmland() {
-        linePathData.addToNodeToFarmland(node, new Way());
+    void addToNodeTo() {
+        linePathData.addNodeTo(OSMType.FARMLAND, node, new Way());
 
-        assertEquals(1, linePathData.getNodeToFarmland().size());
+        assertEquals(1, linePathData.getNodeTo(OSMType.FARMLAND).size());
     }
 
-    @Test
-    void addToNodeToCoastline() {
-        linePathData.addToNodeToCoastline(node, new Way());
 
-        assertEquals(1, linePathData.getNodeToCoastline().size());
-    }
 
 
     @Test
     void getNodeToCoastline() {
-        linePathData.addToNodeToCoastline(node, new Way());
+        linePathData.addNodeTo(OSMType.COASTLINE, node, new Way());
 
-        assertEquals(1, linePathData.getNodeToCoastline().size());
+        assertEquals(1, linePathData.getNodeTo(OSMType.COASTLINE).size());
     }
+
+
 
     @Test
-    void getNodeToForest() {
-        linePathData.addNodeToForest(node, new Way());
+    void removeWayFromNodeTo() {
+        linePathData.removeWayFromNodeTo(OSMType.FOREST, node);
 
-        assertEquals(1, linePathData.getNodeToForest().size());
+        assertEquals(0, linePathData.getNodeTo(OSMType.FOREST).size());
     }
 
-    @Test
-    void getNodeToFarmland() {
-        linePathData.addToNodeToFarmland(node, new Way());
 
-        assertEquals(1, linePathData.getNodeToFarmland().size());
-    }
-
-    @Test
-    void removeWayFromNodeToForest() {
-        linePathData.removeWayFromNodeToForest(node);
-
-        assertEquals(0, linePathData.getNodeToForest().size());
-    }
-
-    @Test
-    void removeWayFromNodeToFarmland() {
-        linePathData.removeWayFromNodeToFarmland(node);
-
-        assertEquals(0, linePathData.getNodeToFarmland().size());
-    }
-
-    @Test
-    void removeWayFromNodeToCoastline() {
-        linePathData.removeWayFromNodeToCoastline(node);
-
-        assertEquals(0, linePathData.getNodeToCoastline().size());
-    }
 }
