@@ -25,6 +25,8 @@ public class KDTree {
 
             insert(root, path);
         }
+
+        System.gc();
     }
 
     public KDNode getRoot(){
@@ -64,14 +66,10 @@ public class KDTree {
 
         if (rect.intersectsRight(node)) {
             range(node.getRightNode(), rect, zoomLevel, list);
-        }else{
-            System.out.println("FALSE RIGHT");
         }
 
         if(rect.intersectsLeft(node)){
             range(node.getLeftNode(), rect, zoomLevel, list);
-        }else{
-            System.out.println("FALSE LEFT");
         }
 
     }
@@ -111,14 +109,10 @@ public class KDTree {
 
         if (rect.intersectsRight(node)) {
             range(node.getRightNode(), rect, list, zoomLevel, point);
-        }else{
-            System.out.println("FALSE RIGHT");
         }
 
         if(rect.intersectsLeft(node)){
             range(node.getLeftNode(), rect, list, zoomLevel, point);
-        }else{
-            System.out.println("FALSE LEFT");
         }
     }
 
@@ -136,7 +130,9 @@ public class KDTree {
         }else{
             node.setSplit(path.getCenterLongitude());
         }
+        path.setWayNull();
         node.setLinePath(path);
+        
 
         return node;
     }

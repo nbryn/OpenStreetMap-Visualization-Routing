@@ -89,7 +89,8 @@ public class Parser {
                             tags = new HashMap<>();
                             break;
                         case "tag":
-                            if (tags == null) break;
+                            if (tags == null)
+                                break;
 
                             String key = reader.getAttributeValue(null, "k");
                             String value = reader.getAttributeValue(null, "v");
@@ -126,27 +127,26 @@ public class Parser {
                     break;
             }
         }
+        System.out.println(i);
     }
 
     private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
-        if (tags.size() == 0) return;
+        if (tags.size() == 0)
+            return;
 
         String city = tags.get("addr:city");
         String housenumber = tags.get("addr:housenumber");
         String postcode = tags.get("addr:postcode");
         String street = tags.get("addr:street");
 
-        if (city == null) return;
+        if (city == null)
+            return;
 
         Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
         appController.addToModel(lastNodeId, address);
     }
 
-    private void parseTags(
-            OSMElement lastElementParsed,
-            HashMap<String,
-                    String> tags,
-            String[] firstTag) {
+    private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
 
         try {
             if (tags.containsKey("name")) {
@@ -163,9 +163,10 @@ public class Parser {
 
                     OSMType type = OSMType.LANDUSE;
 
-                    try{
+                    try {
                         type = OSMType.valueOf(tags.get("landuse").toUpperCase());
-                    }catch (Exception e){}
+                    } catch (Exception e) {
+                    }
 
                     lastElementParsed.setOSMType(type);
                 }
@@ -181,9 +182,11 @@ public class Parser {
             }
 
         } catch (Exception err) {
-            //This exception is getting throwen a lot, because of all the missing Enum Types.
-            //appController.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags, exiting.");
-            //System.exit(1);
+            // This exception is getting throwen a lot, because of all the missing Enum
+            // Types.
+            // appController.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags,
+            // exiting.");
+            // System.exit(1);
         }
     }
 
@@ -197,8 +200,9 @@ public class Parser {
                 type = OSMType.UNCLASSIFIED_HIGHWAY;
             }
         } catch (Exception e) {
-            //This catch is here to check if the current highway type exists in the Type enum, if it does, that will be used,
-            //If it dosen't this will throw, and the program will use Type.HIGHWAY
+            // This catch is here to check if the current highway type exists in the Type
+            // enum, if it does, that will be used,
+            // If it dosen't this will throw, and the program will use Type.HIGHWAY
         }
         lastElementParsed.setOSMType(type);
         parseHighway(lastElementParsed, tags);
@@ -206,6 +210,14 @@ public class Parser {
 
     private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
         Way way = (Way) lastElementParsed;
+
+        for (long id : way.getNodeIds()) {
+
+            Node node = appController.getNodeFromModel(id);
+            way.addNode(node);
+
+        }
+
         if (tags.containsKey("maxspeed")) {
             way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
         }
@@ -231,6 +243,8 @@ public class Parser {
         try {
             type = OSMType.valueOf(tags.get("highway").toUpperCase());
 
+            ;
+
             if (type == OSMType.RESIDENTIAL) {
                 type = OSMType.RESIDENTIAL_HIGHWAY;
             } else if (type == OSMType.UNCLASSIFIED) {
@@ -254,7 +268,6 @@ public class Parser {
         float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-
         appController.addToModel(new Bounds(maxLat, minLat, maxLon, minLon));
     }
 
@@ -267,10 +280,10 @@ public class Parser {
 
     }
 
-    //1. Adding relation to temp
-    //2. Adding sub elements to the temp relation
-    //3. Adding final relation to the real realtions list.
-    //Why: to have all sub elements in the final relations.
+    // 1. Adding relation to temp
+    // 2. Adding sub elements to the temp relation
+    // 3. Adding final relation to the real realtions list.
+    // Why: to have all sub elements in the final relations.
     private Relation addRelationToList(XMLStreamReader reader) {
         long id = Long.parseLong(reader.getAttributeValue(null, "id"));
         Relation relation = new Relation(id);
@@ -296,8 +309,13 @@ public class Parser {
         return way;
     }
 
+    int i = 0;
+
     private void addSubElementToWay(XMLStreamReader reader, Way lastWay) {
         long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
+
         lastWay.addNodeId(id);
+
+        i++;
     }
 }

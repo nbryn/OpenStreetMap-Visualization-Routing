@@ -3,9 +3,11 @@ package bfst20.logic.entities;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.OSMElement;
 
+import java.io.Serializable;
+
 import javax.xml.stream.XMLStreamReader;
 
-public class Node implements OSMElement, Comparable {
+public class Node implements OSMElement, Comparable, Serializable {
     private long id;
     protected float latitude;
     protected float longitude;
@@ -22,6 +24,9 @@ public class Node implements OSMElement, Comparable {
         this.longitude = longitude;
     }
 
+    public Node() {
+
+    }
 
 
     public long getId() {

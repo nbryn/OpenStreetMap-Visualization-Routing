@@ -27,6 +27,9 @@ public class AddressData {
     public void putAddress(long id, Address address) { addresses.put(id, address);}
     public Map<Long, Address> getAddresses(){return addresses;}
 
+    public void setAddresses(Map<Long, Address> addresses){
+        this.addresses = addresses;
+    }
 
     private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,.\\V ]*";
 
@@ -52,7 +55,11 @@ public class AddressData {
 
         if(addressStrings.length == 0) return null;
 
+        System.out.println(addressStrings[0] + " " + addressStrings[1]);
+
         for(Address address : addresses.values()){
+            if(address.getStreet() == null) continue;
+            
             if(
                             address.getStreet().trim().equals(addressStrings[0].trim())
                     &&      address.getHousenumber().trim().equals(addressStrings[1].trim())
