@@ -25,7 +25,7 @@ class OSMElementDataTest {
 
     @Test
     void addRelation() {
-        Relation relation = new Relation();
+        Relation relation = new Relation(23232);
 
         osmElementData.addRelation(relation);
 
@@ -36,8 +36,8 @@ class OSMElementDataTest {
     void getOSMRelations() {
         osmElementData.getOSMRelations().clear();
 
-        Relation relation = new Relation();
-        Relation relation2 = new Relation();
+        Relation relation = new Relation(1123);
+        Relation relation2 = new Relation(23322);
 
         osmElementData.addRelation(relation);
         osmElementData.addRelation(relation2);
