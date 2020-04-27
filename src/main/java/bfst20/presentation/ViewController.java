@@ -148,7 +148,7 @@ public class ViewController {
                 Point2D converted = view.toModelCoords(e.getX(), e.getY());
 
                 InterestPointData interestPointData = InterestPointData.getInstance();
-                interestPointData.addIntrestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
+                interestPointData.addInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
             }
 
             view.repaint();

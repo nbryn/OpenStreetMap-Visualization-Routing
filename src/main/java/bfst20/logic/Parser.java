@@ -127,8 +127,65 @@ public class Parser {
                     break;
             }
         }
-        System.out.println(i);
+
     }
+
+    private void setBounds(XMLStreamReader reader) {
+        float minLat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
+        float maxLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
+        float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
+        float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
+
+        appController.addToModel(new Bounds(maxLat, minLat, maxLon, minLon));
+    }
+
+
+    private void addNodeToMap(XMLStreamReader reader) {
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        float latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
+        float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
+
+        Node node = new Node(id, latitude, longitude);
+        appController.addToModel(node.getId(), node);
+
+    }
+
+    private Way addWayToList(XMLStreamReader reader) {
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Way way = new Way(id);
+
+        appController.addToModel(way);
+
+        return way;
+    }
+
+    private void addSubElementToWay(XMLStreamReader reader, Way lastWay) {
+        long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
+
+        lastWay.addNodeId(id);
+
+    }
+
+    // 1. Adding relation to temp
+    // 2. Adding sub elements to the temp relation
+    // 3. Adding final relation to the real realtions list.
+    // Why: to have all sub elements in the final relations.
+    private Relation addRelationToList(XMLStreamReader reader) {
+        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
+        Relation relation = new Relation(id);
+        tempOSMRelations.add(relation);
+
+        return relation;
+    }
+
+
+    private void addMemberToRelation(XMLStreamReader reader) {
+        Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
+        long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
+        String type = reader.getAttributeValue(null, "type");
+        relation.addMember(member, type);
+    }
+
 
     private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
         if (tags.size() == 0)
@@ -147,14 +204,13 @@ public class Parser {
     }
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
-
         try {
-            if (tags.containsKey("name")) {
-                lastElementParsed.setName(tags.get("name"));
-            }
+            if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name"));
+
             if (tags.containsKey("type") && tags.get("type").equals("multipolygon")) {
                 lastElementParsed.setMultipolygon(true);
             }
+
             if (tags.containsKey("landuse") || tags.containsKey("natural")) {
                 if (tags.containsKey("natural")) {
 
@@ -170,13 +226,11 @@ public class Parser {
 
                     lastElementParsed.setOSMType(type);
                 }
-            } else if (tags.containsKey("building")) {
-                lastElementParsed.setOSMType(OSMType.BUILDING);
-            } else if (tags.containsKey("highway")) {
+            } else if (tags.containsKey("building")) lastElementParsed.setOSMType(OSMType.BUILDING);
 
-                OSMType type = OSMType.HIGHWAY;
+            else if (tags.containsKey("highway")) {
 
-                setHighway(lastElementParsed, tags, type);
+                parseHighway(lastElementParsed, tags);
             } else {
                 lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
             }
@@ -190,132 +244,42 @@ public class Parser {
         }
     }
 
-    private void setHighway(OSMElement lastElementParsed, HashMap<String, String> tags, OSMType type) {
-        try {
-            type = OSMType.valueOf(tags.get("highway").toUpperCase());
-
-            if (type == OSMType.RESIDENTIAL) {
-                type = OSMType.RESIDENTIAL_HIGHWAY;
-            } else if (type == OSMType.UNCLASSIFIED) {
-                type = OSMType.UNCLASSIFIED_HIGHWAY;
-            }
-        } catch (Exception e) {
-            // This catch is here to check if the current highway type exists in the Type
-            // enum, if it does, that will be used,
-            // If it dosen't this will throw, and the program will use Type.HIGHWAY
-        }
-        lastElementParsed.setOSMType(type);
-        parseHighway(lastElementParsed, tags);
-    }
-
     private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
         Way way = (Way) lastElementParsed;
 
         for (long id : way.getNodeIds()) {
-
             Node node = appController.getNodeFromModel(id);
             way.addNode(node);
-
         }
 
-        if (tags.containsKey("maxspeed")) {
-            way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
-        }
+        if (tags.containsKey("maxspeed")) way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
 
-        setOneWay(tags, way);
+        if (tags.containsKey("oneway")) {
+            if (tags.get("oneway").equals("yes")) way.setOneWay(true);
+            else way.setOneWay(false);
+        }
         OSMType type = OSMType.HIGHWAY;
 
         type = setHighwayType(tags, type);
         lastElementParsed.setOSMType(type);
     }
 
-    private void setOneWay(HashMap<String, String> tags, Way way) {
-        if (tags.containsKey("oneway")) {
-            if (tags.get("oneway").equals("yes")) {
-                way.setOneWay(true);
-            } else {
-                way.setOneWay(false);
-            }
-        }
-    }
-
     private OSMType setHighwayType(HashMap<String, String> tags, OSMType type) {
         try {
             type = OSMType.valueOf(tags.get("highway").toUpperCase());
 
-            ;
+            if (type == OSMType.RESIDENTIAL) type = OSMType.RESIDENTIAL_HIGHWAY;
 
-            if (type == OSMType.RESIDENTIAL) {
-                type = OSMType.RESIDENTIAL_HIGHWAY;
-            } else if (type == OSMType.UNCLASSIFIED) {
-                type = OSMType.UNCLASSIFIED_HIGHWAY;
-            } else if (type == OSMType.FOOTWAY) {
-                type = OSMType.FOOTWAY;
-            } else if (type == OSMType.PATH) {
-                type = OSMType.PATH;
-            } else if (type == OSMType.TRACK) {
-                type = OSMType.TRACK;
-            }
+            else if (type == OSMType.UNCLASSIFIED) type = OSMType.UNCLASSIFIED_HIGHWAY;
+
+            else if (type == OSMType.FOOTWAY) type = OSMType.FOOTWAY;
+
+            else if (type == OSMType.PATH) type = OSMType.PATH;
+
+            else if (type == OSMType.TRACK) type = OSMType.TRACK;
 
         } catch (Exception e) {
         }
         return type;
-    }
-
-    private void setBounds(XMLStreamReader reader) {
-        float minLat = -Float.parseFloat(reader.getAttributeValue(null, "maxlat"));
-        float maxLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "maxlon"));
-        float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
-        float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
-
-        appController.addToModel(new Bounds(maxLat, minLat, maxLon, minLon));
-    }
-
-    private void addNodeToMap(XMLStreamReader reader) {
-        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
-        float latitude = -Float.parseFloat(reader.getAttributeValue(null, "lat"));
-        float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
-        Node node = new Node(id, latitude, longitude);
-        appController.addToModel(node.getId(), node);
-
-    }
-
-    // 1. Adding relation to temp
-    // 2. Adding sub elements to the temp relation
-    // 3. Adding final relation to the real realtions list.
-    // Why: to have all sub elements in the final relations.
-    private Relation addRelationToList(XMLStreamReader reader) {
-        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
-        Relation relation = new Relation(id);
-
-        tempOSMRelations.add(relation);
-
-        return relation;
-    }
-
-    private void addMemberToRelation(XMLStreamReader reader) {
-        Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
-        long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
-        String type = reader.getAttributeValue(null, "type");
-        relation.addMember(member, type);
-    }
-
-    private Way addWayToList(XMLStreamReader reader) {
-        long id = Long.parseLong(reader.getAttributeValue(null, "id"));
-        Way way = new Way(id);
-
-        appController.addToModel(way);
-
-        return way;
-    }
-
-    int i = 0;
-
-    private void addSubElementToWay(XMLStreamReader reader, Way lastWay) {
-        long id = Long.parseLong(reader.getAttributeValue(null, "ref"));
-
-        lastWay.addNodeId(id);
-
-        i++;
     }
 }

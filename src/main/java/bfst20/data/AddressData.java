@@ -8,66 +8,65 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AddressData {
-
+    private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,.\\V ]*";
     private static AddressData addressData;
     private Map<Long, Address> addresses;
 
-    private AddressData(){
+    private AddressData() {
         addresses = new HashMap<>();
     }
 
-    public static AddressData getInstance(){
-        if(addressData == null){
+    public static AddressData getInstance() {
+        if (addressData == null) {
             addressData = new AddressData();
         }
 
         return addressData;
     }
 
-    public void putAddress(long id, Address address) { addresses.put(id, address);}
-    public Map<Long, Address> getAddresses(){return addresses;}
+    public void addAddress(long id, Address address) {
+        addresses.put(id, address);
+    }
 
-    public void setAddresses(Map<Long, Address> addresses){
+    public void saveAddresses(Map<Long, Address> addresses) {
         this.addresses = addresses;
     }
 
-    private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,.\\V ]*";
+    public Map<Long, Address> getAddresses() {
+        return addresses;
+    }
 
-    public String[] parseAddress(String input){
+    public String[] parseAddress(String input) {
         Matcher pattern = Pattern.compile(streethouse).matcher(input);
 
-        if(pattern.matches() && !input.equals("")){
+        if (pattern.matches() && !input.equals("")) {
             String street = pattern.group("street");
             String house = pattern.group("house");
 
             String[] address = {street, house};
 
             return address;
-        }else{
+        } else {
+
             return new String[0];
         }
-
     }
 
-    public Address search(String input){
-
+    public Address search(String input) {
         String[] addressStrings = parseAddress(input);
+        if (addressStrings.length == 0) return null;
 
-        if(addressStrings.length == 0) return null;
+        for (Address address : addresses.values()) {
+            if (address.getStreet() == null) continue;
 
-        System.out.println(addressStrings[0] + " " + addressStrings[1]);
+            if (
+                    address.getStreet().trim().equals(addressStrings[0].trim())
+                            && address.getHousenumber().trim().equals(addressStrings[1].trim())
 
-        for(Address address : addresses.values()){
-            if(address.getStreet() == null) continue;
-            
-            if(
-                            address.getStreet().trim().equals(addressStrings[0].trim())
-                    &&      address.getHousenumber().trim().equals(addressStrings[1].trim())
+            ) {
 
-            ){
                 return address;
             }
-
         }
 
         return null;

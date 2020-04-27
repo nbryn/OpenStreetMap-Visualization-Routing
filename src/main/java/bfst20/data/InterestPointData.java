@@ -6,32 +6,32 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class InterestPointData {
-
-    private List<InterestPoint> intrestPoints;
     private static InterestPointData interestPointData;
+    private List<InterestPoint> interestPoints;
 
-    private InterestPointData(){
-        intrestPoints = new LinkedList<>();
+
+    private InterestPointData() {
+        interestPoints = new LinkedList<>();
     }
 
-    public static InterestPointData getInstance(){
-        if(interestPointData == null){
+    public static InterestPointData getInstance() {
+        if (interestPointData == null) {
             interestPointData = new InterestPointData();
         }
 
         return interestPointData;
     }
 
-    public void addIntrestPoint(InterestPoint interestPoint){
-        intrestPoints.add(interestPoint);
+    public void addInterestPoint(InterestPoint interestPoint) {
+        interestPoints.add(interestPoint);
     }
 
-    public void removeIntrestPoint(int key){
-        intrestPoints.remove(key);
+    public void removeInterestPoint(int key) {
+        interestPoints.remove(key);
     }
 
-    public List<InterestPoint> getAllIntrestPoints(){
-        return intrestPoints;
+    public List<InterestPoint> getAllInterestPoints() {
+        return interestPoints;
     }
 
 }

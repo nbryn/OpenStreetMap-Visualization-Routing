@@ -4,7 +4,6 @@ import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.kdtree.KDNode;
-import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
@@ -216,7 +215,7 @@ public class View {
     private void drawInterestPoints(double lineWidth) {
         InterestPointData interestPointData = InterestPointData.getInstance();
 
-        for (InterestPoint interestPoint : interestPointData.getAllIntrestPoints()) {
+        for (InterestPoint interestPoint : interestPointData.getAllInterestPoints()) {
             int bubbleSize = 30;
 
             drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude());
@@ -338,7 +337,7 @@ public class View {
 
         //System.out.println(linePath.getOSMType());
 
-        if(linePath.isMultiploygon()){
+        if(linePath.isMultipolygon()){
             traceMultipolygon(linePath, gc);
         }else{
             trace(linePath, gc);

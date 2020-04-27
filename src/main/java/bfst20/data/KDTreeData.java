@@ -24,13 +24,13 @@ public class KDTreeData {
             isLoaded = true;
             kdTreeData = new KDTreeData();
         }
+
         return kdTreeData;
     }
 
     public Rect getRect() {
         return this.rect;
     }
-
 
     public void setValuesOnRect(float minLat, float maxLat, float minLon, float maxLon) {
         rect.setMinLat(minLat);
@@ -41,7 +41,6 @@ public class KDTreeData {
 
     public void addKDTree(OSMType OSMType, KDTree kdTree) {
         kdTrees.put(OSMType, kdTree);
-
     }
 
     public KDTree getKDTree(OSMType OSMType) {
@@ -52,8 +51,5 @@ public class KDTreeData {
         kdTrees = new HashMap<>();
         System.gc();
     }
-
-
-
 
 }

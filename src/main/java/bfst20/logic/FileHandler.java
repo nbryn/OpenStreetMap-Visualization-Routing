@@ -64,8 +64,8 @@ public class FileHandler {
 
             appController.addToModel(bounds);
             appController.addToModel(linePaths);
-            appController.addToModelAddresses(addresses);
-            appController.addToModelHighways(highways);
+            appController.addAddressesToModel(addresses);
+            appController.addHighwaysToModel(highways);
         } catch (IOException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
             System.exit(1);
@@ -87,7 +87,7 @@ public class FileHandler {
                 if (name.endsWith(".osm")) {
                     InputStream stream = zipFile.getInputStream(entry);
                     String toBeParsed = new String(stream.readAllBytes());
-                    appController.startStringParsing(toBeParsed);
+                    appController.parseString(toBeParsed);
                 }
             }
 
