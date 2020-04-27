@@ -25,7 +25,9 @@ public class Address implements Serializable {
         this.nodeID = nodeID;
     }
 
-    public String getStreet() {
+
+
+    public String getStreet(){
         return street;
     }
 
