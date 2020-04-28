@@ -137,7 +137,7 @@ public class View {
 
         pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
-        int boxSize = 300;
+        int boxSize = 100;
 
         Rect rect = createRect(boxSize);
 
@@ -264,6 +264,7 @@ public class View {
     }
 
     private void drawLocation(double lineWidth, int bubbleSize, float lon, float lat) {
+        gc.setStroke(Color.RED);
         gc.strokeOval(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
         gc.moveTo(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
         gc.lineTo(lon, lat);
@@ -330,9 +331,9 @@ public class View {
 
 
         OSMType OSMType = linePath.getOSMType();
+        gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
         gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
         gc.beginPath();
-        gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
         gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
 
         //System.out.println(linePath.getOSMType());
@@ -385,13 +386,14 @@ public class View {
     }
 
     public void zoom(double factor, double x, double y, double deltaY) {
-        if (deltaY<0 && zoomLevel > 1.0)
+        /*if (deltaY<0 && zoomLevel > 1.0)
         {
             scale(factor,x,y,deltaY);
         }
         if (deltaY>0 && zoomLevel <= 150) {
             scale(factor,x,y,deltaY);
-        }
+        }*/
+            scale(factor,x,y,deltaY);
         reduceZoomLevel();
         reduceTimesZoomed();
     }
