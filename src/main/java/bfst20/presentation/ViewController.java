@@ -5,12 +5,15 @@ package bfst20.presentation;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Queue;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
 import javafx.beans.value.ChangeListener;
@@ -254,6 +257,22 @@ public class ViewController {
 
                 view.setSearchString(searchText);
 
+            }
+        });
+
+        searchAddress.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String s2) {
+
+                if(s2.equals(""))return;
+
+                AddressData addressData = AddressData.getInstance();
+
+                Queue<Address> address = addressData.getTst().keysWithPrefix(s2);
+
+                for(int i = 0; i< 10; i++){
+                    System.out.println(address.poll());
+                }
             }
         });
     }

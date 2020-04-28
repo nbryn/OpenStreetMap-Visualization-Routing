@@ -1,6 +1,7 @@
 package bfst20.data;
 
 import bfst20.logic.entities.Address;
+import bfst20.logic.ternary.TST;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,9 +12,11 @@ public class AddressData {
     private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,.\\V ]*";
     private static AddressData addressData;
     private Map<Long, Address> addresses;
+    private TST tst;
 
     private AddressData() {
         addresses = new HashMap<>();
+        tst = new TST();
     }
 
     public static AddressData getInstance() {
@@ -25,7 +28,12 @@ public class AddressData {
     }
 
     public void addAddress(long id, Address address) {
-        addresses.put(id, address);
+        //addresses.put(id, address);
+        tst.put(address.toString(), address);
+    }
+
+    public TST getTst(){
+        return tst;
     }
 
     public void saveAddresses(Map<Long, Address> addresses) {
