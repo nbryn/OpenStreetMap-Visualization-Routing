@@ -19,6 +19,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 
 public class ViewController {
@@ -53,6 +55,12 @@ public class ViewController {
     private Slider zoomSlider;
     private boolean scrollTrigger;
 
+    @FXML
+    AnchorPane canvasParent;
+
+    @FXML
+    HBox hbox;
+
     public ViewController() {
         appController = new AppController();
     }
@@ -61,6 +69,23 @@ public class ViewController {
 
     @FXML
     public void initialize() {
+
+        /*        canvas.widthProperty().bind(canvasParent.widthProperty());
+        canvas.heightProperty().bind(canvasParent.heightProperty());
+
+        System.out.println(canvas.getWidth());*/
+
+        hbox.widthProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            canvas.setWidth((double) newVal - 400);
+            view.repaint();
+        });
+
+        hbox.heightProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            canvas.setHeight((double) newVal);
+            view.repaint();
+        });
 
         appController.createView(canvas, mouseLocationLabel);
 
