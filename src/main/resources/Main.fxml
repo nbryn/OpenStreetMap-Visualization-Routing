@@ -7,13 +7,13 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -86,7 +86,7 @@
                                  <children>
                                      <!-- VBox for routing elements-->
                                      <VBox fx:id="routeVBox" prefHeight="692.0" prefWidth="330.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                         <HBox prefHeight="100.0" prefWidth="200.0">
+                                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                              <children>
                                                <VBox prefHeight="77.0" prefWidth="276.0">
                                                   <children>
@@ -97,15 +97,20 @@
                                                <Button fx:id="searchRouteButton" mnemonicParsing="false" prefHeight="96.0" prefWidth="55.0" text="Search" />
                                              </children>
                                          </HBox>
-                                         <HBox prefHeight="30" prefWidth="330" spacing="5.0">
-                                             <ToggleButton fx:id="bikeButton" mnemonicParsing="false" prefWidth="130.0" text="Bike">
-                                                 <!--Allows buttons to switch toggle between assigned buttons-->
-                                                 <toggleGroup>
-                                                   <ToggleGroup fx:id="vehicleSelection" />
+                                         <HBox alignment="TOP_CENTER" prefHeight="20.0" prefWidth="330" spacing="5.0">
+                                             <RadioButton mnemonicParsing="false" prefWidth="45.0" selected="true" text="Car" userData="car">
+                                                <HBox.margin>
+                                                   <Insets right="10.0" />
+                                                </HBox.margin>
+                                                <toggleGroup>
+                                                   <ToggleGroup fx:id="type" />
                                                 </toggleGroup>
-                                             </ToggleButton>
-                                             <ToggleButton fx:id="carButton" mnemonicParsing="false" prefWidth="130.0" text="Car" toggleGroup="$vehicleSelection">
-                                       </ToggleButton>
+                                             </RadioButton>
+                                             <RadioButton mnemonicParsing="false" text="Bicycle" toggleGroup="$type" userData="bicycle">
+                                                <HBox.margin>
+                                                   <Insets left="10.0" />
+                                                </HBox.margin>
+                                             </RadioButton>
                                              <padding>
                                                 <Insets left="33.0" />
                                              </padding>
@@ -132,7 +137,7 @@
                                                    <!-- Scrollpane to contain suggestions for addresses-->
                                                    <ScrollPane fitToWidth="true" pannable="true" prefHeight="36.0" prefWidth="331.0" style="-fx-background: #17181f; -fx-border-color: #17181f;" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
                                                       <content>
-                                                         <FlowPane fx:id="displayPane3" hgap="50.0" prefWidth="330" style="-fx-background-color: white;" />
+                                                         <FlowPane fx:id="wayPointFlowPane" hgap="50.0" style="-fx-background-color: white;" />
                                                       </content>
                                                    </ScrollPane>
                                                </children>

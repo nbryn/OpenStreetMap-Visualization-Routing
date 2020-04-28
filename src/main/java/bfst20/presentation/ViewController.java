@@ -1,8 +1,10 @@
 package bfst20.presentation;
 
 
+
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -10,6 +12,7 @@ import javax.xml.stream.XMLStreamException;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.InterestPoint;
+import bfst20.logic.misc.Vehicle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -18,9 +21,15 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class ViewController {
@@ -48,10 +57,6 @@ public class ViewController {
     @FXML
     private TextField destinationBar;
     @FXML
-    private ToggleButton bikeButton;
-    @FXML
-    private ToggleButton carButton;
-    @FXML
     private Slider zoomSlider;
     private boolean scrollTrigger;
 
@@ -60,6 +65,11 @@ public class ViewController {
 
     @FXML
     HBox hbox;
+
+    @FXML FlowPane wayPointFlowPane;
+
+    @FXML
+    ToggleGroup type;
 
     public ViewController() {
         appController = new AppController();
@@ -97,7 +107,7 @@ public class ViewController {
 
         try {
             file = new File(classLoader.getResource("samsoe.osm").getFile());
-            //file = new File("/home/nbryn/Desktop/ITU/2.Semester/BFST20Gruppe17/danmark.bin");
+            //file = new File("D:\\Projects\\Java\\BFST20Gruppe17Data\\danmark.bin");
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
             System.exit(1);
@@ -131,15 +141,60 @@ public class ViewController {
 
         setupSearchButton();
 
-        setupRouteButtons();
-
         searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                view.searchRoute();
 
+                if(searchbar.getText().equals("") || destinationBar.getText().equals("")){
+                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address");
+                    return;
+                }
+
+                //view.searchRoute("Sølyst 3", "Vestergade 37", Vehicle.CAR);
+                Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
+                view.searchRoute(searchbar.getText(), destinationBar.getText(), vehicle);
             }
         });
+    }
+
+    private void updateIntrestPoints(){
+        wayPointFlowPane.getChildren().clear();
+
+        InterestPointData data = InterestPointData.getInstance();
+        List<InterestPoint> intrestPoints = data.getAllInterestPoints();
+
+        int i = 0;
+
+        for(InterestPoint intrest : intrestPoints){
+            Text scoreText = new Text(i + ". Intrest point");
+
+            int s = i;
+
+            scoreText.setFont(new Font("ARIAL", 25));
+            scoreText.setStyle("-fx-font-weight: bold;");
+            scoreText.setFill(Color.BLACK);
+
+            Button button = new Button();
+            button.setText("Delete");
+
+            HBox box = new HBox(scoreText, button);
+
+            button.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    wayPointFlowPane.getChildren().remove(s);
+                    intrestPoints.remove(s);
+                    updateIntrestPoints();
+                    view.repaint();
+                }
+            });
+
+
+            wayPointFlowPane.getChildren().add(box);
+
+
+            i++;
+        }
     }
 
     private void setupFileHandling() {
@@ -174,6 +229,7 @@ public class ViewController {
 
                 InterestPointData interestPointData = InterestPointData.getInstance();
                 interestPointData.addInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
+                updateIntrestPoints();
             }
 
             view.repaint();
@@ -198,24 +254,6 @@ public class ViewController {
 
                 view.setSearchString(searchText);
 
-            }
-        });
-    }
-
-    private void setupRouteButtons() {
-        bikeButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                //System.out.println("HEY");
-                //TODO: Bike not implemented yet.
-            }
-        });
-
-        carButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                view.setAddress(searchbar.getText(), destinationBar.getText());
-                view.repaint();
             }
         });
     }
