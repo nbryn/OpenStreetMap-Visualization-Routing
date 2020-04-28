@@ -17,6 +17,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 
 
@@ -215,18 +216,19 @@ public class View {
     private void drawInterestPoints(double lineWidth) {
         InterestPointData interestPointData = InterestPointData.getInstance();
 
+        int i = 0;
+
         for (InterestPoint interestPoint : interestPointData.getAllInterestPoints()) {
             int bubbleSize = 30;
 
-            drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude());
+            drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude(), String.valueOf(i));
+            i++;
         }
     }
 
     
-    public void searchRoute(){
-       //ItshortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR);
-       //shortestPath("Oven Bæltet 13", "Sommerbyen 93", Vehicle.CAR);
-        shortestPath("Sølyst 3", "Vestergade 37", Vehicle.CAR);
+    public void searchRoute(String source, String target, Vehicle vehicle){
+        shortestPath(source, target, vehicle);
     }
 
     List<Edge> route = null;
@@ -259,12 +261,16 @@ public class View {
 
         int bubbleSize = 30;
 
-        drawLocation(lineWidth, bubbleSize, address.getLon(), address.getLat());
+        drawLocation(lineWidth, bubbleSize, address.getLon(), address.getLat(), "1");
         //gc.strokeRect(address.getLon(), address.getLat(), 1, 1);
     }
 
-    private void drawLocation(double lineWidth, int bubbleSize, float lon, float lat) {
+    private void drawLocation(double lineWidth, int bubbleSize, float lon, float lat, String id) {
         gc.setStroke(Color.RED);
+        gc.setFill(Color.RED);
+        gc.setFont(new Font("Arial", lineWidth * 20));
+        gc.fillText(id, lon - (lineWidth * bubbleSize / 2) + (lineWidth * bubbleSize/3), lat - (lineWidth * bubbleSize * 1.4)+(lineWidth * bubbleSize/1.5));
+        gc.fill();
         gc.strokeOval(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
         gc.moveTo(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
         gc.lineTo(lon, lat);
