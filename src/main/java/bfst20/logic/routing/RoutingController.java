@@ -8,9 +8,8 @@ import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.misc.Vehicle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.*;
 
 public class RoutingController {
     private static RoutingController routingController;
@@ -81,7 +80,15 @@ public class RoutingController {
 
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
             List<Edge> route = extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode);
+            Map<String, Double> routeInfo = extractRouteInfo(route);
             appController.addToModel(route);
+            appController.addRouteInfoToModel(routeInfo);
+
+
+            // TODO: Needed?
+            route = null;
+            routeInfo = null;
+            System.gc();
         }
 
         double dist = dijkstra.distTo(trgNode);
@@ -128,6 +135,7 @@ public class RoutingController {
     private List<Edge> extractEdgesOnRoute(Map<Node, Edge> edgesFromDijkstra, Node source, Node target) {
         List<Edge> edges = new ArrayList<>();
         Edge edge = edgesFromDijkstra.get(target);
+
         long id = 0;
 
         while (id != source.getId()) {
@@ -142,6 +150,21 @@ public class RoutingController {
         }
 
         return edges;
+    }
+
+    private Map<String, Double> extractRouteInfo(List<Edge> edges) {
+        Map<String, Double> routeInfo = new LinkedHashMap<>();
+        DecimalFormat dm = new DecimalFormat("#.##");
+
+        for (int i = edges.size() - 1; i >= 0; i--) {
+            if (!routeInfo.containsKey(edges.get(i).getName())) {
+                routeInfo.put(edges.get(i).getName(), Double.parseDouble(dm.format(edges.get(i).getLength())));
+            } else {
+                routeInfo.put(edges.get(i).getName(), Double.parseDouble(dm.format(routeInfo.get(edges.get(i).getName()) + edges.get(i).getLength())));
+            }
+        }
+
+        return routeInfo;
     }
 
     private int binarySearch(List<Edge> list, String address) {
