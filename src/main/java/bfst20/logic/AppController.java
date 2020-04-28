@@ -125,6 +125,14 @@ public class AppController {
         routingData.saveRoute(route);
     }
 
+    public void addRouteInfoToModel(Map<String, Double> routeInfo) {
+        routingData.saveRouteInfo(routeInfo);
+    }
+
+    public Map<String, Double> getRouteInfoFromModel() {
+        return routingData.getRouteInfo();
+    }
+
     public void loadFile(File file) {
         try {
             FileHandler fileHandler = FileHandler.getInstance();

@@ -9,12 +9,14 @@ import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
+import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.text.Font;
@@ -28,19 +30,20 @@ import javafx.scene.transform.NonInvertibleTransformException;
 
 
 public class View {
-
-    private AppController appController;
-    private Affine trans = new Affine();
-    private Canvas canvas;
-    private GraphicsContext gc;
     private Map<OSMType, List<LinePath>> linePaths;
-    private List<LinePath> coastLine;
-    private boolean kd;
     private boolean isColorBlindMode = false;
-    private String addressString;
-    private Point2D mousePos;
+    private Affine trans = new Affine();
+    private AppController appController;
     private String address1, address2;
+    private List<LinePath> coastLine;
+    private String addressString;
+    private GraphicsContext gc;
+    private Point2D mousePos;
+    private Canvas canvas;
+    private boolean kd;
 
+    @FXML
+    public FlowPane displayPane;
 
     Label mouseLocationLabel;
 
@@ -99,21 +102,21 @@ public class View {
         float maxLat = bounds.getMaxLat();
 
         pan(-minLon, -minLat);
-        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0,1);
+        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0, 1);
 
         repaint();
     }
 
     private long lastTime = 0;
 
-    private boolean fps(){
+    private boolean fps() {
         Date date = new Date();
 
-        if(lastTime == 0){
+        if (lastTime == 0) {
             lastTime = date.getTime();
             return false;
-        }else{
-            if((date.getTime() - 30) < lastTime){
+        } else {
+            if ((date.getTime() - 30) < lastTime) {
                 return true;
             }
         }
@@ -127,13 +130,13 @@ public class View {
 
     public void repaint() {
 
-        if(fps()) return;
+        if (fps()) return;
 
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        gc.strokeRect(0,0, canvas.getWidth(), canvas.getHeight());
+        gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
         pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
@@ -149,7 +152,7 @@ public class View {
 
         //drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
 
-        for(LinePath path : coastLine){
+        for (LinePath path : coastLine) {
             drawLinePath(path, pixelwidth);
         }
 
@@ -194,7 +197,7 @@ public class View {
 
         drawInterestPoints(pixelwidth);
 
-        if(route != null){
+        if (route != null) {
             for (Edge edge : route) {
                 drawRoute(edge, pixelwidth);
             }
@@ -202,7 +205,7 @@ public class View {
     }
 
 
-    public void setAddress(String address1, String address2){
+    public void setAddress(String address1, String address2) {
         this.address2 = address2;
         this.address1 = address1;
     }
@@ -226,16 +229,16 @@ public class View {
         }
     }
 
-    
-    public void searchRoute(String source, String target, Vehicle vehicle){
+
+    public void searchRoute(String source, String target, Vehicle vehicle) {
         shortestPath(source, target, vehicle);
     }
 
     List<Edge> route = null;
+    Map<String, Double> routeInfo = null;
 
 
     private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
-
         double distance = appController.initializeRouting(sourceQuery, targetQuery, vehicle);
 
         route = appController.getRouteFromModel();
@@ -269,7 +272,7 @@ public class View {
         gc.setStroke(Color.RED);
         gc.setFill(Color.RED);
         gc.setFont(new Font("Arial", lineWidth * 20));
-        gc.fillText(id, lon - (lineWidth * bubbleSize / 2) + (lineWidth * bubbleSize/3), lat - (lineWidth * bubbleSize * 1.4)+(lineWidth * bubbleSize/1.5));
+        gc.fillText(id, lon - (lineWidth * bubbleSize / 2) + (lineWidth * bubbleSize / 3), lat - (lineWidth * bubbleSize * 1.4) + (lineWidth * bubbleSize / 1.5));
         gc.fill();
         gc.strokeOval(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
         gc.moveTo(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
@@ -295,7 +298,7 @@ public class View {
         }
     }
 
-    public void drawKdTest(){
+    public void drawKdTest() {
         KDNode root = appController.getKDTreeFromModel(OSMType.HIGHWAY).getRoot();
 
         gc.setStroke(Color.BLUE);
@@ -309,7 +312,6 @@ public class View {
         gc.setLineWidth(lineWidth);
         gc.beginPath();
         gc.setStroke(OSMType.getColor(OSMType.ROUTING, false));
-
 
 
         traceEdge(edge, gc);
@@ -330,11 +332,9 @@ public class View {
 
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
-
-        if(linePath.getOSMType() == OSMType.TREE_ROW && linePath.getWayId() == 165460372){
+        if (linePath.getOSMType() == OSMType.TREE_ROW && linePath.getWayId() == 165460372) {
             String i = "";
         }
-
 
         OSMType OSMType = linePath.getOSMType();
         gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
@@ -344,17 +344,16 @@ public class View {
 
         //System.out.println(linePath.getOSMType());
 
-        if(linePath.isMultipolygon()){
+        if (linePath.isMultipolygon()) {
             traceMultipolygon(linePath, gc);
-        }else{
+        } else {
             trace(linePath, gc);
             gc.stroke();
 
-            if(OSMType.getFill(linePath.getOSMType())){
+            if (OSMType.getFill(linePath.getOSMType())) {
                 gc.fill();
             }
         }
-
     }
 
     private void traceMultipolygon(LinePath linePath, GraphicsContext gc) {
@@ -362,15 +361,14 @@ public class View {
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2; i <= coords.length; i += 2) {
-            if(coords[i-2] == -99999.0){
-                gc.moveTo(coords[i-1], coords[i]);
-            }else{
+            if (coords[i - 2] == -99999.0) {
+                gc.moveTo(coords[i - 1], coords[i]);
+            } else {
                 gc.lineTo(coords[i - 2], coords[i - 1]);
             }
         }
         gc.fill();
     }
-
 
 
     private void trace(LinePath linePath, GraphicsContext gc) {
@@ -399,31 +397,27 @@ public class View {
         if (deltaY>0 && zoomLevel <= 150) {
             scale(factor,x,y,deltaY);
         }*/
-            scale(factor,x,y,deltaY);
+        scale(factor, x, y, deltaY);
         reduceZoomLevel();
         reduceTimesZoomed();
     }
 
 
-    public void scale(double factor, double x, double y, double deltaY)
-    {
+    public void scale(double factor, double x, double y, double deltaY) {
         trans.prependScale(factor, factor, x, y);
         zoomLevel *= factor;
-        timesZoomed += deltaY/40;
+        timesZoomed += deltaY / 40;
         repaint();
     }
 
     public void reduceZoomLevel() {
-        if (zoomLevel > 2500)
-        {
-            zoomLevel = zoomLevel/2517.0648374271736;
+        if (zoomLevel > 2500) {
+            zoomLevel = zoomLevel / 2517.0648374271736;
         }
     }
 
-    public void reduceTimesZoomed()
-    {
-        if (timesZoomed>126)
-        {
+    public void reduceTimesZoomed() {
+        if (timesZoomed > 126) {
             timesZoomed = 126;
         }
     }
@@ -433,7 +427,7 @@ public class View {
         repaint();
     }
 
-    public void displayError(Alert.AlertType type, String text){
+    public void displayError(Alert.AlertType type, String text) {
         Alert alert = new Alert(type, text, ButtonType.OK);
         alert.showAndWait();
     }
@@ -448,16 +442,14 @@ public class View {
 
 
     public double getTimesZoomed() {
-        return  timesZoomed;
+        return timesZoomed;
     }
 
-    public void setSliderValue(double value)
-    {
+    public void setSliderValue(double value) {
         sliderValue = value;
     }
 
-    public double getSliderValue()
-    {
+    public double getSliderValue() {
         return sliderValue;
     }
 }

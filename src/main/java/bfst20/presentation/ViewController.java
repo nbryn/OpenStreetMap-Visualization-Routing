@@ -1,10 +1,10 @@
 package bfst20.presentation;
 
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -34,6 +34,7 @@ import javafx.stage.FileChooser;
 
 public class ViewController {
 
+    public FlowPane displayPane;
     private AppController appController;
 
     private View view;
@@ -66,7 +67,8 @@ public class ViewController {
     @FXML
     HBox hbox;
 
-    @FXML FlowPane wayPointFlowPane;
+    @FXML
+    FlowPane wayPointFlowPane;
 
     @FXML
     ToggleGroup type;
@@ -141,11 +143,22 @@ public class ViewController {
 
         setupSearchButton();
 
+        displayPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (appController.getRouteInfoFromModel() != null) {
+                    for (Map.Entry<String, Double> entry : appController.getRouteInfoFromModel().entrySet()) {
+                        displayPane.getChildren().add(new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " meters"));
+                    }
+                }
+            }
+        });
+
         searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
 
-                if(searchbar.getText().equals("") || destinationBar.getText().equals("")){
+                if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
                     appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address");
                     return;
                 }
@@ -157,15 +170,15 @@ public class ViewController {
         });
     }
 
-    private void updateIntrestPoints(){
+    private void updateInterestPoints() {
         wayPointFlowPane.getChildren().clear();
 
         InterestPointData data = InterestPointData.getInstance();
-        List<InterestPoint> intrestPoints = data.getAllInterestPoints();
+        List<InterestPoint> interestPoints = data.getAllInterestPoints();
 
         int i = 0;
 
-        for(InterestPoint intrest : intrestPoints){
+        for (InterestPoint interest : interestPoints) {
             Text scoreText = new Text(i + ". Intrest point");
 
             int s = i;
@@ -183,8 +196,8 @@ public class ViewController {
                 @Override
                 public void handle(MouseEvent event) {
                     wayPointFlowPane.getChildren().remove(s);
-                    intrestPoints.remove(s);
-                    updateIntrestPoints();
+                    interestPoints.remove(s);
+                    updateInterestPoints();
                     view.repaint();
                 }
             });
@@ -229,7 +242,7 @@ public class ViewController {
 
                 InterestPointData interestPointData = InterestPointData.getInstance();
                 interestPointData.addInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
-                updateIntrestPoints();
+                updateInterestPoints();
             }
 
             view.repaint();
