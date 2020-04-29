@@ -39,6 +39,12 @@ public class TST {
 
     private Node put(Node parent, String key, Address value, int index){
 
+        if(key.contains("sams")){
+            System.out.println(key);
+        }
+
+        System.out.println(key);
+
         char charecter = key.charAt(index);
 
         if(parent == null){
@@ -71,6 +77,7 @@ public class TST {
     }
 
     private Node get(Node parent, String key, int index){
+
         char charecter = key.charAt(index);
         if(charecter > parent.getKey()){
             return get(parent.getRight(), key, index);

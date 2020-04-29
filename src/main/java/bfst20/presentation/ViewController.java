@@ -271,7 +271,9 @@ public class ViewController {
                 Queue<Address> address = addressData.getTst().keysWithPrefix(s2);
 
                 for(int i = 0; i< 10; i++){
-                    System.out.println(address.poll());
+                    if(address.poll() != null){
+                        System.out.println(address.poll().toString());
+                    }
                 }
             }
         });
