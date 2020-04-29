@@ -3,6 +3,8 @@ package bfst20.data;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +51,12 @@ public class RoutingData {
 
     public Map<String, Double> getRouteInfo() {
         return routeInfo;
+    }
+
+    public void clearData() {
+        route = new ArrayList<>();
+        routeInfo = new HashMap<>();
+
+        System.gc();
     }
 }

@@ -36,11 +36,9 @@ public class RoutingController {
         List<Node> highwayNodes = new ArrayList<>();
 
         for (LinePath lp : highways) {
-            if(lp.getWay() == null) continue;
+            if (lp.getWay() == null) continue;
             highwayNodes.addAll(lp.getWay().getNodes());
         }
-
-        System.out.println(highwayNodes.size());
 
 
         Graph graph = new Graph(new ArrayList<>(highwayNodes));
@@ -86,19 +84,26 @@ public class RoutingController {
 
         dijkstra = new Dijkstra(graph, srcNode, trgNode, vehicle);
 
+        System.out.println("Has path to: " + dijkstra.hasPathTo(trgNode));
+
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
-            List<Edge> route = extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode);
+            List<Edge> route = new ArrayList<>();
+            if (dijkstra.getEdgeTo().size() == 1) route.addAll(dijkstra.getEdgeTo().values());
+            else route.addAll(extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode));
+
+
             Map<String, Double> routeInfo = extractRouteInfo(route);
             appController.addToModel(route);
             appController.addRouteInfoToModel(routeInfo);
+            System.out.println("Finished");
 
 
             // TODO: Needed?
             route = null;
             routeInfo = null;
             System.gc();
-        }
 
+        }
         double dist = dijkstra.distTo(trgNode);
         dijkstra.clearData();
         return dist;
@@ -108,8 +113,8 @@ public class RoutingController {
         List<Edge> closestEdges = new ArrayList<>();
 
         int addressIndex = binarySearch(edges, address.getStreet());
-        int searchInterval = 500;
-        
+        int searchInterval = 10000;
+
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
             if (edges.get(i).getStreet().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
@@ -141,14 +146,15 @@ public class RoutingController {
 
 
     private List<Edge> extractEdgesOnRoute(Map<Node, Edge> edgesFromDijkstra, Node source, Node target) {
+        System.out.println(edgesFromDijkstra.size());
         List<Edge> edges = new ArrayList<>();
         Edge edge = edgesFromDijkstra.get(target);
-
         long id = 0;
 
         while (id != source.getId()) {
             edge = edgesFromDijkstra.get(edge.getTarget());
             long tempID = edge.getTarget().getId();
+
 
             // Follow either target or source node
             edge = id == tempID ? edgesFromDijkstra.get(edge.getTarget()) : edgesFromDijkstra.get(edge.getSource());
@@ -165,10 +171,10 @@ public class RoutingController {
 
         for (int i = edges.size() - 1; i >= 0; i--) {
             if (!routeInfo.containsKey(edges.get(i).getStreet())) {
-               
+
                 routeInfo.put(edges.get(i).getStreet(), (double) Math.round(edges.get(i).getLength() * 100) / 100);
             } else {
-                routeInfo.put(edges.get(i).getStreet(), (double) Math.round((routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength())*100)/100);
+                routeInfo.put(edges.get(i).getStreet(), (double) Math.round((routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength()) * 100) / 100);
             }
         }
 

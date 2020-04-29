@@ -3,6 +3,7 @@ package bfst20.logic.routing;
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
+import javax.xml.stream.events.StartDocument;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,14 +23,21 @@ public class Dijkstra {
 
 
     public void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
+        System.out.println(source.getId());
+        System.out.println(target.getId());
         setup(graph, source);
 
         while (!pq.isEmpty()) {
             Node min = pq.delMin();
 
-            if (min.getId() == target.getId()) return;
-
             for (Edge edge : graph.adj(min)) {
+                if (min.getId() == target.getId()) {
+                    // Source and Target have same ID
+                    if (edgeTo.size() == 0) {
+                        edgeTo.put(target, edge);
+                        return;
+                    }
+                }
                 relax(edge, min, vehicle);
             }
         }
@@ -39,6 +47,7 @@ public class Dijkstra {
         for (int i = 0; i < graph.getNodes().size(); i++) {
             distTo.put(graph.getNodes().get(i), Double.POSITIVE_INFINITY);
         }
+
         source.setDistTo(0.0);
         distTo.put(source, 0.0);
         pq.insert(source);
@@ -54,6 +63,8 @@ public class Dijkstra {
             // As we know it's not oneway when coming from target
             if (!edge.isOneWay(vehicle)) {
                 vehicleAllowed(edge, min, vehicle, current);
+            } else {
+                if(edge.getStreet().equals("Paltholmvej") || edge.getStreet().equals("Stavnsholtvej")) System.out.println(edge.getStreet());
             }
         } else {
             current = edge.getSource();

@@ -34,16 +34,12 @@ public class View {
     private boolean isColorBlindMode = false;
     private Affine trans = new Affine();
     private AppController appController;
-    private String address1, address2;
     private List<LinePath> coastLine;
     private String addressString;
     private GraphicsContext gc;
     private Point2D mousePos;
     private Canvas canvas;
     private boolean kd;
-
-    @FXML
-    public FlowPane displayPane;
 
     Label mouseLocationLabel;
 
@@ -52,8 +48,6 @@ public class View {
     double sliderValue = 0;
 
     public View(Canvas canvas) {
-        address1 = "";
-        address2 = "";
         mousePos = new Point2D(0, 0);
         appController = new AppController();
         kd = false;
@@ -63,13 +57,16 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    public void initialize() {
+
+    public void initialize(boolean isBinary) {
         trans = new Affine();
         linePaths = appController.getLinePathsFromModel();
         coastLine = appController.getCoastlines();
-        //appController.clearLinePathData();
 
-        //createKDTrees();
+        if (!isBinary) {
+            appController.clearLinePathData();
+            createKDTrees();
+        }
 
         System.gc();
 
@@ -96,8 +93,8 @@ public class View {
         for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
             if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
                 continue;
-            
-            if(entry.getKey() != OSMType.COASTLINE){
+
+            if (entry.getKey() != OSMType.COASTLINE) {
                 if (entry.getValue().size() != 0) {
                     appController.addKDTreeToModel(entry.getKey(), entry.getValue());
                 }
@@ -140,7 +137,6 @@ public class View {
         if (fps()) return;
 
 
-
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
@@ -179,9 +175,10 @@ public class View {
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
         //drawKdTest();
 
-        try{
+        try {
             mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
-        }catch(Exception e){}
+        } catch (Exception e) {
+        }
 
         Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
         Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
@@ -196,11 +193,6 @@ public class View {
         drawSearchLocation(pixelwidth);
         drawInterestPoints(pixelwidth);
 
-        /*shortestPath("Sølyst 3", "Vestergade 39" , Vehicle.CAR, pixelwidth);
-
-        if(!address1.equals("") && !address2.equals("")){
-            shortestPath(address1, address2,Vehicle.CAR, pixelwidth);
-        }*/
 
         if (route != null) {
             for (Edge edge : route) {
@@ -209,11 +201,6 @@ public class View {
         }
     }
 
-
-    public void setAddress(String address1, String address2) {
-        this.address2 = address2;
-        this.address1 = address1;
-    }
 
     private Rect createRect(int boxSize) {
         Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
@@ -284,7 +271,7 @@ public class View {
     }
 
     public void drawTypeKdTree(OSMType type, Rect rect, double lineWidth) {
-        if(OSMType.getZoomLevel(type) <= trans.determinant()){
+        if (OSMType.getZoomLevel(type) <= trans.determinant()) {
             for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {
 
                 drawLinePath(linePath, lineWidth);

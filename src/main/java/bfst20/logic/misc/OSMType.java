@@ -208,7 +208,7 @@ public enum OSMType {
             case UNCLASSIFIED_HIGHWAY:
                 return 80;
             case TRACK:
-                return 100;
+                return 20;
             default:
                 return 60;
         }

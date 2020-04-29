@@ -48,8 +48,6 @@ public class AppController {
 
     public View initialize() throws IOException {
 
-        //setInstances();
-
         routingController = routingController.getInstance();
 
         if (!isBinary) {
@@ -59,7 +57,7 @@ public class AppController {
             clearNodeData();
             System.out.println("Generate Highways");
             generateHighways();
-            System.out.println("Done, building graph");
+            System.out.println("Building graph");
             try{
                 routingController.buildRoutingGraph();
             }catch(Exception e){
@@ -67,7 +65,7 @@ public class AppController {
             }
         }
         System.out.println("Done");
-        view.initialize();
+        view.initialize(isBinary);
         System.gc();
 
         return view;
@@ -107,18 +105,14 @@ public class AppController {
         return linePathData.getHighWays();
     }
 
-    public void addHighwaysToModel(List<LinePath> highways) {
-        linePathData.saveHighways(highways);
-    }
 
     public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
         routingController = routingController.getInstance();
 
-        Address source = findAddress(sourceQuery);
-        Address target = findAddress(targetQuery);
+        Address source = addressData.search(sourceQuery);
+        Address target = addressData.search(targetQuery);
 
         Graph graph = getGraphFromModel();
-
         List<Edge> edges = graph.getEdges();
         edges.sort(Comparator.comparing(Edge::getStreet));
 
@@ -171,20 +165,8 @@ public class AppController {
         parser.parseString(string);
     }
 
-
-
-    public void addAddressesToModel(Map<Long, Address> addresses) {
-        addressData.saveAddresses(addresses);
-    }
-
     public void addToModel(long id, Address address) {
         addressData.addAddress(id, address);
-    }
-
-    public Address findAddress(String query) {
-        Address address = addressData.search(query);
-
-        return address;
     }
 
     public void addToModel(Relation relation) {
@@ -239,10 +221,6 @@ public class AppController {
         return linePathData.getLinePaths();
     }
 
-    public Map<Long, Address> getAddressesFromModel() {
-        AddressData addressData = AddressData.getInstance();
-        return addressData.getAddresses();
-    }
 
     public Way removeWayFromNodeTo(OSMType type, Node node) {
         return linePathData.removeWayFromNodeTo(type, node);
@@ -268,9 +246,6 @@ public class AppController {
         linePathData.addType(type);
     }
 
-    public void addToModel(Map<OSMType, List<LinePath>> linePaths) {
-        linePathData.saveLinePaths(linePaths);
-    }
 
     public void clearLinePathData() {
         LinePathGenerator.getInstance().clearData();
@@ -308,12 +283,19 @@ public class AppController {
 
     //TODO: NOT BEING USED?
     public void generateBinary() throws IOException {
+        clearAllNonBinData();
         try {
             FileHandler fileHandler = FileHandler.getInstance();
             fileHandler.generateBinary();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void clearAllNonBinData() {
+        clearNodeData();
+        clearLinePathData();
+        routingData.clearData();
     }
 
 	public TST getTST() {
