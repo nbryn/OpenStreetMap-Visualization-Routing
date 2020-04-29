@@ -132,6 +132,8 @@ public class View {
 
         if (fps()) return;
 
+
+
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTBLUE);
 
@@ -141,7 +143,7 @@ public class View {
 
         pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
-        int boxSize = 100;
+        int boxSize = 300;
 
         Rect rect = createRect(boxSize);
 
@@ -170,13 +172,6 @@ public class View {
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
         //drawKdTest();
 
-        /*drawTypeKdTree(Type.HIGHWAY, rect, pixelwidth, mouse);
-        drawTypeKdTree(Type.TERTIARY, rect, pixelwidth, mouse);
-        drawTypeKdTree(Type.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
-        drawTypeKdTree(Type.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);*/
-
-        //mouseLocationLabel.setText(kdTrees.get(Type.HIGHWAY).getClosetsLinepath().getName());
-
         mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
 
         Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
@@ -184,7 +179,10 @@ public class View {
 
         //gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
+        gc.beginPath();
+        gc.setStroke(Color.BLUE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
+        gc.stroke();
 
         drawSearchLocation(pixelwidth);
         drawInterestPoints(pixelwidth);
@@ -194,8 +192,6 @@ public class View {
         if(!address1.equals("") && !address2.equals("")){
             shortestPath(address1, address2,Vehicle.CAR, pixelwidth);
         }*/
-
-        drawInterestPoints(pixelwidth);
 
         if (route != null) {
             for (Edge edge : route) {
@@ -263,6 +259,7 @@ public class View {
     }
 
     private void drawLocation(double lineWidth, int bubbleSize, float lon, float lat, String id) {
+        gc.beginPath();
         gc.setStroke(Color.RED);
         gc.setFill(Color.RED);
         gc.setFont(new Font("Arial", lineWidth * 20));
@@ -274,6 +271,7 @@ public class View {
         gc.moveTo(lon + (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
         gc.lineTo(lon, lat);
         gc.stroke();
+
     }
 
     public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
