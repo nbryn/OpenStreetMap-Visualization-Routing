@@ -275,6 +275,7 @@ public class View {
     }
 
     public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
+        //if(OSMType.getZoomLevel(OSMType) <= zoomLevel) return;
         for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant())) {
 
             drawLinePath(linePath, lineWidth);

@@ -54,7 +54,7 @@ public class AppController {
         if (!isBinary) {
             System.out.println("Creating linepaths");
             createLinePaths();
-            //generateBinary();
+            generateBinary();
             clearNodeData();
         }
         System.out.println("Generate Highways");
@@ -76,7 +76,7 @@ public class AppController {
     public void generateHighways() {
         Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
         List<LinePath> highWays = new ArrayList<>();
-        System.out.println(linePaths.get(OSMType.HIGHWAY).size());
+        //System.out.println(linePaths.get(OSMType.HIGHWAY).size());
         highWays.addAll(linePaths.get(OSMType.HIGHWAY));
         highWays.addAll(linePaths.get(OSMType.TERTIARY));
         highWays.addAll(linePaths.get(OSMType.UNCLASSIFIED_HIGHWAY));

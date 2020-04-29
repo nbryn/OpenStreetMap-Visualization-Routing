@@ -29,6 +29,7 @@ public class LinePathGenerator {
         OSMWays = new ArrayList<>();
         OSMRelations = new ArrayList<>();
 
+        loaded = false;
         System.gc();
     }
 
