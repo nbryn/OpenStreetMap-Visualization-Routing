@@ -62,7 +62,6 @@ public class TST {
     }
 
     private Node put(Node parent, String key, Address value, int index) {
-
         char character = key.charAt(index);
 
         if (parent == null) {
@@ -93,6 +92,7 @@ public class TST {
 
         return result == null ? null : result.getValue();
     }
+
 
     private Node get(Node parent, String key, int index) {
         char character = key.charAt(index);
