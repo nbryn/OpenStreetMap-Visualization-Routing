@@ -65,11 +65,11 @@ public class View {
 
     public void initialize() {
         trans = new Affine();
-        //linePaths = appController.getLinePathsFromModel();
+        linePaths = appController.getLinePathsFromModel();
         coastLine = appController.getCoastlines();
         appController.clearLinePathData();
 
-        //createKDTrees();
+        createKDTrees();
 
         System.gc();
 
