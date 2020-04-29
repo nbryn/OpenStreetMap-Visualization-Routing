@@ -6,105 +6,129 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class TST {
-    private class Node{
+    private class Node {
         private Node left, mid, right;
-        private char key;
         private Address value;
+        private char key;
 
-        public Node(char key){
+
+        public Node(char key) {
             this.key = key;
         }
 
-        public Node getLeft()               {return left;}
-        public Node getMid()                {return mid;}
-        public Node getRight()              {return right;}
+        public Node getLeft() {
+            return left;
+        }
 
-        public char getKey()                {return key;}
+        public Node getMid() {
+            return mid;
+        }
 
-        public Address getValue()           {return value;}
+        public Node getRight() {
+            return right;
+        }
 
-        public void setLeft(Node left)      {this.left = left;}
-        public void setMid(Node mid)        {this.mid = mid;}
-        public void setRight(Node right)    {this.right = right;}
-        public void setValue(Address address) {this.value = address;}
+        public char getKey() {
+            return key;
+        }
+
+        public Address getValue() {
+            return value;
+        }
+
+        public void setLeft(Node left) {
+            this.left = left;
+        }
+
+        public void setMid(Node mid) {
+            this.mid = mid;
+        }
+
+        public void setRight(Node right) {
+            this.right = right;
+        }
+
+        public void setValue(Address address) {
+            this.value = address;
+        }
     }
 
     private int R = 29;
     private Node root;
     private int size;
 
-    public void put(String key, Address value){
+    public void put(String key, Address value) {
         root = put(root, key, value, 0);
     }
 
-    private Node put(Node parent, String key, Address value, int index){
+    private Node put(Node parent, String key, Address value, int index) {
 
-        char charecter = key.charAt(index);
+        char character = key.charAt(index);
 
-        if(parent == null){
+        if (parent == null) {
             size++;
-            parent = new Node(charecter);
+            parent = new Node(character);
         }
 
-        if(charecter == 'l'){
+        if (character == 'l') {
             String i = "";
         }
 
-        if(charecter < parent.getKey()){
+        if (character < parent.getKey()) {
             parent.setLeft(put(parent.getLeft(), key, value, index));
-        }else if(charecter > parent.getKey()){
+        } else if (character > parent.getKey()) {
             parent.setRight(put(parent.getRight(), key, value, index));
-        }else if(index < key.length() - 1){
-            parent.setMid(put(parent.getMid(), key, value, index+1));
-        }else{
+        } else if (index < key.length() - 1) {
+            parent.setMid(put(parent.getMid(), key, value, index + 1));
+        } else {
             parent.setValue(value);
         }
 
         return parent;
     }
 
-    public Address get(String key){
+    public Address get(String key) {
 
         Node result = get(root, key, 0);
 
         return result == null ? null : result.getValue();
     }
 
-    private Node get(Node parent, String key, int index){
-        char charecter = key.charAt(index);
-        if(charecter > parent.getKey()){
+    private Node get(Node parent, String key, int index) {
+        char character = key.charAt(index);
+        if (character > parent.getKey()) {
             return get(parent.getRight(), key, index);
-        }else if(charecter < parent.getKey()){
+        } else if (character < parent.getKey()) {
             return get(parent.getLeft(), key, index);
-        }else if(index < key.length() - 1){
-            return get(parent.getMid(), key, index+1);
-        }else{
+        } else if (index < key.length() - 1) {
+            return get(parent.getMid(), key, index + 1);
+        } else {
             return parent;
         }
     }
 
-    public int getSize(){
+    public int getSize() {
         return size;
     }
 
-    public Queue<Address> keysWithPrefix(String prefix){
+    public Queue<Address> keysWithPrefix(String prefix) {
         Queue<Address> queue = new LinkedList<>();
 
         Node startNode = get(root, prefix, 0);
 
-        if(startNode == null) return queue;
-        if(startNode.getValue() != null) queue.add(startNode.getValue());
+        if (startNode == null) return queue;
+        if (startNode.getValue() != null) queue.add(startNode.getValue());
 
-        collect(startNode.getMid(),new StringBuilder(prefix), queue);
+        collect(startNode.getMid(), new StringBuilder(prefix), queue);
 
         return queue;
     }
 
-    private void collect(Node parent,StringBuilder prefix,  Queue<Address> queue){
+    private void collect(Node parent, StringBuilder prefix, Queue<Address> queue) {
         if (parent == null) return;
-        collect(parent.getLeft(),  prefix, queue);
+        collect(parent.getLeft(), prefix, queue);
         if (parent.getValue() != null) queue.add(parent.getValue());
-        collect(parent.getMid(),   prefix.append(parent.getKey()), queue);
+        collect(parent.getMid(), prefix.append(parent.getKey()), queue);
         prefix.deleteCharAt(prefix.length() - 1);
         collect(parent.getRight(), prefix, queue);
     }
