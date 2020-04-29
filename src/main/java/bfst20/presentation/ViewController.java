@@ -169,7 +169,7 @@ public class ViewController {
     }
 
     private void setupZoomSlider() {
-        zoomSlider.setMax(128);
+        zoomSlider.setMax(70);
         zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
