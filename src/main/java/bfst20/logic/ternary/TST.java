@@ -2,11 +2,12 @@ package bfst20.logic.ternary;
 
 import bfst20.logic.entities.Address;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class TST {
-    private class Node {
+public class TST implements Serializable{
+    private class Node implements Serializable {
         private Node left, mid, right;
         private Address value;
         private char key;

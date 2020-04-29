@@ -67,9 +67,9 @@ public class View {
         trans = new Affine();
         linePaths = appController.getLinePathsFromModel();
         coastLine = appController.getCoastlines();
-        appController.clearLinePathData();
+        //appController.clearLinePathData();
 
-        createKDTrees();
+        //createKDTrees();
 
         System.gc();
 
@@ -96,6 +96,7 @@ public class View {
         for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
             if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
                 continue;
+            
             if(entry.getKey() != OSMType.COASTLINE){
                 if (entry.getValue().size() != 0) {
                     appController.addKDTreeToModel(entry.getKey(), entry.getValue());
@@ -178,7 +179,9 @@ public class View {
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
         //drawKdTest();
 
-        mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
+        try{
+            mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
+        }catch(Exception e){}
 
         Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
         Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
@@ -280,17 +283,19 @@ public class View {
 
     }
 
-    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
-        //if(OSMType.getZoomLevel(OSMType) <= zoomLevel) return;
-        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant())) {
+    public void drawTypeKdTree(OSMType type, Rect rect, double lineWidth) {
+        if(OSMType.getZoomLevel(type) <= trans.determinant()){
+            for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {
 
-            drawLinePath(linePath, lineWidth);
-            gc.fill();
+                drawLinePath(linePath, lineWidth);
+                gc.fill();
+            }
         }
     }
 
-    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth, Point2D point) {
-        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).query(rect, trans.determinant(), point)) {
+    public void drawTypeKdTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
+        //TODO: WORK :D
+        for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
             gc.fill();

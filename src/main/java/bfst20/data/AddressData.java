@@ -77,4 +77,8 @@ public class AddressData {
 
         return null;
     }
+
+	public void setTst(TST tst) {
+        this.tst = tst;
+	}
 }

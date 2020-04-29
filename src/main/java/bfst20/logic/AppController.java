@@ -16,6 +16,7 @@ import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
+import bfst20.logic.ternary.TST;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
@@ -58,11 +59,13 @@ public class AppController {
             clearNodeData();
             System.out.println("Generate Highways");
             generateHighways();
+            System.out.println("Done, building graph");
+            try{
+                routingController.buildRoutingGraph();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
-        System.out.println("Done, building graph");
-        try{
-            routingController.buildRoutingGraph();
-        }catch(Exception e){}
         System.out.println("Done");
         view.initialize();
         System.gc();
@@ -115,6 +118,7 @@ public class AppController {
         Address target = findAddress(targetQuery);
 
         Graph graph = getGraphFromModel();
+
         List<Edge> edges = graph.getEdges();
         edges.sort(Comparator.comparing(Edge::getStreet));
 
@@ -311,4 +315,13 @@ public class AppController {
             e.printStackTrace();
         }
     }
+
+	public TST getTST() {
+		return addressData.getTst();
+	}
+
+	public void addTst(TST tst) {
+        addressData.setTst(tst);
+	}
+
 }

@@ -65,11 +65,11 @@ public class KDTree implements Serializable {
             System.out.println("FALSE " + "HEY");
         }*/
 
-        if (rect.intersectsRight(node)) {
+        if (rect.intersectsRight(node)  && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             range(node.getRightNode(), rect, zoomLevel, list);
         }
 
-        if(rect.intersectsLeft(node)){
+        if(rect.intersectsLeft(node)  && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel){
             range(node.getLeftNode(), rect, zoomLevel, list);
         }
 
@@ -77,10 +77,6 @@ public class KDTree implements Serializable {
 
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point){
         if (node == null) return;
-
-        if(node.getLinePath().getWayId() == 27674116){
-            String i = "";
-        }
 
         if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
@@ -101,18 +97,11 @@ public class KDTree implements Serializable {
 
         }
 
-        /*if(rect.intersects(node)){
-            range(node.getRightNode(), rect, list, zoomLevel, point);
-            range(node.getLeftNode(), rect, list, zoomLevel, point);
-        }else{
-            System.out.println("FALSE " + "HEY");
-        }*/
-
-        if (rect.intersectsRight(node)) {
+        if (rect.intersectsRight(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             range(node.getRightNode(), rect, list, zoomLevel, point);
         }
 
-        if(rect.intersectsLeft(node)){
+        if(rect.intersectsLeft(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel){
             range(node.getLeftNode(), rect, list, zoomLevel, point);
         }
     }

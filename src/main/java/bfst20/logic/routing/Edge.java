@@ -1,10 +1,13 @@
 package bfst20.logic.routing;
 
 import bfst20.logic.misc.OSMType;
+
+import java.io.Serializable;
+
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
-public class Edge {
+public class Edge implements Serializable{
     private OSMType highwayType;
     private boolean isOneWay;
     private double length;

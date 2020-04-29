@@ -5,6 +5,8 @@ import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMType;
+import bfst20.logic.routing.Graph;
+import bfst20.logic.ternary.TST;
 import bfst20.logic.kdtree.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -64,15 +66,15 @@ public class FileHandler {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
-            Map<Long, Address> addresses = (Map<Long, Address>) in.readObject();
-            List<LinePath> highways = (List<LinePath>) in.readObject();
             List<LinePath> coastline = (List<LinePath>) in.readObject();
+            TST tst = (TST) in.readObject();
+            Graph graph = (Graph) in.readObject();
 
             appController.addToModel(bounds);
             appController.setAllKDTrees(tree);
-            appController.addAddressesToModel(addresses);
-            appController.addHighwaysToModel(highways);
             appController.addCoastLine(coastline);
+            appController.addTst(tst);
+            appController.addToModel(graph);
         } catch (IOException e) {
             e.printStackTrace();
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
@@ -118,9 +120,9 @@ public class FileHandler {
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(appController.getBoundsFromModel());
         objectOut.writeObject(appController.getAllLKDTrees());
-        objectOut.writeObject(appController.getAddressesFromModel());
-        objectOut.writeObject(appController.getHighwaysFromModel());
         objectOut.writeObject(appController.getCoastlines());
+        objectOut.writeObject(appController.getTST());
+        objectOut.writeObject(appController.getGraphFromModel());
         objectOut.close();
     }
 }
