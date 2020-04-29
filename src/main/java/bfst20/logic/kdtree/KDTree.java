@@ -1,5 +1,6 @@
 package bfst20.logic.kdtree;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
 import javafx.geometry.Point2D;
 
-public class KDTree {
+public class KDTree implements Serializable {
 
     private KDNode root;
 

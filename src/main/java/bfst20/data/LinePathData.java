@@ -13,6 +13,7 @@ import java.util.Map;
 public class LinePathData {
     private Map<OSMType, List<LinePath>> linePaths;
     private Map<OSMType, Map<Node, Way>> nodeTo;
+    private List<LinePath> coastline;
     private static LinePathData linePathData;
     private static boolean isLoaded = false;
     private List<LinePath> highWays;
@@ -21,6 +22,7 @@ public class LinePathData {
         linePaths = new HashMap<>();
         nodeTo = new HashMap<>();
         highWays = new ArrayList<>();
+        coastline = new ArrayList<>();
     }
 
     public static LinePathData getInstance() {
@@ -46,7 +48,19 @@ public class LinePathData {
 
     public void addLinePath(OSMType OSMType, LinePath linePath) {
         if (linePaths.get(OSMType) == null) linePaths.put(OSMType, new ArrayList<>());
+        if(OSMType == OSMType.COASTLINE){
+            coastline.add(linePath);
+            return;
+        }
         linePaths.get(OSMType).add(linePath);
+    }
+
+    public List<LinePath> getCoastlines(){
+        return coastline;
+    }
+
+    public void addCoastLine(List<LinePath> paths){
+        this.coastline = paths;
     }
 
     public void saveLinePaths(Map<OSMType, List<LinePath>> linePaths) {
@@ -81,4 +95,12 @@ public class LinePathData {
 
         System.gc();
     }
+
+	public void addSingleCoastLine(LinePath linePath) {
+        if(coastline == null){
+            coastline = new ArrayList<>();
+        }
+
+        coastline.add(linePath);
+	}
 }

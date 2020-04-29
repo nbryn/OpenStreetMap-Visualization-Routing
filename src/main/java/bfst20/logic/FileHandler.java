@@ -5,6 +5,7 @@ import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMType;
+import bfst20.logic.kdtree.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -62,14 +63,16 @@ public class FileHandler {
     private void loadBinary(File file) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
-            Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
+            Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
             Map<Long, Address> addresses = (Map<Long, Address>) in.readObject();
             List<LinePath> highways = (List<LinePath>) in.readObject();
+            List<LinePath> coastline = (List<LinePath>) in.readObject();
 
             appController.addToModel(bounds);
-            appController.addToModel(linePaths);
+            appController.setAllKDTrees(tree);
             appController.addAddressesToModel(addresses);
             appController.addHighwaysToModel(highways);
+            appController.addCoastLine(coastline);
         } catch (IOException e) {
             e.printStackTrace();
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
@@ -114,9 +117,10 @@ public class FileHandler {
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(appController.getBoundsFromModel());
-        objectOut.writeObject(appController.getLinePathsFromModel());
+        objectOut.writeObject(appController.getAllLKDTrees());
         objectOut.writeObject(appController.getAddressesFromModel());
         objectOut.writeObject(appController.getHighwaysFromModel());
+        objectOut.writeObject(appController.getCoastlines());
         objectOut.close();
     }
 }

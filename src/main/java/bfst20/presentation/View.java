@@ -65,10 +65,25 @@ public class View {
 
     public void initialize() {
         trans = new Affine();
-        linePaths = appController.getLinePathsFromModel();
+        //linePaths = appController.getLinePathsFromModel();
+        coastLine = appController.getCoastlines();
         appController.clearLinePathData();
 
-        createKDTrees();
+        //createKDTrees();
+
+        System.gc();
+
+        Bounds bounds = appController.getBoundsFromModel();
+
+        float minLon = bounds.getMinLon();
+        float maxLon = bounds.getMaxLon();
+        float minLat = bounds.getMinLat();
+        float maxLat = bounds.getMaxLat();
+
+        pan(-minLon, -minLat);
+        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0, 1);
+
+        repaint();
     }
 
     public void setMousePos(Point2D mousePos) {
@@ -81,8 +96,10 @@ public class View {
         for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
             if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
                 continue;
-            if (entry.getValue().size() != 0) {
-                appController.addKDTreeToModel(entry.getKey(), entry.getValue());
+            if(entry.getKey() != OSMType.COASTLINE){
+                if (entry.getValue().size() != 0) {
+                    appController.addKDTreeToModel(entry.getKey(), entry.getValue());
+                }
             }
         }
 
@@ -90,19 +107,8 @@ public class View {
 
         appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
         appController.addKDTreeToModel(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
-        coastLine = linePaths.get(OSMType.COASTLINE);
+
         linePaths = null;
-        System.gc();
-
-        Bounds bounds = appController.getBoundsFromModel();
-
-        float minLon = bounds.getMinLon();
-        float maxLon = bounds.getMaxLon();
-        float minLat = bounds.getMinLat();
-        float maxLat = bounds.getMaxLat();
-
-        pan(-minLon, -minLat);
-        zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0, 1);
 
         repaint();
     }

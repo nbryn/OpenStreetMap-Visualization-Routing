@@ -54,13 +54,15 @@ public class AppController {
         if (!isBinary) {
             System.out.println("Creating linepaths");
             createLinePaths();
-            generateBinary();
+            //generateBinary();
             clearNodeData();
+            System.out.println("Generate Highways");
+            generateHighways();
         }
-        System.out.println("Generate Highways");
-        generateHighways();
         System.out.println("Done, building graph");
-        routingController.buildRoutingGraph();
+        try{
+            routingController.buildRoutingGraph();
+        }catch(Exception e){}
         System.out.println("Done");
         view.initialize();
         System.gc();
@@ -90,10 +92,17 @@ public class AppController {
         linePathData.saveHighways(highWays);
     }
 
+    public Map<OSMType, KDTree> getAllLKDTrees() {
+        return kdTreeData.getAllLKDTrees();
+    }
+
+    public void setAllKDTrees(Map<OSMType, KDTree> tree){
+        kdTreeData.setAllKDTrees(tree);
+    }
+
     public List<LinePath> getHighwaysFromModel() {
         return linePathData.getHighWays();
     }
-
 
     public void addHighwaysToModel(List<LinePath> highways) {
         linePathData.saveHighways(highways);
@@ -210,6 +219,13 @@ public class AppController {
         return osmElementData.getNodes();
     }
 
+    public List<LinePath> getCoastlines() {
+        return linePathData.getCoastlines();
+    }
+
+    public void addCoastLine(List<LinePath> paths){
+        linePathData.addCoastLine(paths);
+    }
 
     public void clearNodeData() {
         OSMElementData.getInstance().clearNodeData();
@@ -237,7 +253,11 @@ public class AppController {
     }
 
     public void addToModel(OSMType type, LinePath linePath) {
-        linePathData.addLinePath(type, linePath);
+        if(type == OSMType.COASTLINE){
+            linePathData.addSingleCoastLine(linePath);
+        }else{
+            linePathData.addLinePath(type, linePath);
+        }
     }
 
     public void addToModel(OSMType type) {
@@ -263,8 +283,9 @@ public class AppController {
         return kdTreeData.getRect();
     }
 
-    public void addKDTreeToModel(OSMType OSMType, List<LinePath> linePaths) {
-        kdTreeData.addKDTree(OSMType, new KDTree(linePaths, getRectFromModel()));
+    public void addKDTreeToModel(OSMType type, List<LinePath> linePaths) {
+        if(type == OSMType.COASTLINE) return;
+        kdTreeData.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
     }
 
     public KDTree getKDTreeFromModel(OSMType OSMType) {
