@@ -229,16 +229,10 @@ public class View {
         }
     }
 
-
-    public void searchRoute(String source, String target, Vehicle vehicle) {
-        shortestPath(source, target, vehicle);
-    }
-
     List<Edge> route = null;
-    Map<String, Double> routeInfo = null;
 
 
-    private void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
+    public void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
         double distance = appController.initializeRouting(sourceQuery, targetQuery, vehicle);
 
         route = appController.getRouteFromModel();

@@ -33,45 +33,42 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class ViewController {
-
-    public FlowPane displayPane;
     private AppController appController;
-
-    private View view;
+    @FXML
+    private FlowPane wayPointFlowPane;
+    @FXML
+    private Button searchAdressButton;
+    @FXML
+    private Button searchRouteButton;
 
     @FXML
-    private MenuItem openFile;
+    private TextField destinationBar;
     @FXML
     private Label mouseLocationLabel;
     @FXML
     private TextField searchAddress;
     @FXML
-    private Button searchAdressButton;
-
+    private AnchorPane canvasParent;
+    private boolean scrollTrigger;
     @FXML
-    private Button searchRouteButton;
+    public FlowPane displayPane;
+    @FXML
+    private TextField searchbar;
+    @FXML
+    private MenuItem openFile;
+    @FXML
+    private Slider zoomSlider;
+    @FXML
+    private ToggleGroup type;
     @FXML
     private Canvas canvas;
     @FXML
-    private TextField searchbar;
+    private HBox hbox;
+    private View view;
 
-    @FXML
-    private TextField destinationBar;
-    @FXML
-    private Slider zoomSlider;
-    private boolean scrollTrigger;
 
-    @FXML
-    AnchorPane canvasParent;
 
-    @FXML
-    HBox hbox;
 
-    @FXML
-    FlowPane wayPointFlowPane;
-
-    @FXML
-    ToggleGroup type;
 
     public ViewController() {
         appController = new AppController();
@@ -87,17 +84,7 @@ public class ViewController {
 
         System.out.println(canvas.getWidth());*/
 
-        hbox.widthProperty().addListener((obs, oldVal, newVal) -> {
-            // Do whatever you want
-            canvas.setWidth((double) newVal - 400);
-            view.repaint();
-        });
-
-        hbox.heightProperty().addListener((obs, oldVal, newVal) -> {
-            // Do whatever you want
-            canvas.setHeight((double) newVal);
-            view.repaint();
-        });
+        setupHbox();
 
         appController.createView(canvas, mouseLocationLabel);
 
@@ -123,6 +110,62 @@ public class ViewController {
             e.printStackTrace();
         }
 
+        setupZoomSlider();
+
+        setupCanvas();
+
+        setupSearchButton();
+
+        setupDisplayPane();
+
+        setupRouteButton();
+    }
+
+    private void setupRouteButton() {
+        searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+
+                if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
+                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address");
+                    return;
+                }
+
+                //view.searchRoute("Sølyst 3", "Vestergade 37", Vehicle.CAR);
+                Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
+                view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
+            }
+        });
+    }
+
+    private void setupHbox() {
+        hbox.widthProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            canvas.setWidth((double) newVal - 400);
+            view.repaint();
+        });
+
+        hbox.heightProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            canvas.setHeight((double) newVal);
+            view.repaint();
+        });
+    }
+
+    private void setupDisplayPane() {
+        displayPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (appController.getRouteInfoFromModel() != null) {
+                    for (Map.Entry<String, Double> entry : appController.getRouteInfoFromModel().entrySet()) {
+                        displayPane.getChildren().add(new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km"));
+                    }
+                }
+            }
+        });
+    }
+
+    private void setupZoomSlider() {
         zoomSlider.setMax(128);
         zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -137,36 +180,6 @@ public class ViewController {
                 view.setSliderValue(zoomSlider.getValue());
             }
 
-        });
-
-        setupCanvas();
-
-        setupSearchButton();
-
-        displayPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (appController.getRouteInfoFromModel() != null) {
-                    for (Map.Entry<String, Double> entry : appController.getRouteInfoFromModel().entrySet()) {
-                        displayPane.getChildren().add(new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " meters"));
-                    }
-                }
-            }
-        });
-
-        searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-
-                if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
-                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address");
-                    return;
-                }
-
-                //view.searchRoute("Sølyst 3", "Vestergade 37", Vehicle.CAR);
-                Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
-                view.searchRoute(searchbar.getText(), destinationBar.getText(), vehicle);
-            }
         });
     }
 

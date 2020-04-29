@@ -1,7 +1,6 @@
 package bfst20.logic.routing;
 
 import bfst20.logic.entities.Node;
-import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.Vehicle;
 
 import java.util.HashMap;
@@ -18,15 +17,9 @@ public class Dijkstra {
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
 
-        findShortestPath(graph, source, target, vehicle);  
+        findShortestPath(graph, source, target, vehicle);
     }
 
-    public void clearData(){
-        distTo = null;
-        edgeTo = null;
-        pq = null;
-        System.gc();
-    }
 
     public void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
         setup(graph, source);
@@ -51,6 +44,56 @@ public class Dijkstra {
         pq.insert(source);
     }
 
+
+    private void relax(Edge edge, Node min, Vehicle vehicle) {
+        // Current node can be target or source for current edge because the graph is not directed
+        Node current;
+        if (min == edge.getSource()) {
+            current = edge.getTarget();
+            // Only need to check oneway when coming from source
+            // As we know it's not oneway when coming from target
+            if (!edge.isOneWay(vehicle)) {
+                vehicleAllowed(edge, min, vehicle, current);
+            }
+        } else {
+            current = edge.getSource();
+            vehicleAllowed(edge, min, vehicle, current);
+        }
+    }
+
+    private void vehicleAllowed(Edge edge, Node min, Vehicle vehicle, Node current) {
+        if (edge.isVehicleAllowed(vehicle)) {
+            if (vehicle == Vehicle.CAR) {
+                setDistToCar(edge, min, current);
+            } else {
+                setDistTo(edge, min, current);
+            }
+        }
+    }
+
+    private void setDistToCar(Edge edge, Node min, Node current) {
+        if (distTo.get(current) > distTo.get(min) + (edge.getLength() / edge.getMaxSpeed())) {
+            distTo.put(current, distTo.get(min) + (edge.getLength() / edge.getMaxSpeed()));
+            insertNodePQ(edge, current);
+        }
+    }
+
+
+    private void setDistTo(Edge edge, Node min, Node current) {
+        if (distTo.get(current) > distTo.get(min) + edge.getLength()) {
+            distTo.put(current, distTo.get(min) + edge.getLength());
+            insertNodePQ(edge, current);
+        }
+    }
+
+
+    private void insertNodePQ(Edge edge, Node current) {
+        edgeTo.put(current, edge);
+        current.setDistTo(distTo.get(current));
+
+        pq.insert(current);
+    }
+
     public Map<Node, Edge> getEdgeTo() {
         return edgeTo;
     }
@@ -63,50 +106,11 @@ public class Dijkstra {
         return distTo.get(node) < Double.POSITIVE_INFINITY;
     }
 
-    private void relax(Edge edge, Node min, Vehicle vehicle) {
-        // Current node can be target or source for current edge because the graph is not directed
-        Node current;
-        if (min == edge.getSource()) {
-            current = edge.getTarget();
-            if (edge.isVehicleAllowed(vehicle)) {
-                if (vehicle == Vehicle.CAR) {
-                    setDistToCar(edge, min, current);
-                } else {
-                    setDistTo(edge, min, current);
-                }
-            }
-        } else {
-            current = edge.getSource();
-            if (!edge.isOneWay(vehicle)) {
-                if (edge.isVehicleAllowed(vehicle)) {
-                    if (vehicle == Vehicle.CAR) {
-                        setDistToCar(edge, min, current);
-                    } else {
-                        setDistTo(edge, min, current);
-                    }
-                }
-            }
-        }
+    public void clearData() {
+        distTo = null;
+        edgeTo = null;
+        pq = null;
+        System.gc();
     }
 
-    private void setDistTo(Edge edge, Node min, Node current) {
-        if (distTo.get(current) > distTo.get(min) + edge.getLength()) {
-            distTo.put(current, distTo.get(min) + edge.getLength());
-            insertNodeInPQ(edge, current);
-        }
-    }
-
-    private void setDistToCar(Edge edge, Node min, Node current) {
-        if (distTo.get(current) > distTo.get(min) + (edge.getLength() / edge.getMaxSpeed())) {
-            distTo.put(current, distTo.get(min) + (edge.getLength() / edge.getMaxSpeed()));
-            insertNodeInPQ(edge, current);
-        }
-    }
-
-    private void insertNodeInPQ(Edge edge, Node current) {
-        edgeTo.put(current, edge);
-        current.setDistTo(distTo.get(current));
-
-        pq.insert(current);
-    }
 }

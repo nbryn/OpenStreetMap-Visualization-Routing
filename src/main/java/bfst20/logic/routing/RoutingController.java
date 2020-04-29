@@ -43,6 +43,10 @@ public class RoutingController {
 
         generateGraphEdges(highways, graph);
         appController.addToModel(graph);
+
+        //TODO: Needed?
+        graph = null;
+        System.gc();
     }
 
     private void generateGraphEdges(List<LinePath> highWays, Graph graph) {
@@ -103,7 +107,7 @@ public class RoutingController {
         int searchInterval = 500;
 
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
-            if (edges.get(i).getName().equals(address.getStreet())) {
+            if (edges.get(i).getStreet().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
             }
         }
@@ -157,10 +161,10 @@ public class RoutingController {
         DecimalFormat dm = new DecimalFormat("#.##");
 
         for (int i = edges.size() - 1; i >= 0; i--) {
-            if (!routeInfo.containsKey(edges.get(i).getName())) {
-                routeInfo.put(edges.get(i).getName(), Double.parseDouble(dm.format(edges.get(i).getLength())));
+            if (!routeInfo.containsKey(edges.get(i).getStreet())) {
+                routeInfo.put(edges.get(i).getStreet(), Double.parseDouble(dm.format(edges.get(i).getLength())));
             } else {
-                routeInfo.put(edges.get(i).getName(), Double.parseDouble(dm.format(routeInfo.get(edges.get(i).getName()) + edges.get(i).getLength())));
+                routeInfo.put(edges.get(i).getStreet(), Double.parseDouble(dm.format(routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength())));
             }
         }
 
@@ -174,7 +178,7 @@ public class RoutingController {
         while (low <= high) {
             int mid = (low + high) / 2;
             Edge midElement = list.get(mid);
-            String midID = midElement.getName();
+            String midID = midElement.getStreet();
 
             if (midID.compareTo(address) < 0) {
                 low = mid + 1;

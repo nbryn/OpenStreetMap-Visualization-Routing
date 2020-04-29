@@ -104,7 +104,7 @@ public class AppController {
 
         Graph graph = getGraphFromModel();
         List<Edge> edges = graph.getEdges();
-        edges.sort(Comparator.comparing(Edge::getName));
+        edges.sort(Comparator.comparing(Edge::getStreet));
 
         return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
     }

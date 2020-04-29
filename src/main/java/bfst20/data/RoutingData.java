@@ -46,6 +46,7 @@ public class RoutingData {
     public void saveRouteInfo(Map<String, Double> routeInfo) {
         this.routeInfo = routeInfo;
     }
+
     public Map<String, Double> getRouteInfo() {
         return routeInfo;
     }
