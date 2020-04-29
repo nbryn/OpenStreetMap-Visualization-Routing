@@ -14,6 +14,7 @@ public enum OSMType {
     RESIDENTIAL_HIGHWAY,
     UNCLASSIFIED_HIGHWAY,
     FOOTWAY,
+    CYCLEWAY,
     PATH,
     TRACK,
     UNCLASSIFIED,
@@ -44,6 +45,7 @@ public enum OSMType {
             case FOOTWAY:
             case PATH:
             case TRACK:
+            case CYCLEWAY:
                 return lineWidth * 1;
             default:
                 return lineWidth;
@@ -77,6 +79,7 @@ public enum OSMType {
             case FOOTWAY:
             case PATH:
             case TRACK:
+            case CYCLEWAY:
                 return 2.8945867784311756E7;
             default:
                 return Double.POSITIVE_INFINITY;
@@ -153,6 +156,7 @@ public enum OSMType {
             case FOOTWAY:
             case PATH:
             case TRACK:
+            case CYCLEWAY:
                 return Color.YELLOW;
             case NATURAL:
                 return Color.BLUEVIOLET;
