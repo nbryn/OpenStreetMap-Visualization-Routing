@@ -58,6 +58,7 @@ public class TST {
     private int size;
 
     public void put(String key, Address value) {
+        key = key.toLowerCase();
         root = put(root, key, value, 0);
     }
 
@@ -112,6 +113,7 @@ public class TST {
     }
 
     public Queue<Address> keysWithPrefix(String prefix) {
+        prefix = prefix.toLowerCase();
         Queue<Address> queue = new LinkedList<>();
 
         Node startNode = get(root, prefix, 0);

@@ -34,6 +34,7 @@ public class LinePathGenerator {
 
     public static LinePathGenerator getInstance() {
         if (!loaded) {
+            loaded = true;
             linePathGenerator = new LinePathGenerator();
         }
 
@@ -99,10 +100,18 @@ public class LinePathGenerator {
         if(appController.getNodeTo(OSMType.HEATH) != null) {
             addRelation(OSMType.HEATH, appController.getNodeTo(OSMType.HEATH));
         }
-        addRelation(OSMType.MEADOW, appController.getNodeTo(OSMType.MEADOW));
-        addRelation(OSMType.BUILDING, appController.getNodeTo(OSMType.BUILDING));
-        addRelation(OSMType.FOREST, appController.getNodeTo(OSMType.FOREST));
-        addRelation(OSMType.FARMLAND, appController.getNodeTo(OSMType.FARMLAND));
+        if(appController.getNodeTo(OSMType.MEADOW) != null) {
+            addRelation(OSMType.MEADOW, appController.getNodeTo(OSMType.MEADOW));
+        }
+        if(appController.getNodeTo(OSMType.BUILDING) != null) {
+            addRelation(OSMType.BUILDING, appController.getNodeTo(OSMType.BUILDING));
+        }
+        if(appController.getNodeTo(OSMType.FOREST) != null) {
+            addRelation(OSMType.FOREST, appController.getNodeTo(OSMType.FOREST));
+        }
+        if(appController.getNodeTo(OSMType.FARMLAND) != null) {
+            addRelation(OSMType.FARMLAND, appController.getNodeTo(OSMType.FARMLAND));
+        }
         addRelation(OSMType.COASTLINE, appController.getNodeTo(OSMType.COASTLINE));
     }
 
@@ -212,8 +221,8 @@ public class LinePathGenerator {
 
         Way way = new Way();
         way.addAllNodeIds(before);
-        way.addNodeId(-99999);
-        way.addNodeId(-99999);
+        //way.addNodeId(-99999);
+        //way.addNodeId(-99999);
         way.addAllNodeIds(after);
 
         return way;

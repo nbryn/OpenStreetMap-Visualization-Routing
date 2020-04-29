@@ -158,13 +158,13 @@ public class RoutingController {
 
     private Map<String, Double> extractRouteInfo(List<Edge> edges) {
         Map<String, Double> routeInfo = new LinkedHashMap<>();
-        DecimalFormat dm = new DecimalFormat("#.##");
 
         for (int i = edges.size() - 1; i >= 0; i--) {
             if (!routeInfo.containsKey(edges.get(i).getStreet())) {
-                routeInfo.put(edges.get(i).getStreet(), Double.parseDouble(dm.format(edges.get(i).getLength())));
+               
+                routeInfo.put(edges.get(i).getStreet(), (double) Math.round(edges.get(i).getLength() * 100) / 100);
             } else {
-                routeInfo.put(edges.get(i).getStreet(), Double.parseDouble(dm.format(routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength())));
+                routeInfo.put(edges.get(i).getStreet(), (double) Math.round((routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength())*100)/100);
             }
         }
 

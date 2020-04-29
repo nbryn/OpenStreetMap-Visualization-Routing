@@ -99,7 +99,7 @@ public class ViewController {
 
         try {
             file = new File(classLoader.getResource("samsoe.osm").getFile());
-            //file = new File("D:\\Projects\\Java\\BFST20Gruppe17Data\\danmark.bin");
+            //file = new File("D:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
             System.exit(1);
@@ -137,6 +137,12 @@ public class ViewController {
                 //view.searchRoute("Sølyst 3", "Vestergade 37", Vehicle.CAR);
                 Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
                 view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
+
+                if (appController.getRouteInfoFromModel() != null) {
+                    for (Map.Entry<String, Double> entry : appController.getRouteInfoFromModel().entrySet()) {
+                        displayPane.getChildren().add(new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km"));
+                    }
+                }
             }
         });
     }
@@ -156,7 +162,7 @@ public class ViewController {
     }
 
     private void setupDisplayPane() {
-        displayPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
+        /*displayPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 if (appController.getRouteInfoFromModel() != null) {
@@ -165,7 +171,7 @@ public class ViewController {
                     }
                 }
             }
-        });
+        });*/
     }
 
     private void setupZoomSlider() {
@@ -282,6 +288,7 @@ public class ViewController {
                 String searchText = searchAddress.getText();
 
                 view.setSearchString(searchText);
+                
 
             }
         });
@@ -310,6 +317,11 @@ public class ViewController {
     }
 
     public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+
+    }
+
+    public void save(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+        appController.generateBinary();
     }
 
     public void normalColorButton(ActionEvent actionEvent) {

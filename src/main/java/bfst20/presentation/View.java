@@ -167,7 +167,7 @@ public class View {
         drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
         drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
         drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
-        //drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
+        drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
         //drawKdTest();
@@ -350,16 +350,13 @@ public class View {
 
     private void traceMultipolygon(LinePath linePath, GraphicsContext gc) {
         gc.setFillRule(FillRule.EVEN_ODD);
+        gc.beginPath();
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2; i <= coords.length; i += 2) {
-            if (coords[i - 2] == -99999.0) {
-                gc.moveTo(coords[i - 1], coords[i]);
-            } else {
-                gc.lineTo(coords[i - 2], coords[i - 1]);
-            }
+            gc.lineTo(coords[i - 2], coords[i - 1]);
         }
-        gc.fill();
+        gc.stroke();
     }
 
 

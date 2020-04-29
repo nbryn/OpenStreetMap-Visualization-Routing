@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamException;
 public class AppController {
     private RoutingController routingController;
     private LinePathGenerator linePathGenerator;
-    private OSMElementData OSMElementData;
+    private OSMElementData osmElementData;
     private LinePathData linePathData;
     private boolean isBinary = false;
     private RoutingData routingData;
@@ -36,7 +36,7 @@ public class AppController {
     private View view;
 
     public AppController() {
-        OSMElementData = OSMElementData.getInstance();
+        osmElementData = OSMElementData.getInstance();
         linePathData = LinePathData.getInstance();
         routingData = RoutingData.getInstance();
         addressData = AddressData.getInstance();
@@ -46,8 +46,13 @@ public class AppController {
     }
 
     public View initialize() throws IOException {
+
+        //setInstances();
+
         routingController = routingController.getInstance();
+
         if (!isBinary) {
+            System.out.println("Creating linepaths");
             createLinePaths();
             //generateBinary();
             clearNodeData();
@@ -58,9 +63,6 @@ public class AppController {
         routingController.buildRoutingGraph();
         System.out.println("Done");
         view.initialize();
-        OSMElementData = null;
-        linePathData = null;
-        linePathGenerator = null;
         System.gc();
 
         return view;
@@ -74,6 +76,7 @@ public class AppController {
     public void generateHighways() {
         Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
         List<LinePath> highWays = new ArrayList<>();
+        System.out.println(linePaths.get(OSMType.HIGHWAY).size());
         highWays.addAll(linePaths.get(OSMType.HIGHWAY));
         highWays.addAll(linePaths.get(OSMType.TERTIARY));
         highWays.addAll(linePaths.get(OSMType.UNCLASSIFIED_HIGHWAY));
@@ -172,44 +175,44 @@ public class AppController {
     }
 
     public void addToModel(Relation relation) {
-        OSMElementData.addRelation(relation);
+        osmElementData.addRelation(relation);
     }
 
     public List<Relation> getRelationsFromModel() {
-        return OSMElementData.getRelations();
+        return osmElementData.getRelations();
     }
 
     public void addToModel(Bounds bounds) {
-        OSMElementData.setBounds(bounds);
+        osmElementData.setBounds(bounds);
     }
 
     public Bounds getBoundsFromModel() {
-        return OSMElementData.getBounds();
+        return osmElementData.getBounds();
     }
 
     public void addToModel(long id, Node node) {
-        OSMElementData.addToNodeMap(id, node);
+        osmElementData.addToNodeMap(id, node);
     }
 
     public void addToModel(Way way) {
-        OSMElementData.addWay(way);
+        osmElementData.addWay(way);
     }
 
     public List<Way> getWaysFromModel() {
-        return OSMElementData.getOSMWays();
+        return osmElementData.getOSMWays();
     }
 
     public Node getNodeFromModel(long id) {
-        return OSMElementData.getNode(id);
+        return osmElementData.getNode(id);
     }
 
     public Map<Long, Node> getNodesFromModel() {
-        return OSMElementData.getNodes();
+        return osmElementData.getNodes();
     }
 
 
     public void clearNodeData() {
-        OSMElementData.clearNodeData();
+        OSMElementData.getInstance().clearNodeData();
     }
 
     public Map<OSMType, List<LinePath>> getLinePathsFromModel() {
@@ -274,7 +277,8 @@ public class AppController {
     }
 
     public void alertOK(Alert.AlertType type, String text) {
-        view.displayError(type, text);
+        System.out.println(text);
+        //view.displayError(type, text);
     }
 
     //TODO: NOT BEING USED?

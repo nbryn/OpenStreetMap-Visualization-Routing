@@ -11,11 +11,9 @@ import java.util.regex.Pattern;
 public class AddressData {
     private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,.\\V ]*";
     private static AddressData addressData;
-    private Map<Long, Address> addresses;
     private TST tst;
 
     private AddressData() {
-        addresses = new HashMap<>();
         tst = new TST();
     }
 
@@ -28,7 +26,6 @@ public class AddressData {
     }
 
     public void addAddress(long id, Address address) {
-        //addresses.put(id, address);
         tst.put(address.toString(), address);
     }
 
@@ -37,11 +34,12 @@ public class AddressData {
     }
 
     public void saveAddresses(Map<Long, Address> addresses) {
-        this.addresses = addresses;
+        //this.addresses = addresses;
     }
 
     public Map<Long, Address> getAddresses() {
-        return addresses;
+        //return addresses;
+        return null;
     }
 
     public String[] parseAddress(String input) {
@@ -63,13 +61,13 @@ public class AddressData {
     public Address search(String input) {
         String[] addressStrings = parseAddress(input);
         if (addressStrings.length == 0) return null;
-
-        for (Address address : addresses.values()) {
+        
+        for (Address address : tst.keysWithPrefix(addressStrings[0])) {
             if (address.getStreet() == null) continue;
 
             if (
-                    address.getStreet().trim().equals(addressStrings[0].trim())
-                            && address.getHousenumber().trim().equals(addressStrings[1].trim())
+                    address.getStreet().trim().toLowerCase().equals(addressStrings[0].trim().toLowerCase())
+                            && address.getHousenumber().toLowerCase().trim().equals(addressStrings[1].trim().toLowerCase())
 
             ) {
 

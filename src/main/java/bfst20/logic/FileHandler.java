@@ -33,6 +33,10 @@ public class FileHandler {
     }
 
     public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
+        
+        appController.clearNodeData();
+        appController.clearLinePathData();
+
         long time = -System.nanoTime();
         String filename = file.getName();
         String fileExt = filename.substring(filename.lastIndexOf("."));
@@ -67,6 +71,7 @@ public class FileHandler {
             appController.addAddressesToModel(addresses);
             appController.addHighwaysToModel(highways);
         } catch (IOException e) {
+            e.printStackTrace();
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
             System.exit(1);
         } catch (ClassNotFoundException e) {
