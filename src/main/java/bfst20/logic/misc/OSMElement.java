@@ -1,11 +1,12 @@
 package bfst20.logic.misc;
 
-import javax.xml.stream.XMLStreamReader;
 
 public interface OSMElement {
 
-
+    //TODO: Remove setName?
     void setName(String name);
+
     void setMultipolygon(boolean multipolygon);
+
     void setOSMType(OSMType OSMType);
 }

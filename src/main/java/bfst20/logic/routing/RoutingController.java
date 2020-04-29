@@ -8,9 +8,8 @@ import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.misc.Vehicle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.*;
 
 public class RoutingController {
     private static RoutingController routingController;
@@ -44,6 +43,10 @@ public class RoutingController {
 
         generateGraphEdges(highways, graph);
         appController.addToModel(graph);
+
+        //TODO: Needed?
+        graph = null;
+        System.gc();
     }
 
     private void generateGraphEdges(List<LinePath> highWays, Graph graph) {
@@ -81,7 +84,15 @@ public class RoutingController {
 
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
             List<Edge> route = extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode);
+            Map<String, Double> routeInfo = extractRouteInfo(route);
             appController.addToModel(route);
+            appController.addRouteInfoToModel(routeInfo);
+
+
+            // TODO: Needed?
+            route = null;
+            routeInfo = null;
+            System.gc();
         }
 
         double dist = dijkstra.distTo(trgNode);
@@ -96,7 +107,7 @@ public class RoutingController {
         int searchInterval = 500;
 
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
-            if (edges.get(i).getName().equals(address.getStreet())) {
+            if (edges.get(i).getStreet().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
             }
         }
@@ -128,6 +139,7 @@ public class RoutingController {
     private List<Edge> extractEdgesOnRoute(Map<Node, Edge> edgesFromDijkstra, Node source, Node target) {
         List<Edge> edges = new ArrayList<>();
         Edge edge = edgesFromDijkstra.get(target);
+
         long id = 0;
 
         while (id != source.getId()) {
@@ -144,6 +156,21 @@ public class RoutingController {
         return edges;
     }
 
+    private Map<String, Double> extractRouteInfo(List<Edge> edges) {
+        Map<String, Double> routeInfo = new LinkedHashMap<>();
+        DecimalFormat dm = new DecimalFormat("#.##");
+
+        for (int i = edges.size() - 1; i >= 0; i--) {
+            if (!routeInfo.containsKey(edges.get(i).getStreet())) {
+                routeInfo.put(edges.get(i).getStreet(), Double.parseDouble(dm.format(edges.get(i).getLength())));
+            } else {
+                routeInfo.put(edges.get(i).getStreet(), Double.parseDouble(dm.format(routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength())));
+            }
+        }
+
+        return routeInfo;
+    }
+
     private int binarySearch(List<Edge> list, String address) {
         int low = 0;
         int high = list.size() - 1;
@@ -151,7 +178,7 @@ public class RoutingController {
         while (low <= high) {
             int mid = (low + high) / 2;
             Edge midElement = list.get(mid);
-            String midID = midElement.getName();
+            String midID = midElement.getStreet();
 
             if (midID.compareTo(address) < 0) {
                 low = mid + 1;

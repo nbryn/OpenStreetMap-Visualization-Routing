@@ -104,7 +104,7 @@ public class AppController {
 
         Graph graph = getGraphFromModel();
         List<Edge> edges = graph.getEdges();
-        edges.sort(Comparator.comparing(Edge::getName));
+        edges.sort(Comparator.comparing(Edge::getStreet));
 
         return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
     }
@@ -123,6 +123,14 @@ public class AppController {
 
     public void addToModel(List<Edge> route) {
         routingData.saveRoute(route);
+    }
+
+    public void addRouteInfoToModel(Map<String, Double> routeInfo) {
+        routingData.saveRouteInfo(routeInfo);
+    }
+
+    public Map<String, Double> getRouteInfoFromModel() {
+        return routingData.getRouteInfo();
     }
 
     public void loadFile(File file) {

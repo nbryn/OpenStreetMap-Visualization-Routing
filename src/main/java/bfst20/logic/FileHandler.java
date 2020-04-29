@@ -55,7 +55,7 @@ public class FileHandler {
 
     }
 
-    public void loadBinary(File file) {
+    private void loadBinary(File file) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
