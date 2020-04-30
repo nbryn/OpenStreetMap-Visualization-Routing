@@ -69,6 +69,10 @@ public class LinePathData {
         this.coastline = paths;
     }
 
+    public List<LinePath> getMotorway() {
+        return motorway;
+    }
+
 
     public void saveLinePaths(Map<OSMType, List<LinePath>> linePaths) {
         this.linePaths = linePaths;

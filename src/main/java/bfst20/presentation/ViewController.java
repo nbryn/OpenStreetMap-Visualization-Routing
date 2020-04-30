@@ -104,11 +104,12 @@ public class ViewController {
 
         try {
 
-            //file = new File(classLoader.getResource("farum1.osm").getFile());
+
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\DenmarkV2.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = new File("/home/nbryn/Desktop/DenmarkV2.bin");
+            file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //file = new File("/home/nbryn/Desktop/DenmarkV2.bin");
 
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
@@ -129,8 +130,6 @@ public class ViewController {
 
         setupSearchButton();
 
-        setupDisplayPane();
-
         setupRouteButton();
     }
 
@@ -144,7 +143,6 @@ public class ViewController {
                     return;
                 }
 
-                //view.searchRoute("Sølyst 3", "Vestergade 37", Vehicle.CAR);
                 Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
                 view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
 
@@ -177,19 +175,6 @@ public class ViewController {
             canvas.setHeight((double) newVal);
             view.repaint();
         });
-    }
-
-    private void setupDisplayPane() {
-        /*displayPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (appController.getRouteInfoFromModel() != null) {
-                    for (Map.Entry<String, Double> entry : appController.getRouteInfoFromModel().entrySet()) {
-                        displayPane.getChildren().add(new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km"));
-                    }
-                }
-            }
-        });*/
     }
 
     private void setupZoomSlider() {
@@ -242,9 +227,7 @@ public class ViewController {
                 }
             });
 
-
             wayPointFlowPane.getChildren().add(box);
-
 
             i++;
         }
@@ -301,7 +284,6 @@ public class ViewController {
 
 
     private void setupSearchButton() {
-
         searchAdressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {

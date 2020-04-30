@@ -48,7 +48,6 @@ public class AppController {
     }
 
     public View initialize() throws IOException {
-
         routingController = routingController.getInstance();
 
         if (!isBinary) {
@@ -56,14 +55,12 @@ public class AppController {
             createLinePaths();
             //generateBinary();
             clearNodeData();
+
             System.out.println("Generate Highways");
             generateHighways();
             System.out.println("Building graph");
-            try{
-                routingController.buildRoutingGraph();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+            routingController.buildRoutingGraph();
+
         }
         System.out.println("Done");
         view.initialize(isBinary);
@@ -72,7 +69,7 @@ public class AppController {
         return view;
     }
 
-    public void setSearchString(String search){
+    public void setSearchString(String search) {
         view.setSearchString(search);
     }
 
@@ -84,25 +81,20 @@ public class AppController {
     public void generateHighways() {
         Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
         List<LinePath> highWays = new ArrayList<>();
-        System.out.println(linePaths.get(OSMType.HIGHWAY).size());
-        highWays.addAll(linePaths.get(OSMType.HIGHWAY));
-        highWays.addAll(linePaths.get(OSMType.TERTIARY));
-        highWays.addAll(linePaths.get(OSMType.UNCLASSIFIED_HIGHWAY));
-        highWays.addAll(linePaths.get(OSMType.RESIDENTIAL_HIGHWAY));
-        highWays.addAll(linePaths.get(OSMType.PATH));
-        highWays.addAll(linePaths.get(OSMType.FOOTWAY));
-        highWays.addAll(linePaths.get(OSMType.TRACK));
 
-        if (linePaths.get(OSMType.MOTORWAY) != null) highWays.addAll(linePaths.get(OSMType.MOTORWAY));
+        if (linePathData.getMotorway() != null) highWays.addAll(linePathData.getMotorway());
+        for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
+            highWays.addAll(entry.getValue());
+        }
 
         linePathData.saveHighways(highWays);
     }
 
-    public Map<OSMType, KDTree> getAllLKDTrees() {
+    public Map<OSMType, KDTree> getAllKDTreesFromModel() {
         return kdTreeData.getAllLKDTrees();
     }
 
-    public void setAllKDTrees(Map<OSMType, KDTree> tree){
+    public void setAllKDTrees(Map<OSMType, KDTree> tree) {
         kdTreeData.setAllKDTrees(tree);
     }
 
@@ -119,6 +111,7 @@ public class AppController {
 
         Graph graph = getGraphFromModel();
         List<Edge> edges = graph.getEdges();
+        //TODO: Remove - Sorting edges before generating bin
         edges.sort(Comparator.comparing(Edge::getStreet));
 
         return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
@@ -214,7 +207,7 @@ public class AppController {
         return linePathData.getCoastlines();
     }
 
-    public void addCoastLine(List<LinePath> paths){
+    public void addCoastLine(List<LinePath> paths) {
         linePathData.addCoastLine(paths);
     }
 
@@ -240,9 +233,9 @@ public class AppController {
     }
 
     public void addToModel(OSMType type, LinePath linePath) {
-        if(type == OSMType.COASTLINE){
+        if (type == OSMType.COASTLINE) {
             linePathData.addSingleCoastLine(linePath);
-        }else{
+        } else {
             linePathData.addLinePath(type, linePath);
         }
     }
@@ -268,7 +261,7 @@ public class AppController {
     }
 
     public void addKDTreeToModel(OSMType type, List<LinePath> linePaths) {
-        if(type == OSMType.COASTLINE) return;
+        if (type == OSMType.COASTLINE) return;
         kdTreeData.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
     }
 
@@ -303,12 +296,12 @@ public class AppController {
         routingData.clearData();
     }
 
-	public TST getTST() {
-		return addressData.getTst();
-	}
+    public TST getTST() {
+        return addressData.getTst();
+    }
 
-	public void addTst(TST tst) {
+    public void addTst(TST tst) {
         addressData.setTst(tst);
-	}
+    }
 
 }

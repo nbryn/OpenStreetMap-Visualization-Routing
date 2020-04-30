@@ -118,7 +118,7 @@ public class FileHandler {
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(appController.getBoundsFromModel());
-        objectOut.writeObject(appController.getAllLKDTrees());
+        objectOut.writeObject(appController.getAllKDTreesFromModel());
         objectOut.writeObject(appController.getCoastlines());
         objectOut.writeObject(appController.getTST());
         objectOut.writeObject(appController.getGraphFromModel());

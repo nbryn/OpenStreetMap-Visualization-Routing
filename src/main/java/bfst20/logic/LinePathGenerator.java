@@ -54,14 +54,15 @@ public class LinePathGenerator {
 
             LinePath linePath = createLinePath(way);
 
-            OSMType OSMType = linePath.getOSMType();
+            OSMType type = linePath.getOSMType();
 
-            if (!appController.getLinePathsFromModel().containsKey(OSMType)) {
-                appController.addToModel(OSMType);
+            if (!appController.getLinePathsFromModel().containsKey(type)) {
+                appController.addToModel(type);
             }
 
-            if (OSMType != OSMType.PLACE) {
-                appController.addToModel(OSMType, linePath);
+            if (type != OSMType.PLACE) {
+                appController.addToModel(type, linePath);
+
             }
         }
     }

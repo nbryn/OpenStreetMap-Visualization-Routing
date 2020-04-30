@@ -249,6 +249,8 @@ public class Parser {
         for (long id : way.getNodeIds()) {
             Node node = appController.getNodeFromModel(id);
 
+            if(id == 6114291207L) System.out.println("Yesssir");
+
             way.addNode(node);
         }
 
@@ -273,7 +275,7 @@ public class Parser {
 
             else if (type == OSMType.UNCLASSIFIED) type = OSMType.UNCLASSIFIED_HIGHWAY;
 
-            else if (type == OSMType.MOTORWAY) type = OSMType.MOTORWAY;
+            else if (type == OSMType.MOTORWAY)  type = OSMType.MOTORWAY;
 
             else if (type == OSMType.TERTIARY) type = OSMType.TERTIARY;
 

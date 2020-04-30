@@ -23,8 +23,6 @@ public class Dijkstra {
 
 
     public void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
-        System.out.println(source.getId());
-        System.out.println(target.getId());
         setup(graph, source);
 
         while (!pq.isEmpty()) {
@@ -32,12 +30,13 @@ public class Dijkstra {
 
             for (Edge edge : graph.adj(min)) {
                 if (min.getId() == target.getId()) {
-                    // Source and Target have same ID
+                    // Source and Target = Same edge
                     if (edgeTo.size() == 0) {
                         edgeTo.put(target, edge);
                         return;
                     }
                 }
+
                 relax(edge, min, vehicle);
             }
         }
