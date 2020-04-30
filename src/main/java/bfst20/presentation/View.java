@@ -381,19 +381,36 @@ public class View {
         /*if (deltaY<0 && zoomLevel > 1.0)
         {
             scale(factor,x,y,deltaY);
-        }
-        if (deltaY>0 && zoomLevel <= 150) {
+        } else if (deltaY>0 && zoomLevel <= 150) {
             scale(factor,x,y,deltaY);
         }*/
-        scale(factor, x, y, deltaY);
-        reduceZoomLevel();
-        reduceTimesZoomed();
+        
+        System.out.println(zoomLevel);
+        zoomLevel *= factor;
+
+        System.out.println(zoomLevel);
+        if(zoomLevel >= 364471.7988313){
+            zoomLevel = 364471.7988313;
+            return;
+        }
+        if(zoomLevel < 2429.6667527942855){
+            zoomLevel = 2429.6667527942855;
+            return;
+        }
+        else {
+            scale(factor, x, y, deltaY);
+        }
+
+        //if(zoomLevel > 1.0) return;
+
+        //scale(factor, x, y, deltaY);
+        //reduceZoomLevel();
+        //reduceTimesZoomed();
     }
 
 
     public void scale(double factor, double x, double y, double deltaY) {
         trans.prependScale(factor, factor, x, y);
-        zoomLevel *= factor;
         timesZoomed += deltaY / 40;
         repaint();
     }
