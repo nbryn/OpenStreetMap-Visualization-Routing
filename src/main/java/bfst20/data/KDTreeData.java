@@ -52,4 +52,12 @@ public class KDTreeData {
         System.gc();
     }
 
+    public Map<OSMType, KDTree> getAllLKDTrees() {
+        return kdTrees;
+    }
+
+    public void setAllKDTrees(Map<OSMType, KDTree> tree){
+        this.kdTrees = tree;
+    }
+
 }

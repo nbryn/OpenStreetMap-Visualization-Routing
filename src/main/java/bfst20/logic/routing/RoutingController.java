@@ -36,8 +36,12 @@ public class RoutingController {
         List<Node> highwayNodes = new ArrayList<>();
 
         for (LinePath lp : highways) {
+            if(lp.getWay() == null) continue;
             highwayNodes.addAll(lp.getWay().getNodes());
         }
+
+        System.out.println(highwayNodes.size());
+
 
         Graph graph = new Graph(new ArrayList<>(highwayNodes));
 
@@ -104,8 +108,8 @@ public class RoutingController {
         List<Edge> closestEdges = new ArrayList<>();
 
         int addressIndex = binarySearch(edges, address.getStreet());
-        int searchInterval = 500;
-
+        int searchInterval = 5000;
+        
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
             if (edges.get(i).getStreet().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));

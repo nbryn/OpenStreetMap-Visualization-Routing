@@ -2,12 +2,13 @@ package bfst20.logic.routing;
 
 import bfst20.logic.entities.Node;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Graph {
+public class Graph implements Serializable{
     private Map<Node, List<Edge>> adj;
     private List<Edge> edges;
     private List<Node> nodes;

@@ -16,6 +16,7 @@ import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
+import bfst20.logic.ternary.TST;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
@@ -54,15 +55,19 @@ public class AppController {
         if (!isBinary) {
             System.out.println("Creating linepaths");
             createLinePaths();
-            generateBinary();
+            //generateBinary();
             clearNodeData();
+            System.out.println("Generate Highways");
+            generateHighways();
+            System.out.println("Done, building graph");
+            try{
+                routingController.buildRoutingGraph();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
-        System.out.println("Generate Highways");
-        generateHighways();
-        System.out.println("Done, building graph");
-        routingController.buildRoutingGraph();
         System.out.println("Done");
-        view.initialize();
+        view.initialize(isBinary);
         System.gc();
 
         return view;
@@ -90,10 +95,17 @@ public class AppController {
         linePathData.saveHighways(highWays);
     }
 
+    public Map<OSMType, KDTree> getAllLKDTrees() {
+        return kdTreeData.getAllLKDTrees();
+    }
+
+    public void setAllKDTrees(Map<OSMType, KDTree> tree){
+        kdTreeData.setAllKDTrees(tree);
+    }
+
     public List<LinePath> getHighwaysFromModel() {
         return linePathData.getHighWays();
     }
-
 
     public void addHighwaysToModel(List<LinePath> highways) {
         linePathData.saveHighways(highways);
@@ -106,6 +118,7 @@ public class AppController {
         Address target = findAddress(targetQuery);
 
         Graph graph = getGraphFromModel();
+
         List<Edge> edges = graph.getEdges();
         edges.sort(Comparator.comparing(Edge::getStreet));
 
@@ -210,6 +223,13 @@ public class AppController {
         return osmElementData.getNodes();
     }
 
+    public List<LinePath> getCoastlines() {
+        return linePathData.getCoastlines();
+    }
+
+    public void addCoastLine(List<LinePath> paths){
+        linePathData.addCoastLine(paths);
+    }
 
     public void clearNodeData() {
         OSMElementData.getInstance().clearNodeData();
@@ -237,7 +257,11 @@ public class AppController {
     }
 
     public void addToModel(OSMType type, LinePath linePath) {
-        linePathData.addLinePath(type, linePath);
+        if(type == OSMType.COASTLINE){
+            linePathData.addSingleCoastLine(linePath);
+        }else{
+            linePathData.addLinePath(type, linePath);
+        }
     }
 
     public void addToModel(OSMType type) {
@@ -263,8 +287,9 @@ public class AppController {
         return kdTreeData.getRect();
     }
 
-    public void addKDTreeToModel(OSMType OSMType, List<LinePath> linePaths) {
-        kdTreeData.addKDTree(OSMType, new KDTree(linePaths, getRectFromModel()));
+    public void addKDTreeToModel(OSMType type, List<LinePath> linePaths) {
+        if(type == OSMType.COASTLINE) return;
+        kdTreeData.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
     }
 
     public KDTree getKDTreeFromModel(OSMType OSMType) {
@@ -290,4 +315,13 @@ public class AppController {
             e.printStackTrace();
         }
     }
+
+	public TST getTST() {
+		return addressData.getTst();
+	}
+
+	public void addTst(TST tst) {
+        addressData.setTst(tst);
+	}
+
 }
