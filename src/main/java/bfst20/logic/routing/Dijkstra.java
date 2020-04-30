@@ -56,6 +56,7 @@ public class Dijkstra {
 
     private void relax(Edge edge, Node min, Vehicle vehicle) {
         // Current node can be target or source for current edge because the graph is not directed
+
         Node current;
         if (min == edge.getSource()) {
             current = edge.getTarget();
@@ -63,8 +64,6 @@ public class Dijkstra {
             // As we know it's not oneway when coming from target
             if (!edge.isOneWay(vehicle)) {
                 vehicleAllowed(edge, min, vehicle, current);
-            } else {
-                if(edge.getStreet().equals("Paltholmvej") || edge.getStreet().equals("Stavnsholtvej")) System.out.println(edge.getStreet());
             }
         } else {
             current = edge.getSource();

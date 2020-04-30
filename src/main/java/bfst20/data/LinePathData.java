@@ -48,33 +48,27 @@ public class LinePathData {
         return linePaths;
     }
 
-    public void addLinePath(OSMType OSMType, LinePath linePath) {
-        if (linePaths.get(OSMType) == null) linePaths.put(OSMType, new ArrayList<>());
-        if(OSMType == OSMType.COASTLINE){
+    public void addLinePath(OSMType type, LinePath linePath) {
+        if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
+        if(type == type.COASTLINE){
             coastline.add(linePath);
             return;
-        }else if(OSMType == OSMType.MOTORWAY){
+        }else if(type == type.MOTORWAY){
             motorway.add(linePath);
             return;
         }
-        linePaths.get(OSMType).add(linePath);
+        linePaths.get(type).add(linePath);
     }
 
     public List<LinePath> getCoastlines(){
         return coastline;
     }
 
-    public List<LinePath> getMotorway() {
-        return motorway;
-    }
 
     public void addCoastLine(List<LinePath> paths){
         this.coastline = paths;
     }
 
-    public void addMotorway(List<LinePath> motorway){
-        this.motorway = motorway;
-    }
 
     public void saveLinePaths(Map<OSMType, List<LinePath>> linePaths) {
         this.linePaths = linePaths;
@@ -118,11 +112,5 @@ public class LinePathData {
         coastline.add(linePath);
     }
     
-    public void addSingleMotorway(LinePath linePath) {
-        if(motorway == null){
-            motorway = new ArrayList<>();
-        }
 
-        motorway.add(linePath);
-	}
 }

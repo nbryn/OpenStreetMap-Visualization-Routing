@@ -90,8 +90,8 @@
                                              <children>
                                                <VBox prefHeight="77.0" prefWidth="276.0">
                                                   <children>
-                                                      <TextField fx:id="searchbar" text="issehoved 7" prefHeight="48.0" prefWidth="330.0" promptText="Insert address" />
-                                                      <TextField fx:id="destinationBar" text="landevejen 29" prefHeight="48.0" prefWidth="330.0" promptText="Insert destination" />
+                                                      <TextField fx:id="searchbar" text="Fuglsangpark 28" prefHeight="48.0" prefWidth="330.0" promptText="Insert address" />
+                                                      <TextField fx:id="destinationBar" text="Gedevasevej 4" prefHeight="48.0" prefWidth="330.0" promptText="Insert destination" />
                                                   </children>
                                                </VBox>
                                                <Button fx:id="searchRouteButton" mnemonicParsing="false" prefHeight="96.0" prefWidth="55.0" text="Search" />

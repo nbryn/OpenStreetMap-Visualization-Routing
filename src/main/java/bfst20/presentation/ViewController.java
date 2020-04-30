@@ -99,9 +99,9 @@ public class ViewController {
 
         try {
 
-            //file = new File(classLoader.getResource("samsoe.osm").getFile());
+            file = new File(classLoader.getResource("farum1.osm").getFile());
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
-            file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\DenmarkV2.bin");
+            //file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\DenmarkV2.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\Denmark.bin");
 

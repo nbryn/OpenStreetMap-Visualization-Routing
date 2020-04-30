@@ -113,7 +113,10 @@ public class LinePathGenerator {
         if(appController.getNodeTo(OSMType.FARMLAND) != null) {
             addRelation(OSMType.FARMLAND, appController.getNodeTo(OSMType.FARMLAND));
         }
-        addRelation(OSMType.COASTLINE, appController.getNodeTo(OSMType.COASTLINE));
+        if(appController.getNodeTo(OSMType.COASTLINE) != null) {
+            addRelation(OSMType.COASTLINE, appController.getNodeTo(OSMType.COASTLINE));
+        }
+
     }
 
     private void addRelation(OSMType OSMType, Map<Node, Way> nodeTo) {
