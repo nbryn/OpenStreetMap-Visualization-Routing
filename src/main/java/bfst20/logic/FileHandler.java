@@ -1,6 +1,5 @@
 package bfst20.logic;
 
-import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import javafx.scene.control.Alert;
