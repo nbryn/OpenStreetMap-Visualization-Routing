@@ -91,8 +91,10 @@
                                              <children>
                                                <VBox prefHeight="77.0" prefWidth="276.0">
                                                   <children>
+
                                                       <TextField fx:id="searchbar" prefHeight="48.0" prefWidth="330.0" promptText="Insert address" text="issehoved 7" />
                                                       <TextField fx:id="destinationBar" prefHeight="48.0" prefWidth="330.0" promptText="Insert destination" text="landevejen 29" />
+
                                                   </children>
                                                </VBox>
                                                <Button fx:id="searchRouteButton" mnemonicParsing="false" prefHeight="96.0" prefWidth="55.0" text="Search" />

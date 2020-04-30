@@ -1,17 +1,20 @@
 package bfst20.logic;
 
+import bfst20.data.LinePathData;
 import bfst20.logic.LinePathGenerator;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.misc.OSMType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class LinePathGeneratorTest {
     static LinePathGenerator linePathGenerator;
@@ -97,4 +100,5 @@ public class LinePathGeneratorTest {
         assertEquals(way.getFirstNodeId(), 1);
         assertEquals(way.getNodeIds().size(), 10);
     }
+
 }

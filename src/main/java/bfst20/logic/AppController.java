@@ -25,6 +25,7 @@ import javafx.scene.control.Label;
 import javax.xml.stream.XMLStreamException;
 
 public class AppController {
+
     private RoutingController routingController;
     private LinePathGenerator linePathGenerator;
     private OSMElementData osmElementData;

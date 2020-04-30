@@ -161,16 +161,16 @@ public class View {
             drawLinePath(path, pixelwidth);
         }
 
-        drawTypeKdTree(OSMType.BEACH, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.BEACH, rect, pixelwidth);
         drawTypeKdTree(OSMType.FARMLAND, rect, pixelwidth);
         drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
-        drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
         drawTypeKdTree(OSMType.WOOD, rect, pixelwidth);
         //drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
         drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
         drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
         drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
-        drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
+        //drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
         //drawKdTest();

@@ -248,15 +248,16 @@ public class Parser {
 
         for (long id : way.getNodeIds()) {
             Node node = appController.getNodeFromModel(id);
+
             way.addNode(node);
         }
 
         if (tags.containsKey("maxspeed")) way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
 
         if (tags.containsKey("oneway")) {
-            if (tags.get("oneway").equals("yes") && tags.get("highway") != "motorway" && tags.get("highway") != "tertiary") {
-                way.setOneWay(true);
-            } else way.setOneWay(false);
+            if (tags.get("oneway").equals("yes")) way.setOneWay(true);
+
+            else way.setOneWay(false);
         }
         OSMType type = OSMType.HIGHWAY;
 

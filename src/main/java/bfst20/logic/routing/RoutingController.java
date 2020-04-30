@@ -61,26 +61,29 @@ public class RoutingController {
                     Node sourceNode = way.getNodes().get(i - 1);
                     Node targetNode = way.getNodes().get(i);
 
-                    addEdgeToGraph(graph, way, OSMType, sourceNode, targetNode);
+                    double length = calculateDistBetween(sourceNode, targetNode);
+
+                    Edge edge = new Edge(OSMType, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
+                            way.isOneWay());
+
+                    if (edge.getStreet().equals("Farum Hovedgade")) {
+                        if (edge.getSource().getId() == 2877365550L)
+                            System.out.println("Source: " + edge.getSource().getId());
+
+                        if (edge.getTarget().getId() == 2877365550L)
+                            System.out.println("Target: " + edge.getTarget().getId());
+                    }
+
+                    graph.addEdge(edge);
                 }
             }
         }
     }
 
-    private void addEdgeToGraph(Graph graph, Way way, OSMType OSMType, Node sourceNode, Node targetNode) {
-        if (sourceNode != null && targetNode != null) {
-            double length = calculateDistBetween(sourceNode, targetNode);
-
-            Edge edge = new Edge(OSMType, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
-                    way.isOneWay());
-
-            graph.addEdge(edge);
-        }
-    }
 
     public double calculateShortestRoute(Graph graph, List<Edge> edges, Address srcAddress, Address trgAddress, Vehicle vehicle) {
-        Node srcNode = findClosestNodeTo(srcAddress, edges);
-        Node trgNode = findClosestNodeTo(trgAddress, edges);
+        Node srcNode = findClosestNodeTo(srcAddress, edges, vehicle);
+        Node trgNode = findClosestNodeTo(trgAddress, edges, vehicle);
 
         dijkstra = new Dijkstra(graph, srcNode, trgNode, vehicle);
 
@@ -109,27 +112,31 @@ public class RoutingController {
         return dist;
     }
 
-    private Node findClosestNodeTo(Address address, List<Edge> edges) {
+    private Node findClosestNodeTo(Address address, List<Edge> edges, Vehicle vehicle) {
         List<Edge> closestEdges = new ArrayList<>();
 
         int addressIndex = binarySearch(edges, address.getStreet());
 
-        int searchInterval = 10000;
-        
+        System.out.println(address.getStreet());
+        System.out.println(edges.size());
+        System.out.println("AddressIndex: " + addressIndex);
+
+        int searchInterval = 5000;
+
 
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
-            if (edges.get(i).getStreet().equals(address.getStreet())) {
+            if (i >= 0 && edges.get(i).getStreet().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
             }
         }
 
-        Node closestNode = calculateDistanceBetween(address, closestEdges);
+        Node closestNode = calculateDistanceBetween(address, closestEdges, vehicle);
 
         return closestNode;
     }
 
 
-    private Node calculateDistanceBetween(Address address, List<Edge> closestEdges) {
+    private Node calculateDistanceBetween(Address address, List<Edge> closestEdges, Vehicle vehicle) {
         float shortestDistance = Float.POSITIVE_INFINITY;
         Node closestNode = null;
 
@@ -137,7 +144,7 @@ public class RoutingController {
             float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2)
                     + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
 
-            if (distance < shortestDistance) {
+            if (distance < shortestDistance && e.isVehicleAllowed(vehicle)) {
                 closestNode = e.getTarget();
                 shortestDistance = distance;
             }
@@ -190,11 +197,11 @@ public class RoutingController {
         while (low <= high) {
             int mid = (low + high) / 2;
             Edge midElement = list.get(mid);
-            String midID = midElement.getStreet();
+            String midStreet = midElement.getStreet();
 
-            if (midID.compareTo(address) < 0) {
+            if (midStreet.compareTo(address) < 0) {
                 low = mid + 1;
-            } else if (midID.compareTo(address) > 0) {
+            } else if (midStreet.compareTo(address) > 0) {
                 high = mid - 1;
             } else {
                 return low;
