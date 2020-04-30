@@ -26,7 +26,8 @@ public class AddressData {
     }
 
     public void addAddress(long id, Address address) {
-        tst.put(address.toString(), address);
+        if(address.getStreet() == null) return;
+        tst.put(address.getStreet(), address);
     }
 
     public TST getTst(){

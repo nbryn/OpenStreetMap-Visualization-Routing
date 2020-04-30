@@ -113,7 +113,9 @@ public class RoutingController {
         List<Edge> closestEdges = new ArrayList<>();
 
         int addressIndex = binarySearch(edges, address.getStreet());
+
         int searchInterval = 10000;
+        
 
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
             if (edges.get(i).getStreet().equals(address.getStreet())) {
