@@ -67,7 +67,7 @@ public class AppController {
             }
         }
         System.out.println("Done");
-        view.initialize();
+        view.initialize(isBinary);
         System.gc();
 
         return view;

@@ -63,13 +63,15 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    public void initialize() {
+    public void initialize(boolean isBin) {
         trans = new Affine();
         linePaths = appController.getLinePathsFromModel();
         coastLine = appController.getCoastlines();
-        //appController.clearLinePathData();
+        if(!isBin){
+            appController.clearLinePathData();
 
-        //createKDTrees();
+            createKDTrees();
+        }
 
         System.gc();
 
