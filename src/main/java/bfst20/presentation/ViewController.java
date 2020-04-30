@@ -67,9 +67,12 @@ public class ViewController {
     private Canvas canvas;
     @FXML
     private HBox hbox;
+    @FXML
+    private VBox suggestionsList;
+    private SuggestionHandler suggestionHandler;
+
+
     private View view;
-
-
 
 
 
@@ -86,6 +89,8 @@ public class ViewController {
         canvas.heightProperty().bind(canvasParent.heightProperty());
 
         System.out.println(canvas.getWidth());*/
+
+        suggestionHandler = new SuggestionHandler(appController, searchAddress);
 
         setupHbox();
 
@@ -294,7 +299,9 @@ public class ViewController {
         });
     }
 
+
     private void setupSearchButton() {
+
         searchAdressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -302,6 +309,31 @@ public class ViewController {
 
                 view.setSearchString(searchText);
                 
+
+            }
+        });
+
+        searchAddress.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                                String oldValue, String newValue) {
+
+                if(newValue.equals("")){
+                    suggestionHandler.hide();
+                    return;
+                }
+
+                suggestionHandler.show(newValue);
+            }
+        });
+
+        //https://stackoverflow.com/questions/16549296/how-perform-task-on-javafx-textfield-at-onfocus-and-outfocus
+        searchAddress.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+                if (!newPropertyValue) {
+                    suggestionHandler.hide();
+                }
 
             }
         });

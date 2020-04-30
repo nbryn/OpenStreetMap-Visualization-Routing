@@ -176,7 +176,8 @@ public class View {
         //drawKdTest();
 
         try {
-            mouseLocationLabel.setText(appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName());
+            String name = appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName();
+            mouseLocationLabel.setText(name == null ? "Unknown way" : name);
         } catch (Exception e) {
         }
 
@@ -323,36 +324,27 @@ public class View {
 
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
-        if (linePath.getOSMType() == OSMType.TREE_ROW && linePath.getWayId() == 165460372) {
-            String i = "";
-        }
 
         OSMType OSMType = linePath.getOSMType();
         gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
         gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
-        gc.beginPath();
         gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
 
-        //System.out.println(linePath.getOSMType());
 
         if (linePath.isMultipolygon()) {
             traceMultipolygon(linePath, gc);
         } else {
             trace(linePath, gc);
-            gc.stroke();
-
-            if (OSMType.getFill(linePath.getOSMType())) {
-                gc.fill();
-            }
         }
     }
 
     private void traceMultipolygon(LinePath linePath, GraphicsContext gc) {
-        gc.setFillRule(FillRule.EVEN_ODD);
         gc.beginPath();
+        gc.setFillRule(FillRule.EVEN_ODD);
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2; i <= coords.length; i += 2) {
+
             gc.lineTo(coords[i - 2], coords[i - 1]);
         }
         gc.stroke();
@@ -360,10 +352,17 @@ public class View {
 
 
     private void trace(LinePath linePath, GraphicsContext gc) {
+        gc.beginPath();
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
         for (int i = 2; i <= coords.length; i += 2) {
             gc.lineTo(coords[i - 2], coords[i - 1]);
+        }
+
+        gc.stroke();
+
+        if (OSMType.getFill(linePath.getOSMType())) {
+            gc.fill();
         }
     }
 

@@ -71,6 +71,10 @@ public class AppController {
         return view;
     }
 
+    public void setSearchString(String search){
+        view.setSearchString(search);
+    }
+
     public void createLinePaths() {
         linePathGenerator = LinePathGenerator.getInstance();
         linePathGenerator.createLinePaths();
