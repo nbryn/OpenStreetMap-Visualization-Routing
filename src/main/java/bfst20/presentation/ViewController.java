@@ -98,8 +98,14 @@ public class ViewController {
         File file = null;
 
         try {
-            file = new File(classLoader.getResource("samsoe.osm").getFile());
-            //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
+
+            //file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
+            file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\DenmarkV2.bin");
+            //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
+
+            //file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\Denmark.bin");
+
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
             System.exit(1);

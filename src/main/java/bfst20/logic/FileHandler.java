@@ -1,10 +1,12 @@
 package bfst20.logic;
 
-import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMType;
+import bfst20.logic.routing.Graph;
+import bfst20.logic.ternary.TST;
+import bfst20.logic.kdtree.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -62,14 +64,16 @@ public class FileHandler {
     private void loadBinary(File file) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
-            Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
-            Map<Long, Address> addresses = (Map<Long, Address>) in.readObject();
-            List<LinePath> highways = (List<LinePath>) in.readObject();
+            Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
+            List<LinePath> coastline = (List<LinePath>) in.readObject();
+            TST tst = (TST) in.readObject();
+            Graph graph = (Graph) in.readObject();
 
             appController.addToModel(bounds);
-            appController.addToModel(linePaths);
-            appController.addAddressesToModel(addresses);
-            appController.addHighwaysToModel(highways);
+            appController.setAllKDTrees(tree);
+            appController.addCoastLine(coastline);
+            appController.addTst(tst);
+            appController.addToModel(graph);
         } catch (IOException e) {
             e.printStackTrace();
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
@@ -114,9 +118,10 @@ public class FileHandler {
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(appController.getBoundsFromModel());
-        objectOut.writeObject(appController.getLinePathsFromModel());
-        objectOut.writeObject(appController.getAddressesFromModel());
-        objectOut.writeObject(appController.getHighwaysFromModel());
+        objectOut.writeObject(appController.getAllLKDTrees());
+        objectOut.writeObject(appController.getCoastlines());
+        objectOut.writeObject(appController.getTST());
+        objectOut.writeObject(appController.getGraphFromModel());
         objectOut.close();
     }
 }

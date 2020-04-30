@@ -1,8 +1,10 @@
 package bfst20.logic.kdtree;
 
+import java.io.Serializable;
+
 import bfst20.logic.entities.LinePath;
 
-public class KDNode {
+public class KDNode implements Serializable{
     private LinePath path;
     private KDNode left;
     private KDNode right;

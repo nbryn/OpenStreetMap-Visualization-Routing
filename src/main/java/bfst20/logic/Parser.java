@@ -188,16 +188,14 @@ public class Parser {
 
 
     private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
-        if (tags.size() == 0)
-            return;
+        if (tags.size() == 0) return;
 
         String city = tags.get("addr:city");
         String housenumber = tags.get("addr:housenumber");
         String postcode = tags.get("addr:postcode");
         String street = tags.get("addr:street");
 
-        if (city == null)
-            return;
+        if (city == null) return;
 
         Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
         appController.addToModel(lastNodeId, address);
@@ -219,6 +217,7 @@ public class Parser {
 
                     OSMType type = OSMType.LANDUSE;
 
+                    //TODO: Needed?
                     try {
                         type = OSMType.valueOf(tags.get("landuse").toUpperCase());
                     } catch (Exception e) {
@@ -255,8 +254,9 @@ public class Parser {
         if (tags.containsKey("maxspeed")) way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
 
         if (tags.containsKey("oneway")) {
-            if (tags.get("oneway").equals("yes")) way.setOneWay(true);
-            else way.setOneWay(false);
+            if (tags.get("oneway").equals("yes") && tags.get("highway") != "motorway" && tags.get("highway") != "tertiary") {
+                way.setOneWay(true);
+            } else way.setOneWay(false);
         }
         OSMType type = OSMType.HIGHWAY;
 
@@ -272,7 +272,13 @@ public class Parser {
 
             else if (type == OSMType.UNCLASSIFIED) type = OSMType.UNCLASSIFIED_HIGHWAY;
 
+            else if (type == OSMType.MOTORWAY) type = OSMType.MOTORWAY;
+
+            else if (type == OSMType.TERTIARY) type = OSMType.TERTIARY;
+
             else if (type == OSMType.FOOTWAY) type = OSMType.FOOTWAY;
+
+            else if (type == OSMType.CYCLEWAY) type = OSMType.CYCLEWAY;
 
             else if (type == OSMType.PATH) type = OSMType.PATH;
 

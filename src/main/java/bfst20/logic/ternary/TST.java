@@ -2,13 +2,16 @@ package bfst20.logic.ternary;
 
 import bfst20.logic.entities.Address;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
-public class TST {
-    private class Node {
+public class TST implements Serializable{
+    private class Node implements Serializable {
         private Node left, mid, right;
-        private Address value;
+        private List<Address> value;
         private char key;
 
 
@@ -32,7 +35,7 @@ public class TST {
             return key;
         }
 
-        public Address getValue() {
+        public List<Address> getValue() {
             return value;
         }
 
@@ -49,7 +52,11 @@ public class TST {
         }
 
         public void setValue(Address address) {
-            this.value = address;
+            if(value == null){
+                value = new ArrayList<>();
+            }
+
+            value.add(address);
         }
     }
 
@@ -87,8 +94,8 @@ public class TST {
         return parent;
     }
 
-    public Address get(String key) {
-
+    public List<Address> get(String key) {
+        key = key.toLowerCase();
         Node result = get(root, key, 0);
 
         return result == null ? null : result.getValue();
@@ -119,7 +126,7 @@ public class TST {
         Node startNode = get(root, prefix, 0);
 
         if (startNode == null) return queue;
-        if (startNode.getValue() != null) queue.add(startNode.getValue());
+        if (startNode.getValue() != null) queue.addAll(startNode.getValue());
 
         collect(startNode.getMid(), new StringBuilder(prefix), queue);
 
@@ -129,7 +136,7 @@ public class TST {
     private void collect(Node parent, StringBuilder prefix, Queue<Address> queue) {
         if (parent == null) return;
         collect(parent.getLeft(), prefix, queue);
-        if (parent.getValue() != null) queue.add(parent.getValue());
+        if (parent.getValue() != null) queue.addAll(parent.getValue());
         collect(parent.getMid(), prefix.append(parent.getKey()), queue);
         prefix.deleteCharAt(prefix.length() - 1);
         collect(parent.getRight(), prefix, queue);
