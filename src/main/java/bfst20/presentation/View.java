@@ -4,19 +4,18 @@ import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.kdtree.KDNode;
+import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
-import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.text.Font;
@@ -34,7 +33,7 @@ public class View {
     private boolean isColorBlindMode = false;
     private Affine trans = new Affine();
     private AppController appController;
-    private List<LinePath> coastLine;
+    private List<LinePath> coastlines;
     private String addressString;
     private GraphicsContext gc;
     private Point2D mousePos;
@@ -61,7 +60,7 @@ public class View {
     public void initialize(boolean isBinary) {
         trans = new Affine();
         linePaths = appController.getLinePathsFromModel();
-        coastLine = appController.getCoastlines();
+        coastlines = appController.getCoastlines();
 
         if (!isBinary) {
             appController.clearLinePathData();
@@ -157,23 +156,15 @@ public class View {
 
         //drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
 
-        for (LinePath path : coastLine) {
+        for (LinePath path : coastlines) {
             drawLinePath(path, pixelwidth);
         }
 
-        //drawTypeKdTree(OSMType.BEACH, rect, pixelwidth);
-        drawTypeKdTree(OSMType.FARMLAND, rect, pixelwidth);
-        drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
-        //drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
-        drawTypeKdTree(OSMType.WOOD, rect, pixelwidth);
-        //drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
-        drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
-        drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
-        drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
-        //drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
+        Map<OSMType, KDTree> trees = appController.getAllKDTreesFromModel();
 
-        drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
-        //drawKdTest();
+        for (Map.Entry<OSMType, KDTree> entry : trees.entrySet()) {
+            if (entry.getValue() != null) drawKdTree(entry.getKey(), entry.getValue(), rect, pixelwidth);
+        }
 
         try {
             String name = appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepath().getName();
@@ -202,6 +193,16 @@ public class View {
         }
     }
 
+    public void drawKdTree(OSMType type, KDTree kdTree, Rect rect, double lineWidth) {
+        if (OSMType.getZoomLevel(type) <= trans.determinant()) {
+            for (LinePath linePath : kdTree.query(rect, trans.determinant())) {
+
+                drawLinePath(linePath, lineWidth);
+                gc.fill();
+            }
+        }
+    }
+
 
     private Rect createRect(int boxSize) {
         Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
@@ -222,6 +223,7 @@ public class View {
         }
     }
 
+    //TODO: Move
     List<Edge> route = null;
 
 
@@ -239,6 +241,7 @@ public class View {
         repaint();
     }
 
+    //TODO: Better naming
     public void drawSearchLocation(double lineWidth) {
         if (addressString == null) return;
         AddressData addressData = AddressData.getInstance();
@@ -255,6 +258,8 @@ public class View {
         //gc.strokeRect(address.getLon(), address.getLat(), 1, 1);
     }
 
+
+    //TODO: Better naming
     private void drawLocation(double lineWidth, int bubbleSize, float lon, float lat, String id) {
         gc.beginPath();
         gc.setStroke(Color.RED);
@@ -271,17 +276,8 @@ public class View {
 
     }
 
-    public void drawTypeKdTree(OSMType type, Rect rect, double lineWidth) {
-        if (OSMType.getZoomLevel(type) <= trans.determinant()) {
-            for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant())) {
 
-                drawLinePath(linePath, lineWidth);
-                gc.fill();
-            }
-        }
-    }
-
-    public void drawTypeKdTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
+    public void drawKdTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
         //TODO: WORK :D
         for (LinePath linePath : appController.getKDTreeFromModel(type).query(rect, trans.determinant(), point)) {
 
@@ -290,6 +286,8 @@ public class View {
         }
     }
 
+
+    //TODO: Remove?
     public void drawKdTest() {
         KDNode root = appController.getKDTreeFromModel(OSMType.HIGHWAY).getRoot();
 
@@ -341,31 +339,30 @@ public class View {
     private void traceMultipolygon(LinePath linePath, GraphicsContext gc) {
         gc.beginPath();
         gc.setFillRule(FillRule.EVEN_ODD);
-        float[] coords = linePath.getCoords();
-        gc.moveTo(coords[0], coords[1]);
-        for (int i = 2; i <= coords.length; i += 2) {
-
-            gc.lineTo(coords[i - 2], coords[i - 1]);
-        }
-        gc.stroke();
+        draw(linePath, gc);
     }
 
 
     private void trace(LinePath linePath, GraphicsContext gc) {
         gc.beginPath();
-        float[] coords = linePath.getCoords();
-        gc.moveTo(coords[0], coords[1]);
-        for (int i = 2; i <= coords.length; i += 2) {
-            gc.lineTo(coords[i - 2], coords[i - 1]);
-        }
-
-        gc.stroke();
+        draw(linePath, gc);
 
         if (OSMType.getFill(linePath.getOSMType())) {
             gc.fill();
         }
     }
 
+    private void draw(LinePath linePath, GraphicsContext gc) {
+        float[] coords = linePath.getCoords();
+        gc.moveTo(coords[0], coords[1]);
+        for (int i = 2; i <= coords.length; i += 2) {
+            gc.lineTo(coords[i - 2], coords[i - 1]);
+        }
+
+        gc.stroke();
+    }
+
+    //TODO: Better Naming
     public Point2D toModelCoords(double x, double y) {
         try {
             return trans.inverseTransform(x, y);

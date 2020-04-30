@@ -7,7 +7,7 @@ import java.io.Serializable;
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
-public class Edge implements Serializable{
+public class Edge implements Serializable {
     private OSMType highwayType;
     private boolean isOneWay;
     private double length;
@@ -17,7 +17,7 @@ public class Edge implements Serializable{
     private Node target;
 
 
-
+    //TODO: Cleanup
     public Edge(OSMType highwayType, Node source, Node target, double length, String street, int maxSpeed, boolean isOneWay) {
         this.maxSpeed = maxSpeed != 0 ? maxSpeed : OSMType.getMaxSpeed(highwayType);
         this.highwayType = highwayType;
@@ -38,7 +38,7 @@ public class Edge implements Serializable{
     public boolean isVehicleAllowed(Vehicle vehicle) {
         if (vehicle == Vehicle.BICYCLE && highwayType == OSMType.MOTORWAY || vehicle == Vehicle.WALK && highwayType == OSMType.MOTORWAY) {
             return false;
-        } else if (vehicle == Vehicle.CAR && highwayType == OSMType.FOOTWAY || vehicle == Vehicle.CAR && highwayType == OSMType.PATH) {
+        } else if (vehicle == Vehicle.CAR && highwayType == OSMType.FOOTWAY || vehicle == Vehicle.CAR && highwayType == OSMType.PATH || vehicle == Vehicle.CAR && highwayType == OSMType.CYCLEWAY) {
             return false;
         }
 

@@ -3,10 +3,7 @@ package bfst20.logic.routing;
 import bfst20.logic.entities.Node;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Graph implements Serializable{
     private Map<Node, List<Edge>> adj;
@@ -16,16 +13,19 @@ public class Graph implements Serializable{
 
 
     public Graph(List<Node> nodes) {
-        this.nodes = nodes;
+        this.nodeCount = nodes.size();
         edges = new ArrayList<>();
         adj = new HashMap<>();
-        this.nodeCount = nodes.size();
+        this.nodes = nodes;
 
         for (int i = 0; i < nodeCount; i++) {
-
             adj.put(nodes.get(i), new ArrayList<>());
         }
 
+    }
+
+    public void sortEdges() {
+        edges.sort(Comparator.comparing(Edge::getStreet));
     }
 
     public int nodeCount() {
