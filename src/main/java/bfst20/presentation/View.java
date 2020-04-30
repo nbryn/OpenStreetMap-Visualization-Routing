@@ -394,10 +394,16 @@ public class View {
         System.out.println(zoomLevel);
         zoomLevel *= factor;
 
-        if(zoomLevel >= 48728.06309775159){
-            zoomLevel = 48728.06309775159;
+        System.out.println(zoomLevel);
+        if(zoomLevel >= 364471.7988313){
+            zoomLevel = 364471.7988313;
             return;
-        }else {
+        }
+        if(zoomLevel < 2429.6667527942855){
+            zoomLevel = 2429.6667527942855;
+            return;
+        }
+        else {
             scale(factor, x, y, deltaY);
         }
 
