@@ -101,7 +101,7 @@ public class ViewController {
 
             //file = new File(classLoader.getResource("samsoe.osm").getFile());
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
-            file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\DenmarkV2.bin");
+            file = new File("C:\\Users\\Chrisitan\\Desktop\\dk\\denmark-latest (1).osm");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\Denmark.bin");
 
@@ -144,7 +144,6 @@ public class ViewController {
                 view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
 
                 if (appController.getRouteInfoFromModel() != null) {
-                    displayPane.getChildren().clear();
                     for (Map.Entry<String, Double> entry : appController.getRouteInfoFromModel().entrySet()) {
                         Button route = new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km");
                         route.setPrefWidth(375);
