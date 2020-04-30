@@ -254,7 +254,7 @@ public class Parser {
         if (tags.containsKey("maxspeed")) way.setMaxSpeed(Integer.parseInt(tags.get("maxspeed")));
 
         if (tags.containsKey("oneway")) {
-            if (tags.get("oneway").equals("yes") && tags.get("highway") != "motorway") {
+            if (tags.get("oneway").equals("yes") && tags.get("highway") != "motorway" && tags.get("highway") != "tertiary") {
                 way.setOneWay(true);
             } else way.setOneWay(false);
         }
