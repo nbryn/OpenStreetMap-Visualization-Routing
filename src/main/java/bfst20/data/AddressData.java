@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AddressData {
-    private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,.\\V ]*";
+    private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,. ]*(?<postcode>[\\w]*)[,.\\V]*";
     private static AddressData addressData;
     private TST tst;
 
@@ -49,8 +49,9 @@ public class AddressData {
         if (pattern.matches() && !input.equals("")) {
             String street = pattern.group("street");
             String house = pattern.group("house");
+            String postcode = pattern.group("postcode");
 
-            String[] address = {street, house};
+            String[] address = {street, house, postcode};
 
             return address;
         } else {
@@ -69,6 +70,7 @@ public class AddressData {
             if (
                     address.getStreet().trim().toLowerCase().equals(addressStrings[0].trim().toLowerCase())
                             && address.getHousenumber().toLowerCase().trim().equals(addressStrings[1].trim().toLowerCase())
+                            && (addressStrings[2].equals("") || (!addressStrings[2].equals("") && address.getPostcode().trim().equals(addressStrings[2].trim())))
 
             ) {
 

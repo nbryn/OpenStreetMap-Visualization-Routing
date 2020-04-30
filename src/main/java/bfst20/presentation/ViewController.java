@@ -305,24 +305,6 @@ public class ViewController {
 
             }
         });
-
-        searchAddress.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String s2) {
-
-                if(s2.equals(""))return;
-
-                AddressData addressData = AddressData.getInstance();
-
-                Queue<Address> address = addressData.getTst().keysWithPrefix(s2);
-
-                for(int i = 0; i< 10; i++){
-                    if(address.poll() != null){
-                        System.out.println(address.poll().toString());
-                    }
-                }
-            }
-        });
     }
 
     public static void main(String[] args) {
