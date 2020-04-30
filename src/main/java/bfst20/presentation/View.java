@@ -385,7 +385,7 @@ public class View {
             scale(factor,x,y,deltaY);
         }*/
         
-        System.out.println(zoomLevel);
+        /*System.out.println(zoomLevel);
         zoomLevel *= factor;
 
         System.out.println(zoomLevel);
@@ -399,13 +399,13 @@ public class View {
         }
         else {
             scale(factor, x, y, deltaY);
-        }
+        }*/
 
         //if(zoomLevel > 1.0) return;
 
-        //scale(factor, x, y, deltaY);
-        //reduceZoomLevel();
-        //reduceTimesZoomed();
+        scale(factor, x, y, deltaY);
+        reduceZoomLevel();
+        reduceTimesZoomed();
     }
 
 

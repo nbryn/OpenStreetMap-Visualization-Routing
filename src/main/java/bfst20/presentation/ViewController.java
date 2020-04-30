@@ -103,7 +103,6 @@ public class ViewController {
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\DenmarkV2.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\Denmark.bin");
 
         } catch (NullPointerException e) {
