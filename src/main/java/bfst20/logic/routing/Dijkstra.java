@@ -3,18 +3,20 @@ package bfst20.logic.routing;
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
-import javax.xml.stream.events.StartDocument;
+import java.util.AbstractQueue;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class Dijkstra {
+    private AbstractQueue<Node> minPQ;
     private Map<Node, Double> distTo;
     private Map<Node, Edge> edgeTo;
-    private MinPQ<Node> pq;
+
 
 
     public Dijkstra(Graph graph, Node source, Node target, Vehicle vehicle) {
-        pq = new MinPQ<>(graph.nodeCount());
+        minPQ = new PriorityQueue<>(graph.nodeCount());
         distTo = new HashMap<>();
         edgeTo = new HashMap<>();
 
@@ -23,21 +25,18 @@ public class Dijkstra {
 
 
     public void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
-        System.out.println(source.getId());
-        System.out.println(target.getId());
         setup(graph, source);
 
-        while (!pq.isEmpty()) {
-            Node min = pq.delMin();
+        while (!minPQ.isEmpty()) {
+            Node min = minPQ.poll();
 
             for (Edge edge : graph.adj(min)) {
                 if (min.getId() == target.getId()) {
-                    // Source and Target have same ID
-                    if (edgeTo.size() == 0) {
-                        edgeTo.put(target, edge);
-                        return;
-                    }
+                    // Source and Target = Same edge
+                    if (edgeTo.size() == 0) edgeTo.put(target, edge);
+                    return;
                 }
+
                 relax(edge, min, vehicle);
             }
         }
@@ -50,7 +49,7 @@ public class Dijkstra {
 
         source.setDistTo(0.0);
         distTo.put(source, 0.0);
-        pq.insert(source);
+        minPQ.add(source);
     }
 
 
@@ -63,8 +62,6 @@ public class Dijkstra {
             // As we know it's not oneway when coming from target
             if (!edge.isOneWay(vehicle)) {
                 vehicleAllowed(edge, min, vehicle, current);
-            } else {
-                if(edge.getStreet().equals("Paltholmvej") || edge.getStreet().equals("Stavnsholtvej")) System.out.println(edge.getStreet());
             }
         } else {
             current = edge.getSource();
@@ -102,7 +99,7 @@ public class Dijkstra {
         edgeTo.put(current, edge);
         current.setDistTo(distTo.get(current));
 
-        pq.insert(current);
+        minPQ.add(current);
     }
 
     public Map<Node, Edge> getEdgeTo() {
@@ -120,7 +117,7 @@ public class Dijkstra {
     public void clearData() {
         distTo = null;
         edgeTo = null;
-        pq = null;
+        minPQ = null;
         System.gc();
     }
 

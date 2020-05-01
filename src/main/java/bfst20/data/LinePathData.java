@@ -13,18 +13,18 @@ import java.util.Map;
 public class LinePathData {
     private Map<OSMType, List<LinePath>> linePaths;
     private Map<OSMType, Map<Node, Way>> nodeTo;
-    private List<LinePath> coastline;
-    private List<LinePath> motorway;
     private static LinePathData linePathData;
     private static boolean isLoaded = false;
+    private List<LinePath> coastlines;
+    private List<LinePath> motorways;
     private List<LinePath> highWays;
 
     private LinePathData() {
         linePaths = new HashMap<>();
         nodeTo = new HashMap<>();
         highWays = new ArrayList<>();
-        coastline = new ArrayList<>();
-        motorway = new ArrayList<>();
+        coastlines = new ArrayList<>();
+        motorways = new ArrayList<>();
     }
 
     public static LinePathData getInstance() {
@@ -48,33 +48,31 @@ public class LinePathData {
         return linePaths;
     }
 
-    public void addLinePath(OSMType OSMType, LinePath linePath) {
-        if (linePaths.get(OSMType) == null) linePaths.put(OSMType, new ArrayList<>());
-        if(OSMType == OSMType.COASTLINE){
-            coastline.add(linePath);
+    public void addLinePath(OSMType type, LinePath linePath) {
+        if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
+        if(type == type.COASTLINE){
+            coastlines.add(linePath);
             return;
-        }else if(OSMType == OSMType.MOTORWAY){
-            motorway.add(linePath);
+        }else if(type == type.MOTORWAY){
+            motorways.add(linePath);
             return;
         }
-        linePaths.get(OSMType).add(linePath);
+        linePaths.get(type).add(linePath);
     }
 
     public List<LinePath> getCoastlines(){
-        return coastline;
+        return coastlines;
     }
 
-    public List<LinePath> getMotorway() {
-        return motorway;
+
+    public void addCoastline(List<LinePath> paths){
+        this.coastlines = paths;
     }
 
-    public void addCoastLine(List<LinePath> paths){
-        this.coastline = paths;
+    public List<LinePath> getMotorways() {
+        return motorways;
     }
 
-    public void addMotorway(List<LinePath> motorway){
-        this.motorway = motorway;
-    }
 
     public void saveLinePaths(Map<OSMType, List<LinePath>> linePaths) {
         this.linePaths = linePaths;
@@ -111,18 +109,12 @@ public class LinePathData {
     }
 
 	public void addSingleCoastLine(LinePath linePath) {
-        if(coastline == null){
-            coastline = new ArrayList<>();
+        if(coastlines == null){
+            coastlines = new ArrayList<>();
         }
 
-        coastline.add(linePath);
+        coastlines.add(linePath);
     }
     
-    public void addSingleMotorway(LinePath linePath) {
-        if(motorway == null){
-            motorway = new ArrayList<>();
-        }
 
-        motorway.add(linePath);
-	}
 }

@@ -8,7 +8,6 @@ import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.misc.Vehicle;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class RoutingController {
@@ -32,7 +31,7 @@ public class RoutingController {
     }
 
     public void buildRoutingGraph() {
-        List<LinePath> highways = appController.getHighwaysFromModel();
+        List<LinePath> highways = appController.fetchHighwayData();
         List<Node> highwayNodes = new ArrayList<>();
 
         for (LinePath lp : highways) {
@@ -42,11 +41,13 @@ public class RoutingController {
 
 
         Graph graph = new Graph(new ArrayList<>(highwayNodes));
-
         generateGraphEdges(highways, graph);
-        appController.addToModel(graph);
+        graph.sortEdges();
+
+        appController.saveData(graph);
 
         //TODO: Needed?
+        highwayNodes = null;
         graph = null;
         System.gc();
     }
@@ -54,33 +55,27 @@ public class RoutingController {
     private void generateGraphEdges(List<LinePath> highWays, Graph graph) {
         for (LinePath linePath : highWays) {
             Way way = linePath.getWay();
-            OSMType OSMType = linePath.getOSMType();
+            OSMType type = way.getOSMType();
 
             if (way != null) {
                 for (int i = 1; i < way.getNodes().size(); i++) {
                     Node sourceNode = way.getNodes().get(i - 1);
                     Node targetNode = way.getNodes().get(i);
 
-                    addEdgeToGraph(graph, way, OSMType, sourceNode, targetNode);
+                    double length = calculateDistBetween(sourceNode, targetNode);
+                    Edge edge = new Edge(type, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
+                            way.isOneWay());
+
+                    graph.addEdge(edge);
                 }
             }
         }
     }
 
-    private void addEdgeToGraph(Graph graph, Way way, OSMType OSMType, Node sourceNode, Node targetNode) {
-        if (sourceNode != null && targetNode != null) {
-            double length = calculateDistBetween(sourceNode, targetNode);
-
-            Edge edge = new Edge(OSMType, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
-                    way.isOneWay());
-
-            graph.addEdge(edge);
-        }
-    }
 
     public double calculateShortestRoute(Graph graph, List<Edge> edges, Address srcAddress, Address trgAddress, Vehicle vehicle) {
-        Node srcNode = findClosestNodeTo(srcAddress, edges);
-        Node trgNode = findClosestNodeTo(trgAddress, edges);
+        Node srcNode = findClosestNodeTo(srcAddress, edges, vehicle);
+        Node trgNode = findClosestNodeTo(trgAddress, edges, vehicle);
 
         dijkstra = new Dijkstra(graph, srcNode, trgNode, vehicle);
 
@@ -88,59 +83,55 @@ public class RoutingController {
 
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
             List<Edge> route = new ArrayList<>();
+
             if (dijkstra.getEdgeTo().size() == 1) route.addAll(dijkstra.getEdgeTo().values());
             else route.addAll(extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode));
 
-
             Map<String, Double> routeInfo = extractRouteInfo(route);
-            appController.addToModel(route);
-            appController.addRouteInfoToModel(routeInfo);
-            System.out.println("Finished");
-
+            appController.saveData(route);
+            appController.saveRouteInfo(routeInfo);
 
             // TODO: Needed?
             route = null;
             routeInfo = null;
             System.gc();
-
         }
+        System.out.println("Finished Routing");
         double dist = dijkstra.distTo(trgNode);
         dijkstra.clearData();
         return dist;
     }
 
-    private Node findClosestNodeTo(Address address, List<Edge> edges) {
+    private Node findClosestNodeTo(Address address, List<Edge> edges, Vehicle vehicle) {
         List<Edge> closestEdges = new ArrayList<>();
-
         int addressIndex = binarySearch(edges, address.getStreet());
-
-        int searchInterval = 10000;
-        
+        int searchInterval = 5000;
 
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
-            if (edges.get(i).getStreet().equals(address.getStreet())) {
+            if (i >= 0 && i < edges.size() && edges.get(i).getStreet().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
             }
         }
-
-        Node closestNode = calculateDistanceBetween(address, closestEdges);
+        Node closestNode = calculateDistanceBetween(address, closestEdges, vehicle);
 
         return closestNode;
     }
 
 
-    private Node calculateDistanceBetween(Address address, List<Edge> closestEdges) {
+    private Node calculateDistanceBetween(Address address, List<Edge> closestEdges, Vehicle vehicle) {
         float shortestDistance = Float.POSITIVE_INFINITY;
         Node closestNode = null;
 
         for (Edge e : closestEdges) {
+
             float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2)
                     + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
 
-            if (distance < shortestDistance) {
+            if (distance < shortestDistance && e.isVehicleAllowed(vehicle)) {
                 closestNode = e.getTarget();
                 shortestDistance = distance;
             }
+
         }
 
         return closestNode;
@@ -148,7 +139,6 @@ public class RoutingController {
 
 
     private List<Edge> extractEdgesOnRoute(Map<Node, Edge> edgesFromDijkstra, Node source, Node target) {
-        System.out.println(edgesFromDijkstra.size());
         List<Edge> edges = new ArrayList<>();
         Edge edge = edgesFromDijkstra.get(target);
         long id = 0;
@@ -173,7 +163,6 @@ public class RoutingController {
 
         for (int i = edges.size() - 1; i >= 0; i--) {
             if (!routeInfo.containsKey(edges.get(i).getStreet())) {
-
                 routeInfo.put(edges.get(i).getStreet(), (double) Math.round(edges.get(i).getLength() * 100) / 100);
             } else {
                 routeInfo.put(edges.get(i).getStreet(), (double) Math.round((routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength()) * 100) / 100);
@@ -190,11 +179,11 @@ public class RoutingController {
         while (low <= high) {
             int mid = (low + high) / 2;
             Edge midElement = list.get(mid);
-            String midID = midElement.getStreet();
+            String midStreet = midElement.getStreet();
 
-            if (midID.compareTo(address) < 0) {
+            if (midStreet.compareTo(address) < 0) {
                 low = mid + 1;
-            } else if (midID.compareTo(address) > 0) {
+            } else if (midStreet.compareTo(address) > 0) {
                 high = mid - 1;
             } else {
                 return low;
@@ -204,6 +193,7 @@ public class RoutingController {
         return 0;
     }
 
+    //TODO: Add explanation
     private double calculateDistBetween(Node source, Node target) {
         double sourceLat = source.getLatitude();
         double sourceLong = source.getLongitude();

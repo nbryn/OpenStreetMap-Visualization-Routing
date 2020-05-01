@@ -121,7 +121,7 @@ public enum OSMType {
             case MEADOW:
                 return Color.rgb(205, 235, 176, 1);
             case COASTLINE:
-                return Color.rgb(157, 202, 138, 0.5);
+                return Color.rgb(242, 239, 233, 1);
             case PLACE:
             case GREEN:
                 return Color.LIGHTGREEN;
@@ -208,9 +208,9 @@ public enum OSMType {
             case MOTORWAY:
                 return 110;
             case TERTIARY:
-                return 70;
-            case UNCLASSIFIED_HIGHWAY:
                 return 80;
+            case UNCLASSIFIED_HIGHWAY:
+                return 70;
             case TRACK:
                 return 20;
             default:

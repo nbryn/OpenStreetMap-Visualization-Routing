@@ -4,7 +4,9 @@ import bfst20.logic.entities.Address;
 import bfst20.logic.ternary.TST;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,11 +58,42 @@ public class AddressData {
             return address;
         } else {
 
-            return new String[0];
+            String[] string = {input.trim()};
+
+            return string;
         }
     }
 
-    public Address search(String input) {
+    public Queue<Address> searchSuggestions(String input){
+
+        String[] addressStrings = parseAddress(input);
+
+        if(addressStrings == null) return null;
+
+        Queue<Address> addresses = getTst().keysWithPrefix(addressStrings[0]);
+        Queue<Address> newAddresses = new LinkedList<>();
+
+        for(Address address : addresses){
+
+            if(addressStrings.length == 3 && !addressStrings[1].equals("")){
+                if(!address.getHousenumber().startsWith(addressStrings[1])){
+                    continue;
+                }
+            }
+
+            if(addressStrings.length == 3 && !addressStrings[2].equals("")){
+                if(!address.getPostcode().startsWith(addressStrings[2])){
+                    continue;
+                }
+            }
+
+            newAddresses.add(address);
+        }
+
+        return newAddresses;
+    }
+
+    public Address findAddress(String input) {
         String[] addressStrings = parseAddress(input);
         if (addressStrings.length == 0) return null;
         

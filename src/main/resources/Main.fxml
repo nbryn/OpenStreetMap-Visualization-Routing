@@ -67,6 +67,7 @@
                                                    <Button fx:id="searchAdressButton" mnemonicParsing="false" prefHeight="47.0" prefWidth="148.0" text="Search" />
                                                 </children>
                                              </HBox>
+                                             <VBox fx:id="suggestionsList" prefHeight="0.0" prefWidth="100.0" />
                                               <!-- Scrollpane to contain suggestions for addresses-->
                                              <ScrollPane fitToWidth="true" pannable="true" style="-fx-background: #17181f; -fx-border-color: #17181f;" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
                                                <content>
@@ -90,8 +91,10 @@
                                              <children>
                                                <VBox prefHeight="77.0" prefWidth="276.0">
                                                   <children>
-                                                      <TextField fx:id="searchbar" text="issehoved 7" prefHeight="48.0" prefWidth="330.0" promptText="Insert address" />
-                                                      <TextField fx:id="destinationBar" text="landevejen 29" prefHeight="48.0" prefWidth="330.0" promptText="Insert destination" />
+
+                                                      <TextField fx:id="searchbar" prefHeight="48.0" prefWidth="330.0" promptText="Insert address" text="issehoved 7" />
+                                                      <TextField fx:id="destinationBar" prefHeight="48.0" prefWidth="330.0" promptText="Insert destination" text="landevejen 29" />
+
                                                   </children>
                                                </VBox>
                                                <Button fx:id="searchRouteButton" mnemonicParsing="false" prefHeight="96.0" prefWidth="55.0" text="Search" />
