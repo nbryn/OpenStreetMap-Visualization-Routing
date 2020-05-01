@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+//import static org.mockito.Mockito.*;
 
 public class LinePathGeneratorTest {
     static LinePathGenerator linePathGenerator;
