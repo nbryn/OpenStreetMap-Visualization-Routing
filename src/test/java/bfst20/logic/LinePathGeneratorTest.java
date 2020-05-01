@@ -110,32 +110,32 @@ public class LinePathGeneratorTest {
         assertEquals(way.getFirstNodeId(), 1);
         assertEquals(way.getNodeIds().size(), 10);
     }
-    @Test
-    void connectMultipolygon() throws Exception {
-        LinePathGenerator generator = mock(LinePathGenerator.class);
-
-        AppController appController = mock(AppController.class);
-
-
-        Field field = LinePathGenerator.class.getDeclaredField("OSMWays");
-        field.setAccessible(true);
-        ArrayList<Way> ways = (ArrayList<Way>) field.get(linePathGenerator);
-
-
-
-
-        ways.add(way1);
-        ways.add(way2);
-        Method method = LinePathGenerator.class.getDeclaredMethod("connectMultipolygon", Relation.class, OSMType.class);
-        method.setAccessible(true);
-        method.invoke(linePathGenerator,relation,OSMType.FOREST);
-        assertEquals(1,1);
-
-//        Field appcontroller = LinePathGenerator.class.getDeclaredField("appController");
-//        appcontroller.setAccessible(true);
-//        AppController controller = (AppController) appcontroller.get(linePathGenerator);
-
-        verify(appController, times(2)).addToModel(OSMType.FOREST, node1, way1);
-
-    }
+//    @Test
+//    void connectMultipolygon() throws Exception {
+//        LinePathGenerator generator = mock(LinePathGenerator.class);
+//
+//        AppController appController = mock(AppController.class);
+//
+//
+//        Field field = LinePathGenerator.class.getDeclaredField("OSMWays");
+//        field.setAccessible(true);
+//        ArrayList<Way> ways = (ArrayList<Way>) field.get(linePathGenerator);
+//
+//
+//
+//
+//        ways.add(way1);
+//        ways.add(way2);
+//        Method method = LinePathGenerator.class.getDeclaredMethod("connectMultipolygon", Relation.class, OSMType.class);
+//        method.setAccessible(true);
+//        method.invoke(linePathGenerator,relation,OSMType.FOREST);
+//        assertEquals(1,1);
+//
+////        Field appcontroller = LinePathGenerator.class.getDeclaredField("appController");
+////        appcontroller.setAccessible(true);
+////        AppController controller = (AppController) appcontroller.get(linePathGenerator);
+//
+//        verify(appController, times(2)).addToModel(OSMType.FOREST, node1, way1);
+//
+//    }
 }
