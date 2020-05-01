@@ -57,10 +57,6 @@ public class Rect {
 
     public boolean intersects(KDNode node) {
         LinePath path = node.getLinePath();
-        /*if(path.getWayId() == 126706360){
-            String i = "";
-        }
-        return true;*/
 
         if(node.getDirection() == Direction.Latitudinal){
             return node.getSplit() >= minLat && node.getSplit() <= maxLat;
@@ -76,10 +72,8 @@ public class Rect {
 
         if(node.getDirection() == Direction.Latitudinal){
             return node.getSplit() <= minLat || node.getSplit() <= maxLat;
-            //return true;
         }else{
             return node.getSplit() >= minLon || node.getSplit() >= maxLon;
-            //return true;
         }
     }
 
@@ -87,10 +81,8 @@ public class Rect {
         LinePath path = node.getLinePath();
         if(node.getDirection() == Direction.Latitudinal){
             return node.getSplit() >= minLat || node.getSplit() >= maxLat;
-            //return true;
         }else{
             return node.getSplit() <= minLon || node.getSplit() <= maxLon;
-            //return true;
         }
     }
 

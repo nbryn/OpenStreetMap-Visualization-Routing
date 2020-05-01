@@ -67,8 +67,7 @@ public class ViewController {
     private Canvas canvas;
     @FXML
     private HBox hbox;
-    @FXML
-    private VBox suggestionsList;
+
     private SuggestionHandler suggestionHandler;
 
 
@@ -107,9 +106,9 @@ public class ViewController {
 
 
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
-            file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
+            //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            //file = new File(classLoader.getResource("samsoe.osm").getFile());
+            file = new File(classLoader.getResource("samsoe.osm").getFile());
             //file = new File("/home/nbryn/Desktop/DenmarkV2.bin");
 
         } catch (NullPointerException e) {
@@ -296,30 +295,6 @@ public class ViewController {
             }
         });
 
-        searchAddress.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                                String oldValue, String newValue) {
-
-                if(newValue.equals("")){
-                    suggestionHandler.hide();
-                    return;
-                }
-
-                suggestionHandler.show(newValue);
-            }
-        });
-
-        //https://stackoverflow.com/questions/16549296/how-perform-task-on-javafx-textfield-at-onfocus-and-outfocus
-        searchAddress.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
-                if (!newPropertyValue) {
-                    suggestionHandler.hide();
-                }
-
-            }
-        });
     }
 
     public static void main(String[] args) {

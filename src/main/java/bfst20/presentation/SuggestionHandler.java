@@ -4,6 +4,8 @@ import bfst20.data.AddressData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.Address;
 import bfst20.logic.misc.Vehicle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -28,6 +30,7 @@ public class SuggestionHandler {
     public SuggestionHandler(AppController appController, TextField textField){
         this.textField = textField;
         this.appController = appController;
+        setupEvents();
     }
 
     public void show(String text){
@@ -67,5 +70,32 @@ public class SuggestionHandler {
         test.getItems().clear();
         test.hide();
 
+    }
+
+    public void setupEvents(){
+        textField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                                String oldValue, String newValue) {
+
+                if(newValue.equals("")){
+                    hide();
+                    return;
+                }
+
+                show(newValue);
+            }
+        });
+
+        //https://stackoverflow.com/questions/16549296/how-perform-task-on-javafx-textfield-at-onfocus-and-outfocus
+        textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+                if (!newPropertyValue) {
+                    hide();
+                }
+
+            }
+        });
     }
 }
