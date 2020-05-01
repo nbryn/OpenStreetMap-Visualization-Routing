@@ -31,12 +31,11 @@ public class Way implements OSMElement, Serializable {
         nodes = new ArrayList<>();
     }
 
+    //Used to make a temp copy of a way in LinePathGenerator.
     public Way(Way way) {
-        nodes = way.getNodes();
-        //this.nodes = way.getNodes();
-        this.nodeIds = new ArrayList<>(way.getNodeIds());
         this.id = way.getId();
-        //nodes = new ArrayList<>();
+        this.nodeIds = new ArrayList<>(way.getNodeIds());
+        nodes = way.getNodes();
     }
 
     public int getMaxSpeed() {
