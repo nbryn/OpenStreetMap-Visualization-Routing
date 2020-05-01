@@ -108,11 +108,10 @@ public class RoutingController {
         int searchInterval = 5000;
 
         for (int i = addressIndex - searchInterval; i < addressIndex + searchInterval; i++) {
-            if (i >= 0 && edges.get(i).getStreet().equals(address.getStreet())) {
+            if (i >= 0 && i < edges.size() && edges.get(i).getStreet().equals(address.getStreet())) {
                 closestEdges.add(edges.get(i));
             }
         }
-
         Node closestNode = calculateDistanceBetween(address, closestEdges, vehicle);
 
         return closestNode;
@@ -124,6 +123,7 @@ public class RoutingController {
         Node closestNode = null;
 
         for (Edge e : closestEdges) {
+
             float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2)
                     + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
 
@@ -131,6 +131,7 @@ public class RoutingController {
                 closestNode = e.getTarget();
                 shortestDistance = distance;
             }
+
         }
 
         return closestNode;

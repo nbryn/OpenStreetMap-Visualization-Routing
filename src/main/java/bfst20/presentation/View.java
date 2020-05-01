@@ -4,7 +4,6 @@ import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
 import bfst20.logic.kdtree.KDNode;
-import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
@@ -266,7 +265,7 @@ public class View {
     public void drawSearchLocation(double lineWidth) {
         if (addressString == null) return;
         AddressData addressData = AddressData.getInstance();
-        Address address = addressData.search(addressString);
+        Address address = addressData.findAddress(addressString);
 
         if (address == null) {
             System.out.println("Missing");
@@ -362,7 +361,6 @@ public class View {
         gc.setFillRule(FillRule.EVEN_ODD);
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
-        System.out.println(coords.length);
         for (int i = 2; i <= coords.length; i += 2) {
             gc.lineTo(coords[i - 2], coords[i - 1]);
         }

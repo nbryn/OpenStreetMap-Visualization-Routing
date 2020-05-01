@@ -108,8 +108,8 @@ public class ViewController {
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = new File(classLoader.getResource("samsoe.osm").getFile());
-            //file = new File("/home/nbryn/Desktop/DenmarkV2.bin");
+            //file = new File(classLoader.getResource("samsoe.osm").getFile());
+            file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
@@ -204,7 +204,7 @@ public class ViewController {
         int i = 0;
 
         for (InterestPoint interest : interestPoints) {
-            Text scoreText = new Text(i + ". Intrest point");
+            Text scoreText = new Text(i + ". Interest point");
 
             int s = i;
 

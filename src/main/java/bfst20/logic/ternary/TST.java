@@ -60,6 +60,7 @@ public class TST implements Serializable{
         }
     }
 
+    //TODO: Move
     private int R = 29;
     private Node root;
     private int size;

@@ -87,7 +87,7 @@ public class AddressData {
         return newAddresses;
     }
 
-    public Address search(String input) {
+    public Address findAddress(String input) {
         String[] addressStrings = parseAddress(input);
         if (addressStrings.length == 0) return null;
         

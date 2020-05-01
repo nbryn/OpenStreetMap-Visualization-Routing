@@ -2,7 +2,6 @@ package bfst20.logic;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -104,8 +103,9 @@ public class AppController {
     public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
         routingController = routingController.getInstance();
 
-        Address source = addressData.search(sourceQuery);
-        Address target = addressData.search(targetQuery);
+        Address source = addressData.findAddress(sourceQuery);
+        Address target = addressData.findAddress(targetQuery);
+
 
         Graph graph = getGraphFromModel();
         List<Edge> edges = graph.getEdges();

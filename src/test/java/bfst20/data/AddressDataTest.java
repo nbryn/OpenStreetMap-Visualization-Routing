@@ -45,7 +45,7 @@ class AddressDataTest {
     void search() {
         addressData.addAddress(1, new Address("Samsoe", "1", "1234", "Smediegyde", 1, 1, 321));
         String searchString = "Smediegyde 1";
-        Address address = addressData.search(searchString);
+        Address address = addressData.findAddress(searchString);
 
         assertEquals("Smediegyde", address.getStreet());
     }
