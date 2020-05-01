@@ -48,7 +48,7 @@ public class LinePathData {
         return linePaths;
     }
 
-    public void addLinePath(OSMType type, LinePath linePath) {
+    public void saveLinePath(OSMType type, LinePath linePath) {
         if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
         if(type == type.COASTLINE){
             coastlines.add(linePath);
@@ -65,8 +65,8 @@ public class LinePathData {
     }
 
 
-    public void addCoastline(List<LinePath> paths){
-        this.coastlines = paths;
+    public void saveCoastlines(List<LinePath> coastlines){
+        this.coastlines = coastlines;
     }
 
     public List<LinePath> getMotorways() {
@@ -108,7 +108,7 @@ public class LinePathData {
         System.gc();
     }
 
-	public void addSingleCoastLine(LinePath linePath) {
+	public void saveSingleCoastLine(LinePath linePath) {
         if(coastlines == null){
             coastlines = new ArrayList<>();
         }

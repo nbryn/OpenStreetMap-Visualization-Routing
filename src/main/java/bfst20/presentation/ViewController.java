@@ -267,7 +267,7 @@ public class ViewController {
                 Point2D converted = view.toModelCoords(e.getX(), e.getY());
 
                 InterestPointData interestPointData = InterestPointData.getInstance();
-                interestPointData.addInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
+                interestPointData.saveInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
                 updateInterestPoints();
             }
 

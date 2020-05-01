@@ -31,7 +31,7 @@ public class OSMElementData {
         return OSMElementData;
     }
 
-    public void setBounds(Bounds bounds) {
+    public void saveBounds(Bounds bounds) {
         this.bounds = new Bounds(bounds.getMaxLat(), bounds.getMinLat(), bounds.getMaxLon(), bounds.getMinLon());
     }
 
@@ -51,7 +51,7 @@ public class OSMElementData {
         nodeMap.put(id, node);
     }
 
-    public void addWay(Way way) {
+    public void saveWay(Way way) {
         OSMWays.add(way);
     }
 
@@ -59,7 +59,7 @@ public class OSMElementData {
         return OSMWays;
     }
 
-    public void addRelation(Relation relation) {
+    public void saveRelation(Relation relation) {
         OSMRelations.add(relation);
     }
 

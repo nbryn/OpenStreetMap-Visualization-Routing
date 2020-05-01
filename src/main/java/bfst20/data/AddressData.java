@@ -3,14 +3,15 @@ package bfst20.data;
 import bfst20.logic.entities.Address;
 import bfst20.logic.ternary.TST;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class AddressData {
+
+    //TODO: Better naming
     private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d\\w]{0,3}[\\w])[,. ]*(?<postcode>[\\w]*)[,.\\V]*";
     private static AddressData addressData;
     private TST tst;
@@ -27,23 +28,15 @@ public class AddressData {
         return addressData;
     }
 
-    public void addAddress(long id, Address address) {
+    public void saveAddress(long id, Address address) {
         if(address.getStreet() == null) return;
         tst.put(address.getStreet(), address);
     }
 
-    public TST getTst(){
+    public TST getTST(){
         return tst;
     }
 
-    public void saveAddresses(Map<Long, Address> addresses) {
-        //this.addresses = addresses;
-    }
-
-    public Map<Long, Address> getAddresses() {
-        //return addresses;
-        return null;
-    }
 
     public String[] parseAddress(String input) {
         Matcher pattern = Pattern.compile(streethouse).matcher(input);
@@ -70,7 +63,7 @@ public class AddressData {
 
         if(addressStrings == null) return null;
 
-        Queue<Address> addresses = getTst().keysWithPrefix(addressStrings[0]);
+        Queue<Address> addresses = getTST().keysWithPrefix(addressStrings[0]);
         Queue<Address> newAddresses = new LinkedList<>();
 
         for(Address address : addresses){
@@ -114,7 +107,7 @@ public class AddressData {
         return null;
     }
 
-	public void setTst(TST tst) {
+	public void saveTST(TST tst) {
         this.tst = tst;
 	}
 }
