@@ -240,6 +240,9 @@ public class AppController {
         linePathData.addType(type);
     }
 
+    public List<LinePath> getMotorways(){
+        return linePathData.getMotorway();
+    }
 
     public void clearLinePathData() {
         LinePathGenerator.getInstance().clearData();

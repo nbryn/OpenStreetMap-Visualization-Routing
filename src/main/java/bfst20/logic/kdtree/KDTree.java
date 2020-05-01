@@ -74,6 +74,10 @@ public class KDTree implements Serializable {
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point) {
         if (node == null) return;
 
+        if(node.getLinePath().getOSMType() == OSMType.MOTORWAY){
+            String i = "";
+        }
+
         if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
@@ -102,6 +106,7 @@ public class KDTree implements Serializable {
     public LinePath getClosetsLinepathToMouse() {
         return closetsNode.getLinePath();
     }
+    public double getClosetsLinePathToMouseDistance(){return closetNodeDistance;}
 
     private KDNode createNewKdNode(LinePath path, Direction direction) {
         KDNode node = new KDNode();
