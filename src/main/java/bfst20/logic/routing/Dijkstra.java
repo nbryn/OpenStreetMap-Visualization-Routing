@@ -31,10 +31,8 @@ public class Dijkstra {
             for (Edge edge : graph.adj(min)) {
                 if (min.getId() == target.getId()) {
                     // Source and Target = Same edge
-                    if (edgeTo.size() == 0) {
-                        edgeTo.put(target, edge);
-                        return;
-                    }
+                    if (edgeTo.size() == 0) edgeTo.put(target, edge);
+                    return;
                 }
 
                 relax(edge, min, vehicle);
@@ -55,7 +53,6 @@ public class Dijkstra {
 
     private void relax(Edge edge, Node min, Vehicle vehicle) {
         // Current node can be target or source for current edge because the graph is not directed
-
         Node current;
         if (min == edge.getSource()) {
             current = edge.getTarget();
