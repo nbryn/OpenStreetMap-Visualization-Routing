@@ -208,9 +208,9 @@ public enum OSMType {
             case MOTORWAY:
                 return 110;
             case TERTIARY:
-                return 70;
-            case UNCLASSIFIED_HIGHWAY:
                 return 80;
+            case UNCLASSIFIED_HIGHWAY:
+                return 70;
             case TRACK:
                 return 20;
             default:

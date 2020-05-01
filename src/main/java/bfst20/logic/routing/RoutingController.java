@@ -31,7 +31,7 @@ public class RoutingController {
     }
 
     public void buildRoutingGraph() {
-        List<LinePath> highways = appController.getHighwaysFromModel();
+        List<LinePath> highways = appController.fetchHighwayData();
         List<Node> highwayNodes = new ArrayList<>();
 
         for (LinePath lp : highways) {
@@ -44,7 +44,7 @@ public class RoutingController {
         generateGraphEdges(highways, graph);
         graph.sortEdges();
 
-        appController.addToModel(graph);
+        appController.saveData(graph);
 
         //TODO: Needed?
         highwayNodes = null;
@@ -88,8 +88,8 @@ public class RoutingController {
             else route.addAll(extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode));
 
             Map<String, Double> routeInfo = extractRouteInfo(route);
-            appController.addToModel(route);
-            appController.addRouteInfoToModel(routeInfo);
+            appController.saveData(route);
+            appController.saveRouteInfo(routeInfo);
 
             // TODO: Needed?
             route = null;

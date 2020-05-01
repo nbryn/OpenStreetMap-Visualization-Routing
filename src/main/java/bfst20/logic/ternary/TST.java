@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class TST implements Serializable{
+public class TST implements Serializable {
     private class Node implements Serializable {
         private Node left, mid, right;
         private List<Address> value;
@@ -52,7 +52,7 @@ public class TST implements Serializable{
         }
 
         public void setValue(Address address) {
-            if(value == null){
+            if (value == null) {
                 value = new ArrayList<>();
             }
 
@@ -105,7 +105,7 @@ public class TST implements Serializable{
 
     private Node get(Node parent, String key, int index) {
         char character = key.charAt(index);
-        if(character == ' ') return parent;
+        if (character == ' ') return parent;
         if (character > parent.getKey()) {
             return get(parent.getRight(), key, index);
         } else if (character < parent.getKey()) {
@@ -125,9 +125,9 @@ public class TST implements Serializable{
         prefix = prefix.toLowerCase();
         Queue<Address> queue = new LinkedList<>();
         Node startNode;
-        try{
+        try {
             startNode = get(root, prefix, 0);
-        }catch(NullPointerException exception){
+        } catch (NullPointerException exception) {
             return queue;
         }
 
