@@ -12,12 +12,17 @@ public class WayTest {
     public static Way way1;
     public static Way way2;
     public static Way way3;
+    public static List<Long> listLong;
     public static List<Node> list;
     public static Node node1;
     public static Node node2;
 
     @BeforeAll
     public static void setup() {
+        listLong = new ArrayList<>();
+        listLong.add((long)100);
+        listLong.add((long)500);
+
         node1 = new Node(1, (float) 55.6388937, (float) 12.6195664);
         node2 = new Node(2, (float) 55.6388541, (float) 12.6195888);
         
@@ -26,8 +31,10 @@ public class WayTest {
         way2 = new Way(10);
         way2.addNode(node1);
         way2.addNode(node2);
-
+        way2.addNodeId(100);
+        way2.addNodeId(500);
         way3 = new Way(way2);
+        way3.addNodeId(750);
     }
 
     //Combined two methods, not to create excessive test.
@@ -100,8 +107,47 @@ public class WayTest {
 
     @Test
     public void get_addNodeId(){
+        
+        assertEquals(way2.getNodeIds(), listLong);
+
+        //Added extra to check if addNodeId works on way3, which is a copy of way2
+        listLong.add((long)750);
+        
+        assertEquals(way3.getNodeIds(), listLong);
+        listLong.remove((long)750);
+    }
+
+    @Test
+    public void getFirstNodeId(){
+        assertEquals(way2.getFirstNodeId(), 100);
+        assertEquals(way3.getFirstNodeId(), 100);
 
     }
+
+    @Test
+    public void getLastNodeId(){
+        assertEquals(way2.getLastNodeId(), 500);
+        assertEquals(way3.getLastNodeId(), 750);
+    }
+
+    @Test
+    public void addAllNodeIds(){
+        //needed since addAllNodeIds adds to the existing list
+        listLong.add((long)100);
+        listLong.add((long)500);
+        listLong.add((long)750);
+        way2.addAllNodeIds(way3);
+        assertEquals(way2.getNodeIds(),listLong);
+
+        //Needed since the test runs randomly through the methods.
+        way2.getNodeIds().remove((long)100);
+        way2.getNodeIds().remove((long)500);
+        way2.getNodeIds().remove((long)750);
+        listLong.remove((long)100);
+        listLong.remove((long)500);
+        listLong.remove((long)750);
+    }
+
  
     @Test
     public void get_addNode(){
