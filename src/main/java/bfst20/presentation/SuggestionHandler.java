@@ -6,10 +6,13 @@ import bfst20.logic.entities.Address;
 import bfst20.logic.misc.Vehicle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -21,54 +24,96 @@ import java.util.Queue;
 
 public class SuggestionHandler {
 
+    public enum SuggestionEvent{
+        SEARCH,
+        ADDRESS,
+        DESTINATION
+    }
+
     private VBox suggestionsList;
     private TextField textField;
-    AppController appController;
+    private AppController appController;
+    private SuggestionEvent suggestionEvent;
 
-    ContextMenu test;
+    ContextMenu cm;
 
-    public SuggestionHandler(AppController appController, TextField textField){
+    boolean space;
+
+    public SuggestionHandler(AppController appController, TextField textField, SuggestionEvent suggestionEvent){
         this.textField = textField;
         this.appController = appController;
+        this.suggestionEvent = suggestionEvent;
         setupEvents();
     }
 
     public void show(String text){
+
         hide();
         AddressData addressData = AddressData.getInstance();
 
         Queue<Address> addresses = addressData.searchSuggestions(text);
 
-        test = new ContextMenu();
+        cm = new ContextMenu();
 
-        test.setPrefWidth(400);
+        cm.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode() == KeyCode.SPACE){
+                    space = true;
+                }
+
+            }
+        });
+
+        cm.addEventFilter(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode() == KeyCode.SPACE){
+                    space = false;
+                }
+
+            }
+        });
+
+        cm.setPrefWidth(400);
+
+        if(addresses.size() <= 0) return;
 
         for(int i = 0; i < 10; i++){
-            TextFlow entryFlow = new TextFlow(new Text(addresses.poll().toString()));
+            Address address = addresses.poll();
+            if (address == null) continue;
 
-            CustomMenuItem t1 = new CustomMenuItem(entryFlow, true);
+            MenuItem t1 = new MenuItem(address.toString());
 
-            entryFlow.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-                String addressText = addresses.poll().toString();
-                appController.setSearchString(addressText);
-                textField.setText(addressText);
+            t1.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if(space) return;
 
-                test.hide();
+                    String addressText = address.toString();
+                    if(suggestionEvent == SuggestionEvent.SEARCH){
+                        appController.setSearchString(addressText);
+                    }
+                    textField.setText(addressText);
+
+                    cm.hide();
+                }
             });
 
 
-            test.getItems().add(t1);
+            cm.getItems().add(t1);
         }
 
 
-        test.show(textField, Side.BOTTOM, 0, 0);
+        cm.show(textField, Side.BOTTOM, 0, 0);
 
     }
 
     public void hide(){
-        if(test == null) return;
-        test.getItems().clear();
-        test.hide();
+        if(cm == null) return;
+        cm.getItems().clear();
+        cm.hide();
+        cm = null;
 
     }
 

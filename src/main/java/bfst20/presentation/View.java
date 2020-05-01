@@ -33,6 +33,7 @@ public class View {
     private Affine trans = new Affine();
     private AppController appController;
     private List<LinePath> coastlines;
+    private List<LinePath> motorways;
     private String addressString;
     private GraphicsContext gc;
     private Point2D mousePos;
@@ -88,10 +89,8 @@ public class View {
     private void createKDTrees() {
         appController.setupRect();
 
-        for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
-            /*if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
-                continue;
-*/
+        for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()){
+
             if (entry.getKey() != OSMType.COASTLINE) {
                 if (entry.getValue().size() != 0) {
                     appController.addKDTreeToModel(entry.getKey(), entry.getValue());
@@ -102,6 +101,13 @@ public class View {
         //List<LinePath> highways = appController.getHighwaysFromModel();
 
         //appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
+
+        motorways = appController.getMotorways();
+
+        if(motorways.size() > 0){
+            appController.addKDTreeToModel(OSMType.MOTORWAY, motorways);
+        }
+
         appController.addKDTreeToModel(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
 
         linePaths = null;
@@ -161,8 +167,28 @@ public class View {
 
         drawAllKDTreeTypes(rect, mouse);
 
+
         try {
-            String name = appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinepathToMouse().getName();
+            Map<OSMType, Double> dist = new HashMap<>();
+            dist.put(OSMType.HIGHWAY, appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinePathToMouseDistance());
+            dist.put(OSMType.RESIDENTIAL_HIGHWAY, appController.getKDTreeFromModel(OSMType.RESIDENTIAL_HIGHWAY).getClosetsLinePathToMouseDistance());
+            dist.put(OSMType.TERTIARY, appController.getKDTreeFromModel(OSMType.TERTIARY).getClosetsLinePathToMouseDistance());
+            dist.put(OSMType.UNCLASSIFIED_HIGHWAY, appController.getKDTreeFromModel(OSMType.UNCLASSIFIED_HIGHWAY).getClosetsLinePathToMouseDistance());
+            if(appController.getAllKDTreesFromModel().get(OSMType.MOTORWAY) != null){
+                dist.put(OSMType.MOTORWAY, appController.getKDTreeFromModel(OSMType.MOTORWAY).getClosetsLinePathToMouseDistance());
+            }
+
+            double shortestDistance = Double.POSITIVE_INFINITY;
+            OSMType shortestType = null;
+
+            for(Map.Entry<OSMType, Double> entry : dist.entrySet()){
+                if(entry.getValue() < shortestDistance){
+                    shortestDistance = entry.getValue();
+                    shortestType = entry.getKey();
+                }
+            }
+
+            String name = appController.getKDTreeFromModel(shortestType).getClosetsLinepathToMouse().getName();
             mouseLocationLabel.setText(name == null ? "Unknown way" : name);
         } catch (Exception e) {
         }
@@ -186,6 +212,8 @@ public class View {
                 drawRoute(edge, pixelwidth);
             }
         }
+
+        System.gc();
     }
 
     //Order of methods is important.
@@ -205,6 +233,11 @@ public class View {
         drawTypeKdTree(OSMType.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
         drawTypeKdTree(OSMType.TERTIARY, rect, pixelwidth, mouse);
         drawTypeKdTree(OSMType.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);
+
+        if(appController.getAllKDTreesFromModel().get(OSMType.MOTORWAY) != null) {
+            drawTypeKdTree(OSMType.MOTORWAY, rect, pixelwidth, mouse);
+        }
+
     }
 
     public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
@@ -365,6 +398,10 @@ public class View {
             gc.lineTo(coords[i - 2], coords[i - 1]);
         }
         gc.stroke();
+
+        if (OSMType.getFill(linePath.getOSMType())) {
+            gc.fill();
+        }
     }
 
 

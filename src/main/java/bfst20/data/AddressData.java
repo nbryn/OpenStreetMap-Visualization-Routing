@@ -58,7 +58,7 @@ public class AddressData {
             return address;
         } else {
 
-            String[] string = {input};
+            String[] string = {input.trim()};
 
             return string;
         }
@@ -77,6 +77,12 @@ public class AddressData {
 
             if(addressStrings.length == 3 && !addressStrings[1].equals("")){
                 if(!address.getHousenumber().startsWith(addressStrings[1])){
+                    continue;
+                }
+            }
+
+            if(addressStrings.length == 3 && !addressStrings[2].equals("")){
+                if(!address.getPostcode().startsWith(addressStrings[2])){
                     continue;
                 }
             }

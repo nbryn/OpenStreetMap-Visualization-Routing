@@ -50,6 +50,7 @@ public class LinePathGenerator {
 
     private void createWays() {
         for (Way way : OSMWays) {
+
             if (way.getOSMType() == OSMType.COASTLINE || way.getOSMType() == null) continue;
 
             LinePath linePath = createLinePath(way);
@@ -138,6 +139,7 @@ public class LinePathGenerator {
     private void connectMultipolygon(Relation relation, OSMType osmType){
         if(!relation.isMultipolygon()) return;
         Collections.sort(relation.getMembers());
+
 
         Way way = null;
 

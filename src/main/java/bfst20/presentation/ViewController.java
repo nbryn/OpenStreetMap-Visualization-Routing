@@ -68,7 +68,9 @@ public class ViewController {
     @FXML
     private HBox hbox;
 
-    private SuggestionHandler suggestionHandler;
+    private SuggestionHandler suggestionHandlerSearch;
+    private SuggestionHandler suggestionHandlerAddress;
+    private SuggestionHandler suggestionHandlerDestination;
 
 
     private View view;
@@ -89,7 +91,9 @@ public class ViewController {
 
         System.out.println(canvas.getWidth());*/
 
-        suggestionHandler = new SuggestionHandler(appController, searchAddress);
+        suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
+        suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
+        suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
 
 
         setupHbox();
