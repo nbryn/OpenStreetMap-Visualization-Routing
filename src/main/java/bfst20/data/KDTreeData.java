@@ -32,14 +32,14 @@ public class KDTreeData {
         return this.rect;
     }
 
-    public void setValuesOnRect(float minLat, float maxLat, float minLon, float maxLon) {
+    public void saveRectValues(float minLat, float maxLat, float minLon, float maxLon) {
         rect.setMinLat(minLat);
         rect.setMaxLat(maxLat);
         rect.setMinLon(minLon);
         rect.setMaxLon(maxLon);
     }
 
-    public void addKDTree(OSMType OSMType, KDTree kdTree) {
+    public void saveKDTree(OSMType OSMType, KDTree kdTree) {
         kdTrees.put(OSMType, kdTree);
     }
 
@@ -56,7 +56,7 @@ public class KDTreeData {
         return kdTrees;
     }
 
-    public void setAllKDTrees(Map<OSMType, KDTree> tree){
+    public void saveAllKDTrees(Map<OSMType, KDTree> tree){
         this.kdTrees = tree;
     }
 

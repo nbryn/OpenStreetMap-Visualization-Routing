@@ -22,7 +22,7 @@ public class InterestPointData {
         return interestPointData;
     }
 
-    public void addInterestPoint(InterestPoint interestPoint) {
+    public void saveInterestPoint(InterestPoint interestPoint) {
         interestPoints.add(interestPoint);
     }
 

@@ -92,7 +92,7 @@ public class AppController {
     }
 
     public void saveAllKDTrees(Map<OSMType, KDTree> tree) {
-        kdTreeData.setAllKDTrees(tree);
+        kdTreeData.saveAllKDTrees(tree);
     }
 
     public List<LinePath> fetchHighwayData() {
@@ -160,11 +160,11 @@ public class AppController {
     }
 
     public void saveData(long id, Address address) {
-        addressData.addAddress(id, address);
+        addressData.saveAddress(id, address);
     }
 
     public void saveData(Relation relation) {
-        osmElementData.addRelation(relation);
+        osmElementData.saveRelation(relation);
     }
 
     public List<Relation> fetchRelations() {
@@ -172,7 +172,7 @@ public class AppController {
     }
 
     public void saveData(Bounds bounds) {
-        osmElementData.setBounds(bounds);
+        osmElementData.saveBounds(bounds);
     }
 
     public Bounds fetchBoundsData() {
@@ -184,7 +184,7 @@ public class AppController {
     }
 
     public void saveData(Way way) {
-        osmElementData.addWay(way);
+        osmElementData.saveWay(way);
     }
 
     public List<Way> getAllWayData() {
@@ -204,7 +204,7 @@ public class AppController {
     }
 
     public void saveCoastLines(List<LinePath> paths) {
-        linePathData.addCoastline(paths);
+        linePathData.saveCoastlines(paths);
     }
 
     public void clearNodeData() {
@@ -230,9 +230,9 @@ public class AppController {
 
     public void saveData(OSMType type, LinePath linePath) {
         if (type == OSMType.COASTLINE) {
-            linePathData.addSingleCoastLine(linePath);
+            linePathData.saveSingleCoastLine(linePath);
         } else {
-            linePathData.addLinePath(type, linePath);
+            linePathData.saveLinePath(type, linePath);
         }
     }
 
@@ -252,7 +252,7 @@ public class AppController {
     public void setupRect() {
         Bounds bounds = fetchBoundsData();
 
-        kdTreeData.setValuesOnRect(bounds.getMinLat(), bounds.getMaxLat(), bounds.getMinLon(), bounds.getMaxLon());
+        kdTreeData.saveRectValues(bounds.getMinLat(), bounds.getMaxLat(), bounds.getMinLon(), bounds.getMaxLon());
     }
 
     public Rect fetchRectData() {
@@ -261,7 +261,7 @@ public class AppController {
 
     public void saveKDTree(OSMType type, List<LinePath> linePaths) {
         if (type == OSMType.COASTLINE) return;
-        kdTreeData.addKDTree(type, new KDTree(linePaths, fetchRectData()));
+        kdTreeData.saveKDTree(type, new KDTree(linePaths, fetchRectData()));
     }
 
     public KDTree fetchKDTree(OSMType OSMType) {
@@ -296,11 +296,11 @@ public class AppController {
     }
 
     public TST fetchTST() {
-        return addressData.getTst();
+        return addressData.getTST();
     }
 
     public void saveTST(TST tst) {
-        addressData.setTst(tst);
+        addressData.saveTST(tst);
     }
 
 }

@@ -27,7 +27,7 @@ class OSMElementDataTest {
     void addRelation() {
         Relation relation = new Relation(23232);
 
-        osmElementData.addRelation(relation);
+        osmElementData.saveRelation(relation);
 
         assertEquals(relation, osmElementData.getRelations().get(0));
     }
@@ -39,8 +39,8 @@ class OSMElementDataTest {
         Relation relation = new Relation(1123);
         Relation relation2 = new Relation(23322);
 
-        osmElementData.addRelation(relation);
-        osmElementData.addRelation(relation2);
+        osmElementData.saveRelation(relation);
+        osmElementData.saveRelation(relation2);
 
 
 
@@ -51,7 +51,7 @@ class OSMElementDataTest {
     void setBounds() {
         Bounds bounds = new Bounds(12, 14, 16, 18);
 
-        osmElementData.setBounds(bounds);
+        osmElementData.saveBounds(bounds);
 
         assertEquals(12, osmElementData.getBounds().getMaxLat());
         assertEquals(14, osmElementData.getBounds().getMinLat());
@@ -63,7 +63,7 @@ class OSMElementDataTest {
     void getBounds() {
         Bounds bounds = new Bounds(12, 14, 16, 18);
 
-        osmElementData.setBounds(bounds);
+        osmElementData.saveBounds(bounds);
 
         assertNotNull(osmElementData.getBounds());
     }
@@ -93,7 +93,7 @@ class OSMElementDataTest {
     void addWay() {
         Way way = new Way();
 
-        osmElementData.addWay(way);
+        osmElementData.saveWay(way);
 
         assertEquals(way, osmElementData.getOSMWays().get(0));
     }
@@ -103,8 +103,8 @@ class OSMElementDataTest {
         Way way = new Way();
         Way way2 = new Way();
 
-        osmElementData.addWay(way);
-        osmElementData.addWay(way2);
+        osmElementData.saveWay(way);
+        osmElementData.saveWay(way2);
 
         assertNotNull(osmElementData.getOSMWays());
     }

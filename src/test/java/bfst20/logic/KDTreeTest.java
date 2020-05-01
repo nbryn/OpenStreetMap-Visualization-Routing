@@ -6,6 +6,7 @@ import bfst20.logic.entities.Way;
 import bfst20.logic.kdtree.Direction;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.misc.OSMType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class KDTree {
+public class KDTreeTest {
 
     @Test
     void structureRoot(){
@@ -40,7 +41,7 @@ public class KDTree {
 
         bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
 
-        assertEquals(kdTree.getRoot().getDirection(), Direction.Latitudinal);
+        Assertions.assertEquals(kdTree.getRoot().getDirection(), Direction.Latitudinal);
     }
 
     @Test
@@ -56,7 +57,7 @@ public class KDTree {
         bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
 
         assert kdTree.getRoot().getLeftNode() != null;
-        assertEquals(kdTree.getRoot().getLeftNode().getDirection(), Direction.Longitudinal);
+        Assertions.assertEquals(kdTree.getRoot().getLeftNode().getDirection(), Direction.Longitudinal);
     }
 
     @Test
@@ -72,7 +73,7 @@ public class KDTree {
         bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
 
         assert kdTree.getRoot().getRightNode() != null;
-        assertEquals(kdTree.getRoot().getRightNode().getDirection(), Direction.Longitudinal);
+        Assertions.assertEquals(kdTree.getRoot().getRightNode().getDirection(), Direction.Longitudinal);
     }
 
     @Test
@@ -90,7 +91,7 @@ public class KDTree {
         bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
 
         assert kdTree.getRoot().getLeftNode().getLeftNode() != null;
-        assertEquals(kdTree.getRoot().getLeftNode().getLeftNode().getDirection(), Direction.Latitudinal);
+        Assertions.assertEquals(kdTree.getRoot().getLeftNode().getLeftNode().getDirection(), Direction.Latitudinal);
     }
 
     @Test
@@ -108,7 +109,7 @@ public class KDTree {
         bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
 
         assert kdTree.getRoot().getLeftNode().getRightNode() != null;
-        assertEquals(kdTree.getRoot().getLeftNode().getRightNode().getDirection(), Direction.Latitudinal);
+        Assertions.assertEquals(kdTree.getRoot().getLeftNode().getRightNode().getDirection(), Direction.Latitudinal);
     }
 
     @Test
