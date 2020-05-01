@@ -3,14 +3,16 @@ package bfst20.logic.routing;
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.Vehicle;
 
+import java.util.AbstractQueue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
 public class Dijkstra {
+    private AbstractQueue<Node> minPQ;
     private Map<Node, Double> distTo;
     private Map<Node, Edge> edgeTo;
-    private PriorityQueue<Node> minPQ;
+
 
 
     public Dijkstra(Graph graph, Node source, Node target, Vehicle vehicle) {
