@@ -90,9 +90,9 @@ public class View {
         appController.setupRect();
 
         for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
-            if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
+            /*if (entry.getKey() == OSMType.HIGHWAY || entry.getKey() == OSMType.RESIDENTIAL_HIGHWAY || entry.getKey() == OSMType.TERTIARY || entry.getKey() == OSMType.UNCLASSIFIED_HIGHWAY)
                 continue;
-
+*/
             if (entry.getKey() != OSMType.COASTLINE) {
                 if (entry.getValue().size() != 0) {
                     appController.addKDTreeToModel(entry.getKey(), entry.getValue());
@@ -100,9 +100,9 @@ public class View {
             }
         }
 
-        List<LinePath> highways = appController.getHighwaysFromModel();
+        //List<LinePath> highways = appController.getHighwaysFromModel();
 
-        appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
+        //appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
         appController.addKDTreeToModel(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
 
         linePaths = null;
@@ -201,7 +201,11 @@ public class View {
         drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
         drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
         drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
+
         drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(OSMType.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
+        drawTypeKdTree(OSMType.TERTIARY, rect, pixelwidth, mouse);
+        drawTypeKdTree(OSMType.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);
     }
 
     public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
