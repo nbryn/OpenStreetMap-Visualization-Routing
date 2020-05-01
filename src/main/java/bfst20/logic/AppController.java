@@ -79,7 +79,7 @@ public class AppController {
         Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
         List<LinePath> highWays = new ArrayList<>();
 
-        if (linePathData.getMotorway() != null) highWays.addAll(linePathData.getMotorway());
+        if (linePathData.getMotorways() != null) highWays.addAll(linePathData.getMotorways());
         for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
             highWays.addAll(entry.getValue());
         }
@@ -87,15 +87,15 @@ public class AppController {
         linePathData.saveHighways(highWays);
     }
 
-    public Map<OSMType, KDTree> getAllKDTreesFromModel() {
+    public Map<OSMType, KDTree> fetchAllKDTreeData() {
         return kdTreeData.getAllLKDTrees();
     }
 
-    public void setAllKDTrees(Map<OSMType, KDTree> tree) {
+    public void saveAllKDTrees(Map<OSMType, KDTree> tree) {
         kdTreeData.setAllKDTrees(tree);
     }
 
-    public List<LinePath> getHighwaysFromModel() {
+    public List<LinePath> fetchHighwayData() {
         return linePathData.getHighWays();
     }
 
@@ -107,33 +107,33 @@ public class AppController {
         Address target = addressData.findAddress(targetQuery);
 
 
-        Graph graph = getGraphFromModel();
+        Graph graph = fetchGraphData();
         List<Edge> edges = graph.getEdges();
 
         return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
     }
 
-    public Graph getGraphFromModel() {
+    public Graph fetchGraphData() {
         return routingData.getGraph();
     }
 
-    public void addToModel(Graph graph) {
+    public void saveData(Graph graph) {
         routingData.saveGraph(graph);
     }
 
-    public List<Edge> getRouteFromModel() {
+    public List<Edge> fetchRouteData() {
         return routingData.getRoute();
     }
 
-    public void addToModel(List<Edge> route) {
+    public void saveData(List<Edge> route) {
         routingData.saveRoute(route);
     }
 
-    public void addRouteInfoToModel(Map<String, Double> routeInfo) {
+    public void saveRouteInfo(Map<String, Double> routeInfo) {
         routingData.saveRouteInfo(routeInfo);
     }
 
-    public Map<String, Double> getRouteInfoFromModel() {
+    public Map<String, Double> fetchRouteInfoData() {
         return routingData.getRouteInfo();
     }
 
@@ -159,59 +159,59 @@ public class AppController {
         parser.parseString(string);
     }
 
-    public void addToModel(long id, Address address) {
+    public void saveData(long id, Address address) {
         addressData.addAddress(id, address);
     }
 
-    public void addToModel(Relation relation) {
+    public void saveData(Relation relation) {
         osmElementData.addRelation(relation);
     }
 
-    public List<Relation> getRelationsFromModel() {
+    public List<Relation> fetchRelations() {
         return osmElementData.getRelations();
     }
 
-    public void addToModel(Bounds bounds) {
+    public void saveData(Bounds bounds) {
         osmElementData.setBounds(bounds);
     }
 
-    public Bounds getBoundsFromModel() {
+    public Bounds fetchBoundsData() {
         return osmElementData.getBounds();
     }
 
-    public void addToModel(long id, Node node) {
+    public void saveData(long id, Node node) {
         osmElementData.addToNodeMap(id, node);
     }
 
-    public void addToModel(Way way) {
+    public void saveData(Way way) {
         osmElementData.addWay(way);
     }
 
-    public List<Way> getWaysFromModel() {
+    public List<Way> getAllWayData() {
         return osmElementData.getOSMWays();
     }
 
-    public Node getNodeFromModel(long id) {
+    public Node getNodeData(long id) {
         return osmElementData.getNode(id);
     }
 
-    public Map<Long, Node> getNodesFromModel() {
+    public Map<Long, Node> fetchAllNodes() {
         return osmElementData.getNodes();
     }
 
-    public List<LinePath> getCoastlines() {
+    public List<LinePath> fetchCoastlines() {
         return linePathData.getCoastlines();
     }
 
-    public void addCoastLine(List<LinePath> paths) {
-        linePathData.addCoastLine(paths);
+    public void saveCoastLines(List<LinePath> paths) {
+        linePathData.addCoastline(paths);
     }
 
     public void clearNodeData() {
         OSMElementData.getInstance().clearNodeData();
     }
 
-    public Map<OSMType, List<LinePath>> getLinePathsFromModel() {
+    public Map<OSMType, List<LinePath>> fetchLinePathData() {
         return linePathData.getLinePaths();
     }
 
@@ -220,7 +220,7 @@ public class AppController {
         return linePathData.removeWayFromNodeTo(type, node);
     }
 
-    public void addToModel(OSMType type, Node node, Way way) {
+    public void saveData(OSMType type, Node node, Way way) {
         linePathData.addNodeTo(type, node, way);
     }
 
@@ -228,7 +228,7 @@ public class AppController {
         return linePathData.getNodeTo(type);
     }
 
-    public void addToModel(OSMType type, LinePath linePath) {
+    public void saveData(OSMType type, LinePath linePath) {
         if (type == OSMType.COASTLINE) {
             linePathData.addSingleCoastLine(linePath);
         } else {
@@ -236,12 +236,12 @@ public class AppController {
         }
     }
 
-    public void addToModel(OSMType type) {
+    public void saveData(OSMType type) {
         linePathData.addType(type);
     }
 
-    public List<LinePath> getMotorways(){
-        return linePathData.getMotorway();
+    public List<LinePath> fetchMotorways(){
+        return linePathData.getMotorways();
     }
 
     public void clearLinePathData() {
@@ -250,21 +250,21 @@ public class AppController {
     }
 
     public void setupRect() {
-        Bounds bounds = getBoundsFromModel();
+        Bounds bounds = fetchBoundsData();
 
         kdTreeData.setValuesOnRect(bounds.getMinLat(), bounds.getMaxLat(), bounds.getMinLon(), bounds.getMaxLon());
     }
 
-    public Rect getRectFromModel() {
+    public Rect fetchRectData() {
         return kdTreeData.getRect();
     }
 
-    public void addKDTreeToModel(OSMType type, List<LinePath> linePaths) {
+    public void saveKDTree(OSMType type, List<LinePath> linePaths) {
         if (type == OSMType.COASTLINE) return;
-        kdTreeData.addKDTree(type, new KDTree(linePaths, getRectFromModel()));
+        kdTreeData.addKDTree(type, new KDTree(linePaths, fetchRectData()));
     }
 
-    public KDTree getKDTreeFromModel(OSMType OSMType) {
+    public KDTree fetchKDTree(OSMType OSMType) {
         return kdTreeData.getKDTree(OSMType);
     }
 
@@ -295,11 +295,11 @@ public class AppController {
         routingData.clearData();
     }
 
-    public TST getTST() {
+    public TST fetchTST() {
         return addressData.getTst();
     }
 
-    public void addTst(TST tst) {
+    public void saveTST(TST tst) {
         addressData.setTst(tst);
     }
 

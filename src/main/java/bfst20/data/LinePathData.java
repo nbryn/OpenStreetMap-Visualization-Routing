@@ -13,18 +13,18 @@ import java.util.Map;
 public class LinePathData {
     private Map<OSMType, List<LinePath>> linePaths;
     private Map<OSMType, Map<Node, Way>> nodeTo;
-    private List<LinePath> coastline;
-    private List<LinePath> motorway;
     private static LinePathData linePathData;
     private static boolean isLoaded = false;
+    private List<LinePath> coastlines;
+    private List<LinePath> motorways;
     private List<LinePath> highWays;
 
     private LinePathData() {
         linePaths = new HashMap<>();
         nodeTo = new HashMap<>();
         highWays = new ArrayList<>();
-        coastline = new ArrayList<>();
-        motorway = new ArrayList<>();
+        coastlines = new ArrayList<>();
+        motorways = new ArrayList<>();
     }
 
     public static LinePathData getInstance() {
@@ -51,26 +51,26 @@ public class LinePathData {
     public void addLinePath(OSMType type, LinePath linePath) {
         if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
         if(type == type.COASTLINE){
-            coastline.add(linePath);
+            coastlines.add(linePath);
             return;
         }else if(type == type.MOTORWAY){
-            motorway.add(linePath);
+            motorways.add(linePath);
             return;
         }
         linePaths.get(type).add(linePath);
     }
 
     public List<LinePath> getCoastlines(){
-        return coastline;
+        return coastlines;
     }
 
 
-    public void addCoastLine(List<LinePath> paths){
-        this.coastline = paths;
+    public void addCoastline(List<LinePath> paths){
+        this.coastlines = paths;
     }
 
-    public List<LinePath> getMotorway() {
-        return motorway;
+    public List<LinePath> getMotorways() {
+        return motorways;
     }
 
 
@@ -109,11 +109,11 @@ public class LinePathData {
     }
 
 	public void addSingleCoastLine(LinePath linePath) {
-        if(coastline == null){
-            coastline = new ArrayList<>();
+        if(coastlines == null){
+            coastlines = new ArrayList<>();
         }
 
-        coastline.add(linePath);
+        coastlines.add(linePath);
     }
     
 

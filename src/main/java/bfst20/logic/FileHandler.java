@@ -69,11 +69,11 @@ public class FileHandler {
             TST tst = (TST) in.readObject();
             Graph graph = (Graph) in.readObject();
 
-            appController.addToModel(bounds);
-            appController.setAllKDTrees(tree);
-            appController.addCoastLine(coastline);
-            appController.addTst(tst);
-            appController.addToModel(graph);
+            appController.saveData(bounds);
+            appController.saveAllKDTrees(tree);
+            appController.saveCoastLines(coastline);
+            appController.saveTST(tst);
+            appController.saveData(graph);
         } catch (IOException e) {
             e.printStackTrace();
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
@@ -117,11 +117,11 @@ public class FileHandler {
     private void writeToFile(File file) throws FileNotFoundException, IOException {
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-        objectOut.writeObject(appController.getBoundsFromModel());
-        objectOut.writeObject(appController.getAllKDTreesFromModel());
-        objectOut.writeObject(appController.getCoastlines());
-        objectOut.writeObject(appController.getTST());
-        objectOut.writeObject(appController.getGraphFromModel());
+        objectOut.writeObject(appController.fetchBoundsData());
+        objectOut.writeObject(appController.fetchAllKDTreeData());
+        objectOut.writeObject(appController.fetchCoastlines());
+        objectOut.writeObject(appController.fetchTST());
+        objectOut.writeObject(appController.fetchGraphData());
         objectOut.close();
     }
 }

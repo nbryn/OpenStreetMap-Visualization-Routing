@@ -59,8 +59,8 @@ public class View {
 
     public void initialize(boolean isBinary) {
         trans = new Affine();
-        linePaths = appController.getLinePathsFromModel();
-        coastlines = appController.getCoastlines();
+        linePaths = appController.fetchLinePathData();
+        coastlines = appController.fetchCoastlines();
 
         if (!isBinary) {
             appController.clearLinePathData();
@@ -69,7 +69,7 @@ public class View {
 
         System.gc();
 
-        Bounds bounds = appController.getBoundsFromModel();
+        Bounds bounds = appController.fetchBoundsData();
 
         float minLon = bounds.getMinLon();
         float maxLon = bounds.getMaxLon();
@@ -93,7 +93,7 @@ public class View {
 
             if (entry.getKey() != OSMType.COASTLINE) {
                 if (entry.getValue().size() != 0) {
-                    appController.addKDTreeToModel(entry.getKey(), entry.getValue());
+                    appController.saveKDTree(entry.getKey(), entry.getValue());
                 }
             }
         }
@@ -102,13 +102,13 @@ public class View {
 
         //appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
 
-        motorways = appController.getMotorways();
+        motorways = appController.fetchMotorways();
 
         if(motorways.size() > 0){
-            appController.addKDTreeToModel(OSMType.MOTORWAY, motorways);
+            appController.saveKDTree(OSMType.MOTORWAY, motorways);
         }
 
-        appController.addKDTreeToModel(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
+        appController.saveKDTree(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
 
         linePaths = null;
 
@@ -170,12 +170,12 @@ public class View {
 
         try {
             Map<OSMType, Double> dist = new HashMap<>();
-            dist.put(OSMType.HIGHWAY, appController.getKDTreeFromModel(OSMType.HIGHWAY).getClosetsLinePathToMouseDistance());
-            dist.put(OSMType.RESIDENTIAL_HIGHWAY, appController.getKDTreeFromModel(OSMType.RESIDENTIAL_HIGHWAY).getClosetsLinePathToMouseDistance());
-            dist.put(OSMType.TERTIARY, appController.getKDTreeFromModel(OSMType.TERTIARY).getClosetsLinePathToMouseDistance());
-            dist.put(OSMType.UNCLASSIFIED_HIGHWAY, appController.getKDTreeFromModel(OSMType.UNCLASSIFIED_HIGHWAY).getClosetsLinePathToMouseDistance());
-            if(appController.getAllKDTreesFromModel().get(OSMType.MOTORWAY) != null){
-                dist.put(OSMType.MOTORWAY, appController.getKDTreeFromModel(OSMType.MOTORWAY).getClosetsLinePathToMouseDistance());
+            dist.put(OSMType.HIGHWAY, appController.fetchKDTree(OSMType.HIGHWAY).getClosetsLinePathToMouseDistance());
+            dist.put(OSMType.RESIDENTIAL_HIGHWAY, appController.fetchKDTree(OSMType.RESIDENTIAL_HIGHWAY).getClosetsLinePathToMouseDistance());
+            dist.put(OSMType.TERTIARY, appController.fetchKDTree(OSMType.TERTIARY).getClosetsLinePathToMouseDistance());
+            dist.put(OSMType.UNCLASSIFIED_HIGHWAY, appController.fetchKDTree(OSMType.UNCLASSIFIED_HIGHWAY).getClosetsLinePathToMouseDistance());
+            if(appController.fetchAllKDTreeData().get(OSMType.MOTORWAY) != null){
+                dist.put(OSMType.MOTORWAY, appController.fetchKDTree(OSMType.MOTORWAY).getClosetsLinePathToMouseDistance());
             }
 
             double shortestDistance = Double.POSITIVE_INFINITY;
@@ -188,7 +188,7 @@ public class View {
                 }
             }
 
-            String name = appController.getKDTreeFromModel(shortestType).getClosetsLinepathToMouse().getName();
+            String name = appController.fetchKDTree(shortestType).getClosetsLinepathToMouse().getName();
             mouseLocationLabel.setText(name == null ? "Unknown way" : name);
         } catch (Exception e) {
         }
@@ -216,40 +216,18 @@ public class View {
         System.gc();
     }
 
-    //Order of methods is important.
-    public void drawAllKDTreeTypes(Rect rect, Point2D mouse){
-        drawTypeKdTree(OSMType.BEACH, rect, pixelwidth);
-        drawTypeKdTree(OSMType.FARMLAND, rect, pixelwidth);
-        drawTypeKdTree(OSMType.RESIDENTIAL, rect, pixelwidth);
-        drawTypeKdTree(OSMType.HEATH, rect, pixelwidth);
-        drawTypeKdTree(OSMType.WOOD, rect, pixelwidth);
-        drawTypeKdTree(OSMType.TREE_ROW, rect, pixelwidth);
-        drawTypeKdTree(OSMType.WATER, rect, pixelwidth);
-        drawTypeKdTree(OSMType.FOREST, rect, pixelwidth);
-        drawTypeKdTree(OSMType.BUILDING, rect, pixelwidth);
-        drawTypeKdTree(OSMType.MEADOW, rect, pixelwidth);
 
-        drawTypeKdTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
-        drawTypeKdTree(OSMType.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
-        drawTypeKdTree(OSMType.TERTIARY, rect, pixelwidth, mouse);
-        drawTypeKdTree(OSMType.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);
 
-        if(appController.getAllKDTreesFromModel().get(OSMType.MOTORWAY) != null) {
-            drawTypeKdTree(OSMType.MOTORWAY, rect, pixelwidth, mouse);
-        }
-
-    }
-
-    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth) {
-        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).getElementsInRect(rect, trans.determinant())) {
+    private void drawKDTree(OSMType type, Rect rect, double lineWidth) {
+        for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant())) {
 
             drawLinePath(linePath, lineWidth);
             gc.fill();
         }
     }
 
-    public void drawTypeKdTree(OSMType OSMType, Rect rect, double lineWidth, Point2D point) {
-        for (LinePath linePath : appController.getKDTreeFromModel(OSMType).getElementsInRect(rect, trans.determinant(), point)) {
+    private void drawKDTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
+        for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
             gc.fill();
@@ -283,7 +261,7 @@ public class View {
     public void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
         double distance = appController.initializeRouting(sourceQuery, targetQuery, vehicle);
 
-        route = appController.getRouteFromModel();
+        route = appController.fetchRouteData();
 
         repaint();
     }
@@ -332,7 +310,7 @@ public class View {
 
     public void drawKdTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
         //TODO: WORK :D
-        for (LinePath linePath : appController.getKDTreeFromModel(type).getElementsInRect(rect, trans.determinant(), point)) {
+        for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
 
             drawLinePath(linePath, lineWidth);
             gc.fill();
@@ -342,11 +320,11 @@ public class View {
 
     //TODO: Remove?
     public void drawKdTest() {
-        KDNode root = appController.getKDTreeFromModel(OSMType.HIGHWAY).getRoot();
+        KDNode root = appController.fetchKDTree(OSMType.HIGHWAY).getRoot();
 
         gc.setStroke(Color.BLUE);
-        gc.moveTo(appController.getRectFromModel().getMinLon(), root.getSplit());
-        gc.lineTo(appController.getRectFromModel().getMaxLon(), root.getSplit());
+        gc.moveTo(appController.fetchRectData().getMinLon(), root.getSplit());
+        gc.lineTo(appController.fetchRectData().getMaxLon(), root.getSplit());
         //System.out.println(root.getSplit());
         gc.stroke();
     }
@@ -468,19 +446,19 @@ public class View {
     }
 
 
-    public void scale(double factor, double x, double y, double deltaY) {
+    private void scale(double factor, double x, double y, double deltaY) {
         trans.prependScale(factor, factor, x, y);
         timesZoomed += deltaY / 40;
         repaint();
     }
 
-    public void reduceZoomLevel() {
+    private void reduceZoomLevel() {
         if (zoomLevel > 2500) {
             zoomLevel = zoomLevel / 2517.0648374271736;
         }
     }
 
-    public void reduceTimesZoomed() {
+    private void reduceTimesZoomed() {
         if (timesZoomed > 126) {
             timesZoomed = 126;
         }
@@ -515,5 +493,29 @@ public class View {
 
     public double getSliderValue() {
         return sliderValue;
+    }
+
+    //Order of KDTree drawing is important.
+    private void drawAllKDTreeTypes(Rect rect, Point2D mouse){
+        drawKDTree(OSMType.BEACH, rect, pixelwidth);
+        drawKDTree(OSMType.FARMLAND, rect, pixelwidth);
+        drawKDTree(OSMType.RESIDENTIAL, rect, pixelwidth);
+        drawKDTree(OSMType.HEATH, rect, pixelwidth);
+        drawKDTree(OSMType.WOOD, rect, pixelwidth);
+        drawKDTree(OSMType.TREE_ROW, rect, pixelwidth);
+        drawKDTree(OSMType.WATER, rect, pixelwidth);
+        drawKDTree(OSMType.FOREST, rect, pixelwidth);
+        drawKDTree(OSMType.BUILDING, rect, pixelwidth);
+        drawKDTree(OSMType.MEADOW, rect, pixelwidth);
+
+        drawKDTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
+        drawKDTree(OSMType.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
+        drawKDTree(OSMType.TERTIARY, rect, pixelwidth, mouse);
+        drawKDTree(OSMType.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);
+
+        if(appController.fetchKDTree(OSMType.MOTORWAY) != null) {
+            drawKDTree(OSMType.MOTORWAY, rect, pixelwidth, mouse);
+        }
+
     }
 }
