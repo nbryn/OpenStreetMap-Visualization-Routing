@@ -121,7 +121,7 @@ public enum OSMType {
             case MEADOW:
                 return Color.rgb(205, 235, 176, 1);
             case COASTLINE:
-                return Color.rgb(157, 202, 138, 0.5);
+                return Color.rgb(242, 239, 233, 1);
             case PLACE:
             case GREEN:
                 return Color.LIGHTGREEN;

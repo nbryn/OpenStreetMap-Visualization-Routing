@@ -275,18 +275,6 @@ public class Parser {
 
             else if (type == OSMType.UNCLASSIFIED) type = OSMType.UNCLASSIFIED_HIGHWAY;
 
-            else if (type == OSMType.MOTORWAY)  type = OSMType.MOTORWAY;
-
-            else if (type == OSMType.TERTIARY) type = OSMType.TERTIARY;
-
-            else if (type == OSMType.FOOTWAY) type = OSMType.FOOTWAY;
-
-            else if (type == OSMType.CYCLEWAY) type = OSMType.CYCLEWAY;
-
-            else if (type == OSMType.PATH) type = OSMType.PATH;
-
-            else if (type == OSMType.TRACK) type = OSMType.TRACK;
-
         } catch (Exception e) {
         }
         return type;

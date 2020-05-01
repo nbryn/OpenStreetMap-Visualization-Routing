@@ -8,7 +8,6 @@ import bfst20.logic.kdtree.Rect;
 import bfst20.logic.misc.OSMType;
 import org.junit.jupiter.api.Test;
 
-import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,7 +130,7 @@ public class KDTree {
 
         int i = 0;
 
-        for(LinePath path : kdTree.query(new Rect(0, 100, 0, 100), 2.8945867784311756E8)){
+        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 100, 0, 100), 2.8945867784311756E8)){
             i++;
         }
 
@@ -157,7 +156,7 @@ public class KDTree {
 
         int i = 0;
 
-        for(LinePath path : kdTree.query(new Rect(0, 9, 0, 9), 2.8945867784311756E8)){
+        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 9, 0, 9), 2.8945867784311756E8)){
             i++;
         }
 

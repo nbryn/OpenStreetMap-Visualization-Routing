@@ -92,6 +92,7 @@ public class ViewController {
 
         suggestionHandler = new SuggestionHandler(appController, searchAddress);
 
+
         setupHbox();
 
         appController.createView(canvas, mouseLocationLabel);
@@ -106,9 +107,9 @@ public class ViewController {
 
 
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
-            //file = new File("d:\\Projects\\Java\\BFST20Gruppe17Data\\DenmarkV2.bin");
+            file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //file = new File(classLoader.getResource("samsoe.osm").getFile());
             //file = new File("/home/nbryn/Desktop/DenmarkV2.bin");
 
         } catch (NullPointerException e) {

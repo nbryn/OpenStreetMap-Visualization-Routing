@@ -53,9 +53,7 @@ public class AppController {
         if (!isBinary) {
             System.out.println("Creating linepaths");
             createLinePaths();
-            //generateBinary();
             clearNodeData();
-
             System.out.println("Generate Highways");
             generateHighways();
             System.out.println("Building graph");
@@ -111,8 +109,6 @@ public class AppController {
 
         Graph graph = getGraphFromModel();
         List<Edge> edges = graph.getEdges();
-        //TODO: Remove - Sorting edges before generating bin
-        edges.sort(Comparator.comparing(Edge::getStreet));
 
         return routingController.calculateShortestRoute(graph, edges, source, target, vehicle);
     }

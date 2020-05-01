@@ -33,14 +33,15 @@ public class KDTree implements Serializable {
         return root;
     }
 
-    public Iterable<LinePath> query(Rect rect, double zoomLevel) {
+    //Without mouse to node distance calculation
+    public Iterable<LinePath> getElementsInRect(Rect rect, double zoomLevel) {
         List<LinePath> list = new ArrayList<>();
         range(root, rect, zoomLevel, list);
         return list;
     }
 
-    //TODO: Naming
-    public Iterable<LinePath> query(Rect rect, double zoomLevel, Point2D point) {
+    //With mouse to node distance calculation
+    public Iterable<LinePath> getElementsInRect(Rect rect, double zoomLevel, Point2D point) {
         closetsNode = root;
         closetNodeDistance = Float.POSITIVE_INFINITY;
 
@@ -60,13 +61,6 @@ public class KDTree implements Serializable {
             list.add(node.getLinePath());
         }
 
-        /*if(rect.intersects(node)){
-            range(node.getRightNode(), rect, zoomLevel, list);
-            range(node.getLeftNode(), rect, zoomLevel, list);
-        }else{
-            System.out.println("FALSE " + "HEY");
-        }*/
-
         if (rect.intersectsRight(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             range(node.getRightNode(), rect, zoomLevel, list);
         }
@@ -74,7 +68,6 @@ public class KDTree implements Serializable {
         if (rect.intersectsLeft(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             range(node.getLeftNode(), rect, zoomLevel, list);
         }
-
     }
 
     //TODO: Better naming
@@ -94,10 +87,7 @@ public class KDTree implements Serializable {
                     closetNodeDistance = distance;
                     closetsNode = node;
                 }
-
-
             }
-
         }
 
         if (rect.intersectsRight(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
@@ -109,11 +99,9 @@ public class KDTree implements Serializable {
         }
     }
 
-    //TODO: Closest to what?
-    public LinePath getClosetsLinepath() {
+    public LinePath getClosetsLinepathToMouse() {
         return closetsNode.getLinePath();
     }
-
 
     private KDNode createNewKdNode(LinePath path, Direction direction) {
         KDNode node = new KDNode();
@@ -151,7 +139,6 @@ public class KDTree implements Serializable {
         }
     }
 
-    //TODO: Better naming
     private void insertNodeLeftExists(KDNode node, LinePath path) {
         //Left node is there but no right node
         if (node.getDirection() == Direction.Latitudinal) {
@@ -176,7 +163,6 @@ public class KDTree implements Serializable {
         }
     }
 
-    //TODO: Better naming
     private void insertNodeRightExists(KDNode node, LinePath path) {
         //Right node is there but no left node.
         if (node.getDirection() == Direction.Latitudinal) {
@@ -201,7 +187,7 @@ public class KDTree implements Serializable {
         }
     }
 
-    //TODO: Better naming - Cleanup
+    //Going down the one of the children of the parent  node.
     private void insertNodeBothExists(KDNode node, LinePath path) {
         //Both nodes are there.
         if (node.getDirection() == Direction.Latitudinal) {
@@ -226,7 +212,7 @@ public class KDTree implements Serializable {
         }
     }
 
-    //TODO: Better naming
+    //Determines what method to call.
     private void insert(KDNode node, LinePath path) {
         if (node.getLeftNode() == null && node.getRightNode() == null) {
             insertNode(node, path);
