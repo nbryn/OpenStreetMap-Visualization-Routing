@@ -106,6 +106,7 @@ public class ViewController {
         try {
 
 
+
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
@@ -146,6 +147,7 @@ public class ViewController {
 
                 Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
                 view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
+
 
                 if (appController.fetchRouteInfoData() != null) {
                     displayPane.getChildren().clear();
