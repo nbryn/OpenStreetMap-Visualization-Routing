@@ -37,7 +37,7 @@ class KDTreeDataTest {
     }
 
     @Test
-    void setValuesOnRect() throws NoSuchFieldException {
+    void saveRectValues() throws NoSuchFieldException {
         kdTreeData.saveRectValues(10, 15, 20, 25);
 
         assertEquals(10, kdTreeData.getRect().getMinLat());
@@ -47,7 +47,7 @@ class KDTreeDataTest {
     }
 
     @Test
-    void addKDTree() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    void saveKDTree() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         List<LinePath> linePaths = new ArrayList<>();
         LinePath linePath = new LinePath(40, 45, 50, 55);
         linePaths.add(linePath);
@@ -78,5 +78,15 @@ class KDTreeDataTest {
         kdTreeData.saveKDTree(OSMType.COASTLINE, kdTree);
 
         assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), kdTree);
+    }
+
+
+
+    @Test
+    void getAllLKDTrees() {
+    }
+
+    @Test
+    void saveAllKDTrees() {
     }
 }

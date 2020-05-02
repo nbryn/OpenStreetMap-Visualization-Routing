@@ -55,7 +55,7 @@ public class OSMElementData {
         OSMWays.add(way);
     }
 
-    public List<Way> getOSMWays() {
+    public List<Way> getWays() {
         return OSMWays;
     }
 

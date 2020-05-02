@@ -80,9 +80,8 @@ public class LinePathData {
     }
 
     public void addNodeTo(OSMType type, Node node, Way way) {
-        if (nodeTo.get(type) == null) {
-            nodeTo.put(type, new HashMap<>());
-        }
+        if (nodeTo.get(type) == null) nodeTo.put(type, new HashMap<>());
+
 
         nodeTo.get(type).put(node, way);
     }
@@ -106,12 +105,9 @@ public class LinePathData {
     }
 
     public void saveSingleCoastLine(LinePath linePath) {
-        if (coastlines == null) {
-            coastlines = new ArrayList<>();
-        }
+        if (coastlines == null) coastlines = new ArrayList<>();
 
         coastlines.add(linePath);
     }
-
 
 }
