@@ -50,7 +50,7 @@ public class AddressTest{
 
     @Test
     public void toStringTest(){
-        assertEquals(address.toString(),"Farstrupvej 1 Køge 4600");
+        assertEquals(address.toString(),"Farstrupvej 1 4600");
     }
 
 
