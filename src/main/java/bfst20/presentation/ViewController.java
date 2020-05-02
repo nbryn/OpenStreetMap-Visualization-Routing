@@ -2,7 +2,9 @@ package bfst20.presentation;
 
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -105,16 +107,14 @@ public class ViewController {
 
         try {
 
-
-
-            //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
+            file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = new File(classLoader.getResource("samsoe.osm").getFile());
+            //file = getResourceAsFile("samsoe.osm");
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);
         }
 
@@ -135,32 +135,73 @@ public class ViewController {
         setupRouteButton();
     }
 
+    //https://stackoverflow.com/questions/676097/java-resource-as-file
+    public static File getResourceAsFile(String resourcePath) {
+        try {
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+            if (in == null) {
+                return null;
+            }
+
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
+            tempFile.deleteOnExit();
+
+            try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                //copy stream
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            return tempFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void setupRouteButton() {
         searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
 
                 if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
-                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address");
+                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address", true);
                     return;
                 }
 
-                Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
-                view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
+                try{
+                    Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
+                    view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
 
+                    if (appController.fetchRouteInfoData() != null) {
+                        displayPane.getChildren().clear();
 
-                if (appController.fetchRouteInfoData() != null) {
-                    displayPane.getChildren().clear();
-                    for (Map.Entry<String, Double> entry : appController.fetchRouteInfoData().entrySet()) {
-                        Button route = new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km");
-                        route.setPrefWidth(375);
-                        route.setPrefHeight(60);
-                        route.setMouseTransparent(true);
-                        route.setFocusTraversable(false);
-                        Separator spacing = new Separator();
-                        displayPane.getChildren().add(spacing);
-                        displayPane.getChildren().add(route);
+                        if(appController.fetchRouteInfoData().size() > 0){
+                            for (Map.Entry<String, Double> entry : appController.fetchRouteInfoData().entrySet()) {
+                                Button route = new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km");
+                                route.setPrefWidth(375);
+                                route.setPrefHeight(60);
+                                route.setMouseTransparent(true);
+                                route.setFocusTraversable(false);
+                                Separator spacing = new Separator();
+                                displayPane.getChildren().add(spacing);
+                                displayPane.getChildren().add(route);
+                            }
+                            appController.clearRouteInfoData();
+                        }else{
+                            displayPane.getChildren().clear();
+                            appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                        }
+
+                    }else{
+                        displayPane.getChildren().clear();
+                        appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                     }
+                }catch (NullPointerException e){
+                    appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+
                 }
             }
         });

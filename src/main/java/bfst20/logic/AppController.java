@@ -137,16 +137,20 @@ public class AppController {
         return routingData.getRouteInfo();
     }
 
+    public void clearRouteInfoData(){
+        routingData.clearData();
+    }
+
     public void loadFile(File file) {
         try {
             FileHandler fileHandler = FileHandler.getInstance();
             if (file.getName().endsWith(".bin")) isBinary = true;
             fileHandler.load(file);
         } catch (IOException ioException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
             System.exit(1);
         } catch (XMLStreamException xmlStreamException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.");
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
             System.exit(1);
         }
     }
@@ -273,9 +277,8 @@ public class AppController {
         view.setMouseLocationView(mouseLocationLabel);
     }
 
-    public void alertOK(Alert.AlertType type, String text) {
-        System.out.println(text);
-        //view.displayError(type, text);
+    public void alertOK(Alert.AlertType type, String text, boolean wait) {
+        view.displayError(type, text, wait);
     }
 
     //TODO: NOT BEING USED?

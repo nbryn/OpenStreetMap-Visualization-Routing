@@ -138,6 +138,10 @@ public class View {
 
     public void repaint() {
 
+        System.out.println(trans.determinant());
+        System.out.println(Math.log(trans.determinant())%100);
+
+
         if (fps()) return;
 
 
@@ -167,31 +171,7 @@ public class View {
 
         drawAllKDTreeTypes(rect, mouse);
 
-
-        try {
-            Map<OSMType, Double> dist = new HashMap<>();
-            dist.put(OSMType.HIGHWAY, appController.fetchKDTree(OSMType.HIGHWAY).getClosetsLinePathToMouseDistance());
-            dist.put(OSMType.RESIDENTIAL_HIGHWAY, appController.fetchKDTree(OSMType.RESIDENTIAL_HIGHWAY).getClosetsLinePathToMouseDistance());
-            dist.put(OSMType.TERTIARY, appController.fetchKDTree(OSMType.TERTIARY).getClosetsLinePathToMouseDistance());
-            dist.put(OSMType.UNCLASSIFIED_HIGHWAY, appController.fetchKDTree(OSMType.UNCLASSIFIED_HIGHWAY).getClosetsLinePathToMouseDistance());
-            if(appController.fetchAllKDTreeData().get(OSMType.MOTORWAY) != null){
-                dist.put(OSMType.MOTORWAY, appController.fetchKDTree(OSMType.MOTORWAY).getClosetsLinePathToMouseDistance());
-            }
-
-            double shortestDistance = Double.POSITIVE_INFINITY;
-            OSMType shortestType = null;
-
-            for(Map.Entry<OSMType, Double> entry : dist.entrySet()){
-                if(entry.getValue() < shortestDistance){
-                    shortestDistance = entry.getValue();
-                    shortestType = entry.getKey();
-                }
-            }
-
-            String name = appController.fetchKDTree(shortestType).getClosetsLinepathToMouse().getName();
-            mouseLocationLabel.setText(name == null ? "Unknown way" : name);
-        } catch (Exception e) {
-        }
+        setClosetLinePathToMouse();
 
         Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
         Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
@@ -213,24 +193,27 @@ public class View {
             }
         }
 
-        System.gc();
+        //System.gc();
     }
 
 
-
     private void drawKDTree(OSMType type, Rect rect, double lineWidth) {
-        for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant())) {
+        if(appController.fetchKDTree(type) != null){
+            for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant())) {
 
-            drawLinePath(linePath, lineWidth);
-            gc.fill();
+                drawLinePath(linePath, lineWidth);
+                gc.fill();
+            }
         }
     }
 
     private void drawKDTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
-        for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
+        if(appController.fetchKDTree(type) != null){
+            for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
 
-            drawLinePath(linePath, lineWidth);
-            gc.fill();
+                drawLinePath(linePath, lineWidth);
+                gc.fill();
+            }
         }
     }
 
@@ -469,9 +452,14 @@ public class View {
         repaint();
     }
 
-    public void displayError(Alert.AlertType type, String text) {
+    public void displayError(Alert.AlertType type, String text, boolean wait) {
         Alert alert = new Alert(type, text, ButtonType.OK);
-        alert.showAndWait();
+
+        if(wait){
+            alert.showAndWait();
+        }else{
+            alert.show();
+        }
     }
 
     public void changeToColorBlindMode(boolean isColorBlindMode) {
@@ -497,25 +485,47 @@ public class View {
 
     //Order of KDTree drawing is important.
     private void drawAllKDTreeTypes(Rect rect, Point2D mouse){
-        drawKDTree(OSMType.BEACH, rect, pixelwidth);
-        drawKDTree(OSMType.FARMLAND, rect, pixelwidth);
-        drawKDTree(OSMType.RESIDENTIAL, rect, pixelwidth);
-        drawKDTree(OSMType.HEATH, rect, pixelwidth);
-        drawKDTree(OSMType.WOOD, rect, pixelwidth);
-        drawKDTree(OSMType.TREE_ROW, rect, pixelwidth);
-        drawKDTree(OSMType.WATER, rect, pixelwidth);
-        drawKDTree(OSMType.FOREST, rect, pixelwidth);
-        drawKDTree(OSMType.BUILDING, rect, pixelwidth);
-        drawKDTree(OSMType.MEADOW, rect, pixelwidth);
 
-        drawKDTree(OSMType.HIGHWAY, rect, pixelwidth, mouse);
-        drawKDTree(OSMType.RESIDENTIAL_HIGHWAY, rect, pixelwidth, mouse);
-        drawKDTree(OSMType.TERTIARY, rect, pixelwidth, mouse);
-        drawKDTree(OSMType.UNCLASSIFIED_HIGHWAY, rect, pixelwidth, mouse);
+        OSMType[] drawableTypes = OSMType.drawables();
 
-        if(appController.fetchKDTree(OSMType.MOTORWAY) != null) {
-            drawKDTree(OSMType.MOTORWAY, rect, pixelwidth, mouse);
+        for(OSMType type : drawableTypes){
+            drawKDTree(type, rect, pixelwidth, mouse);
         }
 
+        OSMType[] highwayTypes = OSMType.highways();
+
+        for(OSMType type : highwayTypes){
+            drawKDTree(type, rect, pixelwidth, mouse);
+        }
+
+    }
+
+    private void setClosetLinePathToMouse() {
+        try {
+
+            OSMType[] types = OSMType.highways();
+
+            Map<OSMType, Double> dist = new HashMap<>();
+
+            for(OSMType type : types){
+                if(appController.fetchAllKDTreeData().get(type) != null){
+                    dist.put(type, appController.fetchKDTree(type).getClosetsLinePathToMouseDistance());
+                }
+            }
+
+            double shortestDistance = Double.POSITIVE_INFINITY;
+            OSMType shortestType = null;
+
+            for(Map.Entry<OSMType, Double> entry : dist.entrySet()){
+                if(entry.getValue() < shortestDistance){
+                    shortestDistance = entry.getValue();
+                    shortestType = entry.getKey();
+                }
+            }
+
+            String name = appController.fetchKDTree(shortestType).getClosetsLinepathToMouse().getName();
+            mouseLocationLabel.setText(name == null ? "Unknown way" : name);
+        } catch (Exception e) {
+        }
     }
 }

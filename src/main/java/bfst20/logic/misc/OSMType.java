@@ -13,6 +13,9 @@ public enum OSMType {
     ROUTING,
     RESIDENTIAL_HIGHWAY,
     UNCLASSIFIED_HIGHWAY,
+    SECONDARY,
+    PRIMARY,
+    SERVICE,
     FOOTWAY,
     CYCLEWAY,
     PATH,
@@ -41,12 +44,10 @@ public enum OSMType {
             case HIGHWAY:
             case MOTORWAY:
             case RESIDENTIAL_HIGHWAY:
+            case SECONDARY:
+            case PRIMARY:
+            case SERVICE:
                 return lineWidth * 2;
-            case FOOTWAY:
-            case PATH:
-            case TRACK:
-            case CYCLEWAY:
-                return lineWidth * 1;
             default:
                 return lineWidth;
         }
@@ -57,30 +58,37 @@ public enum OSMType {
             case COASTLINE:
             case MOTORWAY:
             case ROUTING:
+            case PRIMARY:
                 return 1;
-            case FOREST:
             case HEATH:
             case WATER:
+            case SECONDARY:
+                return 4003111.816427079;
+            case TERTIARY:
+                return 1.1191879061812976E7;
             case FARMLAND:
-            case NATURAL:
-            case WOOD:
             case TREE_ROW:
             case BEACH:
             case GREEN:
             case HIGHWAY:
-            case TERTIARY:
             case MEADOW:
-            case UNCLASSIFIED_HIGHWAY:
                 return 1.3011416847239474E7;
+            case UNCLASSIFIED_HIGHWAY:
             case RESIDENTIAL:
-            case BUILDING:
             case RESIDENTIAL_HIGHWAY:
             case MULTIPOLYGON:
+            case FOREST:
+            case NATURAL:
+            case WOOD:
+                return 2.8945867784311756E7;
+            case BUILDING:
+                return 2.8945867784311756E8;
             case FOOTWAY:
             case PATH:
             case TRACK:
             case CYCLEWAY:
-                return 2.8945867784311756E7;
+            case SERVICE:
+                return 3.2693626068786936E9;
             default:
                 return Double.POSITIVE_INFINITY;
         }
@@ -133,13 +141,12 @@ public enum OSMType {
                 return Color.BROWN;
             case RESIDENTIAL_HIGHWAY:
                 return Color.rgb(92, 92, 92, 1);
-            case TERTIARY:
             case MOTORWAY:
                 return Color.BLACK;
             case HIGHWAY:
                 return Color.rgb(54, 54, 54, 1);
             case UNCLASSIFIED_HIGHWAY:
-                return Color.rgb(79, 79, 79, 1);
+                return Color.rgb(79, 79, 79, 0.5);
             case HEATH:
                 return Color.rgb(214, 217, 159, 0.9);
             case RESIDENTIAL:
@@ -155,9 +162,18 @@ public enum OSMType {
                 return Color.ROYALBLUE;
             case FOOTWAY:
             case PATH:
+                return Color.rgb(183, 120, 90, 1);
             case TRACK:
+                return Color.rgb(186, 153, 87, 1);
             case CYCLEWAY:
-                return Color.YELLOW;
+                return Color.rgb(15, 0, 158, 0.5);
+            case SECONDARY:
+                return Color.rgb(255, 255, 100, 0.5);
+            case PRIMARY:
+                return Color.rgb(253, 221, 179, 0.9);
+            case SERVICE:
+            case TERTIARY:
+                return Color.rgb(158, 156, 153, 1);
             case NATURAL:
                 return Color.BLUEVIOLET;
             case ROUTING:
@@ -216,6 +232,42 @@ public enum OSMType {
             default:
                 return 60;
         }
+    }
+
+    public static OSMType[] highways(){
+        OSMType[] types = {
+                HIGHWAY,
+                RESIDENTIAL_HIGHWAY,
+                TERTIARY,
+                UNCLASSIFIED_HIGHWAY,
+                MOTORWAY,
+                FOOTWAY,
+                PATH,
+                TRACK,
+                CYCLEWAY,
+                SECONDARY,
+                PRIMARY,
+                SERVICE
+        };
+
+        return types;
+    }
+
+    public static OSMType[] drawables(){
+        OSMType[] types = {
+            BEACH,
+            FARMLAND,
+            RESIDENTIAL,
+            HEATH,
+            WOOD,
+            TREE_ROW,
+            WATER,
+            FOREST,
+            BUILDING,
+            MEADOW,
+        };
+
+        return types;
     }
 
 }

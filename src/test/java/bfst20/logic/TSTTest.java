@@ -53,4 +53,16 @@ public class TSTTest {
 
         System.out.println(addresses.size());
     }
+
+    @Test
+    public void spaceTest(){
+        Address Address1 = new Address("Hjørring", "10", "9800", "Skagen landevej", 1, 1, 1);
+        bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
+
+        tst.put(Address1.getStreet(), Address1);
+
+        Queue<Address> addresses = tst.keysWithPrefix("Skagen landevej");
+
+        assert addresses.poll() == Address1;
+    }
 }
