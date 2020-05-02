@@ -107,10 +107,10 @@ public class ViewController {
 
         try {
 
-            file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
+            //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            //file = getResourceAsFile("samsoe.osm");
+            file = getResourceAsFile("samsoe.osm");
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
