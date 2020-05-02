@@ -96,7 +96,7 @@ public class AppController {
     }
 
     public List<LinePath> fetchHighwayData() {
-        return linePathData.getHighWays();
+        return linePathData.getHighways();
     }
 
 

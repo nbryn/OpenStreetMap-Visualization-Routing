@@ -17,12 +17,12 @@ public class LinePathData {
     private static boolean isLoaded = false;
     private List<LinePath> coastlines;
     private List<LinePath> motorways;
-    private List<LinePath> highWays;
+    private List<LinePath> highways;
 
     private LinePathData() {
         linePaths = new HashMap<>();
         nodeTo = new HashMap<>();
-        highWays = new ArrayList<>();
+        highways = new ArrayList<>();
         coastlines = new ArrayList<>();
         motorways = new ArrayList<>();
     }
@@ -37,11 +37,11 @@ public class LinePathData {
     }
 
     public void saveHighways(List<LinePath> highways) {
-        this.highWays = highways;
+        this.highways = highways;
     }
 
-    public List<LinePath> getHighWays() {
-        return this.highWays;
+    public List<LinePath> getHighways() {
+        return this.highways;
     }
 
     public Map<OSMType, List<LinePath>> getLinePaths() {
