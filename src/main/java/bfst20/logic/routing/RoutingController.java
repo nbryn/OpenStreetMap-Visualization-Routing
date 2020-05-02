@@ -16,18 +16,9 @@ public class RoutingController {
     private AppController appController;
     private Dijkstra dijkstra;
 
-    private RoutingController() {
-        appController = new AppController();
+    public RoutingController(AppController appController) {
+        this.appController = appController;
 
-    }
-
-    public static RoutingController getInstance() {
-        if (!isLoaded) {
-            isLoaded = true;
-            routingController = new RoutingController();
-        }
-
-        return routingController;
     }
 
     public void buildRoutingGraph() {

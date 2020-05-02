@@ -14,7 +14,6 @@ public class Dijkstra {
     private Map<Node, Edge> edgeTo;
 
 
-
     public Dijkstra(Graph graph, Node source, Node target, Vehicle vehicle) {
         minPQ = new PriorityQueue<>(graph.nodeCount());
         distTo = new HashMap<>();
@@ -22,7 +21,6 @@ public class Dijkstra {
 
         findShortestPath(graph, source, target, vehicle);
     }
-
 
     public void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
         setup(graph, source);
@@ -46,7 +44,6 @@ public class Dijkstra {
         for (int i = 0; i < graph.getNodes().size(); i++) {
             distTo.put(graph.getNodes().get(i), Double.POSITIVE_INFINITY);
         }
-
         source.setDistTo(0.0);
         distTo.put(source, 0.0);
         minPQ.add(source);
@@ -60,9 +57,7 @@ public class Dijkstra {
             current = edge.getTarget();
             // Only need to check oneway when coming from source
             // As we know it's not oneway when coming from target
-            if (!edge.isOneWay(vehicle)) {
-                vehicleAllowed(edge, min, vehicle, current);
-            }
+            if (!edge.isOneWay(vehicle)) vehicleAllowed(edge, min, vehicle, current);
         } else {
             current = edge.getSource();
             vehicleAllowed(edge, min, vehicle, current);
@@ -71,29 +66,17 @@ public class Dijkstra {
 
     private void vehicleAllowed(Edge edge, Node min, Vehicle vehicle, Node current) {
         if (edge.isVehicleAllowed(vehicle)) {
-            if (vehicle == Vehicle.CAR) {
-                setDistToCar(edge, min, current);
-            } else {
-                setDistTo(edge, min, current);
+            double distance;
+            // Need to take speed limits into account if vehicle is car
+            if (vehicle == Vehicle.CAR) distance = distTo.get(min) + (edge.getLength() / edge.getMaxSpeed());
+            else distance = distTo.get(min) + edge.getLength();
+            // If distance to node is INFINITY -> Insert actual distance
+            if (distTo.get(current) > distance) {
+                distTo.put(current, distance);
+                insertNodePQ(edge, current);
             }
         }
     }
-
-    private void setDistToCar(Edge edge, Node min, Node current) {
-        if (distTo.get(current) > distTo.get(min) + (edge.getLength() / edge.getMaxSpeed())) {
-            distTo.put(current, distTo.get(min) + (edge.getLength() / edge.getMaxSpeed()));
-            insertNodePQ(edge, current);
-        }
-    }
-
-
-    private void setDistTo(Edge edge, Node min, Node current) {
-        if (distTo.get(current) > distTo.get(min) + edge.getLength()) {
-            distTo.put(current, distTo.get(min) + edge.getLength());
-            insertNodePQ(edge, current);
-        }
-    }
-
 
     private void insertNodePQ(Edge edge, Node current) {
         edgeTo.put(current, edge);
