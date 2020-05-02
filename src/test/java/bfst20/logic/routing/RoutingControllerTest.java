@@ -43,7 +43,7 @@ class RoutingControllerTest {
     }
 
     @Test
-    void buildRoutingGraph() throws NoSuchFieldException, IllegalAccessException {
+    void buildRoutingGraph() {
         routingController.buildRoutingGraph();
 
         verify(appController, times(1)).saveGraphData(Mockito.any(Graph.class));
