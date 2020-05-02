@@ -39,16 +39,16 @@ class LinePathDataTest {
 
         linePathData.saveLinePath(OSMType.COASTLINE, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.COASTLINE).get(0));
+        assertEquals(linePath, linePathData.getCoastlines().get(0));
     }
 
     @Test
     void addLinePath() {
-        LinePath linePath = new LinePath(new Way(), OSMType.HIGHWAY, new HashMap<>(), true);
+        LinePath linePath = new LinePath(new Way(), OSMType.MOTORWAY, new HashMap<>(), true);
 
-        linePathData.saveLinePath(OSMType.HIGHWAY, linePath);
+        linePathData.saveLinePath(OSMType.MOTORWAY, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.HIGHWAY).get(0));
+        assertEquals(linePath, linePathData.getMotorways().get(0));
     }
 
     @Test
