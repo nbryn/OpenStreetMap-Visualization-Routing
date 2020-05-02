@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class RoutingControllerTest {
@@ -54,5 +55,7 @@ class RoutingControllerTest {
 
         verify(appController, times(1)).saveRouteData(Mockito.any(ArrayList.class));
         verify(appController, times(1)).saveRouteInfo(Mockito.any(HashMap.class));
+
+        assertEquals(0.04, routingController.calculateShortestRoute(graph, edges, address, address2, Vehicle.CAR));
     }
 }
