@@ -1,6 +1,7 @@
 package bfst20.logic;
 
 import java.io.*;
+import java.lang.reflect.AccessibleObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class AppController {
     }
 
     public View initialize() throws IOException {
-        routingController = routingController.getInstance();
+        routingController = new RoutingController(new AppController());
 
         if (!isBinary) {
             System.out.println("Creating linepaths");
@@ -56,6 +57,7 @@ public class AppController {
             System.out.println("Generate Highways");
             generateHighways();
             System.out.println("Building graph");
+
             routingController.buildRoutingGraph();
 
         }
@@ -101,7 +103,7 @@ public class AppController {
 
 
     public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
-        routingController = routingController.getInstance();
+        routingController = new RoutingController(new AppController());
 
         Address source = addressData.findAddress(sourceQuery);
         Address target = addressData.findAddress(targetQuery);
