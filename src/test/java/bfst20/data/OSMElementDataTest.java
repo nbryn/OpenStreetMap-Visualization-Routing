@@ -24,7 +24,7 @@ class OSMElementDataTest {
     }
 
     @Test
-    void addRelation() {
+    void saveRelation() {
         Relation relation = new Relation(23232);
 
         osmElementData.saveRelation(relation);
@@ -33,7 +33,7 @@ class OSMElementDataTest {
     }
 
     @Test
-    void getOSMRelations() {
+    void getRelations() {
         osmElementData.getRelations().clear();
 
         Relation relation = new Relation(1123);
@@ -43,12 +43,11 @@ class OSMElementDataTest {
         osmElementData.saveRelation(relation2);
 
 
-
         assertEquals(2, osmElementData.getRelations().size());
     }
 
     @Test
-    void setBounds() {
+    void saveBounds() {
         Bounds bounds = new Bounds(12, 14, 16, 18);
 
         osmElementData.saveBounds(bounds);
@@ -79,7 +78,7 @@ class OSMElementDataTest {
     }
 
     @Test
-    void getOSMNodes() {
+    void getNodes() {
         long id = 2223;
         Node node = new Node();
 
@@ -90,24 +89,26 @@ class OSMElementDataTest {
     }
 
     @Test
-    void addWay() {
+    void getNode() {
+    }
+
+    @Test
+    void saveWay() {
         Way way = new Way();
 
         osmElementData.saveWay(way);
 
-        assertEquals(way, osmElementData.getOSMWays().get(0));
+        assertEquals(way, osmElementData.getWays().get(0));
     }
 
     @Test
-    void getOSMWays() {
+    void getWays() {
         Way way = new Way();
         Way way2 = new Way();
 
         osmElementData.saveWay(way);
         osmElementData.saveWay(way2);
 
-        assertNotNull(osmElementData.getOSMWays());
+        assertNotNull(osmElementData.getWays());
     }
-
-
 }

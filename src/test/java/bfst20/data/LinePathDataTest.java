@@ -24,8 +24,6 @@ class LinePathDataTest {
     @BeforeAll
     static void setup() {
         linePathData = LinePathData.getInstance();
-       // node = new Node();
-
     }
 
     @Test
@@ -43,7 +41,7 @@ class LinePathDataTest {
     }
 
     @Test
-    void addLinePath() {
+    void saveLinePath() {
         LinePath linePath = new LinePath(new Way(), OSMType.MOTORWAY, new HashMap<>(), true);
 
         linePathData.saveLinePath(OSMType.MOTORWAY, linePath);
@@ -52,7 +50,7 @@ class LinePathDataTest {
     }
 
     @Test
-    void setLinePaths() {
+    void saveLinePaths() {
         LinePath linePath = new LinePath(new Way(), OSMType.MOTORWAY, new HashMap<>(), true);
         List<LinePath> motorWays = new ArrayList<>();
         motorWays.add(linePath);
@@ -86,15 +84,12 @@ class LinePathDataTest {
     }
 
 
-
-
     @Test
     void getNodeToCoastline() {
         linePathData.addNodeTo(OSMType.COASTLINE, node, new Way());
 
         assertEquals(1, linePathData.getNodeTo(OSMType.COASTLINE).size());
     }
-
 
 
     @Test
@@ -105,4 +100,35 @@ class LinePathDataTest {
     }
 
 
+    @Test
+    void saveHighways() {
+    }
+
+    @Test
+    void getHighWays() {
+    }
+
+    @Test
+    void getCoastlines() {
+    }
+
+    @Test
+    void saveCoastlines() {
+    }
+
+    @Test
+    void getMotorways() {
+    }
+
+    @Test
+    void getNodeTo() {
+    }
+
+    @Test
+    void clearData() {
+    }
+
+    @Test
+    void saveSingleCoastLine() {
+    }
 }

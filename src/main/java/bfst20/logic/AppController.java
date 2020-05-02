@@ -192,7 +192,7 @@ public class AppController {
     }
 
     public List<Way> getAllWayData() {
-        return osmElementData.getOSMWays();
+        return osmElementData.getWays();
     }
 
     public Node getNodeData(long id) {

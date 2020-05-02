@@ -53,4 +53,16 @@ class AddressDataTest {
 
         assertEquals("Smediegyde", address.getStreet());
     }
+
+    @Test
+    void parseAddress() {
+    }
+
+    @Test
+    void searchSuggestions() {
+    }
+
+    @Test
+    void saveTST() {
+    }
 }
