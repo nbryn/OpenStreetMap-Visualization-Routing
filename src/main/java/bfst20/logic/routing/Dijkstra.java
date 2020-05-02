@@ -78,7 +78,6 @@ public class Dijkstra {
         }
     }
 
-
     private void insertNodePQ(Edge edge, Node current) {
         edgeTo.put(current, edge);
         current.setDistTo(distTo.get(current));
