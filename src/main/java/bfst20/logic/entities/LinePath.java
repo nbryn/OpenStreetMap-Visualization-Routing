@@ -46,18 +46,16 @@ public class LinePath implements Serializable {
 
         coords = new float[nodeIds.size() * 2];
         for (int i = 0; i < nodeIds.size(); i++) {
-            if (nodeIds.get(i) == -99999) {
-                coords[i * 2] = -99999;
-                coords[i * 2 + 1] = -99999;
-            } else {
-                coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
-                coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
 
-                if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
-                if (minY > coords[i * 2]) minY = coords[i * 2];
-                if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
-                if (maxY < coords[i * 2]) maxY = coords[i * 2];
-            }
+
+            coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
+            coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
+
+            if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
+            if (minY > coords[i * 2]) minY = coords[i * 2];
+            if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
+            if (maxY < coords[i * 2]) maxY = coords[i * 2];
+
         }
 
         centerLatitude = (maxX - minX) / 2 + minX;
