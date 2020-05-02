@@ -239,9 +239,6 @@ public class Parser {
         } catch (Exception err) {
             // This exception is getting throwen a lot, because of all the missing Enum
             // Types.
-            // appController.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags,
-            // exiting.");
-            // System.exit(1);
         }
     }
 

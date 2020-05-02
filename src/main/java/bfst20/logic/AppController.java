@@ -286,7 +286,7 @@ public class AppController {
             FileHandler fileHandler = FileHandler.getInstance();
             fileHandler.generateBinary();
         } catch (Exception e) {
-            e.printStackTrace();
+            alertOK(Alert.AlertType.ERROR, "Error generating binary, please retry.", false);
         }
     }
 
