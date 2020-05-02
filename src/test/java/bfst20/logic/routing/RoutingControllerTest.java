@@ -57,5 +57,6 @@ class RoutingControllerTest {
         verify(appController, times(1)).saveRouteInfo(Mockito.any(HashMap.class));
 
         assertEquals(0.04, routingController.calculateShortestRoute(graph, edges, address, address2, Vehicle.CAR));
+        assertEquals(3, routingController.calculateShortestRoute(graph, edges, address, address2, Vehicle.BICYCLE));
     }
 }
