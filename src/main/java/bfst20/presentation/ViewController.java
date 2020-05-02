@@ -122,8 +122,8 @@ public class ViewController {
         try {
             view = appController.initialize();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
+            System.exit(1);
         }
 
         setupZoomSlider();
@@ -136,7 +136,7 @@ public class ViewController {
     }
 
     //https://stackoverflow.com/questions/676097/java-resource-as-file
-    public static File getResourceAsFile(String resourcePath) {
+    public File getResourceAsFile(String resourcePath) {
         try {
             InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
             if (in == null) {
@@ -156,7 +156,8 @@ public class ViewController {
             }
             return tempFile;
         } catch (IOException e) {
-            e.printStackTrace();
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading file stream, exiting.", true);
+            System.exit(1);
             return null;
         }
     }
@@ -201,7 +202,6 @@ public class ViewController {
                     }
                 }catch (NullPointerException e){
                     appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
-
                 }
             }
         });
@@ -286,7 +286,7 @@ public class ViewController {
                     view = appController.initialize();
                 }
             } catch (Exception err) {
-                err.printStackTrace();
+                appController.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
             }
         });
     }

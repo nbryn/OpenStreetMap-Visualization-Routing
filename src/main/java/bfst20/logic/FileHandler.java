@@ -75,7 +75,6 @@ public class FileHandler {
             appController.saveTSTData(tst);
             appController.saveGraphData(graph);
         } catch (IOException e) {
-            e.printStackTrace();
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.", true);
             System.exit(1);
         } catch (ClassNotFoundException e) {
