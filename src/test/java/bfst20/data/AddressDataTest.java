@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.Queue;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -59,7 +61,29 @@ class AddressDataTest {
     }
 
     @Test
+    void parseAddressElse() {
+        String[] test = addressData.parseAddress("as");
+
+        String[] testString = {"as"};
+
+        assertEquals(test[0], testString[0]);
+    }
+
+    @Test
     void searchSuggestions() {
+        Address address = new Address("Samsoe", "1", "1234", "Smediegydee", 1, 1, 321);
+        addressData.saveAddress(1, address);
+        Queue<Address> test = addressData.searchSuggestions("Smediegydee");
+
+        assertEquals(test.poll(), address);
+
+        test = addressData.searchSuggestions("Smediegydee 1");
+
+        assertEquals(test.poll(), address);
+
+        test = addressData.searchSuggestions("Smediegydee 1 1234");
+
+        assertEquals(test.poll(), address);
     }
 
     @Test
