@@ -4,11 +4,14 @@ import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.kdtree.Direction;
+import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 import bfst20.logic.misc.OSMType;
+import javafx.geometry.Point2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,5 +165,80 @@ public class KDTreeTest {
         }
 
         assertEquals(i, 0);
+    }
+
+    @Test
+    public void getElementsInRect(){
+        Rect rect = new Rect(0, 100, 0, 100);
+
+        List<LinePath> linePaths = new ArrayList<>();
+
+        Map<Long, Node> nodes1 = new HashMap<>();
+        nodes1.put((long) 1, new Node(1, 10, 10));
+        nodes1.put((long) 2, new Node(2, 11, 10));
+        Way way1 = new Way();
+        way1.addNodeId(1);
+        way1.addNodeId(2);
+
+        LinePath lp = new LinePath(way1, OSMType.BUILDING, nodes1,true);
+
+        linePaths.add(lp);
+
+        bfst20.logic.kdtree.KDTree kdTree = new bfst20.logic.kdtree.KDTree(linePaths, rect);
+
+        int i = 0;
+
+        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 100, 0, 100), 1.3011416847239474E9, new Point2D(1, 1))){
+            i++;
+        }
+
+        assertEquals(i, 1);
+
+        assertEquals(kdTree.getClosetsLinepathToMouse(), lp);
+
+        assert kdTree.getClosetsLinePathToMouseDistance() > 0;
+    }
+
+    @Test
+    public void createTree(){
+        Rect rect = new Rect(0, 10, 0, 10);
+
+        LinePath p1 = createTestLinePath(1, 1, 2, 2);
+        LinePath p2 = createTestLinePath(2, 2, 3, 3);
+        LinePath p3 = createTestLinePath(0, 0, 1, 1);
+        LinePath p4 = createTestLinePath(5, 5, 6, 6);
+        LinePath p5 = createTestLinePath(6, 6, 7, 7);
+        LinePath p6 = createTestLinePath(7, 7, 8, 8);
+        LinePath p7 = createTestLinePath(1, 1, 8, 8);
+
+
+        List<LinePath> paths = new ArrayList<>();
+        paths.add(p1);
+        paths.add(p2);
+        paths.add(p3);
+        paths.add(p4);
+        paths.add(p5);
+        paths.add(p6);
+        paths.add(p7);
+
+        KDTree tree = new KDTree(paths,rect);
+
+        assertEquals(tree.getRoot().getLinePath(), p1);
+        assertEquals(tree.getRoot().getLeftNode().getLinePath(), p2);
+        assertEquals(tree.getRoot().getLeftNode().getRightNode().getLinePath(), p3);
+        assertEquals(tree.getRoot().getLeftNode().getLeftNode().getLinePath(), p7);
+    }
+
+    public LinePath createTestLinePath(float fLat, float fLon, float tLat, float tLon){
+        Map<Long, Node> nodes1 = new HashMap<>();
+        nodes1.put((long) 1, new Node(1, fLat, fLon));
+        nodes1.put((long) 2, new Node(2, tLat, tLon));
+        Way way1 = new Way();
+        way1.addNodeId(1);
+        way1.addNodeId(2);
+
+        LinePath lp = new LinePath(way1, OSMType.BUILDING, nodes1,true);
+
+        return lp;
     }
 }

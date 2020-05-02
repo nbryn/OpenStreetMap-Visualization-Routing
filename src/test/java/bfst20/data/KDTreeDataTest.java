@@ -80,13 +80,4 @@ class KDTreeDataTest {
         assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), kdTree);
     }
 
-
-
-    @Test
-    void getAllLKDTrees() {
-    }
-
-    @Test
-    void saveAllKDTrees() {
-    }
 }

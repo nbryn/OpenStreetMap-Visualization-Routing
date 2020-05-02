@@ -74,10 +74,6 @@ public class KDTree implements Serializable {
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point) {
         if (node == null) return;
 
-        if(node.getLinePath().getOSMType() == OSMType.MOTORWAY){
-            String i = "";
-        }
-
         if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
