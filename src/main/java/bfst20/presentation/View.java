@@ -138,10 +138,6 @@ public class View {
 
     public void repaint() {
 
-        System.out.println(trans.determinant());
-        System.out.println(Math.log(trans.determinant())%100);
-
-
         if (fps()) return;
 
 
@@ -154,7 +150,7 @@ public class View {
 
         pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
-        int boxSize = 300;
+        int boxSize = (int) canvas.getWidth() + 50;
 
         Rect rect = createRect(boxSize);
 
@@ -404,7 +400,7 @@ public class View {
         } else if (deltaY>0 && zoomLevel <= 150) {
             scale(factor,x,y,deltaY);
         }*/
-        
+
         /*System.out.println(zoomLevel);
         zoomLevel *= factor;
 
@@ -422,6 +418,10 @@ public class View {
         }*/
 
         //if(zoomLevel > 1.0) return;
+
+        zoomLevel *= factor;
+
+        System.out.println(zoomLevel);
 
         scale(factor, x, y, deltaY);
         reduceZoomLevel();
