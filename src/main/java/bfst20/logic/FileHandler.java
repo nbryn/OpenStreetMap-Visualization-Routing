@@ -76,10 +76,10 @@ public class FileHandler {
             appController.saveData(graph);
         } catch (IOException e) {
             e.printStackTrace();
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.", true);
             System.exit(1);
         } catch (ClassNotFoundException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.", true);
             System.exit(1);
         }
     }
@@ -103,7 +103,7 @@ public class FileHandler {
             zipFile.close();
 
         } catch (IOException | XMLStreamException ex) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.", true);
             System.exit(1);
         }
     }

@@ -32,6 +32,7 @@ dependencies {
 
 application {
     mainClassName = 'bfst20.presentation.ViewController'
+    applicationDefaultJvmArgs = ["-Xmx12140m"]
 }
 
 compileJava.options.encoding = 'UTF-8'
