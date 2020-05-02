@@ -94,6 +94,7 @@ class OSMElementDataTest {
 
     @Test
     void saveWay() {
+        osmElementData.getWays().clear();
         Way way = new Way();
 
         osmElementData.saveWay(way);
