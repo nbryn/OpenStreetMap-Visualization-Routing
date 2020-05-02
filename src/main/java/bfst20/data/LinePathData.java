@@ -50,22 +50,19 @@ public class LinePathData {
 
     public void saveLinePath(OSMType type, LinePath linePath) {
         if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
-        if(type == type.COASTLINE){
-            coastlines.add(linePath);
-            return;
-        }else if(type == type.MOTORWAY){
-            motorways.add(linePath);
-            return;
-        }
-        linePaths.get(type).add(linePath);
+        if (type == type.COASTLINE) coastlines.add(linePath);
+
+        else if (type == type.MOTORWAY) motorways.add(linePath);
+
+        else linePaths.get(type).add(linePath);
     }
 
-    public List<LinePath> getCoastlines(){
+    public List<LinePath> getCoastlines() {
         return coastlines;
     }
 
 
-    public void saveCoastlines(List<LinePath> coastlines){
+    public void saveCoastlines(List<LinePath> coastlines) {
         this.coastlines = coastlines;
     }
 
@@ -103,18 +100,18 @@ public class LinePathData {
     public void clearData() {
         linePaths = new HashMap<>();
         nodeTo = new HashMap<>();
-       //highWays = new ArrayList<>();
+        //highWays = new ArrayList<>();
 
         System.gc();
     }
 
-	public void saveSingleCoastLine(LinePath linePath) {
-        if(coastlines == null){
+    public void saveSingleCoastLine(LinePath linePath) {
+        if (coastlines == null) {
             coastlines = new ArrayList<>();
         }
 
         coastlines.add(linePath);
     }
-    
+
 
 }
