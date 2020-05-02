@@ -26,12 +26,16 @@ class EdgeTest {
 
     @Test
     void isOneWay() {
+
         assertEquals(true, edge.isOneWay(vehicle));
+        assertEquals(false, edge.isOneWay(Vehicle.BICYCLE));
     }
 
     @Test
     void isVehicleAllowed() {
+
         assertEquals(false, edge.isVehicleAllowed(Vehicle.BICYCLE));
+        assertEquals(true, edge.isVehicleAllowed(vehicle));
     }
 
     @Test
