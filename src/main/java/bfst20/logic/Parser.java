@@ -203,6 +203,8 @@ public class Parser {
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
         try {
+            if(tags.containsKey("route")) return;
+
             if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name"));
 
             if (tags.containsKey("type") && tags.get("type").equals("multipolygon")) {

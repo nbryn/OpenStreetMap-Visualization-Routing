@@ -50,7 +50,6 @@ public class LinePathGenerator {
 
     private void createWays() {
         for (Way way : OSMWays) {
-
             if (way.getOSMType() == OSMType.COASTLINE || way.getOSMType() == null) continue;
 
             LinePath linePath = createLinePath(way);
