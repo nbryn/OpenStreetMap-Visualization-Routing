@@ -27,7 +27,7 @@ class AppControllerTest {
     }
 
     @Test
-    void saveData() {
+    void saveGraphData() {
     }
 
     @Test
@@ -35,7 +35,7 @@ class AppControllerTest {
     }
 
     @Test
-    void testSaveData() {
+    void saveRouteData() {
     }
 
     @Test
@@ -47,11 +47,11 @@ class AppControllerTest {
     }
 
     @Test
-    void testSaveData1() {
+    void saveAddressData() {
     }
 
     @Test
-    void testSaveData2() {
+    void saveRelationData() {
     }
 
     @Test
@@ -59,7 +59,7 @@ class AppControllerTest {
     }
 
     @Test
-    void testSaveData3() {
+    void saveBoundsData() {
     }
 
     @Test
@@ -67,11 +67,11 @@ class AppControllerTest {
     }
 
     @Test
-    void testSaveData4() {
+    void saveNodeData() {
     }
 
     @Test
-    void testSaveData5() {
+    void saveWayData() {
     }
 
     @Test
@@ -91,7 +91,7 @@ class AppControllerTest {
     }
 
     @Test
-    void saveCoastLines() {
+    void saveCoastlines() {
     }
 
     @Test
@@ -103,7 +103,7 @@ class AppControllerTest {
     }
 
     @Test
-    void testSaveData6() {
+    void saveNodeToData() {
     }
 
     @Test
@@ -111,11 +111,11 @@ class AppControllerTest {
     }
 
     @Test
-    void testSaveData7() {
+    void saveLinePathData() {
     }
 
     @Test
-    void testSaveData8() {
+    void saveData() {
     }
 
     @Test
@@ -139,14 +139,10 @@ class AppControllerTest {
     }
 
     @Test
-    void createView() {
+    void fetchTSTData() {
     }
 
     @Test
-    void fetchTST() {
-    }
-
-    @Test
-    void saveTST() {
+    void saveTSTData() {
     }
 }

@@ -117,7 +117,7 @@ public class AppController {
         return routingData.getGraph();
     }
 
-    public void saveData(Graph graph) {
+    public void saveGraphData(Graph graph) {
         routingData.saveGraph(graph);
     }
 
@@ -125,7 +125,7 @@ public class AppController {
         return routingData.getRoute();
     }
 
-    public void saveData(List<Edge> route) {
+    public void saveRouteData(List<Edge> route) {
         routingData.saveRoute(route);
     }
 
@@ -137,7 +137,7 @@ public class AppController {
         return routingData.getRouteInfo();
     }
 
-    public void clearRouteInfoData(){
+    public void clearRouteInfoData() {
         routingData.clearData();
     }
 
@@ -163,11 +163,11 @@ public class AppController {
         parser.parseString(string);
     }
 
-    public void saveData(long id, Address address) {
+    public void saveAddressData(long id, Address address) {
         addressData.saveAddress(id, address);
     }
 
-    public void saveData(Relation relation) {
+    public void saveRelationData(Relation relation) {
         osmElementData.saveRelation(relation);
     }
 
@@ -175,7 +175,7 @@ public class AppController {
         return osmElementData.getRelations();
     }
 
-    public void saveData(Bounds bounds) {
+    public void saveBoundsData(Bounds bounds) {
         osmElementData.saveBounds(bounds);
     }
 
@@ -183,11 +183,11 @@ public class AppController {
         return osmElementData.getBounds();
     }
 
-    public void saveData(long id, Node node) {
+    public void saveNodeData(long id, Node node) {
         osmElementData.addToNodeMap(id, node);
     }
 
-    public void saveData(Way way) {
+    public void saveWayData(Way way) {
         osmElementData.saveWay(way);
     }
 
@@ -207,7 +207,7 @@ public class AppController {
         return linePathData.getCoastlines();
     }
 
-    public void saveCoastLines(List<LinePath> paths) {
+    public void saveCoastlines(List<LinePath> paths) {
         linePathData.saveCoastlines(paths);
     }
 
@@ -224,7 +224,7 @@ public class AppController {
         return linePathData.removeWayFromNodeTo(type, node);
     }
 
-    public void saveData(OSMType type, Node node, Way way) {
+    public void saveNodeToData(OSMType type, Node node, Way way) {
         linePathData.addNodeTo(type, node, way);
     }
 
@@ -232,19 +232,17 @@ public class AppController {
         return linePathData.getNodeTo(type);
     }
 
-    public void saveData(OSMType type, LinePath linePath) {
-        if (type == OSMType.COASTLINE) {
-            linePathData.saveSingleCoastLine(linePath);
-        } else {
-            linePathData.saveLinePath(type, linePath);
-        }
+    public void saveLinePathData(OSMType type, LinePath linePath) {
+        if (type == OSMType.COASTLINE) linePathData.saveSingleCoastLine(linePath);
+
+        else linePathData.saveLinePath(type, linePath);
     }
 
     public void saveData(OSMType type) {
         linePathData.addType(type);
     }
 
-    public List<LinePath> fetchMotorways(){
+    public List<LinePath> fetchMotorways() {
         return linePathData.getMotorways();
     }
 
@@ -298,11 +296,11 @@ public class AppController {
         routingData.clearData();
     }
 
-    public TST fetchTST() {
+    public TST fetchTSTData() {
         return addressData.getTST();
     }
 
-    public void saveTST(TST tst) {
+    public void saveTSTData(TST tst) {
         addressData.saveTST(tst);
     }
 
