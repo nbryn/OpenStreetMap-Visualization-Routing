@@ -65,14 +65,12 @@ public enum OSMType {
             case SECONDARY:
                 return 4003111.816427079;
             case TERTIARY:
-                return 1.1191879061812976E7;
             case FARMLAND:
             case TREE_ROW:
             case BEACH:
             case GREEN:
-            case HIGHWAY:
             case MEADOW:
-                return 1.3011416847239474E7;
+                return 1.1191879061812976E7;
             case UNCLASSIFIED_HIGHWAY:
             case RESIDENTIAL:
             case RESIDENTIAL_HIGHWAY:
@@ -80,15 +78,15 @@ public enum OSMType {
             case FOREST:
             case NATURAL:
             case WOOD:
-                return 2.8945867784311756E7;
             case BUILDING:
-                return 2.8945867784311756E8;
+            case HIGHWAY:
+                return 1.3011416847239474E9;
             case FOOTWAY:
             case PATH:
             case TRACK:
             case CYCLEWAY:
             case SERVICE:
-                return 3.2693626068786936E9;
+                return 3.2693626068786936E10;
             default:
                 return Double.POSITIVE_INFINITY;
         }

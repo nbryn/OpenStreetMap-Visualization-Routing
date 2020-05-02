@@ -229,9 +229,9 @@ public class ViewController {
 
                 if (!scrollTrigger) {
                     double deltaValue = zoomSlider.getValue() - view.getSliderValue();
-                    double factor = Math.pow(1.001, 40 * deltaValue);
+                    double factor = Math.pow(1.001, 20 * deltaValue);
 
-                    view.zoom(factor, canvas.getWidth() / 2, canvas.getHeight() / 2, 40 * deltaValue);
+                    view.zoom(factor, canvas.getWidth() / 2, canvas.getHeight() / 2, 20 * deltaValue);
                 }
                 view.setSliderValue(zoomSlider.getValue());
             }
