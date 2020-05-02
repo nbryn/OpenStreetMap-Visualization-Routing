@@ -69,11 +69,11 @@ public class FileHandler {
             TST tst = (TST) in.readObject();
             Graph graph = (Graph) in.readObject();
 
-            appController.saveData(bounds);
+            appController.saveBoundsData(bounds);
             appController.saveAllKDTrees(tree);
-            appController.saveCoastLines(coastline);
-            appController.saveTST(tst);
-            appController.saveData(graph);
+            appController.saveCoastlines(coastline);
+            appController.saveTSTData(tst);
+            appController.saveGraphData(graph);
         } catch (IOException e) {
             e.printStackTrace();
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.", true);
@@ -120,7 +120,7 @@ public class FileHandler {
         objectOut.writeObject(appController.fetchBoundsData());
         objectOut.writeObject(appController.fetchAllKDTreeData());
         objectOut.writeObject(appController.fetchCoastlines());
-        objectOut.writeObject(appController.fetchTST());
+        objectOut.writeObject(appController.fetchTSTData());
         objectOut.writeObject(appController.fetchGraphData());
         objectOut.close();
     }

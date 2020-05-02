@@ -115,7 +115,7 @@ public class Parser {
                             break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
-                            appController.saveData(relation);
+                            appController.saveRelationData(relation);
                             parseTags(lastElementParsed, tags, firstTag);
                             break;
                         case "way":
@@ -136,7 +136,7 @@ public class Parser {
         float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-        appController.saveData(new Bounds(maxLat, minLat, maxLon, minLon));
+        appController.saveBoundsData(new Bounds(maxLat, minLat, maxLon, minLon));
     }
 
 
@@ -146,7 +146,7 @@ public class Parser {
         float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
 
         Node node = new Node(id, latitude, longitude);
-        appController.saveData(node.getId(), node);
+        appController.saveNodeData(node.getId(), node);
 
     }
 
@@ -154,7 +154,7 @@ public class Parser {
         long id = Long.parseLong(reader.getAttributeValue(null, "id"));
         Way way = new Way(id);
 
-        appController.saveData(way);
+        appController.saveWayData(way);
 
         return way;
     }
@@ -198,7 +198,7 @@ public class Parser {
         if (city == null) return;
 
         Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
-        appController.saveData(lastNodeId, address);
+        appController.saveAddressData(lastNodeId, address);
     }
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {

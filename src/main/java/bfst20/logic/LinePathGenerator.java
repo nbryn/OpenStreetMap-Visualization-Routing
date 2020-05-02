@@ -61,7 +61,7 @@ public class LinePathGenerator {
             }
 
             if (type != OSMType.PLACE) {
-                appController.saveData(type, linePath);
+                appController.saveLinePathData(type, linePath);
 
             }
         }
@@ -125,7 +125,7 @@ public class LinePathGenerator {
                     path.setMultipolygon(true);
                 }
 
-                appController.saveData(OSMType, path);
+                appController.saveLinePathData(OSMType, path);
             }
         }
     }
@@ -148,8 +148,8 @@ public class LinePathGenerator {
 
         way.setMultipolygon(true);
 
-        appController.saveData(osmType, OSMNodes.get(way.getFirstNodeId()), way);
-        appController.saveData(osmType, OSMNodes.get(way.getLastNodeId()), way);
+        appController.saveNodeToData(osmType, OSMNodes.get(way.getFirstNodeId()), way);
+        appController.saveNodeToData(osmType, OSMNodes.get(way.getLastNodeId()), way);
     }
 
     private void connectWays(Relation relation, OSMType OSMType) {
@@ -169,8 +169,8 @@ public class LinePathGenerator {
 
             way = merge(merge(before, way), after);
 
-            appController.saveData(OSMType, OSMNodes.get(way.getFirstNodeId()), way);
-            appController.saveData(OSMType, OSMNodes.get(way.getLastNodeId()), way);
+            appController.saveNodeToData(OSMType, OSMNodes.get(way.getFirstNodeId()), way);
+            appController.saveNodeToData(OSMType, OSMNodes.get(way.getLastNodeId()), way);
         }
     }
 

@@ -44,7 +44,7 @@ public class RoutingController {
         generateGraphEdges(highways, graph);
         graph.sortEdges();
 
-        appController.saveData(graph);
+        appController.saveGraphData(graph);
 
         //TODO: Needed?
         highwayNodes = null;
@@ -88,7 +88,7 @@ public class RoutingController {
             else route.addAll(extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode));
 
             Map<String, Double> routeInfo = extractRouteInfo(route);
-            appController.saveData(route);
+            appController.saveRouteData(route);
             appController.saveRouteInfo(routeInfo);
 
             // TODO: Needed?
