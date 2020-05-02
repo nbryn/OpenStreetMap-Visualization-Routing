@@ -49,12 +49,6 @@ public class Rect {
         return minLon;
     }
 
-
-    /*public boolean intersectsRight(KdNode node) {
-        LinePath path = node.getLinePath();
-        return path.getMinX() >= minlat || path.getMaxY() <= maxlon;
-    }*/
-
     public boolean intersects(KDNode node) {
         LinePath path = node.getLinePath();
 

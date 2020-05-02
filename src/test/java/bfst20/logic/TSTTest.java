@@ -15,12 +15,11 @@ public class TSTTest {
         Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1, 1);
 
         bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
-        tst.put("Hello 1", address);
-        tst.put("Hej 2", address);
-        tst.put("Hellsevej 3", address);
-        tst.put("Hellsevej 4", address);
+        tst.put("Hello", address);
+        tst.put("Hej", address);
+        tst.put("Hellsevej", address);
 
-        assert tst.getSize() == 18;
+        assert tst.getSize() == 11;
     }
 
     @Test
@@ -29,12 +28,12 @@ public class TSTTest {
         Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1, 1);
 
         bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
-        tst.put("Hello 1", address);
-        tst.put("Hej 2", addressRes);
-        tst.put("Hellsevej 3", address);
-        tst.put("Hellsevej 4", address);
+        tst.put("Hello", address);
+        tst.put("Hej", addressRes);
+        tst.put("Hellsevej", address);
+        tst.put("Hellsevej", address);
 
-        assert tst.get("Hej 2") == addressRes;
+        assert tst.get("Hej").get(0) == addressRes;
     }
 
     @Test
@@ -44,14 +43,13 @@ public class TSTTest {
         Address Address3 = new Address("Hilleroed", "10", "3400", "Hellsevej", 1, 1, 1);
 
         bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
-        tst.put("Hello 1", Address1);
-        tst.put("Hej 2", Address2);
-        tst.put("Hellsevej 3", Address3);
-        //tst.put("Hellsevej 4", address);
+        tst.put("Hello", Address1);
+        tst.put("Hej", Address2);
+        tst.put("Hellsevej", Address3);
 
         Queue<Address> addresses = tst.keysWithPrefix("Hello");
 
-        System.out.println(addresses.size());
+        assert addresses.size() == 1;
     }
 
     @Test

@@ -19,7 +19,7 @@ public class OSMTypeTest {
     @Test
     public void getZoomLevel(){
         assertEquals(OSMType.getZoomLevel(ROUTING),1);
-        assertEquals(OSMType.getZoomLevel(HIGHWAY),1.3011416847239474E7);
+        assertEquals(OSMType.getZoomLevel(HIGHWAY),1.3011416847239474E9);
     }   
     
     @Test

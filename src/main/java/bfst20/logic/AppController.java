@@ -67,6 +67,7 @@ public class AppController {
     }
 
     public void setSearchString(String search) {
+
         view.setSearchString(search);
     }
 

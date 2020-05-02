@@ -131,7 +131,7 @@ public class KDTreeTest {
 
         int i = 0;
 
-        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 100, 0, 100), 2.8945867784311756E8)){
+        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 100, 0, 100), 1.3011416847239474E9)){
             i++;
         }
 
