@@ -62,7 +62,7 @@ public class Parser {
 
             switch (reader.getEventType()) {
                 case START_ELEMENT:
-                    String tagName = reader.getLocalName();
+                    String tagName = reader.getLocalName().intern();
 
                     switch (tagName) {
                         case "bounds":
@@ -99,7 +99,7 @@ public class Parser {
                                 firstTag[0] = key;
                                 firstTag[1] = value;
                             }
-                            tags.put(key, value);
+                            tags.put(key.intern(), value.intern());
                             break;
                         case "member":
                             addMemberToRelation(reader);
@@ -182,7 +182,7 @@ public class Parser {
     private void addMemberToRelation(XMLStreamReader reader) {
         Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
         long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
-        String type = reader.getAttributeValue(null, "type");
+        String type = reader.getAttributeValue(null, "type").intern();
         relation.addMember(member, type);
     }
 
@@ -196,16 +196,28 @@ public class Parser {
         String street = tags.get("addr:street");
 
         if (city == null) return;
+        if (housenumber == null) return;
+        if (postcode == null) return;
+        if (street == null) return;
 
-        Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
-        appController.saveAddressData(lastNodeId, address);
+        try{
+            Address address = new Address(
+                    city.intern(),
+                    housenumber.equals("") ? "" : housenumber.intern(),
+                    postcode.equals("") ? "" : postcode.intern(),
+                    street.equals("") ? "" : street.intern(),
+                    lat, lon, lastNodeId);
+            appController.saveAddressData(lastNodeId, address);
+        }catch (Exception e){
+            String i = "";
+        }
     }
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
         try {
             if(tags.containsKey("route")) return;
 
-            if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name"));
+            if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name").intern());
 
             if (tags.containsKey("type") && tags.get("type").equals("multipolygon")) {
                 lastElementParsed.setMultipolygon(true);
