@@ -100,19 +100,21 @@ public class ViewController {
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = FileHandler.getResourceAsFile("samsoe.osm", appController);
+            file = FileHandler.getResourceAsFile("samsode.osm", appController);
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);
         }
-        try {
+
+        appController.initialize(view, file);
+        /*try {
           appController.initialize(view, file);
         } catch (Exception e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
-        }
+        }*/
     }
 
     private void setupRouteButton() {

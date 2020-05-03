@@ -38,7 +38,7 @@ public class FileHandler {
                 break;
         }
         time += System.nanoTime();
-        System.out.printf("Load time: %.3fms\n", time / 1e6);
+        //System.out.printf("Load time: %.3fms\n", time / 1e6);
 
     }
 
@@ -110,10 +110,13 @@ public class FileHandler {
     //https://stackoverflow.com/questions/676097/java-resource-as-file
     public static File getResourceAsFile(String resourcePath, AppController appController) {
         try {
+
+            String suffix = resourcePath.endsWith(".osm") ? ".osm" : ".bin";
+
             InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
             if (in == null)  return null;
 
-            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),suffix);
             tempFile.deleteOnExit();
 
             try (FileOutputStream out = new FileOutputStream(tempFile)) {

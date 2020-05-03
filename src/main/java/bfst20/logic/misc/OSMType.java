@@ -35,6 +35,7 @@ public enum OSMType {
     RESIDENTIAL,
     WOOD,
     MULTIPOLYGON,
+    OCEAN,
     PLACE;
 
     public static double getLineWidth(OSMType OSMType, double lineWidth) {
@@ -122,6 +123,8 @@ public enum OSMType {
 
     public static Color getNormalColor(OSMType OSMType) {
         switch (OSMType) {
+            case OCEAN:
+                return Color.LIGHTBLUE;
             case BEACH:
                 return Color.rgb(255, 241, 186, 1);
             case MEADOW:
@@ -182,40 +185,11 @@ public enum OSMType {
 
     }
 
-    //TODO: COLORBLIND
     public static Color getColorBlindColor(OSMType OSMType) {
-        switch (OSMType) {
-            case PLACE:
-            case COASTLINE:
-            case GREEN:
-                return Color.PINK;
-            case WATER:
-                return Color.RED;
-            case BUILDING:
-            case MULTIPOLYGON:
-                return Color.YELLOW;
-            case HIGHWAY:
-                return Color.BURLYWOOD;
-            case HEATH:
-                return Color.rgb(255, 178, 102, 0.6);
-            case RESIDENTIAL:
-                return Color.rgb(128, 128, 128, 0.6);
-            case FARMLAND:
-                return Color.rgb(238, 240, 213, 0.6);
-            case WOOD:
-            case FOREST:
-            case TREE_ROW:
-                return Color.rgb(0, 102, 0, 0.7);
-            case PARKING:
-                return Color.RED;
-            case NATURAL:
-                return Color.BLUEVIOLET;
-            default:
-                return Color.TRANSPARENT;
-        }
-
+        return getColor(OSMType, false).invert();
     }
 
+    //TODO: FIX SPEED
     public static int getMaxSpeed(OSMType OSMType) {
         switch (OSMType) {
             case RESIDENTIAL_HIGHWAY:
@@ -228,6 +202,12 @@ public enum OSMType {
                 return 70;
             case TRACK:
                 return 20;
+            case PRIMARY:
+                return 80;
+            case SECONDARY:
+                return 50;
+            case SERVICE:
+                return 30;
             default:
                 return 60;
         }
