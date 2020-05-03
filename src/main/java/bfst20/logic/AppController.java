@@ -47,13 +47,11 @@ public class AppController {
     }
 
     public View initialize() throws IOException {
-        linePathGenerator = new LinePathGenerator(new AppController());
         routingController = new RoutingController(new AppController());
 
         if (!isBinary) {
             System.out.println("Creating linepaths");
-            linePathGenerator.createWays(fetchAllWays(), fetchAllNodes());
-            linePathGenerator.createRelations(fetchRelations());
+            createLinePaths();
             clearNodeData();
             System.out.println("Generate Highways");
             generateHighways();
@@ -66,6 +64,11 @@ public class AppController {
         System.gc();
 
         return view;
+    }
+
+    public void createLinePaths() {
+        linePathGenerator = LinePathGenerator.getInstance();
+        linePathGenerator.createLinePaths();
     }
 
     public void setSearchString(Address address) {
@@ -241,6 +244,7 @@ public class AppController {
     }
 
     public void clearLinePathData() {
+        LinePathGenerator.getInstance().clearData();
         linePathData.clearData();
     }
 
