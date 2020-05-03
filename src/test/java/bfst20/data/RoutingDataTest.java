@@ -20,10 +20,8 @@ class RoutingDataTest {
     public static List<Edge> route;
     
     public static RoutingData routingData;
-  
     public static Map<String, Double> routeInfo;
   
-    
     public static Node node1;
     public static Node node2;
     public static Edge edge;
