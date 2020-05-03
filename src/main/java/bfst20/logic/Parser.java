@@ -95,6 +95,7 @@ public class Parser {
                             String key = reader.getAttributeValue(null, "k");
                             String value = reader.getAttributeValue(null, "v");
 
+                            //TODO: Used?
                             if (firstTag[0] == null) {
                                 firstTag[0] = key;
                                 firstTag[1] = value;
@@ -111,7 +112,7 @@ public class Parser {
 
                     switch (tagName) {
                         case "node":
-                            parseTagsAddress(lastNodeId, lon, lat, tags);
+                            parseAddressTags(lastNodeId, lon, lat, tags);
                             break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
@@ -187,7 +188,7 @@ public class Parser {
     }
 
 
-    private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
+    private void parseAddressTags(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
         if (tags.size() == 0) return;
 
         String city = tags.get("addr:city");
@@ -209,6 +210,7 @@ public class Parser {
         appController.saveAddressData(lastNodeId, address);
     }
 
+    //TODO: Refactor
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
         try {
             if(tags.containsKey("route")) return;
@@ -221,10 +223,8 @@ public class Parser {
 
             if (tags.containsKey("landuse") || tags.containsKey("natural")) {
                 if (tags.containsKey("natural")) {
-
                     lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));
                 } else {
-
                     OSMType type = OSMType.LANDUSE;
 
                     //TODO: Needed?
@@ -253,6 +253,7 @@ public class Parser {
     private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
         Way way = (Way) lastElementParsed;
 
+        // Need source and target for graph edges
         for (long id : way.getNodeIds()) {
             Node node = appController.fetchNodeData(id);
             way.addNode(node);
