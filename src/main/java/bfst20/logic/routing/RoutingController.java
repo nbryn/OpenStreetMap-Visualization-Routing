@@ -22,7 +22,7 @@ public class RoutingController {
     }
 
     public void buildRoutingGraph() {
-        List<LinePath> highways = appController.fetchHighwayData();
+        List<LinePath> highways = appController.fetchHighways();
         List<Node> highwayNodes = new ArrayList<>();
 
         for (LinePath lp : highways) {
