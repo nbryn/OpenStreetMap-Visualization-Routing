@@ -134,8 +134,8 @@ public class LinePathGenerator {
             if (way == null) {
                 way = (binarySearch(ways, entry));
             } else {
-                Way newWay = (binarySearch(ways, entry));
-                way = combine(way, newWay);
+                Way newWay = (binarySearch(OSMWays, entry));
+                way = combineWays(way, newWay);
             }
         }
 
@@ -190,16 +190,28 @@ public class LinePathGenerator {
         return way;
     }
 
-    //TODO: Naming/Explanation
-    private Way combine(Way before, Way after) {
-        if (before == null) return after;
-        if (after == null) return before;
 
+    private LinePath createLinePath(Way way) {
+        OSMType type = OSMType.UNKNOWN;
+
+        try {
+            type = way.getOSMType();
+        } catch (Exception e) {
+            //This catch is here to check if the current way type exists in the Type enum, if it does, that will be used,
+            //If it dosen't this will throw, and the program will use Type.UNKNOWN
+        }
+        Boolean fill = OSMType.getFill(type);
+
+        // TODO: Does every LinePath need all nodes?
+        return new LinePath(way, type, OSMNodes, fill);
+    }
+
+    private Way combineWays(Way first, Way second) {
+        if (first == null) return second;
+        if (second == null) return first;
         Way way = new Way();
-        way.addAllNodeIds(before);
-        //way.addNodeId(-99999);
-        //way.addNodeId(-99999);
-        way.addAllNodeIds(after);
+        way.addAllNodeIds(first);
+        way.addAllNodeIds(second);
 
         return way;
     }

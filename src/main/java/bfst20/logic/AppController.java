@@ -69,9 +69,8 @@ public class AppController {
         return view;
     }
 
-    public void setSearchString(String search) {
-
-        view.setSearchString(search);
+    public void setSearchString(Address address) {
+        view.setSearchString(address);
     }
 
 
@@ -143,9 +142,8 @@ public class AppController {
 
     public void loadFile(File file) {
         try {
-            FileHandler fileHandler = FileHandler.getInstance();
             if (file.getName().endsWith(".bin")) isBinary = true;
-            fileHandler.load(file);
+            FileHandler.load(file);
         } catch (IOException ioException) {
             alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
             System.exit(1);
@@ -278,12 +276,10 @@ public class AppController {
         view.displayError(type, text, wait);
     }
 
-    //TODO: NOT BEING USED?
     public void generateBinary() throws IOException {
         clearAllNonBinData();
         try {
-            FileHandler fileHandler = FileHandler.getInstance();
-            fileHandler.generateBinary();
+            FileHandler.generateBinary();
         } catch (Exception e) {
             alertOK(Alert.AlertType.ERROR, "Error generating binary, please retry.", false);
         }

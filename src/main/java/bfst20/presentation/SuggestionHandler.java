@@ -92,7 +92,15 @@ public class SuggestionHandler {
 
                     String addressText = address.toString();
                     if(suggestionEvent == SuggestionEvent.SEARCH){
-                        appController.setSearchString(addressText);
+
+                        AddressData addressData = AddressData.getInstance();
+                        Address address = addressData.findAddress(addressText);
+
+                        if(address != null){
+                            appController.setSearchString(address);
+                        }else{
+                            appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
+                        }
                     }
                     textField.setText(addressText);
 

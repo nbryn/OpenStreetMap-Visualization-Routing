@@ -109,7 +109,7 @@ public enum OSMType {
             case BEACH:
             case MEADOW:
                 return true;
-            default: //TODO FIX
+            default:
                 return false;
         }
     }
@@ -237,7 +237,7 @@ public enum OSMType {
                 HIGHWAY,
                 RESIDENTIAL_HIGHWAY,
                 TERTIARY,
-                //UNCLASSIFIED_HIGHWAY,
+                UNCLASSIFIED_HIGHWAY,
                 MOTORWAY,
                 FOOTWAY,
                 PATH,

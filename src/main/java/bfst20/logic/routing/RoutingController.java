@@ -33,7 +33,6 @@ public class RoutingController {
 
         appController.saveGraphData(graph);
 
-        //TODO: Needed?
         highwayNodes = null;
         graph = null;
         System.gc();

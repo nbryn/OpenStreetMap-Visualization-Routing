@@ -18,24 +18,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileHandler {
-    private static boolean isLoaded = false;
-    private static FileHandler fileHandler;
-    private AppController appController;
 
-    private FileHandler() {
-        appController = new AppController();
-    }
+    public static void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
+        AppController appController = new AppController();
 
-    public static FileHandler getInstance() {
-        if (!isLoaded) {
-            isLoaded = true;
-            fileHandler = new FileHandler();
-        }
-        return fileHandler;
-    }
-
-    public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
-        
         appController.clearNodeData();
         appController.clearLinePathData();
 
@@ -61,7 +47,8 @@ public class FileHandler {
 
     }
 
-    private void loadBinary(File file) {
+    private static void loadBinary(File file) {
+        AppController appController = new AppController();
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
@@ -83,7 +70,9 @@ public class FileHandler {
         }
     }
 
-    private void loadZip(File file) {
+    private static void loadZip(File file) {
+        AppController appController = new AppController();
+
         try {
             ZipFile zipFile = new ZipFile(file.toString());
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -107,13 +96,15 @@ public class FileHandler {
         }
     }
 
-    public void generateBinary() throws IOException {
+    public static void generateBinary() throws IOException {
         File file = new File("samsoe.bin");
         file.createNewFile();
         writeToFile(file);
     }
 
-    private void writeToFile(File file) throws FileNotFoundException, IOException {
+    private static void writeToFile(File file) throws FileNotFoundException, IOException {
+        AppController appController = new AppController();
+
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
         objectOut.writeObject(appController.fetchBoundsData());
@@ -122,5 +113,34 @@ public class FileHandler {
         objectOut.writeObject(appController.fetchTSTData());
         objectOut.writeObject(appController.fetchGraphData());
         objectOut.close();
+    }
+
+    //https://stackoverflow.com/questions/676097/java-resource-as-file
+    public static File getResourceAsFile(String resourcePath) {
+        AppController appController = new AppController();
+
+        try {
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+            if (in == null) {
+                return null;
+            }
+
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
+            tempFile.deleteOnExit();
+
+            try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                //copy stream
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            return tempFile;
+        } catch (IOException e) {
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading file stream, exiting.", true);
+            System.exit(1);
+            return null;
+        }
     }
 }

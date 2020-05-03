@@ -10,8 +10,11 @@ import java.util.*;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.FileHandler;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
 import javafx.beans.value.ChangeListener;
@@ -106,7 +109,7 @@ public class ViewController {
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = getResourceAsFile("samsoe.osm");
+            file = FileHandler.getResourceAsFile("samsoe.osm");
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
@@ -131,33 +134,6 @@ public class ViewController {
         setupRouteButton();
     }
 
-    //TODO: Move?
-    //https://stackoverflow.com/questions/676097/java-resource-as-file
-    private File getResourceAsFile(String resourcePath) {
-        try {
-            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-            if (in == null) {
-                return null;
-            }
-
-            File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".osm");
-            tempFile.deleteOnExit();
-
-            try (FileOutputStream out = new FileOutputStream(tempFile)) {
-                //copy stream
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
-                }
-            }
-            return tempFile;
-        } catch (IOException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading file stream, exiting.", true);
-            System.exit(1);
-            return null;
-        }
-    }
 
     private void setupRouteButton() {
         searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -175,6 +151,7 @@ public class ViewController {
 
                     if (appController.fetchRouteDirections() != null) {
                         displayPane.getChildren().clear();
+
                         Map<String, Double> routeDirections = appController.fetchRouteDirections();
                         List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
                         Collections.reverse(streetsOnRoute);
@@ -245,9 +222,7 @@ public class ViewController {
         InterestPointData data = InterestPointData.getInstance();
         List<InterestPoint> interestPoints = data.getAllInterestPoints();
 
-        int i = 0;
-
-        for (InterestPoint interest : interestPoints) {
+        for(int i = 0; i < interestPoints.size(); i++){
             Text scoreText = new Text(i + ". Interest point");
 
             int s = i;
@@ -260,6 +235,9 @@ public class ViewController {
             button.setText("Delete");
 
             HBox box = new HBox(scoreText, button);
+            box.setMinWidth(400);
+            box.setPrefWidth(400);
+
 
             button.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
@@ -272,8 +250,6 @@ public class ViewController {
             });
 
             wayPointFlowPane.getChildren().add(box);
-
-            i++;
         }
     }
 
@@ -333,9 +309,14 @@ public class ViewController {
             public void handle(MouseEvent mouseEvent) {
                 String searchText = searchAddress.getText();
 
-                view.setSearchString(searchText);
+                AddressData addressData = AddressData.getInstance();
+                Address address = addressData.findAddress(searchText);
 
-
+                if(address != null){
+                    view.setSearchString(address);
+                }else{
+                    appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
+                }
             }
         });
 

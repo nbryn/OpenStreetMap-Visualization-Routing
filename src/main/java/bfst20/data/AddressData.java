@@ -11,8 +11,7 @@ import java.util.regex.Pattern;
 
 public class AddressData {
 
-    //TODO: Better naming
-    private static String streethouse = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d][\\w]*)[,. ]*(?<postcode>[\\w]*)[,.\\V]*";
+    private static String addressRegex = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d][\\w]*)[,. ]*(?<postcode>[\\w]*)[,.\\V]*";
     private static AddressData addressData;
     private TST tst;
 
@@ -39,7 +38,7 @@ public class AddressData {
 
 
     public String[] parseAddress(String input) {
-        Matcher pattern = Pattern.compile(streethouse).matcher(input);
+        Matcher pattern = Pattern.compile(addressRegex).matcher(input);
 
         if (pattern.matches() && !input.equals("") && pattern.groupCount() == 3) {
             String street = pattern.group("street");

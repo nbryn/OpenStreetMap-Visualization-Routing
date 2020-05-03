@@ -33,13 +33,6 @@ public class KDTree implements Serializable {
         return root;
     }
 
-    //Without mouse to node distance calculation
-    public Iterable<LinePath> getElementsInRect(Rect rect, double zoomLevel) {
-        List<LinePath> list = new ArrayList<>();
-        range(root, rect, zoomLevel, list);
-        return list;
-    }
-
     //With mouse to node distance calculation
     public Iterable<LinePath> getElementsInRect(Rect rect, double zoomLevel, Point2D point) {
         closetsNode = root;
@@ -50,26 +43,6 @@ public class KDTree implements Serializable {
         return list;
     }
 
-    private int i = 0;
-
-
-    //TODO: Why two range?
-    private void range(KDNode node, Rect rect, double zoomLevel, List<LinePath> list) {
-        if (node == null) return;
-
-        if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
-            list.add(node.getLinePath());
-        }
-
-        if (rect.intersectsRight(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
-            range(node.getRightNode(), rect, zoomLevel, list);
-        }
-
-        if (rect.intersectsLeft(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
-            range(node.getLeftNode(), rect, zoomLevel, list);
-        }
-    }
-
     //TODO: Better naming
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point) {
         if (node == null) return;
@@ -77,15 +50,17 @@ public class KDTree implements Serializable {
         if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
-            float[] coords = node.getLinePath().getCoords();
+            if(point != null){
+                float[] coords = node.getLinePath().getCoords();
 
-            for (int i = 2; i <= coords.length; i += 2) {
+                for (int i = 2; i <= coords.length; i += 2) {
 
-                float distance = (float) Math.sqrt(Math.pow(point.getY() - coords[i - 1], 2) + Math.pow(point.getX() - coords[i - 2], 2));
+                    float distance = (float) Math.sqrt(Math.pow(point.getY() - coords[i - 1], 2) + Math.pow(point.getX() - coords[i - 2], 2));
 
-                if (distance < closetNodeDistance) {
-                    closetNodeDistance = distance;
-                    closetsNode = node;
+                    if (distance < closetNodeDistance) {
+                        closetNodeDistance = distance;
+                        closetsNode = node;
+                    }
                 }
             }
         }
@@ -112,9 +87,8 @@ public class KDTree implements Serializable {
         } else {
             node.setSplit(path.getCenterLongitude());
         }
-        path.setWayNull();
+        path.removeWay();
         node.setLinePath(path);
-
 
         return node;
     }
