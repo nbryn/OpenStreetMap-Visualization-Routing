@@ -196,8 +196,6 @@ public class LinePathGenerator {
     }
 
 
-
-
     //TODO: Naming/Explanation
     private Way combine(Way before, Way after) {
         if (before == null) return after;

@@ -104,6 +104,7 @@ public class LinePathGeneratorTest {
         relation1.addMember(13,"way");
         relation1.addMember(14,"way");
         relation1.setOSMType(OSMType.FOREST);
+        relation1.setMultipolygon(true);
 
         Relation relation2 = new Relation(10);
         relation2.addMember(10,"way");
@@ -170,33 +171,5 @@ public class LinePathGeneratorTest {
         verify(appController, times(2)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
 
-//    @Test
-//    void connectMultipolygon() throws Exception {
-//        LinePathGenerator generator = mock(LinePathGenerator.class);
-//
-//        AppController appController = mock(AppController.class);
-//
-//
-//        Field field = LinePathGenerator.class.getDeclaredField("OSMWays");
-//        field.setAccessible(true);
-//        ArrayList<Way> ways = (ArrayList<Way>) field.get(linePathGenerator);
-//
-//
-//
-//
-//        ways.add(way1);
-//        ways.add(way2);
-//        Method method = LinePathGenerator.class.getDeclaredMethod("connectMultipolygon", Relation.class, OSMType.class);
-//        method.setAccessible(true);
-//        method.invoke(linePathGenerator,relation,OSMType.FOREST);
-//        assertEquals(1,1);
-//
-////        Field appcontroller = LinePathGenerator.class.getDeclaredField("appController");
-////        appcontroller.setAccessible(true);
-////        AppController controller = (AppController) appcontroller.get(linePathGenerator);
-//
-//        verify(appController, times(2)).addToModel(OSMType.FOREST, node1, way1);
-//
-//    }
 
 }
