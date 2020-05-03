@@ -29,14 +29,18 @@ public class LinePath implements Serializable {
         centerLongitude = (maxY - minY) / 2 + minY;
     }
 
-
-    //TODO: To much logic in constructor?
     public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
         this.way = way;
         this.fill = fill;
         this.OSMType = OSMType;
+        calculateMinMaxCoordinates(OSMNodes);
+        calculateCenterCoordinates();
+    }
+
+    public void calculateMinMaxCoordinates(Map<Long, Node> OSMNodes){
+
         List<Long> nodeIds = way.getNodeIds();
 
         minY = Float.POSITIVE_INFINITY;
@@ -57,7 +61,9 @@ public class LinePath implements Serializable {
             if (maxY < coords[i * 2]) maxY = coords[i * 2];
 
         }
+    }
 
+    public void calculateCenterCoordinates(){
         centerLatitude = (maxX - minX) / 2 + minX;
         centerLongitude = (maxY - minY) / 2 + minY;
     }
@@ -122,8 +128,7 @@ public class LinePath implements Serializable {
         return wayId;
     }
 
-    //TODO: Better name
-    public void setWayNull() {
+    public void removeWay() {
         way = null;
         wayId = 0;
     }

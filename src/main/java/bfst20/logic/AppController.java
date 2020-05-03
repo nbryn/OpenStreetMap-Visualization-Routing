@@ -282,7 +282,6 @@ public class AppController {
         view.displayError(type, text, wait);
     }
 
-    //TODO: NOT BEING USED?
     public void generateBinary() throws IOException {
         clearAllNonBinData();
         try {

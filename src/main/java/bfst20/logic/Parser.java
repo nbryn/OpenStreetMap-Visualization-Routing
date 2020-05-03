@@ -227,7 +227,6 @@ public class Parser {
 
                     OSMType type = OSMType.LANDUSE;
 
-                    //TODO: Needed?
                     try {
                         type = OSMType.valueOf(tags.get("landuse").toUpperCase());
                     } catch (Exception e) {

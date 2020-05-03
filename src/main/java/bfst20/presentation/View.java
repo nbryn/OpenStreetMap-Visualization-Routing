@@ -38,7 +38,7 @@ public class View {
     private GraphicsContext gc;
     private Point2D mousePos;
     private Canvas canvas;
-    private boolean kd;
+    List<Edge> route = null;
 
     Label mouseLocationLabel;
 
@@ -49,7 +49,6 @@ public class View {
     public View(Canvas canvas) {
         mousePos = new Point2D(0, 0);
         appController = new AppController();
-        kd = false;
         this.canvas = canvas;
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.LIGHTBLUE);
@@ -193,15 +192,6 @@ public class View {
     }
 
 
-    private void drawKDTree(OSMType type, Rect rect, double lineWidth) {
-        if(appController.fetchKDTree(type) != null){
-            for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant())) {
-
-                drawLinePath(linePath, lineWidth);
-                gc.fill();
-            }
-        }
-    }
 
     private void drawKDTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
         if(appController.fetchKDTree(type) != null){
@@ -233,10 +223,6 @@ public class View {
         }
     }
 
-    //TODO: Move
-    List<Edge> route = null;
-
-
     public void shortestPath(String sourceQuery, String targetQuery, Vehicle vehicle) {
         double distance = appController.initializeRouting(sourceQuery, targetQuery, vehicle);
 
@@ -258,14 +244,12 @@ public class View {
         Address address = addressData.findAddress(addressString);
 
         if (address == null) {
-            System.out.println("Missing");
             return;
         }
 
         int bubbleSize = 30;
 
         drawLocation(lineWidth, bubbleSize, address.getLon(), address.getLat(), "1");
-        //gc.strokeRect(address.getLon(), address.getLat(), 1, 1);
     }
 
 
@@ -284,28 +268,6 @@ public class View {
         gc.lineTo(lon, lat);
         gc.stroke();
 
-    }
-
-
-    public void drawKdTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
-        //TODO: WORK :D
-        for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
-
-            drawLinePath(linePath, lineWidth);
-            gc.fill();
-        }
-    }
-
-
-    //TODO: Remove?
-    public void drawKdTest() {
-        KDNode root = appController.fetchKDTree(OSMType.HIGHWAY).getRoot();
-
-        gc.setStroke(Color.BLUE);
-        gc.moveTo(appController.fetchRectData().getMinLon(), root.getSplit());
-        gc.lineTo(appController.fetchRectData().getMaxLon(), root.getSplit());
-        //System.out.println(root.getSplit());
-        gc.stroke();
     }
 
     private void drawRoute(Edge edge, double lineWidth) {
@@ -394,34 +356,6 @@ public class View {
     }
 
     public void zoom(double factor, double x, double y, double deltaY) {
-        /*if (deltaY<0 && zoomLevel > 1.0)
-        {
-            scale(factor,x,y,deltaY);
-        } else if (deltaY>0 && zoomLevel <= 150) {
-            scale(factor,x,y,deltaY);
-        }*/
-
-        /*System.out.println(zoomLevel);
-        zoomLevel *= factor;
-
-        System.out.println(zoomLevel);
-        if(zoomLevel >= 364471.7988313){
-            zoomLevel = 364471.7988313;
-            return;
-        }
-        if(zoomLevel < 2429.6667527942855){
-            zoomLevel = 2429.6667527942855;
-            return;
-        }
-        else {
-            scale(factor, x, y, deltaY);
-        }*/
-
-        //if(zoomLevel > 1.0) return;
-
-        zoomLevel *= factor;
-
-        System.out.println(zoomLevel);
 
         scale(factor, x, y, deltaY);
         reduceZoomLevel();
@@ -489,7 +423,7 @@ public class View {
         OSMType[] drawableTypes = OSMType.drawables();
 
         for(OSMType type : drawableTypes){
-            drawKDTree(type, rect, pixelwidth, mouse);
+            drawKDTree(type, rect, pixelwidth, null);
         }
 
         OSMType[] highwayTypes = OSMType.highways();

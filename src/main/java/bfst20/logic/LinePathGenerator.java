@@ -142,7 +142,7 @@ public class LinePathGenerator {
                 way = (binarySearch(OSMWays, entry));
             } else {
                 Way newWay = (binarySearch(OSMWays, entry));
-                way = combine(way, newWay);
+                way = combineWays(way, newWay);
             }
         }
 
@@ -214,16 +214,14 @@ public class LinePathGenerator {
         // TODO: Does every LinePath need all nodes?
         return new LinePath(way, type, OSMNodes, fill);
     }
-    //TODO: Naming/Explanation
-    private Way combine(Way before, Way after) {
-        if (before == null) return after;
-        if (after == null) return before;
+
+    private Way combineWays(Way first, Way second) {
+        if (first == null) return second;
+        if (second == null) return first;
 
         Way way = new Way();
-        way.addAllNodeIds(before);
-        //way.addNodeId(-99999);
-        //way.addNodeId(-99999);
-        way.addAllNodeIds(after);
+        way.addAllNodeIds(first);
+        way.addAllNodeIds(second);
 
         return way;
     }

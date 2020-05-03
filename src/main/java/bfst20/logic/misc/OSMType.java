@@ -109,7 +109,7 @@ public enum OSMType {
             case BEACH:
             case MEADOW:
                 return true;
-            default: //TODO FIX
+            default:
                 return false;
         }
     }

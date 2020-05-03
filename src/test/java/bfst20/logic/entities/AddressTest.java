@@ -44,11 +44,6 @@ public class AddressTest{
     }
 
     @Test
-    public void getNodeId(){
-        assertEquals(address.getNodeID(),1);
-    }
-
-    @Test
     public void toStringTest(){
         assertEquals(address.toString(),"Farstrupvej 1 4600");
     }
