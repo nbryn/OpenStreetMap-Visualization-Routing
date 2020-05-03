@@ -180,7 +180,8 @@ public class ViewController {
                         displayPane.getChildren().clear();
                         if (appController.fetchRouteDirections().size() > 0) {
                             for (String street : streetsOnRoute) {
-                                Button route = new Button("Follow " + street + " for " + routeDirections.get(street) + " km");
+                                String text = street.equals("ååååå") ? "Unknown Street" : street;
+                                Button route = new Button("Follow " + text + " for " + routeDirections.get(street) + " km");
                                 route.setPrefWidth(375);
                                 route.setPrefHeight(60);
                                 route.setMouseTransparent(true);
