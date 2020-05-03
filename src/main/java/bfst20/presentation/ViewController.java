@@ -67,60 +67,48 @@ public class ViewController {
     private HBox hbox;
 
     private boolean scrollTrigger;
-
+    private Point2D lastMouse;
     private View view;
-
 
     public ViewController() {
         appController = new AppController();
     }
-    Point2D lastMouse;
 
     @FXML
     public void initialize() {
-
-
+        view = new View(canvas);
+        view.setMouseLocationView(mouseLocationLabel);
         suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
         suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
         suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
 
-        setupHbox();
-
-        appController.createView(canvas, mouseLocationLabel);
-
-        setupFileHandling();
-
         loadDefault();
 
+        setupHbox();
+        setupFileHandling();
         setupZoomSlider();
 
         setupCanvas();
-
         setupSearchButton();
-
         setupRouteButton();
     }
 
-    public void loadDefault(){
-
+    private void loadDefault(){
         File file = null;
 
         try {
-
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
-            file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
+            //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            //file = FileHandler.getResourceAsFile("samsoe.osm");
+            file = FileHandler.getResourceAsFile("samsoe.osm", appController);
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);
         }
-
-        appController.loadFile(file);
         try {
-            view = appController.initialize();
+          appController.initialize(view, file);
         } catch (IOException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
@@ -250,8 +238,8 @@ public class ViewController {
             try {
                 File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
                 if (file != null) {
-                    appController.loadFile(file);
-                    view = appController.initialize();
+                    view = new View(canvas);;
+                    appController.initialize(view, file);
                 }
             } catch (Exception err) {
                 appController.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
