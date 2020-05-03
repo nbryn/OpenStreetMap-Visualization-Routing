@@ -174,10 +174,10 @@ public class ViewController {
                     view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
 
                     if (appController.fetchRouteDirections() != null) {
+                        displayPane.getChildren().clear();
                         Map<String, Double> routeDirections = appController.fetchRouteDirections();
                         List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
                         Collections.reverse(streetsOnRoute);
-                        displayPane.getChildren().clear();
                         if (appController.fetchRouteDirections().size() > 0) {
                             for (String street : streetsOnRoute) {
                                 String text = street.equals("ååååå") ? "Unknown Street" : street;
