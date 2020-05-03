@@ -233,7 +233,7 @@ public enum OSMType {
         }
     }
 
-    public static OSMType[] highways(){
+    public static OSMType[] highways() {
         OSMType[] types = {
                 HIGHWAY,
                 RESIDENTIAL_HIGHWAY,
@@ -252,24 +252,24 @@ public enum OSMType {
         return types;
     }
 
-    public static OSMType[] drawables(){
+    public static OSMType[] drawables() {
         OSMType[] types = {
-            BEACH,
-            FARMLAND,
-            RESIDENTIAL,
-            HEATH,
-            WOOD,
-            TREE_ROW,
-            WATER,
-            FOREST,
-            BUILDING,
-            MEADOW,
+                BEACH,
+                FARMLAND,
+                RESIDENTIAL,
+                HEATH,
+                WOOD,
+                TREE_ROW,
+                FOREST,
+                WATER,
+                BUILDING,
+                MEADOW,
         };
 
         return types;
     }
 
-    public static OSMType[] relations(){
+    public static OSMType[] relations() {
         OSMType[] types = {
                 HEATH,
                 MEADOW,
