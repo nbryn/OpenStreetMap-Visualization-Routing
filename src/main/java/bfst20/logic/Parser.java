@@ -246,7 +246,7 @@ public class Parser {
         Way way = (Way) lastElementParsed;
 
         for (long id : way.getNodeIds()) {
-            Node node = appController.getNodeData(id);
+            Node node = appController.fetchNodeData(id);
             way.addNode(node);
         }
 
