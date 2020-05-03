@@ -1,7 +1,6 @@
 package bfst20.logic;
 
 import java.io.*;
-import java.lang.reflect.AccessibleObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +47,13 @@ public class AppController {
     }
 
     public View initialize() throws IOException {
+        linePathGenerator = new LinePathGenerator(new AppController());
         routingController = new RoutingController(new AppController());
 
         if (!isBinary) {
             System.out.println("Creating linepaths");
-            createLinePaths();
+            linePathGenerator.createWays(fetchAllWays(), fetchAllNodes());
+            linePathGenerator.createRelations(fetchRelations());
             clearNodeData();
             System.out.println("Generate Highways");
             generateHighways();
@@ -72,10 +73,6 @@ public class AppController {
         view.setSearchString(address);
     }
 
-    public void createLinePaths() {
-        linePathGenerator = LinePathGenerator.getInstance();
-        linePathGenerator.createLinePaths();
-    }
 
     public void generateHighways() {
         Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
@@ -89,7 +86,7 @@ public class AppController {
         linePathData.saveHighways(highWays);
     }
 
-    public Map<OSMType, KDTree> fetchAllKDTreeData() {
+    public Map<OSMType, KDTree> fetchAllKDTrees() {
         return kdTreeData.getAllLKDTrees();
     }
 
@@ -97,7 +94,7 @@ public class AppController {
         kdTreeData.saveAllKDTrees(tree);
     }
 
-    public List<LinePath> fetchHighwayData() {
+    public List<LinePath> fetchHighways() {
         return linePathData.getHighways();
     }
 
@@ -131,12 +128,12 @@ public class AppController {
         routingData.saveRoute(route);
     }
 
-    public void saveRouteInfo(Map<String, Double> routeInfo) {
-        routingData.saveRouteInfo(routeInfo);
+    public void saveRouteDirections(Map<String, Double> routeInfo) {
+        routingData.saveRouteDirections(routeInfo);
     }
 
-    public Map<String, Double> fetchRouteInfoData() {
-        return routingData.getRouteInfo();
+    public Map<String, Double> fetchRouteDirections() {
+        return routingData.getRouteDirections();
     }
 
     public void clearRouteInfoData() {
@@ -192,11 +189,11 @@ public class AppController {
         osmElementData.saveWay(way);
     }
 
-    public List<Way> getAllWayData() {
+    public List<Way> fetchAllWays() {
         return osmElementData.getWays();
     }
 
-    public Node getNodeData(long id) {
+    public Node fetchNodeData(long id) {
         return osmElementData.getNode(id);
     }
 
@@ -248,7 +245,6 @@ public class AppController {
     }
 
     public void clearLinePathData() {
-        LinePathGenerator.getInstance().clearData();
         linePathData.clearData();
     }
 

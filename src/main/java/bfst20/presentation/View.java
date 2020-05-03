@@ -440,7 +440,7 @@ public class View {
             Map<OSMType, Double> dist = new HashMap<>();
 
             for(OSMType type : types){
-                if(appController.fetchAllKDTreeData().get(type) != null){
+                if(appController.fetchAllKDTrees().get(type) != null){
                     dist.put(type, appController.fetchKDTree(type).getClosetsLinePathToMouseDistance());
                 }
             }

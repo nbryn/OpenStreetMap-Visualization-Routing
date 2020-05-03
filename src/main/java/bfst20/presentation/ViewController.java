@@ -5,8 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -38,6 +37,9 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class ViewController {
+    private SuggestionHandler suggestionHandlerDestination;
+    private SuggestionHandler suggestionHandlerAddress;
+    private SuggestionHandler suggestionHandlerSearch;
     private AppController appController;
     @FXML
     private FlowPane wayPointFlowPane;
@@ -45,13 +47,13 @@ public class ViewController {
     private Button searchAdressButton;
     @FXML
     private Button searchRouteButton;
-
     @FXML
     private TextField destinationBar;
     @FXML
     private Label mouseLocationLabel;
     @FXML
     private TextField searchAddress;
+    //TODO: Remove?
     @FXML
     private AnchorPane canvasParent;
     private boolean scrollTrigger;
@@ -69,25 +71,18 @@ public class ViewController {
     private Canvas canvas;
     @FXML
     private HBox hbox;
-
-    private SuggestionHandler suggestionHandlerSearch;
-    private SuggestionHandler suggestionHandlerAddress;
-    private SuggestionHandler suggestionHandlerDestination;
-
-
     private View view;
-
 
 
     public ViewController() {
         appController = new AppController();
     }
-
     Point2D lastMouse;
 
     @FXML
     public void initialize() {
 
+        //TODO: Remove?
         /*        canvas.widthProperty().bind(canvasParent.widthProperty());
         canvas.heightProperty().bind(canvasParent.heightProperty());
 
@@ -108,6 +103,7 @@ public class ViewController {
 
         File file = null;
 
+        //TODO: Move?
         try {
 
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
@@ -138,6 +134,7 @@ public class ViewController {
         setupRouteButton();
     }
 
+
     private void setupRouteButton() {
         searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -148,17 +145,20 @@ public class ViewController {
                     return;
                 }
 
-                try{
+                try {
                     Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
                     view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
 
-                    if (appController.fetchRouteInfoData() != null) {
+                    if (appController.fetchRouteDirections() != null) {
                         displayPane.getChildren().clear();
 
-                        if(appController.fetchRouteInfoData().size() > 0){
-                            for (Map.Entry<String, Double> entry : appController.fetchRouteInfoData().entrySet()) {
-                                String text = entry.getKey().equals("ååååå") ? "Unknown route" : entry.getKey();
-                                Button route = new Button("Follow " + text + " for " + entry.getValue() + " km");
+                        Map<String, Double> routeDirections = appController.fetchRouteDirections();
+                        List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
+                        Collections.reverse(streetsOnRoute);
+                        if (appController.fetchRouteDirections().size() > 0) {
+                            for (String street : streetsOnRoute) {
+                                String text = street.equals("ååååå") ? "Unknown Street" : street;
+                                Button route = new Button("Follow " + text + " for " + routeDirections.get(street) + " km");
                                 route.setPrefWidth(375);
                                 route.setPrefHeight(60);
                                 route.setMouseTransparent(true);
@@ -168,16 +168,16 @@ public class ViewController {
                                 displayPane.getChildren().add(route);
                             }
                             appController.clearRouteInfoData();
-                        }else{
+                        } else {
                             displayPane.getChildren().clear();
                             appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                         }
 
-                    }else{
+                    } else {
                         displayPane.getChildren().clear();
                         appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                     }
-                }catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                 }
             }
