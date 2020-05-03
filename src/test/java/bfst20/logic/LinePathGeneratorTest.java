@@ -157,14 +157,14 @@ public class LinePathGeneratorTest {
 
 
     @Test
-    void createWays() {
+    void convertWaysToLinePaths() {
         linePathGenerator.convertWaysToLinePaths(ways, nodes);
 
         verify(appController, times(4)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
 
     @Test
-    void createRelations() {
+    void convertRelationsToLinePaths() {
         linePathGenerator.convertWaysToLinePaths(ways, nodes);
         linePathGenerator.convertRelationsToLinePaths(relations);
 

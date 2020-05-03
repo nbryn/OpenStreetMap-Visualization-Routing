@@ -93,7 +93,7 @@ public class ViewController {
         setupRouteButton();
     }
 
-    private void loadDefault(){
+    private void loadDefault() {
         File file = null;
 
         try {
@@ -101,15 +101,15 @@ public class ViewController {
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
             file = FileHandler.getResourceAsFile("samsoe.osm", appController);
-            //file = new File("/home/nbryn/Desktop/Denmark.bin");
+            //file = new File("/home/nbryn/Desktop/denmark-latest.osm");
 
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);
         }
         try {
-          appController.initialize(view, file);
-        } catch (IOException e) {
+            appController.initialize(view, file);
+        } catch (Exception e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
         }
@@ -202,7 +202,7 @@ public class ViewController {
         InterestPointData data = InterestPointData.getInstance();
         List<InterestPoint> interestPoints = data.getAllInterestPoints();
 
-        for(int i = 0; i < interestPoints.size(); i++){
+        for (int i = 0; i < interestPoints.size(); i++) {
             Text scoreText = new Text(i + ". Interest point");
 
             int s = i;
@@ -238,7 +238,8 @@ public class ViewController {
             try {
                 File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
                 if (file != null) {
-                    view = new View(canvas);;
+                    view = new View(canvas);
+                    ;
                     appController.initialize(view, file);
                 }
             } catch (Exception err) {
@@ -292,9 +293,9 @@ public class ViewController {
                 AddressData addressData = AddressData.getInstance();
                 Address address = addressData.findAddress(searchText);
 
-                if(address != null){
+                if (address != null) {
                     view.setSearchAddress(address);
-                }else{
+                } else {
                     appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
                 }
             }
