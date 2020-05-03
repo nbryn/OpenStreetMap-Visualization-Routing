@@ -36,9 +36,6 @@ public class LinePathGenerator {
 
             OSMType type = linePath.getOSMType();
 
-            //TODO: Remove?
-            if (!appController.fetchLinePathData().containsKey(type)) appController.saveData(type);
-
             //TODO: Why?
             if (type != OSMType.PLACE) appController.saveLinePathData(type, linePath);
         }
@@ -54,8 +51,6 @@ public class LinePathGenerator {
             //If it dosen't this will throw, and the program will use Type.UNKNOWN
         }
         Boolean fill = OSMType.getFill(type);
-
-        // TODO: Does every LinePath need all nodes?
         return new LinePath(way, type, nodes, fill);
     }
 
@@ -70,9 +65,6 @@ public class LinePathGenerator {
 
 
              else if (relation.getName() != null && relation.getName().startsWith("Region ")) {
-                if (!appController.fetchLinePathData().containsKey(OSMType.COASTLINE)) {
-                    appController.saveData(OSMType.COASTLINE);
-                }
                 connectWays(relation, OSMType.COASTLINE);
             } else if (relation.getOSMType() == OSMType.BUILDING) connectMultipolygon(relation, OSMType.BUILDING);
                 //connectWays(relation, OSMType.BUILDING);
@@ -85,25 +77,12 @@ public class LinePathGenerator {
 
         }
 
-        //TODO: Fix??
+        OSMType[] types = OSMType.relations();
 
-        if (appController.getNodeTo(OSMType.HEATH) != null) {
-            addRelation(OSMType.HEATH, appController.getNodeTo(OSMType.HEATH));
-        }
-        if (appController.getNodeTo(OSMType.MEADOW) != null) {
-            addRelation(OSMType.MEADOW, appController.getNodeTo(OSMType.MEADOW));
-        }
-        if (appController.getNodeTo(OSMType.BUILDING) != null) {
-            addRelation(OSMType.BUILDING, appController.getNodeTo(OSMType.BUILDING));
-        }
-        if (appController.getNodeTo(OSMType.FOREST) != null) {
-            addRelation(OSMType.FOREST, appController.getNodeTo(OSMType.FOREST));
-        }
-        if (appController.getNodeTo(OSMType.FARMLAND) != null) {
-            addRelation(OSMType.FARMLAND, appController.getNodeTo(OSMType.FARMLAND));
-        }
-        if (appController.getNodeTo(OSMType.COASTLINE) != null) {
-            addRelation(OSMType.COASTLINE, appController.getNodeTo(OSMType.COASTLINE));
+        for(OSMType type : types){
+            if (appController.getNodeTo(type) != null) {
+                addRelation(type, appController.getNodeTo(type));
+            }
         }
 
     }
@@ -145,6 +124,7 @@ public class LinePathGenerator {
         appController.saveNodeToData(type, nodes.get(way.getLastNodeId()), way);
     }
 
+    //This is done to make relations look right.
     private void connectWays(Relation relation, OSMType OSMType) {
         Collections.sort(relation.getMembers());
 
@@ -157,8 +137,8 @@ public class LinePathGenerator {
                 way.setMultipolygon(true);
             }
 
-            Way before = removeWayBefore(way, OSMType);
-            Way after = removeWayAfter(way, OSMType);
+            Way before = removeWayById(way.getFirstNodeId(), OSMType);
+            Way after = removeWayById(way.getLastNodeId(), OSMType);
 
             way = merge(merge(before, way), after);
 
@@ -167,24 +147,18 @@ public class LinePathGenerator {
         }
     }
 
-    //TODO: Naming/Explanation
-    private Way removeWayAfter(Way way, OSMType OSMType) {
-        Node node = nodes.get(way.getLastNodeId());
-        return getWay(OSMType, node);
+    private Way removeWayById(long id, OSMType type) {
+        Node node = nodes.get(id);
+        return removeWayFromNodeType(type, node);
     }
-    //TODO: Naming/Explanation
-    private Way removeWayBefore(Way way, OSMType OSMType) {
-        Node node = nodes.get(way.getFirstNodeId());
-        return getWay(OSMType, node);
-    }
-    //TODO: Naming/Explanation
-    private Way getWay(OSMType OSMType, Node node) {
-        Way way = appController.removeWayFromNodeTo(OSMType, node);
+
+    private Way removeWayFromNodeType(OSMType type, Node node) {
+        Way way = appController.removeWayFromNodeTo(type, node);
         if (way != null) {
             Node firstNode = nodes.get(way.getFirstNodeId());
             Node lastNode = nodes.get(way.getLastNodeId());
-            appController.removeWayFromNodeTo(OSMType, firstNode);
-            appController.removeWayFromNodeTo(OSMType, lastNode);
+            appController.removeWayFromNodeTo(type, firstNode);
+            appController.removeWayFromNodeTo(type, lastNode);
         }
 
         return way;
@@ -200,7 +174,7 @@ public class LinePathGenerator {
 
         return way;
     }
-    //TODO: Naming/Explanation
+
     private Way merge(Way before, Way after) {
         if (before == null) return after;
         if (after == null) return before;

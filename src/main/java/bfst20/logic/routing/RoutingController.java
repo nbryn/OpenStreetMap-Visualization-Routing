@@ -71,9 +71,6 @@ public class RoutingController {
             else route.addAll(extractRouteInfo(dijkstra.getEdgeTo(), srcNode, trgNode));
 
             appController.saveRouteData(route);
-            // TODO: Needed?
-            route = null;
-            System.gc();
         }
 
         double dist = dijkstra.distTo(trgNode);

@@ -176,12 +176,13 @@ public enum OSMType {
                 return Color.BLUEVIOLET;
             case ROUTING:
                 return Color.RED;
-            default: //TODO FIX
+            default:
                 return Color.TRANSPARENT;
         }
 
     }
 
+    //TODO: COLORBLIND
     public static Color getColorBlindColor(OSMType OSMType) {
         switch (OSMType) {
             case PLACE:
@@ -209,7 +210,7 @@ public enum OSMType {
                 return Color.RED;
             case NATURAL:
                 return Color.BLUEVIOLET;
-            default: //TODO FIX
+            default:
                 return Color.TRANSPARENT;
         }
 
@@ -263,6 +264,19 @@ public enum OSMType {
             FOREST,
             BUILDING,
             MEADOW,
+        };
+
+        return types;
+    }
+
+    public static OSMType[] relations(){
+        OSMType[] types = {
+                HEATH,
+                MEADOW,
+                BUILDING,
+                FOREST,
+                FARMLAND,
+                COASTLINE
         };
 
         return types;

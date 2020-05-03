@@ -70,7 +70,7 @@ class OSMElementDataTest {
     @Test
     void addToNodeMap() {
         long id = 12345;
-        Node node = new Node();
+        Node node = new Node(1, 1);
 
         osmElementData.addToNodeMap(id, node);
 
@@ -80,7 +80,7 @@ class OSMElementDataTest {
     @Test
     void getNodes() {
         long id = 2223;
-        Node node = new Node();
+        Node node = new Node(1, 1);
 
         osmElementData.addToNodeMap(id, node);
 

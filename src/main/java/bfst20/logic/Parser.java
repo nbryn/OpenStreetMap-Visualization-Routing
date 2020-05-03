@@ -95,7 +95,6 @@ public class Parser {
                             String key = reader.getAttributeValue(null, "k");
                             String value = reader.getAttributeValue(null, "v");
 
-                            //TODO: Used?
                             if (firstTag[0] == null) {
                                 firstTag[0] = key;
                                 firstTag[1] = value;
@@ -210,7 +209,6 @@ public class Parser {
         appController.saveAddressData(lastNodeId, address);
     }
 
-    //TODO: Refactor
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
         try {
             if(tags.containsKey("route")) return;
@@ -230,14 +228,14 @@ public class Parser {
                     try {
                         type = OSMType.valueOf(tags.get("landuse").toUpperCase());
                     } catch (Exception e) {
+                        // This exception is getting throwen a lot, because of all the missing Enum
                     }
 
                     lastElementParsed.setOSMType(type);
                 }
-            } else if (tags.containsKey("building")) lastElementParsed.setOSMType(OSMType.BUILDING);
-
-            else if (tags.containsKey("highway")) {
-
+            } else if (tags.containsKey("building")){
+                lastElementParsed.setOSMType(OSMType.BUILDING);
+            } else if (tags.containsKey("highway")) {
                 parseHighway(lastElementParsed, tags);
             } else {
                 lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));

@@ -5,14 +5,12 @@ import bfst20.logic.misc.OSMElement;
 
 import java.util.ArrayList;
 
-//TODO: FIX
 public class Relation implements OSMElement {
     private ArrayList<Long> members;
     private boolean multipolygon;
     private OSMType OSMType;
     private String name;
     private long id;
-
 
     public Relation(long id) {
         this.id = id;

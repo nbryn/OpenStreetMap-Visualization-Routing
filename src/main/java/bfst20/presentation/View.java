@@ -1,9 +1,7 @@
 package bfst20.presentation;
 
-import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
-import bfst20.logic.kdtree.KDNode;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
@@ -153,7 +151,7 @@ public class View {
 
         Rect rect = createRect(boxSize);
 
-        Point2D mouse = toModelCoords(
+        Point2D mouse = convertCoordinates(
                 mousePos.getX(),
                 mousePos.getY());
 
@@ -168,8 +166,8 @@ public class View {
 
         setClosetLinePathToMouse();
 
-        Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
-        Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
+        Point2D mc1 = convertCoordinates((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
+        Point2D mc2 = convertCoordinates((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
 
         //gc.setStroke(Color.PURPLE);
         //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
@@ -205,8 +203,8 @@ public class View {
 
 
     private Rect createRect(int boxSize) {
-        Point2D mc1 = toModelCoords((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
-        Point2D mc2 = toModelCoords((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
+        Point2D mc1 = convertCoordinates((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
+        Point2D mc2 = convertCoordinates((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
         return new Rect((float) mc1.getY(), (float) mc2.getY(), (float) mc1.getX(), (float) mc2.getX());
     }
 
@@ -218,7 +216,7 @@ public class View {
         for (InterestPoint interestPoint : interestPointData.getAllInterestPoints()) {
             int bubbleSize = 30;
 
-            drawLocation(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude(), String.valueOf(i));
+            drawPointer(lineWidth, bubbleSize, interestPoint.getLongitude(), interestPoint.getLatitude(), String.valueOf(i));
             i++;
         }
     }
@@ -231,28 +229,22 @@ public class View {
         repaint();
     }
 
-    public void setSearchString(Address address) {
+    public void setSearchAddress(Address address) {
         this.searchAddress = address;
 
         repaint();
     }
 
-    //TODO: Better naming
     public void drawSearchLocation(Address address, double lineWidth) {
         if (address == null) return;
 
-        if (address == null) {
-            return;
-        }
-
         int bubbleSize = 30;
 
-        drawLocation(lineWidth, bubbleSize, address.getLon(), address.getLat(), "1");
+        drawPointer(lineWidth, bubbleSize, address.getLon(), address.getLat(), "1");
+
     }
 
-
-    //TODO: Better naming
-    private void drawLocation(double lineWidth, int bubbleSize, float lon, float lat, String id) {
+    private void drawPointer(double lineWidth, int bubbleSize, float lon, float lat, String id) {
         gc.beginPath();
         gc.setStroke(Color.RED);
         gc.setFill(Color.RED);
@@ -342,8 +334,8 @@ public class View {
 
     }
 
-    //TODO: Better Naming
-    public Point2D toModelCoords(double x, double y) {
+    //Converts raw coordinates to canvas coordinates.
+    public Point2D convertCoordinates(double x, double y) {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {

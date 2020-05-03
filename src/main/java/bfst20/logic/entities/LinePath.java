@@ -18,7 +18,7 @@ public class LinePath implements Serializable {
     private Way way;
 
 
-    //TODO: This is only used in tests atm
+    //TODO: CHANGE ALL TESTS.
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
         minY = minLon;
@@ -36,28 +36,9 @@ public class LinePath implements Serializable {
         this.fill = fill;
         this.OSMType = OSMType;
 
-        List<Long> nodeIds = way.getNodeIds();
 
-        minY = Float.POSITIVE_INFINITY;
-        minX = Float.POSITIVE_INFINITY;
-        maxY = Float.NEGATIVE_INFINITY;
-        maxX = Float.NEGATIVE_INFINITY;
-
-        coords = new float[nodeIds.size() * 2];
-        for (int i = 0; i < nodeIds.size(); i++) {
-            coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
-            coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
-
-            //TODO: Explanation
-            if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
-            if (minY > coords[i * 2]) minY = coords[i * 2];
-            if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
-            if (maxY < coords[i * 2]) maxY = coords[i * 2];
-
-        }
-
-        centerLatitude = (maxX - minX) / 2 + minX;
-        centerLongitude = (maxY - minY) / 2 + minY;
+        calculateMinMaxCoordinates(OSMNodes, way);
+        calculateCenterCoordinates();
     }
 
     public void calculateMinMaxCoordinates(Map<Long, Node> OSMNodes, Way way){

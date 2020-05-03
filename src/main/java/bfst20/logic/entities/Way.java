@@ -19,7 +19,6 @@ public class Way implements OSMElement, Serializable {
     private String name;
     private long id;
 
-    //TODO: To many constructors?
     public Way() {
         nodeIds = new ArrayList<>();
         nodes = new ArrayList<>();

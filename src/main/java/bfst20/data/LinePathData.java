@@ -74,10 +74,6 @@ public class LinePathData {
         this.linePaths = linePaths;
     }
 
-    public void addType(OSMType type) {
-        linePaths.put(type, new ArrayList<>());
-    }
-
     public void addNodeTo(OSMType type, Node node, Way way) {
         if (nodeTo.get(type) == null) nodeTo.put(type, new HashMap<>());
 

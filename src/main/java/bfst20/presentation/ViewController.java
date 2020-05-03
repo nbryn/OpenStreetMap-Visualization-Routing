@@ -2,9 +2,7 @@ package bfst20.presentation;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -53,10 +51,6 @@ public class ViewController {
     private Label mouseLocationLabel;
     @FXML
     private TextField searchAddress;
-    //TODO: Remove?
-    @FXML
-    private AnchorPane canvasParent;
-    private boolean scrollTrigger;
     @FXML
     public FlowPane displayPane;
     @FXML
@@ -71,6 +65,9 @@ public class ViewController {
     private Canvas canvas;
     @FXML
     private HBox hbox;
+
+    private boolean scrollTrigger;
+
     private View view;
 
 
@@ -82,16 +79,10 @@ public class ViewController {
     @FXML
     public void initialize() {
 
-        //TODO: Remove?
-        /*        canvas.widthProperty().bind(canvasParent.widthProperty());
-        canvas.heightProperty().bind(canvasParent.heightProperty());
-
-        System.out.println(canvas.getWidth());*/
 
         suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
         suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
         suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
-
 
         setupHbox();
 
@@ -99,11 +90,21 @@ public class ViewController {
 
         setupFileHandling();
 
-        ClassLoader classLoader = getClass().getClassLoader();
+        loadDefault();
+
+        setupZoomSlider();
+
+        setupCanvas();
+
+        setupSearchButton();
+
+        setupRouteButton();
+    }
+
+    public void loadDefault(){
 
         File file = null;
 
-        //TODO: Move?
         try {
 
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
@@ -124,16 +125,7 @@ public class ViewController {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
         }
-
-        setupZoomSlider();
-
-        setupCanvas();
-
-        setupSearchButton();
-
-        setupRouteButton();
     }
-
 
     private void setupRouteButton() {
         searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -281,7 +273,7 @@ public class ViewController {
             lastMouse = new Point2D(e.getX(), e.getY());
 
             if (e.isControlDown()) {
-                Point2D converted = view.toModelCoords(e.getX(), e.getY());
+                Point2D converted = view.convertCoordinates(e.getX(), e.getY());
 
                 InterestPointData interestPointData = InterestPointData.getInstance();
                 interestPointData.saveInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
@@ -313,7 +305,7 @@ public class ViewController {
                 Address address = addressData.findAddress(searchText);
 
                 if(address != null){
-                    view.setSearchString(address);
+                    view.setSearchAddress(address);
                 }else{
                     appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
                 }

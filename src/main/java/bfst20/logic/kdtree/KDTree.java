@@ -43,7 +43,6 @@ public class KDTree implements Serializable {
         return list;
     }
 
-    //TODO: Better naming
     private void range(KDNode node, Rect rect, List<LinePath> list, double zoomLevel, Point2D point) {
         if (node == null) return;
 

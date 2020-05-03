@@ -69,7 +69,7 @@ public class AppController {
     }
 
     public void setSearchString(Address address) {
-        view.setSearchString(address);
+        view.setSearchAddress(address);
     }
 
 
@@ -235,9 +235,6 @@ public class AppController {
         else linePathData.saveLinePath(type, linePath);
     }
 
-    public void saveData(OSMType type) {
-        linePathData.addType(type);
-    }
 
     public List<LinePath> fetchMotorways() {
         return linePathData.getMotorways();

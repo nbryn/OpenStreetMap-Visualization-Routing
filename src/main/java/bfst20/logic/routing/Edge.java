@@ -17,7 +17,6 @@ public class Edge implements Serializable {
     private Node target;
 
 
-    //TODO: Cleanup
     public Edge(OSMType highwayType, Node source, Node target, double length, String street, int maxSpeed, boolean isOneWay) {
         this.maxSpeed = maxSpeed != 0 ? maxSpeed : OSMType.getMaxSpeed(highwayType);
         this.highwayType = highwayType;
@@ -26,7 +25,7 @@ public class Edge implements Serializable {
         this.target = target;
         this.length = length;
 
-        this.street = street == null ? "ååååå" : street;
+        this.street = street == null ? "ååååå" : street.intern();
     }
 
     public boolean isOneWay(Vehicle vehicle) {
@@ -38,7 +37,12 @@ public class Edge implements Serializable {
     public boolean isVehicleAllowed(Vehicle vehicle) {
         if (vehicle == Vehicle.BICYCLE && highwayType == OSMType.MOTORWAY || vehicle == Vehicle.WALK && highwayType == OSMType.MOTORWAY) {
             return false;
-        } else if (vehicle == Vehicle.CAR && highwayType == OSMType.FOOTWAY || vehicle == Vehicle.CAR && highwayType == OSMType.PATH || vehicle == Vehicle.CAR && highwayType == OSMType.CYCLEWAY) {
+        } else if (     vehicle == Vehicle.CAR
+                    &&  highwayType == OSMType.FOOTWAY
+                    ||  vehicle == Vehicle.CAR
+                    &&  highwayType == OSMType.PATH
+                    ||  vehicle == Vehicle.CAR
+                    &&  highwayType == OSMType.CYCLEWAY) {
             return false;
         }
 

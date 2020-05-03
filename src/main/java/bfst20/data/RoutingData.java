@@ -27,7 +27,6 @@ public class RoutingData {
         return routingData;
     }
 
-    //TODO: Two graphs in memory?
     public void saveGraph(Graph graph) {
         this.graph = graph;
     }
@@ -36,7 +35,6 @@ public class RoutingData {
         return graph;
     }
 
-    //TODO: Two routes in memory?
     public void saveRoute(List<Edge> route) {
         this.route = route;
     }
