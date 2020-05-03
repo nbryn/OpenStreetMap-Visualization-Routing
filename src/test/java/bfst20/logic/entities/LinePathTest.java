@@ -137,7 +137,7 @@ public class LinePathTest {
     public void setWayNull() {
         assertEquals(linePath3.getWay(),way1);
         assertEquals(linePath3.getWayId(),10);
-        linePath3.setWayNull();
+        linePath3.removeWay();
         assertEquals(linePath3.getWay(), null);
         assertEquals(linePath3.getWayId(),0);
     }

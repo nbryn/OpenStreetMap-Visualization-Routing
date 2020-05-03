@@ -134,7 +134,7 @@ public class LinePathGeneratorTest {
     @Test
     void combine() throws Exception {
 
-        Method method = LinePathGenerator.class.getDeclaredMethod("combine", Way.class, Way.class);
+        Method method = LinePathGenerator.class.getDeclaredMethod("combineWays", Way.class, Way.class);
         method.setAccessible(true);
         Way way = (Way) method.invoke(linePathGenerator, way1, way2);
         assertEquals(way.getFirstNodeId(), 1);
@@ -143,7 +143,7 @@ public class LinePathGeneratorTest {
     @Test
     void combineSize() throws Exception {
 
-        Method method = LinePathGenerator.class.getDeclaredMethod("combine", Way.class, Way.class);
+        Method method = LinePathGenerator.class.getDeclaredMethod("combineWays", Way.class, Way.class);
         method.setAccessible(true);
         Way way = (Way) method.invoke(linePathGenerator, way1, way2);
         assertEquals(way.getFirstNodeId(), 1);

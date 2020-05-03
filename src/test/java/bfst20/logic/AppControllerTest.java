@@ -56,14 +56,6 @@ class AppControllerTest {
         relation = new Relation(10);
 
     }
-    
-
-    //ALSO LOOK AT SAVEADDRESS PLOX, JUST NEEDS MOCKITO
-//    @Test
-//    public void createLinePaths(){
-//        appController.createLinePaths();
-//        verify(appController, times(1)).createLinePaths(Mockito.any(AppController.class));
-//    }
 
 
     @Test
@@ -78,7 +70,7 @@ class AppControllerTest {
         tree.put(OSMType.BUILDING,kdtree);
 
         appController.saveAllKDTrees(tree);
-        assertEquals(appController.fetchAllKDTreeData(), tree);
+        assertEquals(appController.fetchAllKDTrees(), tree);
     }
 
     //Not a test, but a auto creation for linepaths that is used in test save_fetchAllKDTrees()
@@ -97,7 +89,7 @@ class AppControllerTest {
 
     @Test
     public void fetchHighwayData(){
-        assertEquals(appController.fetchHighwayData().size(),0);
+        assertEquals(appController.fetchHighways().size(),0);
         }
 
     @Test
@@ -108,11 +100,11 @@ class AppControllerTest {
 
     @Test
     public void save_fetch_clearRouteInfoData(){
-        appController.saveRouteInfo(routeInfo);
-        assertEquals(appController.fetchRouteInfoData(), routeInfo);
+        appController.saveRouteDirections(routeInfo);
+        assertEquals(appController.fetchRouteDirections(), routeInfo);
         appController.clearRouteInfoData();
         routeInfo.clear();
-        assertEquals(appController.fetchRouteInfoData(), routeInfo);
+        assertEquals(appController.fetchRouteDirections(), routeInfo);
     }
 
     //todo NIKLAS PLZ MOCKITO THIS :)))
@@ -140,7 +132,7 @@ class AppControllerTest {
     public void save_getNodeData(){
         Node node = new Node(2, (float) 55.6388541, (float) 12.6195888);
         appController.saveNodeData(2,node);
-        assertEquals(appController.getNodeData(2),node);
+        assertEquals(appController.fetchNodeData(2),node);
     }    
     
     @Test
@@ -150,7 +142,7 @@ class AppControllerTest {
         wayList.add(way2);
 
         appController.saveWayData(way2);
-        assertEquals(appController.getAllWayData(),wayList);
+        assertEquals(appController.fetchAllWays(),wayList);
     }
     
 
