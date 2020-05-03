@@ -64,7 +64,7 @@
                                              <HBox alignment="TOP_RIGHT" prefHeight="47.0" prefWidth="330.0" spacing="3.0">
                                                 <children>
                                                    <TextField fx:id="searchAddress" prefHeight="47.0" prefWidth="359.0" promptText="SEARCH HERE" />
-                                                   <Button fx:id="searchAdressButton" mnemonicParsing="false" prefHeight="47.0" prefWidth="148.0" text="Search" />
+                                                   <Button fx:id="searchAddressButton" mnemonicParsing="false" prefHeight="47.0" prefWidth="148.0" text="Search" />
                                                 </children>
                                              </HBox>
                                              <VBox fx:id="suggestionsList" prefHeight="0.0" prefWidth="100.0" />
