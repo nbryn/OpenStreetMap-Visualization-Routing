@@ -145,9 +145,8 @@ public class AppController {
 
     public void loadFile(File file) {
         try {
-            FileHandler fileHandler = FileHandler.getInstance();
             if (file.getName().endsWith(".bin")) isBinary = true;
-            fileHandler.load(file);
+            FileHandler.load(file);
         } catch (IOException ioException) {
             alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
             System.exit(1);
@@ -284,8 +283,7 @@ public class AppController {
     public void generateBinary() throws IOException {
         clearAllNonBinData();
         try {
-            FileHandler fileHandler = FileHandler.getInstance();
-            fileHandler.generateBinary();
+            FileHandler.generateBinary();
         } catch (Exception e) {
             alertOK(Alert.AlertType.ERROR, "Error generating binary, please retry.", false);
         }

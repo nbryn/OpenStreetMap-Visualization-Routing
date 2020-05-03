@@ -14,6 +14,7 @@ import javax.xml.stream.XMLStreamException;
 import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.FileHandler;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
@@ -112,7 +113,7 @@ public class ViewController {
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = getResourceAsFile("samsoe.osm");
+            file = FileHandler.getResourceAsFile("samsoe.osm");
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
@@ -137,33 +138,6 @@ public class ViewController {
         setupRouteButton();
     }
 
-    //https://stackoverflow.com/questions/676097/java-resource-as-file
-    public File getResourceAsFile(String resourcePath) {
-        try {
-            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-            if (in == null) {
-                return null;
-            }
-
-            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
-            tempFile.deleteOnExit();
-
-            try (FileOutputStream out = new FileOutputStream(tempFile)) {
-                //copy stream
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
-                }
-            }
-            return tempFile;
-        } catch (IOException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading file stream, exiting.", true);
-            System.exit(1);
-            return null;
-        }
-    }
-
     private void setupRouteButton() {
         searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -183,7 +157,7 @@ public class ViewController {
 
                         if(appController.fetchRouteInfoData().size() > 0){
                             for (Map.Entry<String, Double> entry : appController.fetchRouteInfoData().entrySet()) {
-                                String text = entry.getKey() == "ååååå" ? "Unknown route" : entry.getKey();
+                                String text = entry.getKey().equals("ååååå") ? "Unknown route" : entry.getKey();
                                 Button route = new Button("Follow " + text + " for " + entry.getValue() + " km");
                                 route.setPrefWidth(375);
                                 route.setPrefHeight(60);
@@ -248,9 +222,7 @@ public class ViewController {
         InterestPointData data = InterestPointData.getInstance();
         List<InterestPoint> interestPoints = data.getAllInterestPoints();
 
-        int i = 0;
-
-        for (InterestPoint interest : interestPoints) {
+        for(int i = 0; i < interestPoints.size(); i++){
             Text scoreText = new Text(i + ". Interest point");
 
             int s = i;
@@ -263,6 +235,9 @@ public class ViewController {
             button.setText("Delete");
 
             HBox box = new HBox(scoreText, button);
+            box.setMinWidth(400);
+            box.setPrefWidth(400);
+
 
             button.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
@@ -275,8 +250,6 @@ public class ViewController {
             });
 
             wayPointFlowPane.getChildren().add(box);
-
-            i++;
         }
     }
 

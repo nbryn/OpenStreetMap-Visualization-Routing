@@ -237,7 +237,7 @@ public enum OSMType {
                 HIGHWAY,
                 RESIDENTIAL_HIGHWAY,
                 TERTIARY,
-                //UNCLASSIFIED_HIGHWAY,
+                UNCLASSIFIED_HIGHWAY,
                 MOTORWAY,
                 FOOTWAY,
                 PATH,
