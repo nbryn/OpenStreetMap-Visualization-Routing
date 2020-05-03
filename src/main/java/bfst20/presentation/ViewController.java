@@ -109,7 +109,7 @@ public class ViewController {
         }
         try {
           appController.initialize(view, file);
-        } catch (IOException e) {
+        } catch (Exception e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
         }
