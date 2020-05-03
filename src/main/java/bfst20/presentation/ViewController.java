@@ -5,8 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -35,6 +34,9 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class ViewController {
+    private SuggestionHandler suggestionHandlerDestination;
+    private SuggestionHandler suggestionHandlerAddress;
+    private SuggestionHandler suggestionHandlerSearch;
     private AppController appController;
     @FXML
     private FlowPane wayPointFlowPane;
@@ -42,13 +44,13 @@ public class ViewController {
     private Button searchAdressButton;
     @FXML
     private Button searchRouteButton;
-
     @FXML
     private TextField destinationBar;
     @FXML
     private Label mouseLocationLabel;
     @FXML
     private TextField searchAddress;
+    //TODO: Remove?
     @FXML
     private AnchorPane canvasParent;
     private boolean scrollTrigger;
@@ -66,25 +68,18 @@ public class ViewController {
     private Canvas canvas;
     @FXML
     private HBox hbox;
-
-    private SuggestionHandler suggestionHandlerSearch;
-    private SuggestionHandler suggestionHandlerAddress;
-    private SuggestionHandler suggestionHandlerDestination;
-
-
     private View view;
-
 
 
     public ViewController() {
         appController = new AppController();
     }
-
     Point2D lastMouse;
 
     @FXML
     public void initialize() {
 
+        //TODO: Remove?
         /*        canvas.widthProperty().bind(canvasParent.widthProperty());
         canvas.heightProperty().bind(canvasParent.heightProperty());
 
@@ -105,6 +100,7 @@ public class ViewController {
 
         File file = null;
 
+        //TODO: Move?
         try {
 
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
@@ -135,15 +131,16 @@ public class ViewController {
         setupRouteButton();
     }
 
+    //TODO: Move?
     //https://stackoverflow.com/questions/676097/java-resource-as-file
-    public File getResourceAsFile(String resourcePath) {
+    private File getResourceAsFile(String resourcePath) {
         try {
             InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
             if (in == null) {
                 return null;
             }
 
-            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".osm");
             tempFile.deleteOnExit();
 
             try (FileOutputStream out = new FileOutputStream(tempFile)) {
@@ -172,16 +169,18 @@ public class ViewController {
                     return;
                 }
 
-                try{
+                try {
                     Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
                     view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
 
-                    if (appController.fetchRouteInfoData() != null) {
+                    if (appController.fetchRouteDirections() != null) {
+                        Map<String, Double> routeDirections = appController.fetchRouteDirections();
+                        List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
+                        Collections.reverse(streetsOnRoute);
                         displayPane.getChildren().clear();
-
-                        if(appController.fetchRouteInfoData().size() > 0){
-                            for (Map.Entry<String, Double> entry : appController.fetchRouteInfoData().entrySet()) {
-                                Button route = new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km");
+                        if (appController.fetchRouteDirections().size() > 0) {
+                            for (String street : streetsOnRoute) {
+                                Button route = new Button("Follow " + street + " for " + routeDirections.get(street) + " km");
                                 route.setPrefWidth(375);
                                 route.setPrefHeight(60);
                                 route.setMouseTransparent(true);
@@ -191,16 +190,16 @@ public class ViewController {
                                 displayPane.getChildren().add(route);
                             }
                             appController.clearRouteInfoData();
-                        }else{
+                        } else {
                             displayPane.getChildren().clear();
                             appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                         }
 
-                    }else{
+                    } else {
                         displayPane.getChildren().clear();
                         appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                     }
-                }catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                 }
             }
@@ -334,7 +333,7 @@ public class ViewController {
                 String searchText = searchAddress.getText();
 
                 view.setSearchString(searchText);
-                
+
 
             }
         });

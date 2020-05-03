@@ -61,8 +61,8 @@ class RoutingDataTest {
 
     @Test
     void saveRouteInfo() {
-        routingData.saveRouteInfo(routeInfo);
-        assertEquals(routingData.getRouteInfo(),routeInfo);
+        routingData.saveRouteDirections(routeInfo);
+        assertEquals(routingData.getRouteDirections(),routeInfo);
     }
 
 

@@ -45,11 +45,11 @@ public class RoutingData {
         return route;
     }
 
-    public void saveRouteInfo(Map<String, Double> routeInfo) {
+    public void saveRouteDirections(Map<String, Double> routeInfo) {
         this.routeInfo = routeInfo;
     }
 
-    public Map<String, Double> getRouteInfo() {
+    public Map<String, Double> getRouteDirections() {
         return routeInfo;
     }
 

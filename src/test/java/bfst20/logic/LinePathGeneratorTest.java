@@ -1,19 +1,14 @@
 package bfst20.logic;
 
-import bfst20.data.LinePathData;
-import bfst20.logic.LinePathGenerator;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;
 import bfst20.logic.misc.OSMType;
-import bfst20.logic.routing.Graph;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 

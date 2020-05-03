@@ -11,14 +11,11 @@ import bfst20.logic.misc.Vehicle;
 import java.util.*;
 
 public class RoutingController {
-    private static RoutingController routingController;
-    private static boolean isLoaded = false;
     private AppController appController;
     private Dijkstra dijkstra;
 
     public RoutingController(AppController appController) {
         this.appController = appController;
-
     }
 
     public void buildRoutingGraph() {
@@ -29,7 +26,6 @@ public class RoutingController {
             if (lp.getWay() == null) continue;
             highwayNodes.addAll(lp.getWay().getNodes());
         }
-
 
         Graph graph = new Graph(new ArrayList<>(highwayNodes));
         generateGraphEdges(highways, graph);
@@ -53,7 +49,7 @@ public class RoutingController {
                     Node sourceNode = way.getNodes().get(i - 1);
                     Node targetNode = way.getNodes().get(i);
 
-                    double length = calculateDistBetween(sourceNode, targetNode);
+                    double length = haversine(sourceNode, targetNode);
                     Edge edge = new Edge(type, sourceNode, targetNode, length, way.getName(), way.getMaxSpeed(),
                             way.isOneWay());
 
@@ -63,31 +59,24 @@ public class RoutingController {
         }
     }
 
-
     public double calculateShortestRoute(Graph graph, List<Edge> edges, Address srcAddress, Address trgAddress, Vehicle vehicle) {
         Node srcNode = findClosestNodeTo(srcAddress, edges, vehicle);
         Node trgNode = findClosestNodeTo(trgAddress, edges, vehicle);
 
         dijkstra = new Dijkstra(graph, srcNode, trgNode, vehicle);
-
-        System.out.println("Has path to: " + dijkstra.hasPathTo(trgNode));
-
+        
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
             List<Edge> route = new ArrayList<>();
 
             if (dijkstra.getEdgeTo().size() == 1) route.addAll(dijkstra.getEdgeTo().values());
-            else route.addAll(extractEdgesOnRoute(dijkstra.getEdgeTo(), srcNode, trgNode));
+            else route.addAll(extractRouteInfo(dijkstra.getEdgeTo(), srcNode, trgNode));
 
-            Map<String, Double> routeInfo = extractRouteInfo(route);
             appController.saveRouteData(route);
-            appController.saveRouteInfo(routeInfo);
-
             // TODO: Needed?
             route = null;
-            routeInfo = null;
             System.gc();
         }
-        System.out.println("Finished Routing");
+
         double dist = dijkstra.distTo(trgNode);
         dijkstra.clearData();
         return dist;
@@ -129,38 +118,34 @@ public class RoutingController {
     }
 
 
-    private List<Edge> extractEdgesOnRoute(Map<Node, Edge> edgesFromDijkstra, Node source, Node target) {
+    private List<Edge> extractRouteInfo(Map<Node, Edge> dijkstraEdges, Node source, Node target) {
+        Map<String, Double> routeDirections = new LinkedHashMap<>();
         List<Edge> edges = new ArrayList<>();
-        Edge edge = edgesFromDijkstra.get(target);
+        Edge edge = dijkstraEdges.get(target);
         long id = 0;
 
         while (id != source.getId()) {
-            edge = edgesFromDijkstra.get(edge.getTarget());
+            edge = dijkstraEdges.get(edge.getTarget());
             long tempID = edge.getTarget().getId();
 
-
             // Follow either target or source node
-            edge = id == tempID ? edgesFromDijkstra.get(edge.getTarget()) : edgesFromDijkstra.get(edge.getSource());
+            edge = id == tempID ? dijkstraEdges.get(edge.getTarget()) : dijkstraEdges.get(edge.getSource());
             id = id == tempID ? edge.getSource().getId() : edge.getTarget().getId();
 
             edges.add(edge);
+            collectRouteDirections(routeDirections, edge);
         }
 
+        appController.saveRouteDirections(routeDirections);
         return edges;
     }
 
-    private Map<String, Double> extractRouteInfo(List<Edge> edges) {
-        Map<String, Double> routeInfo = new LinkedHashMap<>();
-
-        for (int i = edges.size() - 1; i >= 0; i--) {
-            if (!routeInfo.containsKey(edges.get(i).getStreet())) {
-                routeInfo.put(edges.get(i).getStreet(), (double) Math.round(edges.get(i).getLength() * 100) / 100);
-            } else {
-                routeInfo.put(edges.get(i).getStreet(), (double) Math.round((routeInfo.get(edges.get(i).getStreet()) + edges.get(i).getLength()) * 100) / 100);
-            }
+    private void collectRouteDirections(Map<String, Double> routeInfo, Edge edge) {
+        if (!routeInfo.containsKey(edge.getStreet())) {
+            routeInfo.put(edge.getStreet(), (double) Math.round(edge.getLength() * 100) / 100);
+        } else {
+            routeInfo.put(edge.getStreet(), (double) Math.round((routeInfo.get(edge.getStreet()) + edge.getLength()) * 100) / 100);
         }
-
-        return routeInfo;
     }
 
     private int binarySearch(List<Edge> list, String address) {
@@ -184,8 +169,8 @@ public class RoutingController {
         return 0;
     }
 
-    //TODO: Add explanation
-    private double calculateDistBetween(Node source, Node target) {
+    //This formula is used because the earth is a sphere and not flat
+    private double haversine(Node source, Node target) {
         double sourceLat = source.getLatitude();
         double sourceLong = source.getLongitude();
         double targetLat = target.getLatitude();

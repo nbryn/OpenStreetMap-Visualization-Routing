@@ -8,17 +8,14 @@ import bfst20.logic.entities.Way;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.misc.OSMType;
 
-
 public class LinePathGenerator {
     private AppController appController;
     private Map<Long, Node> nodes;
     private List<Way> ways;
 
-
     public LinePathGenerator(AppController appController) {
         this.appController = appController;
         nodes = appController.fetchAllNodes();
-
     }
 
     public void clearData() {
@@ -27,11 +24,12 @@ public class LinePathGenerator {
         System.gc();
     }
 
-
     public void createWays(List<Way> ways, Map<Long, Node> nodes) {
         this.ways = ways;
         this.nodes = nodes;
         for (Way way : ways) {
+
+            //TODO: Remove/Why?
             if (way.getOSMType() == OSMType.COASTLINE || way.getOSMType() == null) continue;
 
             LinePath linePath = createLinePath(way);
@@ -43,7 +41,6 @@ public class LinePathGenerator {
 
             //TODO: Why?
             if (type != OSMType.PLACE) appController.saveLinePathData(type, linePath);
-
         }
     }
 
@@ -85,7 +82,6 @@ public class LinePathGenerator {
 
             else if (relation.getOSMType() == OSMType.HEATH) connectMultipolygon(relation, OSMType.HEATH);
             //connectWays(relation, OSMType.BUILDING);
-
 
         }
 
@@ -189,12 +185,10 @@ public class LinePathGenerator {
             Node lastNode = nodes.get(way.getLastNodeId());
             appController.removeWayFromNodeTo(OSMType, firstNode);
             appController.removeWayFromNodeTo(OSMType, lastNode);
-
         }
 
         return way;
     }
-
 
     //TODO: Naming/Explanation
     private Way combine(Way before, Way after) {

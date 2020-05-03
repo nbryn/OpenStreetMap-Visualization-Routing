@@ -129,12 +129,12 @@ public class AppController {
         routingData.saveRoute(route);
     }
 
-    public void saveRouteInfo(Map<String, Double> routeInfo) {
-        routingData.saveRouteInfo(routeInfo);
+    public void saveRouteDirections(Map<String, Double> routeInfo) {
+        routingData.saveRouteDirections(routeInfo);
     }
 
-    public Map<String, Double> fetchRouteInfoData() {
-        return routingData.getRouteInfo();
+    public Map<String, Double> fetchRouteDirections() {
+        return routingData.getRouteDirections();
     }
 
     public void clearRouteInfoData() {
