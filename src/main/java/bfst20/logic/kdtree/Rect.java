@@ -49,6 +49,7 @@ public class Rect {
         return minLon;
     }
 
+//    Todo:
     public boolean intersects(KDNode node) {
         LinePath path = node.getLinePath();
 
