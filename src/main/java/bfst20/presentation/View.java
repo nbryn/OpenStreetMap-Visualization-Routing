@@ -34,7 +34,7 @@ public class View {
     private AppController appController;
     private List<LinePath> coastlines;
     private List<LinePath> motorways;
-    private String addressString;
+    private Address searchAddress;
     private GraphicsContext gc;
     private Point2D mousePos;
     private Canvas canvas;
@@ -178,7 +178,7 @@ public class View {
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
         gc.stroke();
 
-        drawSearchLocation(pixelwidth);
+        drawSearchLocation(searchAddress, pixelwidth);
         drawInterestPoints(pixelwidth);
 
 
@@ -231,17 +231,15 @@ public class View {
         repaint();
     }
 
-    public void setSearchString(String addressString) {
-        this.addressString = addressString;
+    public void setSearchString(Address address) {
+        this.searchAddress = address;
 
         repaint();
     }
 
     //TODO: Better naming
-    public void drawSearchLocation(double lineWidth) {
-        if (addressString == null) return;
-        AddressData addressData = AddressData.getInstance();
-        Address address = addressData.findAddress(addressString);
+    public void drawSearchLocation(Address address, double lineWidth) {
+        if (address == null) return;
 
         if (address == null) {
             return;

@@ -68,9 +68,8 @@ public class AppController {
         return view;
     }
 
-    public void setSearchString(String search) {
-
-        view.setSearchString(search);
+    public void setSearchString(Address address) {
+        view.setSearchString(address);
     }
 
     public void createLinePaths() {

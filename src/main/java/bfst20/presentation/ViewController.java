@@ -11,8 +11,10 @@ import java.util.Map;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
 import javafx.beans.value.ChangeListener;
@@ -334,9 +336,14 @@ public class ViewController {
             public void handle(MouseEvent mouseEvent) {
                 String searchText = searchAddress.getText();
 
-                view.setSearchString(searchText);
-                
+                AddressData addressData = AddressData.getInstance();
+                Address address = addressData.findAddress(searchText);
 
+                if(address != null){
+                    view.setSearchString(address);
+                }else{
+                    appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
+                }
             }
         });
 
