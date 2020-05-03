@@ -200,17 +200,13 @@ public class Parser {
         if (postcode == null) return;
         if (street == null) return;
 
-        try{
-            Address address = new Address(
-                    city.intern(),
-                    housenumber.equals("") ? "" : housenumber.intern(),
-                    postcode.equals("") ? "" : postcode.intern(),
-                    street.equals("") ? "" : street.intern(),
-                    lat, lon, lastNodeId);
-            appController.saveAddressData(lastNodeId, address);
-        }catch (Exception e){
-            String i = "";
-        }
+        Address address = new Address(
+                city.intern(),
+                housenumber.equals("") ? "" : housenumber.intern(),
+                postcode.equals("") ? "" : postcode.intern(),
+                street.equals("") ? "" : street.intern(),
+                lat, lon, lastNodeId);
+        appController.saveAddressData(lastNodeId, address);
     }
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {

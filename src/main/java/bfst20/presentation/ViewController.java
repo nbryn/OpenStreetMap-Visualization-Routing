@@ -181,7 +181,8 @@ public class ViewController {
 
                         if(appController.fetchRouteInfoData().size() > 0){
                             for (Map.Entry<String, Double> entry : appController.fetchRouteInfoData().entrySet()) {
-                                Button route = new Button("Follow " + entry.getKey() + " for " + entry.getValue() + " km");
+                                String text = entry.getKey() == "ååååå" ? "Unknown route" : entry.getKey();
+                                Button route = new Button("Follow " + text + " for " + entry.getValue() + " km");
                                 route.setPrefWidth(375);
                                 route.setPrefHeight(60);
                                 route.setMouseTransparent(true);
