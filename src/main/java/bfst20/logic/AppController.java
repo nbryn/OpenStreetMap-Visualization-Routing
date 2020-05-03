@@ -57,7 +57,6 @@ public class AppController {
             System.out.println("Generate Highways");
             generateHighways();
             System.out.println("Building graph");
-
             routingController.buildRoutingGraph();
 
         }
