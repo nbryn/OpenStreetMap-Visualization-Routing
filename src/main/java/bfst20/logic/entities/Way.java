@@ -19,7 +19,6 @@ public class Way implements OSMElement, Serializable {
     private String name;
     private long id;
 
-    //TODO: To many constructors?
     public Way() {
         nodeIds = new ArrayList<>();
         nodes = new ArrayList<>();
@@ -31,12 +30,11 @@ public class Way implements OSMElement, Serializable {
         nodes = new ArrayList<>();
     }
 
+    //Used to make a temp copy of a way in LinePathGenerator.
     public Way(Way way) {
-        nodes = way.getNodes();
-        //this.nodes = way.getNodes();
-        this.nodeIds = new ArrayList<>(way.getNodeIds());
         this.id = way.getId();
-        //nodes = new ArrayList<>();
+        this.nodeIds = new ArrayList<>(way.getNodeIds());
+        nodes = way.getNodes();
     }
 
     public int getMaxSpeed() {
@@ -79,7 +77,8 @@ public class Way implements OSMElement, Serializable {
     public OSMType getOSMType() {
         return OSMType;
     }
-
+ 
+   
     public List<Long> getNodeIds() {
         return nodeIds;
     }
@@ -88,18 +87,21 @@ public class Way implements OSMElement, Serializable {
         return id;
     }
 
+  
     public void addNodeId(long id) {
         nodeIds.add(id);
     }
 
+    //is
     public long getFirstNodeId() {
         return nodeIds.get(0);
     }
 
+    //shit
     public long getLastNodeId() {
         return nodeIds.get(nodeIds.size() - 1);
     }
-
+    //af
     public void addAllNodeIds(Way way) {
         nodeIds.addAll(way.getNodeIds());
     }

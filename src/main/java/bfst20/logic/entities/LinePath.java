@@ -18,7 +18,7 @@ public class LinePath implements Serializable {
     private Way way;
 
 
-    //TODO: This is only used in tests atm
+    //TODO: CHANGE ALL TESTS.
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
         minY = minLon;
@@ -29,14 +29,20 @@ public class LinePath implements Serializable {
         centerLongitude = (maxY - minY) / 2 + minY;
     }
 
-
-    //TODO: To much logic in constructor?
     public LinePath(Way way, OSMType OSMType, Map<Long, Node> OSMNodes, Boolean fill) {
         name = way.getName();
         wayId = way.getId();
         this.way = way;
         this.fill = fill;
         this.OSMType = OSMType;
+
+
+        calculateMinMaxCoordinates(OSMNodes, way);
+        calculateCenterCoordinates();
+    }
+
+    public void calculateMinMaxCoordinates(Map<Long, Node> OSMNodes, Way way){
+
         List<Long> nodeIds = way.getNodeIds();
 
         minY = Float.POSITIVE_INFINITY;
@@ -46,20 +52,20 @@ public class LinePath implements Serializable {
 
         coords = new float[nodeIds.size() * 2];
         for (int i = 0; i < nodeIds.size(); i++) {
-            if (nodeIds.get(i) == -99999) {
-                coords[i * 2] = -99999;
-                coords[i * 2 + 1] = -99999;
-            } else {
-                coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
-                coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
 
-                if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
-                if (minY > coords[i * 2]) minY = coords[i * 2];
-                if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
-                if (maxY < coords[i * 2]) maxY = coords[i * 2];
-            }
+
+            coords[i * 2] = OSMNodes.get(nodeIds.get(i)).getLongitude();
+            coords[i * 2 + 1] = OSMNodes.get(nodeIds.get(i)).getLatitude();
+
+            if (minX > coords[i * 2 + 1]) minX = coords[i * 2 + 1];
+            if (minY > coords[i * 2]) minY = coords[i * 2];
+            if (maxX < coords[i * 2 + 1]) maxX = coords[i * 2 + 1];
+            if (maxY < coords[i * 2]) maxY = coords[i * 2];
+
         }
+    }
 
+    public void calculateCenterCoordinates(){
         centerLatitude = (maxX - minX) / 2 + minX;
         centerLongitude = (maxY - minY) / 2 + minY;
     }
@@ -124,8 +130,7 @@ public class LinePath implements Serializable {
         return wayId;
     }
 
-    //TODO: Better name
-    public void setWayNull() {
+    public void removeWay() {
         way = null;
         wayId = 0;
     }

@@ -8,187 +8,37 @@ import bfst20.logic.entities.Way;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.misc.OSMType;
 
-
 public class LinePathGenerator {
-    private static LinePathGenerator linePathGenerator;
-    private static boolean loaded = false;
     private AppController appController;
-    private List<Relation> OSMRelations;
-    private Map<Long, Node> OSMNodes;
-    private List<Way> OSMWays;
+    private Map<Long, Node> nodes;
+    private List<Way> ways;
 
-    private LinePathGenerator() {
-        appController = new AppController();
-        OSMWays = appController.getWaysFromModel();
-        OSMNodes = appController.getNodesFromModel();
-        OSMRelations = appController.getRelationsFromModel();
+    public LinePathGenerator(AppController appController) {
+        this.appController = appController;
+        nodes = appController.fetchAllNodes();
     }
 
     public void clearData() {
-        OSMNodes = new HashMap<>();
-        OSMWays = new ArrayList<>();
-        OSMRelations = new ArrayList<>();
+        nodes = new HashMap<>();
 
         System.gc();
     }
 
-    public static LinePathGenerator getInstance() {
-        if (!loaded) {
-            linePathGenerator = new LinePathGenerator();
-        }
+    public void createWays(List<Way> ways, Map<Long, Node> nodes) {
+        this.ways = ways;
+        this.nodes = nodes;
+        for (Way way : ways) {
 
-        return linePathGenerator;
-    }
-
-    public void createLinePaths() {
-        createWays();
-
-        createRelations();
-    }
-
-    private void createWays() {
-        for (Way way : OSMWays) {
+            //TODO: Remove/Why?
             if (way.getOSMType() == OSMType.COASTLINE || way.getOSMType() == null) continue;
 
             LinePath linePath = createLinePath(way);
 
-            OSMType OSMType = linePath.getOSMType();
+            OSMType type = linePath.getOSMType();
 
-            if (!appController.getLinePathsFromModel().containsKey(OSMType)) {
-                appController.addToModel(OSMType);
-            }
-
-            if (OSMType != OSMType.PLACE) {
-                appController.addToModel(OSMType, linePath);
-            }
+            //TODO: Why?
+            if (type != OSMType.PLACE) appController.saveLinePathData(type, linePath);
         }
-    }
-
-    private void createRelations() {
-        for (Relation relation : OSMRelations) {
-
-            if (relation.getOSMType() == OSMType.FOREST) {
-
-                connectWays(relation, OSMType.FOREST);
-
-            } else if (relation.getOSMType() == OSMType.FARMLAND) {
-
-                connectWays(relation, OSMType.FARMLAND);
-
-            } else if (relation.getName() != null && relation.getName().startsWith("Region ")) {
-
-                if (!appController.getLinePathsFromModel().containsKey(OSMType.COASTLINE)) {
-                    appController.addToModel(OSMType.COASTLINE);
-                }
-
-                connectWays(relation, OSMType.COASTLINE);
-            }else if(relation.getOSMType() == OSMType.BUILDING){
-                //connectWays(relation, OSMType.BUILDING);
-                connectMultipolygon(relation, OSMType.BUILDING);
-            }else if(relation.getOSMType() == OSMType.MEADOW){
-                //connectWays(relation, OSMType.BUILDING);
-                connectMultipolygon(relation, OSMType.MEADOW);
-            }else if(relation.getOSMType() == OSMType.HEATH){
-                //connectWays(relation, OSMType.BUILDING);
-                connectMultipolygon(relation, OSMType.HEATH);
-            }
-
-
-        }
-        //TODO: Crashes on Bornholm without this
-        if(appController.getNodeTo(OSMType.HEATH) != null) {
-            addRelation(OSMType.HEATH, appController.getNodeTo(OSMType.HEATH));
-        }
-        addRelation(OSMType.MEADOW, appController.getNodeTo(OSMType.MEADOW));
-        addRelation(OSMType.BUILDING, appController.getNodeTo(OSMType.BUILDING));
-        addRelation(OSMType.FOREST, appController.getNodeTo(OSMType.FOREST));
-        addRelation(OSMType.FARMLAND, appController.getNodeTo(OSMType.FARMLAND));
-        addRelation(OSMType.COASTLINE, appController.getNodeTo(OSMType.COASTLINE));
-    }
-
-    private void addRelation(OSMType OSMType, Map<Node, Way> nodeTo) {
-        for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
-            if (entry.getKey() == OSMNodes.get(entry.getValue().getLastNodeId())) {
-
-                LinePath path = new LinePath(entry.getValue(), OSMType, OSMNodes, true);
-
-                if(entry.getValue().isMultipolygon()){
-                    path.setMultipolygon(true);
-                }
-
-                appController.addToModel(OSMType, path);
-            }
-        }
-    }
-
-    private void connectMultipolygon(Relation relation, OSMType osmType){
-        if(!relation.isMultipolygon()) return;
-        Collections.sort(relation.getMembers());
-
-        Way way = null;
-
-        for (long entry : relation.getMembers()) {
-
-            if(way == null){
-                way = (binarySearch(OSMWays, entry));
-            }else{
-                Way newWay = (binarySearch(OSMWays, entry));
-                way = combine(way, newWay);
-            }
-        }
-
-        way.setMultipolygon(true);
-
-        appController.addToModel(osmType, OSMNodes.get(way.getFirstNodeId()), way);
-        appController.addToModel(osmType, OSMNodes.get(way.getLastNodeId()), way);
-    }
-
-    private void connectWays(Relation relation, OSMType OSMType) {
-        Collections.sort(relation.getMembers());
-
-        for (long entry : relation.getMembers()) {
-
-            Way way = (binarySearch(OSMWays, entry));
-            if (way == null) continue;
-
-            if(relation.isMultipolygon()){
-                way.setMultipolygon(true);
-            }
-
-            Way before = removeWayBefore(way, OSMType);
-            Way after = removeWayAfter(way, OSMType);
-
-            way = merge(merge(before, way), after);
-
-            appController.addToModel(OSMType, OSMNodes.get(way.getFirstNodeId()), way);
-            appController.addToModel(OSMType, OSMNodes.get(way.getLastNodeId()), way);
-        }
-    }
-
-    private Way removeWayAfter(Way way, OSMType OSMType) {
-        Node node = OSMNodes.get(way.getLastNodeId());
-        Way after = appController.removeWayFromNodeTo(OSMType, node);
-        if (after != null) {
-            Node firstNode = OSMNodes.get(after.getFirstNodeId());
-            Node lastNode = OSMNodes.get(after.getLastNodeId());
-            appController.removeWayFromNodeTo(OSMType, firstNode);
-            appController.removeWayFromNodeTo(OSMType, lastNode);
-
-        }
-
-        return after;
-    }
-
-    private Way removeWayBefore(Way way, OSMType OSMType) {
-        Node node = OSMNodes.get(way.getFirstNodeId());
-        Way before = appController.removeWayFromNodeTo(OSMType, node);
-        if (before != null) {
-            Node firstNode = OSMNodes.get(before.getFirstNodeId());
-            Node lastNode = OSMNodes.get(before.getLastNodeId());
-            appController.removeWayFromNodeTo(OSMType, firstNode);
-            appController.removeWayFromNodeTo(OSMType, lastNode);
-        }
-        return before;
     }
 
     private LinePath createLinePath(Way way) {
@@ -201,20 +51,126 @@ public class LinePathGenerator {
             //If it dosen't this will throw, and the program will use Type.UNKNOWN
         }
         Boolean fill = OSMType.getFill(type);
-
-        // TODO: Does every LinePath need all nodes?
-        return new LinePath(way, type, OSMNodes, fill);
+        return new LinePath(way, type, nodes, fill);
     }
 
-    private Way combine(Way before, Way after){
-        if (before == null) return after;
-        if (after == null) return before;
+    public void createRelations(List<Relation> relations) {
+        for (Relation relation : relations) {
 
+            if (relation.getOSMType() == OSMType.FOREST) {
+
+                connectWays(relation, OSMType.FOREST);
+
+            } else if (relation.getOSMType() == OSMType.FARMLAND) connectWays(relation, OSMType.FARMLAND);
+
+
+             else if (relation.getName() != null && relation.getName().startsWith("Region ")) {
+                connectWays(relation, OSMType.COASTLINE);
+            } else if (relation.getOSMType() == OSMType.BUILDING) connectMultipolygon(relation, OSMType.BUILDING);
+                //connectWays(relation, OSMType.BUILDING);
+
+            else if (relation.getOSMType() == OSMType.MEADOW) connectMultipolygon(relation, OSMType.MEADOW);
+                //connectWays(relation, OSMType.BUILDING);
+
+            else if (relation.getOSMType() == OSMType.HEATH) connectMultipolygon(relation, OSMType.HEATH);
+            //connectWays(relation, OSMType.BUILDING);
+
+        }
+
+        OSMType[] types = OSMType.relations();
+
+        for(OSMType type : types){
+            if (appController.getNodeTo(type) != null) {
+                addRelation(type, appController.getNodeTo(type));
+            }
+        }
+
+    }
+
+    private void addRelation(OSMType OSMType, Map<Node, Way> nodeTo) {
+        for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {
+            if (entry.getKey() == nodes.get(entry.getValue().getLastNodeId())) {
+
+                LinePath path = new LinePath(entry.getValue(), OSMType, nodes, true);
+
+                if (entry.getValue().isMultipolygon()) {
+                    path.setMultipolygon(true);
+                }
+
+                appController.saveLinePathData(OSMType, path);
+            }
+        }
+    }
+
+    private void connectMultipolygon(Relation relation, OSMType type) {
+        if (!relation.isMultipolygon()) return;
+        Collections.sort(relation.getMembers());
+
+        Way way = null;
+
+        for (long entry : relation.getMembers()) {
+
+            if (way == null) {
+                way = (binarySearch(ways, entry));
+            } else {
+                Way newWay = (binarySearch(ways, entry));
+                way = combineWays(way, newWay);
+            }
+        }
+
+        way.setMultipolygon(true);
+
+        appController.saveNodeToData(type, nodes.get(way.getFirstNodeId()), way);
+        appController.saveNodeToData(type, nodes.get(way.getLastNodeId()), way);
+    }
+
+    //This is done to make relations look right.
+    private void connectWays(Relation relation, OSMType OSMType) {
+        Collections.sort(relation.getMembers());
+
+        for (long entry : relation.getMembers()) {
+
+            Way way = (binarySearch(ways, entry));
+            if (way == null) continue;
+
+            if (relation.isMultipolygon()) {
+                way.setMultipolygon(true);
+            }
+
+            Way before = removeWayById(way.getFirstNodeId(), OSMType);
+            Way after = removeWayById(way.getLastNodeId(), OSMType);
+
+            way = merge(merge(before, way), after);
+
+            appController.saveNodeToData(OSMType, nodes.get(way.getFirstNodeId()), way);
+            appController.saveNodeToData(OSMType, nodes.get(way.getLastNodeId()), way);
+        }
+    }
+
+    private Way removeWayById(long id, OSMType type) {
+        Node node = nodes.get(id);
+        return removeWayFromNodeType(type, node);
+    }
+
+    private Way removeWayFromNodeType(OSMType type, Node node) {
+        Way way = appController.removeWayFromNodeTo(type, node);
+        if (way != null) {
+            Node firstNode = nodes.get(way.getFirstNodeId());
+            Node lastNode = nodes.get(way.getLastNodeId());
+            appController.removeWayFromNodeTo(type, firstNode);
+            appController.removeWayFromNodeTo(type, lastNode);
+        }
+
+        return way;
+    }
+
+
+    private Way combineWays(Way first, Way second) {
+        if (first == null) return second;
+        if (second == null) return first;
         Way way = new Way();
-        way.addAllNodeIds(before);
-        way.addNodeId(-99999);
-        way.addNodeId(-99999);
-        way.addAllNodeIds(after);
+        way.addAllNodeIds(first);
+        way.addAllNodeIds(second);
 
         return way;
     }

@@ -3,7 +3,9 @@ package bfst20.data;
 import bfst20.logic.entities.InterestPoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 public class InterestPointDataTest {
 
     static InterestPointData interestPointData;
@@ -12,7 +14,8 @@ public class InterestPointDataTest {
     @BeforeAll
     static void setup() {
         interestPointData = InterestPointData.getInstance();
-        interestPoint = new InterestPoint(9999,8888);
+        interestPoint = new InterestPoint(9999, 8888);
+
     }
 
     @Test
@@ -21,21 +24,23 @@ public class InterestPointDataTest {
     }
 
     @Test
-    void InterestPointLat(){
-        assertEquals(interestPoint.getLatitude(),9999);
+    void InterestPointLat() {
+        assertEquals(interestPoint.getLatitude(), 9999);
     }
+
     @Test
-    void InterestPointLong(){
-    assertEquals(interestPoint.getLongitude(),8888);
+    void InterestPointLong() {
+        assertEquals(interestPoint.getLongitude(), 8888);
     }
+
     @Test
-    void addIntrestPoint(){
-        interestPointData.addInterestPoint(interestPoint);
-    }
-    @Test
-    void removeIntrestPoint(){
-        interestPointData.addInterestPoint(interestPoint);
+    void getAll_remove_addInterestPoint() {
+        assertEquals(interestPointData.getAllInterestPoints().size(),0);
+        interestPointData.saveInterestPoint(interestPoint);
+        assertEquals(interestPointData.getAllInterestPoints().get(0),interestPoint);
+        assertEquals(interestPointData.getAllInterestPoints().size(),1);
         interestPointData.removeInterestPoint(0);
+        assertEquals(interestPointData.getAllInterestPoints().size(),0);
     }
 
 }

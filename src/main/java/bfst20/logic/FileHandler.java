@@ -1,10 +1,12 @@
 package bfst20.logic;
 
-import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import javafx.scene.control.Alert;
 import bfst20.logic.misc.OSMType;
+import bfst20.logic.routing.Graph;
+import bfst20.logic.ternary.TST;
+import bfst20.logic.kdtree.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -16,23 +18,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileHandler {
-    private static boolean isLoaded = false;
-    private static FileHandler fileHandler;
-    private AppController appController;
 
-    private FileHandler() {
-        appController = new AppController();
-    }
+    public static void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
+        AppController appController = new AppController();
 
-    public static FileHandler getInstance() {
-        if (!isLoaded) {
-            isLoaded = true;
-            fileHandler = new FileHandler();
-        }
-        return fileHandler;
-    }
+        appController.clearNodeData();
+        appController.clearLinePathData();
 
-    public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
         long time = -System.nanoTime();
         String filename = file.getName();
         String fileExt = filename.substring(filename.lastIndexOf("."));
@@ -55,27 +47,32 @@ public class FileHandler {
 
     }
 
-    public void loadBinary(File file) {
+    private static void loadBinary(File file) {
+        AppController appController = new AppController();
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
-            Map<OSMType, List<LinePath>> linePaths = (Map<OSMType, List<LinePath>>) in.readObject();
-            Map<Long, Address> addresses = (Map<Long, Address>) in.readObject();
-            List<LinePath> highways = (List<LinePath>) in.readObject();
+            Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
+            List<LinePath> coastline = (List<LinePath>) in.readObject();
+            TST tst = (TST) in.readObject();
+            Graph graph = (Graph) in.readObject();
 
-            appController.addToModel(bounds);
-            appController.addToModel(linePaths);
-            appController.addAddressesToModel(addresses);
-            appController.addHighwaysToModel(highways);
+            appController.saveBoundsData(bounds);
+            appController.saveAllKDTrees(tree);
+            appController.saveCoastlines(coastline);
+            appController.saveTSTData(tst);
+            appController.saveGraphData(graph);
         } catch (IOException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.", true);
             System.exit(1);
         } catch (ClassNotFoundException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.", true);
             System.exit(1);
         }
     }
 
-    private void loadZip(File file) {
+    private static void loadZip(File file) {
+        AppController appController = new AppController();
+
         try {
             ZipFile zipFile = new ZipFile(file.toString());
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -94,24 +91,57 @@ public class FileHandler {
             zipFile.close();
 
         } catch (IOException | XMLStreamException ex) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.", true);
             System.exit(1);
         }
     }
 
-    public void generateBinary() throws IOException {
+    public static void generateBinary() throws IOException {
         File file = new File("samsoe.bin");
         file.createNewFile();
         writeToFile(file);
     }
 
-    private void writeToFile(File file) throws FileNotFoundException, IOException {
+    private static void writeToFile(File file) throws FileNotFoundException, IOException {
+        AppController appController = new AppController();
+
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-        objectOut.writeObject(appController.getBoundsFromModel());
-        objectOut.writeObject(appController.getLinePathsFromModel());
-        objectOut.writeObject(appController.getAddressesFromModel());
-        objectOut.writeObject(appController.getHighwaysFromModel());
+        objectOut.writeObject(appController.fetchBoundsData());
+        objectOut.writeObject(appController.fetchAllKDTrees());
+        objectOut.writeObject(appController.fetchCoastlines());
+        objectOut.writeObject(appController.fetchTSTData());
+        objectOut.writeObject(appController.fetchGraphData());
         objectOut.close();
     }
+
+    //https://stackoverflow.com/questions/676097/java-resource-as-file
+    public static File getResourceAsFile(String resourcePath) {
+        AppController appController = new AppController();
+
+        try {
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+            if (in == null) {
+                return null;
+            }
+
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
+            tempFile.deleteOnExit();
+
+            try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                //copy stream
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            return tempFile;
+        } catch (IOException e) {
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading file stream, exiting.", true);
+            System.exit(1);
+            return null;
+        }
+    }
+
 }

@@ -62,7 +62,7 @@ public class Parser {
 
             switch (reader.getEventType()) {
                 case START_ELEMENT:
-                    String tagName = reader.getLocalName();
+                    String tagName = reader.getLocalName().intern();
 
                     switch (tagName) {
                         case "bounds":
@@ -99,7 +99,7 @@ public class Parser {
                                 firstTag[0] = key;
                                 firstTag[1] = value;
                             }
-                            tags.put(key, value);
+                            tags.put(key.intern(), value.intern());
                             break;
                         case "member":
                             addMemberToRelation(reader);
@@ -111,11 +111,11 @@ public class Parser {
 
                     switch (tagName) {
                         case "node":
-                            parseTagsAddress(lastNodeId, lon, lat, tags);
+                            parseAddressTags(lastNodeId, lon, lat, tags);
                             break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
-                            appController.addToModel(relation);
+                            appController.saveRelationData(relation);
                             parseTags(lastElementParsed, tags, firstTag);
                             break;
                         case "way":
@@ -136,7 +136,7 @@ public class Parser {
         float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-        appController.addToModel(new Bounds(maxLat, minLat, maxLon, minLon));
+        appController.saveBoundsData(new Bounds(maxLat, minLat, maxLon, minLon));
     }
 
 
@@ -146,7 +146,7 @@ public class Parser {
         float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
 
         Node node = new Node(id, latitude, longitude);
-        appController.addToModel(node.getId(), node);
+        appController.saveNodeData(node.getId(), node);
 
     }
 
@@ -154,7 +154,7 @@ public class Parser {
         long id = Long.parseLong(reader.getAttributeValue(null, "id"));
         Way way = new Way(id);
 
-        appController.addToModel(way);
+        appController.saveWayData(way);
 
         return way;
     }
@@ -182,30 +182,38 @@ public class Parser {
     private void addMemberToRelation(XMLStreamReader reader) {
         Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
         long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
-        String type = reader.getAttributeValue(null, "type");
+        String type = reader.getAttributeValue(null, "type").intern();
         relation.addMember(member, type);
     }
 
 
-    private void parseTagsAddress(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
-        if (tags.size() == 0)
-            return;
+    private void parseAddressTags(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
+        if (tags.size() == 0) return;
 
         String city = tags.get("addr:city");
         String housenumber = tags.get("addr:housenumber");
         String postcode = tags.get("addr:postcode");
         String street = tags.get("addr:street");
 
-        if (city == null)
-            return;
+        if (city == null) return;
+        if (housenumber == null) return;
+        if (postcode == null) return;
+        if (street == null) return;
 
-        Address address = new Address(city, housenumber, postcode, street, lat, lon, lastNodeId);
-        appController.addToModel(lastNodeId, address);
+        Address address = new Address(
+                city.intern(),
+                housenumber.equals("") ? "" : housenumber.intern(),
+                postcode.equals("") ? "" : postcode.intern(),
+                street.equals("") ? "" : street.intern(),
+                lat, lon, lastNodeId);
+        appController.saveAddressData(lastNodeId, address);
     }
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
         try {
-            if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name"));
+            if(tags.containsKey("route")) return;
+
+            if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name").intern());
 
             if (tags.containsKey("type") && tags.get("type").equals("multipolygon")) {
                 lastElementParsed.setMultipolygon(true);
@@ -213,23 +221,21 @@ public class Parser {
 
             if (tags.containsKey("landuse") || tags.containsKey("natural")) {
                 if (tags.containsKey("natural")) {
-
                     lastElementParsed.setOSMType(OSMType.valueOf(tags.get("natural").toUpperCase()));
                 } else {
-
                     OSMType type = OSMType.LANDUSE;
 
                     try {
                         type = OSMType.valueOf(tags.get("landuse").toUpperCase());
                     } catch (Exception e) {
+                        // This exception is getting throwen a lot, because of all the missing Enum
                     }
 
                     lastElementParsed.setOSMType(type);
                 }
-            } else if (tags.containsKey("building")) lastElementParsed.setOSMType(OSMType.BUILDING);
-
-            else if (tags.containsKey("highway")) {
-
+            } else if (tags.containsKey("building")){
+                lastElementParsed.setOSMType(OSMType.BUILDING);
+            } else if (tags.containsKey("highway")) {
                 parseHighway(lastElementParsed, tags);
             } else {
                 lastElementParsed.setOSMType(OSMType.valueOf(firstTag[0].toUpperCase()));
@@ -238,17 +244,15 @@ public class Parser {
         } catch (Exception err) {
             // This exception is getting throwen a lot, because of all the missing Enum
             // Types.
-            // appController.alertOK(Alert.AlertType.ERROR, "Error parsing OSM tags,
-            // exiting.");
-            // System.exit(1);
         }
     }
 
     private void parseHighway(OSMElement lastElementParsed, HashMap<String, String> tags) {
         Way way = (Way) lastElementParsed;
 
+        // Need source and target for graph edges
         for (long id : way.getNodeIds()) {
-            Node node = appController.getNodeFromModel(id);
+            Node node = appController.fetchNodeData(id);
             way.addNode(node);
         }
 
@@ -256,6 +260,7 @@ public class Parser {
 
         if (tags.containsKey("oneway")) {
             if (tags.get("oneway").equals("yes")) way.setOneWay(true);
+
             else way.setOneWay(false);
         }
         OSMType type = OSMType.HIGHWAY;
@@ -271,12 +276,6 @@ public class Parser {
             if (type == OSMType.RESIDENTIAL) type = OSMType.RESIDENTIAL_HIGHWAY;
 
             else if (type == OSMType.UNCLASSIFIED) type = OSMType.UNCLASSIFIED_HIGHWAY;
-
-            else if (type == OSMType.FOOTWAY) type = OSMType.FOOTWAY;
-
-            else if (type == OSMType.PATH) type = OSMType.PATH;
-
-            else if (type == OSMType.TRACK) type = OSMType.TRACK;
 
         } catch (Exception e) {
         }

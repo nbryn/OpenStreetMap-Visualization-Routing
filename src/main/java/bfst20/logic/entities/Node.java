@@ -8,7 +8,6 @@ import java.io.Serializable;
 import javax.xml.stream.XMLStreamReader;
 
 public class Node implements OSMElement, Comparable, Serializable {
-    //TODO: Protected?
     protected float longitude;
     protected float latitude;
     private double distTo;
@@ -23,11 +22,6 @@ public class Node implements OSMElement, Comparable, Serializable {
     public Node(float latitude, float longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    //TODO: Only used in test
-    public Node() {
-
     }
 
     public long getId() {
@@ -52,24 +46,21 @@ public class Node implements OSMElement, Comparable, Serializable {
     }
 
     @Override
-    public void setName(String name) {
-        // TODO Auto-generated method stub
+    public int compareTo(Object other) {
+        return Double.compare(this.distTo, ((Node) other).getDistTo());
+    }
 
+    //TODO: NEVER USED \|/
+
+    @Override
+    public void setName(String name) {
     }
 
     @Override
     public void setMultipolygon(boolean multipolygon) {
-
     }
 
     @Override
     public void setOSMType(OSMType OSMType) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public int compareTo(Object other) {
-        return Double.compare(this.distTo, ((Node) other).getDistTo());
     }
 }

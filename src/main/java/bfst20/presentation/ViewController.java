@@ -3,13 +3,18 @@ package bfst20.presentation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.FileHandler;
+import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
+import bfst20.logic.misc.Vehicle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -18,63 +23,98 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class ViewController {
-
+    private SuggestionHandler suggestionHandlerDestination;
+    private SuggestionHandler suggestionHandlerAddress;
+    private SuggestionHandler suggestionHandlerSearch;
     private AppController appController;
-
-    private View view;
-
     @FXML
-    private MenuItem openFile;
+    private FlowPane wayPointFlowPane;
+    @FXML
+    private Button searchAdressButton;
+    @FXML
+    private Button searchRouteButton;
+    @FXML
+    private TextField destinationBar;
     @FXML
     private Label mouseLocationLabel;
     @FXML
     private TextField searchAddress;
     @FXML
-    private Button searchAdressButton;
-
+    public FlowPane displayPane;
     @FXML
-    private Button searchRouteButton;
+    private TextField searchbar;
+    @FXML
+    private MenuItem openFile;
+    @FXML
+    private Slider zoomSlider;
+    @FXML
+    private ToggleGroup type;
     @FXML
     private Canvas canvas;
     @FXML
-    private TextField searchbar;
+    private HBox hbox;
 
-    @FXML
-    private TextField destinationBar;
-    @FXML
-    private ToggleButton bikeButton;
-    @FXML
-    private ToggleButton carButton;
-    @FXML
-    private Slider zoomSlider;
     private boolean scrollTrigger;
+
+    private View view;
+
 
     public ViewController() {
         appController = new AppController();
     }
-
     Point2D lastMouse;
 
     @FXML
     public void initialize() {
 
+
+        suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
+        suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
+        suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
+
+        setupHbox();
+
         appController.createView(canvas, mouseLocationLabel);
 
         setupFileHandling();
 
-        ClassLoader classLoader = getClass().getClassLoader();
+        loadDefault();
+
+        setupZoomSlider();
+
+        setupCanvas();
+
+        setupSearchButton();
+
+        setupRouteButton();
+    }
+
+    public void loadDefault(){
 
         File file = null;
 
         try {
-            file = new File(classLoader.getResource("samsoe.osm").getFile());
-            //file = new File("/home/nbryn/Desktop/ITU/2.Semester/BFST20Gruppe17/danmark.bin");
+
+            //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
+            //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
+            //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
+            file = FileHandler.getResourceAsFile("samsoe.osm");
+            //file = new File("/home/nbryn/Desktop/Denmark.bin");
+
         } catch (NullPointerException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.");
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);
         }
 
@@ -82,39 +122,127 @@ public class ViewController {
         try {
             view = appController.initialize();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
+            System.exit(1);
         }
+    }
 
-        zoomSlider.setMax(128);
+    private void setupRouteButton() {
+        searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+
+                if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
+                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address", true);
+                    return;
+                }
+
+                try {
+                    Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
+                    view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
+
+                    if (appController.fetchRouteDirections() != null) {
+                        displayPane.getChildren().clear();
+
+                        Map<String, Double> routeDirections = appController.fetchRouteDirections();
+                        List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
+                        Collections.reverse(streetsOnRoute);
+                        if (appController.fetchRouteDirections().size() > 0) {
+                            for (String street : streetsOnRoute) {
+                                String text = street.equals("ååååå") ? "Unknown Street" : street;
+                                Button route = new Button("Follow " + text + " for " + routeDirections.get(street) + " km");
+                                route.setPrefWidth(375);
+                                route.setPrefHeight(60);
+                                route.setMouseTransparent(true);
+                                route.setFocusTraversable(false);
+                                Separator spacing = new Separator();
+                                displayPane.getChildren().add(spacing);
+                                displayPane.getChildren().add(route);
+                            }
+                            appController.clearRouteInfoData();
+                        } else {
+                            displayPane.getChildren().clear();
+                            appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                        }
+
+                    } else {
+                        displayPane.getChildren().clear();
+                        appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                    }
+                } catch (NullPointerException e) {
+                    appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                }
+            }
+        });
+    }
+
+    private void setupHbox() {
+        hbox.widthProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            canvas.setWidth((double) newVal - 400);
+            view.repaint();
+        });
+
+        hbox.heightProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            canvas.setHeight((double) newVal);
+            view.repaint();
+        });
+    }
+
+    private void setupZoomSlider() {
+        zoomSlider.setMax(126);
         zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
 
                 if (!scrollTrigger) {
                     double deltaValue = zoomSlider.getValue() - view.getSliderValue();
-                    double factor = Math.pow(1.001, 40 * deltaValue);
+                    double factor = Math.pow(1.001, 20 * deltaValue);
 
-                    view.zoom(factor, canvas.getWidth() / 2, canvas.getHeight() / 2, 40 * deltaValue);
+                    view.zoom(factor, canvas.getWidth() / 2, canvas.getHeight() / 2, 20 * deltaValue);
                 }
                 view.setSliderValue(zoomSlider.getValue());
             }
 
         });
+    }
 
-        setupCanvas();
+    private void updateInterestPoints() {
+        wayPointFlowPane.getChildren().clear();
 
-        setupSearchButton();
+        InterestPointData data = InterestPointData.getInstance();
+        List<InterestPoint> interestPoints = data.getAllInterestPoints();
 
-        setupRouteButtons();
+        for(int i = 0; i < interestPoints.size(); i++){
+            Text scoreText = new Text(i + ". Interest point");
 
-        searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                view.searchRoute();
+            int s = i;
 
-            }
-        });
+            scoreText.setFont(new Font("ARIAL", 25));
+            scoreText.setStyle("-fx-font-weight: bold;");
+            scoreText.setFill(Color.BLACK);
+
+            Button button = new Button();
+            button.setText("Delete");
+
+            HBox box = new HBox(scoreText, button);
+            box.setMinWidth(400);
+            box.setPrefWidth(400);
+
+
+            button.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    wayPointFlowPane.getChildren().remove(s);
+                    interestPoints.remove(s);
+                    updateInterestPoints();
+                    view.repaint();
+                }
+            });
+
+            wayPointFlowPane.getChildren().add(box);
+        }
     }
 
     private void setupFileHandling() {
@@ -126,7 +254,7 @@ public class ViewController {
                     view = appController.initialize();
                 }
             } catch (Exception err) {
-                err.printStackTrace();
+                appController.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
             }
         });
     }
@@ -145,10 +273,11 @@ public class ViewController {
             lastMouse = new Point2D(e.getX(), e.getY());
 
             if (e.isControlDown()) {
-                Point2D converted = view.toModelCoords(e.getX(), e.getY());
+                Point2D converted = view.convertCoordinates(e.getX(), e.getY());
 
                 InterestPointData interestPointData = InterestPointData.getInstance();
-                interestPointData.addInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
+                interestPointData.saveInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
+                updateInterestPoints();
             }
 
             view.repaint();
@@ -165,34 +294,24 @@ public class ViewController {
         });
     }
 
+
     private void setupSearchButton() {
         searchAdressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 String searchText = searchAddress.getText();
 
-                view.setSearchString(searchText);
+                AddressData addressData = AddressData.getInstance();
+                Address address = addressData.findAddress(searchText);
 
-            }
-        });
-    }
-
-    private void setupRouteButtons() {
-        bikeButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                //System.out.println("HEY");
-                //TODO: Bike not implemented yet.
+                if(address != null){
+                    view.setSearchAddress(address);
+                }else{
+                    appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
+                }
             }
         });
 
-        carButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                view.setAddress(searchbar.getText(), destinationBar.getText());
-                view.repaint();
-            }
-        });
     }
 
     public static void main(String[] args) {
@@ -200,6 +319,11 @@ public class ViewController {
     }
 
     public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+
+    }
+
+    public void save(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+        appController.generateBinary();
     }
 
     public void normalColorButton(ActionEvent actionEvent) {

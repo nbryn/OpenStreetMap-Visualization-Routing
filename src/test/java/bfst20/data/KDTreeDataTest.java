@@ -2,7 +2,6 @@ package bfst20.data;
 
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
-import bfst20.logic.kdtree.Direction;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,8 +37,8 @@ class KDTreeDataTest {
     }
 
     @Test
-    void setValuesOnRect() throws NoSuchFieldException {
-        kdTreeData.setValuesOnRect(10, 15, 20, 25);
+    void saveRectValues() throws NoSuchFieldException {
+        kdTreeData.saveRectValues(10, 15, 20, 25);
 
         assertEquals(10, kdTreeData.getRect().getMinLat());
         assertEquals(15, kdTreeData.getRect().getMaxLat());
@@ -48,14 +47,14 @@ class KDTreeDataTest {
     }
 
     @Test
-    void addKDTree() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    void saveKDTree() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         List<LinePath> linePaths = new ArrayList<>();
         LinePath linePath = new LinePath(40, 45, 50, 55);
         linePaths.add(linePath);
 
         KDTree kdTree = new KDTree(linePaths, rect);
 
-        kdTreeData.addKDTree(OSMType.COASTLINE, kdTree);
+        kdTreeData.saveKDTree(OSMType.COASTLINE, kdTree);
 
      /*   Field kdTrees = KDTreeModel.class.getDeclaredField("kdTrees");
         kdTrees.setAccessible(true);
@@ -76,8 +75,9 @@ class KDTreeDataTest {
         linePaths.add(linePath);
 
         KDTree kdTree = new KDTree(linePaths, rect);
-        kdTreeData.addKDTree(OSMType.COASTLINE, kdTree);
+        kdTreeData.saveKDTree(OSMType.COASTLINE, kdTree);
 
         assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), kdTree);
     }
+
 }

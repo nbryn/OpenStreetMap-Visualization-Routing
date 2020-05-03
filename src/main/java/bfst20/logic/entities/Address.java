@@ -51,13 +51,8 @@ public class Address implements Serializable {
         return lon;
     }
 
-    //TODO: Remove?
-    public long getNodeID() {
-        return nodeID;
-    }
-
     @Override
     public String toString() {
-        return street + " " + housenumber + " " + city + " " + postcode;
+        return street + " " + housenumber + " " + postcode;
     }
 }

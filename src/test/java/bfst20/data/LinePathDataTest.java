@@ -24,8 +24,6 @@ class LinePathDataTest {
     @BeforeAll
     static void setup() {
         linePathData = LinePathData.getInstance();
-       // node = new Node();
-
     }
 
     @Test
@@ -37,22 +35,22 @@ class LinePathDataTest {
     void getLinePaths() {
         LinePath linePath = new LinePath(new Way(), OSMType.COASTLINE, new HashMap<>(), true);
 
-        linePathData.addLinePath(OSMType.COASTLINE, linePath);
+        linePathData.saveLinePath(OSMType.COASTLINE, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.COASTLINE).get(0));
+        assertEquals(linePath, linePathData.getCoastlines().get(0));
     }
 
     @Test
-    void addLinePath() {
-        LinePath linePath = new LinePath(new Way(), OSMType.HIGHWAY, new HashMap<>(), true);
+    void saveLinePath() {
+        LinePath linePath = new LinePath(new Way(), OSMType.MOTORWAY, new HashMap<>(), true);
 
-        linePathData.addLinePath(OSMType.HIGHWAY, linePath);
+        linePathData.saveLinePath(OSMType.MOTORWAY, linePath);
 
-        assertEquals(linePath, linePathData.getLinePaths().get(OSMType.HIGHWAY).get(0));
+        assertEquals(linePath, linePathData.getMotorways().get(0));
     }
 
     @Test
-    void setLinePaths() {
+    void saveLinePaths() {
         LinePath linePath = new LinePath(new Way(), OSMType.MOTORWAY, new HashMap<>(), true);
         List<LinePath> motorWays = new ArrayList<>();
         motorWays.add(linePath);
@@ -86,15 +84,12 @@ class LinePathDataTest {
     }
 
 
-
-
     @Test
     void getNodeToCoastline() {
         linePathData.addNodeTo(OSMType.COASTLINE, node, new Way());
 
         assertEquals(1, linePathData.getNodeTo(OSMType.COASTLINE).size());
     }
-
 
 
     @Test
@@ -105,4 +100,35 @@ class LinePathDataTest {
     }
 
 
+    @Test
+    void saveHighways() {
+    }
+
+    @Test
+    void getHighWays() {
+    }
+
+    @Test
+    void getCoastlines() {
+    }
+
+    @Test
+    void saveCoastlines() {
+    }
+
+    @Test
+    void getMotorways() {
+    }
+
+    @Test
+    void getNodeTo() {
+    }
+
+    @Test
+    void clearData() {
+    }
+
+    @Test
+    void saveSingleCoastLine() {
+    }
 }
