@@ -97,13 +97,11 @@ public class RoutingController {
         return closestNode;
     }
 
-
     private Node calculateDistanceBetween(Address address, List<Edge> closestEdges, Vehicle vehicle) {
         float shortestDistance = Float.POSITIVE_INFINITY;
         Node closestNode = null;
 
         for (Edge e : closestEdges) {
-
             float distance = (float) Math.sqrt(Math.pow(e.getTarget().getLatitude() - address.getLat(), 2)
                     + Math.pow(e.getTarget().getLongitude() - address.getLon(), 2));
 
@@ -111,7 +109,6 @@ public class RoutingController {
                 closestNode = e.getTarget();
                 shortestDistance = distance;
             }
-
         }
 
         return closestNode;

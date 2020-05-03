@@ -13,7 +13,6 @@ public class Dijkstra {
     private Map<Node, Double> distTo;
     private Map<Node, Edge> edgeTo;
 
-
     public Dijkstra(Graph graph, Node source, Node target, Vehicle vehicle) {
         minPQ = new PriorityQueue<>(graph.nodeCount());
         distTo = new HashMap<>();
@@ -32,6 +31,7 @@ public class Dijkstra {
                 if (min.getId() == target.getId()) {
                     // Source and Target = Same edge
                     if (edgeTo.size() == 0) edgeTo.put(target, edge);
+
                     return;
                 }
 
@@ -48,7 +48,6 @@ public class Dijkstra {
         distTo.put(source, 0.0);
         minPQ.add(source);
     }
-
 
     private void relax(Edge edge, Node min, Vehicle vehicle) {
         // Current node can be target or source for current edge because the graph is not directed
@@ -103,5 +102,4 @@ public class Dijkstra {
         minPQ = null;
         System.gc();
     }
-
 }
