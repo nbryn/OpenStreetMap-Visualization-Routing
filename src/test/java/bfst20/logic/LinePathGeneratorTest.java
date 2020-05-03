@@ -160,7 +160,7 @@ public class LinePathGeneratorTest {
     void convertWaysToLinePaths() {
         linePathGenerator.convertWaysToLinePaths(ways, nodes);
 
-        verify(appController, times(4)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
+        verify(appController, times(2)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class LinePathGeneratorTest {
         linePathGenerator.convertWaysToLinePaths(ways, nodes);
         linePathGenerator.convertRelationsToLinePaths(relations);
 
-        verify(appController, times(2)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
+        verify(appController, times(4)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
 
 
