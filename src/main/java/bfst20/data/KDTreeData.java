@@ -47,6 +47,7 @@ public class KDTreeData {
         return kdTrees.get(OSMType);
     }
 
+    //TODO
     public void clearData() {
         kdTrees = new HashMap<>();
         System.gc();

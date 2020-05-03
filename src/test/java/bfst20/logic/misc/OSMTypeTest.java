@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static bfst20.logic.misc.OSMType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OSMTypeTest {
     public static Color color;
@@ -49,4 +50,16 @@ public class OSMTypeTest {
         assertEquals(OSMType.getMaxSpeed(TERTIARY),80);
         assertEquals(OSMType.getMaxSpeed(PATH),60);
     }
+
+    @Test
+    public void highways(){
+        assertNotNull(OSMType.highways());
+        
+    }
+
+    @Test
+    public void drawables(){
+        assertNotNull(OSMType.drawables());
+    }
+    
 }
