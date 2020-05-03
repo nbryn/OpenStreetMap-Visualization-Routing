@@ -43,15 +43,20 @@ public class AppController {
         addressData = AddressData.getInstance();
         kdTreeData = KDTreeData.getInstance();
         parser = Parser.getInstance();
-
     }
 
-    public View initialize() throws IOException {
-        routingController = new RoutingController(new AppController());
+    //TODO: Remove prints
+    public void initialize(View view, File file) {
+        this.view = view;
+        loadFile(file);
+        routingController = new RoutingController(this);
+        linePathGenerator = LinePathGenerator.getInstance(this);
 
         if (!isBinary) {
             System.out.println("Creating linepaths");
-            createLinePaths();
+            linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
+            linePathGenerator.convertRelationsToLinePaths(fetchRelations());
+            linePathGenerator.clearData();
             clearNodeData();
             System.out.println("Generate Highways");
             generateHighways();
@@ -62,19 +67,20 @@ public class AppController {
         System.out.println("Done");
         view.initialize(isBinary);
         System.gc();
-
-        return view;
     }
 
-    public void createLinePaths() {
-        linePathGenerator = LinePathGenerator.getInstance();
-        linePathGenerator.createLinePaths();
+    public void loadFile(File file) {
+        try {
+            if (file.getName().endsWith(".bin")) isBinary = true;
+            FileHandler.load(file, this);
+        } catch (IOException ioException) {
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
+            System.exit(1);
+        } catch (XMLStreamException xmlStreamException) {
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
+            System.exit(1);
+        }
     }
-
-    public void setSearchString(Address address) {
-        view.setSearchAddress(address);
-    }
-
 
     public void generateHighways() {
         Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
@@ -100,13 +106,11 @@ public class AppController {
         return linePathData.getHighways();
     }
 
-
     public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
         routingController = new RoutingController(new AppController());
 
         Address source = addressData.findAddress(sourceQuery);
         Address target = addressData.findAddress(targetQuery);
-
 
         Graph graph = fetchGraphData();
         List<Edge> edges = graph.getEdges();
@@ -142,17 +146,8 @@ public class AppController {
         routingData.clearData();
     }
 
-    public void loadFile(File file) {
-        try {
-            if (file.getName().endsWith(".bin")) isBinary = true;
-            FileHandler.load(file);
-        } catch (IOException ioException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
-            System.exit(1);
-        } catch (XMLStreamException xmlStreamException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
-            System.exit(1);
-        }
+    public void setSearchString(Address address) {
+        view.setSearchAddress(address);
     }
 
     public void parseOSM(File file) throws IOException, XMLStreamException {
@@ -219,7 +214,6 @@ public class AppController {
         return linePathData.getLinePaths();
     }
 
-
     public Way removeWayFromNodeTo(OSMType type, Node node) {
         return linePathData.removeWayFromNodeTo(type, node);
     }
@@ -238,13 +232,12 @@ public class AppController {
         else linePathData.saveLinePath(type, linePath);
     }
 
-
     public List<LinePath> fetchMotorways() {
         return linePathData.getMotorways();
     }
 
     public void clearLinePathData() {
-        LinePathGenerator.getInstance().clearData();
+        LinePathGenerator.getInstance(this).clearData();
         linePathData.clearData();
     }
 
@@ -267,10 +260,6 @@ public class AppController {
         return kdTreeData.getKDTree(OSMType);
     }
 
-    public void createView(Canvas canvas, Label mouseLocationLabel) {
-        view = new View(canvas);
-        view.setMouseLocationView(mouseLocationLabel);
-    }
 
     public void alertOK(Alert.AlertType type, String text, boolean wait) {
         view.displayError(type, text, wait);

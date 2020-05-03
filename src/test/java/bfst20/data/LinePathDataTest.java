@@ -63,13 +63,6 @@ class LinePathDataTest {
     }
 
     @Test
-    void addType() {
-        linePathData.addType(OSMType.FOREST);
-
-        assertNotNull(linePathData.getLinePaths().get(OSMType.FOREST));
-    }
-
-    @Test
     void addNodeTo() {
         linePathData.addNodeTo(OSMType.FOREST, node, new Way());
 

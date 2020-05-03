@@ -19,9 +19,7 @@ import java.util.zip.ZipFile;
 
 public class FileHandler {
 
-    public static void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
-        AppController appController = new AppController();
-
+    public static void load(File file, AppController appController) throws IOException, XMLStreamException, FactoryConfigurationError {
         appController.clearNodeData();
         appController.clearLinePathData();
 
@@ -30,16 +28,13 @@ public class FileHandler {
         String fileExt = filename.substring(filename.lastIndexOf("."));
         switch (fileExt) {
             case ".bin":
-                loadBinary(file);
-                break;
-            case ".txt":
-
+                loadBinary(file, appController);
                 break;
             case ".osm":
                 appController.parseOSM(file);
                 break;
             case ".zip":
-                loadZip(file);
+                loadZip(file, appController);
                 break;
         }
         time += System.nanoTime();
@@ -47,8 +42,7 @@ public class FileHandler {
 
     }
 
-    private static void loadBinary(File file) {
-        AppController appController = new AppController();
+    private static void loadBinary(File file, AppController appController) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
@@ -70,9 +64,7 @@ public class FileHandler {
         }
     }
 
-    private static void loadZip(File file) {
-        AppController appController = new AppController();
-
+    private static void loadZip(File file, AppController appController) {
         try {
             ZipFile zipFile = new ZipFile(file.toString());
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -116,14 +108,10 @@ public class FileHandler {
     }
 
     //https://stackoverflow.com/questions/676097/java-resource-as-file
-    public static File getResourceAsFile(String resourcePath) {
-        AppController appController = new AppController();
-
+    public static File getResourceAsFile(String resourcePath, AppController appController) {
         try {
             InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-            if (in == null) {
-                return null;
-            }
+            if (in == null)  return null;
 
             File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
             tempFile.deleteOnExit();
