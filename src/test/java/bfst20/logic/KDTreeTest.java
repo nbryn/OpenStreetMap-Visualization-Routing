@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KDTreeTest {
 
-    /*@Test
+    @Test
     void structureRoot(){
         Rect rect = new Rect(10, 20, 10, 20);
 
@@ -134,7 +134,7 @@ public class KDTreeTest {
 
         int i = 0;
 
-        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 100, 0, 100), 1.3011416847239474E9)){
+        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 100, 0, 100), 1.3011416847239474E9, null)){
             i++;
         }
 
@@ -160,7 +160,7 @@ public class KDTreeTest {
 
         int i = 0;
 
-        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 9, 0, 9), 2.8945867784311756E8)){
+        for(LinePath path : kdTree.getElementsInRect(new Rect(0, 9, 0, 9), 2.8945867784311756E8, null)){
             i++;
         }
 
@@ -197,7 +197,7 @@ public class KDTreeTest {
         assertEquals(kdTree.getClosetsLinepathToMouse(), lp);
 
         assert kdTree.getClosetsLinePathToMouseDistance() > 0;
-    }*/
+    }
 
     @Test
     public void createTree(){

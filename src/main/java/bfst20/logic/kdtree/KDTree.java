@@ -88,6 +88,7 @@ public class KDTree implements Serializable {
             node.setSplit(path.getCenterLongitude());
         }
         path.removeWay();
+        node.setLinePath(path);
 
         return node;
     }
