@@ -26,7 +26,6 @@
             <Menu fx:id="mainMenu" text="File">
                 <items>
                     <MenuItem fx:id="openFile" onAction="#load" text="Open" />
-
                 <SeparatorMenuItem />
                     <MenuItem text="Exit" />
                 </items>

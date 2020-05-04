@@ -100,6 +100,7 @@ public class ViewController {
 
         try {
             file = FileHandler.getResourceAsFile("samsoe.osm", appController);
+
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);

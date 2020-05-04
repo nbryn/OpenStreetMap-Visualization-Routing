@@ -96,9 +96,12 @@ public class LinePathData {
         nodeTo = new HashMap<>();
         highways = new ArrayList<>();
         coastlines = new ArrayList<>();
-        motorways = new ArrayList<>();
 
         System.gc();
+    }
+
+    public void clearMotorways(){
+        motorways = new ArrayList<>();
     }
 
     public void saveSingleCoastLine(LinePath linePath) {

@@ -51,22 +51,20 @@ public class    AppController {
         loadFile(file);
         routingController = new RoutingController(this);
         linePathGenerator = LinePathGenerator.getInstance(this);
-        System.out.println("File loaded.");
         if (!isBinary) {
             linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
             linePathGenerator.convertRelationsToLinePaths(fetchRelations());
             linePathGenerator.clearData();
             clearNodeData();
-            System.out.println("Generating highways");
             generateHighways();
             routingController.buildRoutingGraph();
         }
-        System.out.println("Initializing.");
         view.initialize(isBinary);
         System.gc();
     }
 
     public void loadFile(File file) {
+        linePathData.clearMotorways();
         kdTreeData.clearData();
         clearLinePathData();
         addressData.clearData();
