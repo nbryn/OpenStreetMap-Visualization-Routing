@@ -47,7 +47,7 @@ class KDTreeDataTest {
     }
 
     @Test
-    void saveKDTree() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    void saveKDTree(){
         List<LinePath> linePaths = new ArrayList<>();
         LinePath linePath = new LinePath(40, 45, 50, 55);
         linePaths.add(linePath);
@@ -56,16 +56,7 @@ class KDTreeDataTest {
 
         kdTreeData.saveKDTree(OSMType.COASTLINE, kdTree);
 
-     /*   Field kdTrees = KDTreeModel.class.getDeclaredField("kdTrees");
-        kdTrees.setAccessible(true);
-        Map<Type, KDTree> map = (Map<Type, KDTree>) kdTrees.get(kdTreeModel);
-
-        Method get = map.getClass().getDeclaredMethod("get", new Class[]{});
-
-        KDTree returned = (KDTree) get.invoke(map, Type.COASTLINE);*/
-
         assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), kdTree);
-
     }
 
     @Test
