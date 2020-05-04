@@ -66,6 +66,7 @@ public class    AppController {
     }
 
     public void loadFile(File file) {
+        kdTreeData.clearData();
         try {
             if (file.getName().endsWith(".bin")) isBinary = true;
             FileHandler.load(file, this);

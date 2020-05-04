@@ -78,6 +78,9 @@ class KDTreeDataTest {
         kdTreeData.saveKDTree(OSMType.COASTLINE, kdTree);
 
         assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), kdTree);
+
+        kdTreeData.clearData();
+        assertEquals(kdTreeData.getKDTree(OSMType.COASTLINE), null);
     }
 
 }
