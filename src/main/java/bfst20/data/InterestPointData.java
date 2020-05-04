@@ -22,6 +22,10 @@ public class InterestPointData {
         return interestPointData;
     }
 
+    public void clearData(){
+        interestPoints = new LinkedList<>();
+    }
+
     public void saveInterestPoint(InterestPoint interestPoint) {
         interestPoints.add(interestPoint);
     }

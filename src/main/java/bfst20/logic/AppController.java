@@ -51,24 +51,33 @@ public class    AppController {
         loadFile(file);
         routingController = new RoutingController(this);
         linePathGenerator = LinePathGenerator.getInstance(this);
-
+        System.out.println("File loaded.");
         if (!isBinary) {
             linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
             linePathGenerator.convertRelationsToLinePaths(fetchRelations());
             linePathGenerator.clearData();
             clearNodeData();
+            System.out.println("Generating highways");
             generateHighways();
             routingController.buildRoutingGraph();
-
         }
+        System.out.println("Initializing.");
         view.initialize(isBinary);
         System.gc();
     }
 
     public void loadFile(File file) {
         kdTreeData.clearData();
+        clearLinePathData();
+        addressData.clearData();
+        InterestPointData interestPointData = InterestPointData.getInstance();
+        interestPointData.clearData();
         try {
-            if (file.getName().endsWith(".bin")) isBinary = true;
+            if (file.getName().endsWith(".bin")){
+                isBinary = true;
+            }else{
+                isBinary = false;
+            }
             FileHandler.load(file, this);
         } catch (IOException ioException) {
             alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);

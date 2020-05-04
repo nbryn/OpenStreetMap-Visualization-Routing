@@ -12,7 +12,6 @@ import java.util.*;
 
 public class RoutingController {
     private AppController appController;
-    private Dijkstra dijkstra;
 
     public RoutingController(AppController appController) {
         this.appController = appController;
@@ -41,9 +40,9 @@ public class RoutingController {
     private void generateGraphEdges(List<LinePath> highWays, Graph graph) {
         for (LinePath linePath : highWays) {
             Way way = linePath.getWay();
-            OSMType type = way.getOSMType();
 
             if (way != null) {
+                OSMType type = way.getOSMType();
                 for (int i = 1; i < way.getNodes().size(); i++) {
                     Node sourceNode = way.getNodes().get(i - 1);
                     Node targetNode = way.getNodes().get(i);
@@ -62,7 +61,7 @@ public class RoutingController {
         Node srcNode = findClosestNodeTo(srcAddress, edges, vehicle);
         Node trgNode = findClosestNodeTo(trgAddress, edges, vehicle);
 
-        dijkstra = new Dijkstra(graph, srcNode, trgNode, vehicle);
+        Dijkstra dijkstra = new Dijkstra(graph, srcNode, trgNode, vehicle);
         
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
             List<Edge> route = new ArrayList<>();

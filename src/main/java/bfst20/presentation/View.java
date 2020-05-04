@@ -181,6 +181,11 @@ public class View {
 
 
         if (route != null) {
+
+            drawPointer(pixelwidth, 30, route.get(0).getTarget().getLongitude(), route.get(0).getTarget().getLatitude(), "1");
+            drawPointer(pixelwidth, 30, route.get(route.size()-1).getSource().getLongitude(), route.get(route.size()-1).getSource().getLatitude(), "2");
+
+
             for (Edge edge : route) {
                 drawRoute(edge, pixelwidth);
             }

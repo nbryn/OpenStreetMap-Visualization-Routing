@@ -239,8 +239,11 @@ public class ViewController {
     private void setupFileHandling() {
         openFile.setOnAction(e -> {
             try {
+
                 File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
                 if (file != null) {
+                    wayPointFlowPane.getChildren().clear();
+
                     view = new View(canvas);
 
                     appController.initialize(view, file);
