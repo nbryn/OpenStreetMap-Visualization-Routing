@@ -31,10 +31,9 @@ public class OSMTypeTest {
     
     @Test
     public void getColorBlindColor() {
-        assertEquals(OSMType.getColor(GREEN,true),Color.PINK);
-        assertEquals(OSMType.getColor(WATER,true), Color.RED);
-        assertEquals(OSMType.getColor(MEADOW,true),Color.TRANSPARENT);
-
+        assertEquals(OSMType.getColor(GREEN,true), Color.LIGHTGREEN.invert());
+        assertEquals(OSMType.getColor(WATER,true), Color.rgb(170, 211, 223, 1).invert());
+        assertEquals(OSMType.getColor(MEADOW,true),Color.rgb(205, 235, 176, 1).invert());
     }
 
     @Test
@@ -48,7 +47,7 @@ public class OSMTypeTest {
     @Test
     public void getMaxSpeed(){
         assertEquals(OSMType.getMaxSpeed(TERTIARY),80);
-        assertEquals(OSMType.getMaxSpeed(PATH),60);
+        assertEquals(OSMType.getMaxSpeed(PATH),80);
     }
 
     @Test
