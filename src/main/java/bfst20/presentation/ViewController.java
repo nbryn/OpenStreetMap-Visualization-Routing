@@ -82,6 +82,8 @@ public class ViewController {
         suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
         suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
 
+        appController.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
+
         loadDefault();
 
         setupHbox();
@@ -100,7 +102,7 @@ public class ViewController {
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = FileHandler.getResourceAsFile("samsode.osm", appController);
+            file = FileHandler.getResourceAsFile("samsoe.osm", appController);
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {

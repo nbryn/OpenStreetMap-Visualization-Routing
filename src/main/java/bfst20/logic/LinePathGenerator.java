@@ -57,7 +57,6 @@ public class LinePathGenerator {
         }
         Boolean fill = OSMType.getFill(type);
 
-        // TODO: Does every LinePath need all nodes?
         return new LinePath(way, type, nodes, fill);
     }
 

@@ -71,9 +71,9 @@ public enum OSMType {
             case BEACH:
             case GREEN:
             case MEADOW:
+            case RESIDENTIAL:
                 return 1.1191879061812976E7;
             case UNCLASSIFIED_HIGHWAY:
-            case RESIDENTIAL:
             case RESIDENTIAL_HIGHWAY:
             case MULTIPOLYGON:
             case FOREST:
@@ -209,7 +209,7 @@ public enum OSMType {
             case SERVICE:
                 return 30;
             default:
-                return 60;
+                return 80;
         }
     }
 

@@ -17,8 +17,6 @@ public class LinePath implements Serializable {
     private long wayId;
     private Way way;
 
-
-    //TODO: CHANGE ALL TESTS.
     public LinePath(float maxLat, float maxLon, float minLat, float minLon) {
         this.bounds = new Bounds(maxLat, minLat, maxLon, minLon);
         minY = minLon;
