@@ -65,6 +65,7 @@ public class    AppController {
 
     public void loadFile(File file) {
         linePathData.clearMotorways();
+        linePathData.clearCoastlines();
         kdTreeData.clearData();
         clearLinePathData();
         addressData.clearData();
