@@ -35,6 +35,9 @@ public class AddressData {
     public TST getTST(){
         return tst;
     }
+    public void clearData(){
+        tst = new TST();
+    }
 
 
     public String[] parseAddress(String input) {

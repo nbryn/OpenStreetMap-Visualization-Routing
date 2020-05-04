@@ -92,16 +92,14 @@ public class Way implements OSMElement, Serializable {
         nodeIds.add(id);
     }
 
-    //is
     public long getFirstNodeId() {
         return nodeIds.get(0);
     }
 
-    //shit
     public long getLastNodeId() {
         return nodeIds.get(nodeIds.size() - 1);
     }
-    //af
+
     public void addAllNodeIds(Way way) {
         nodeIds.addAll(way.getNodeIds());
     }

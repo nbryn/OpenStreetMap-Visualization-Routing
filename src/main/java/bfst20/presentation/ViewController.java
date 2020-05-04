@@ -67,50 +67,42 @@ public class ViewController {
     private HBox hbox;
 
     private boolean scrollTrigger;
-
+    private Point2D lastMouse;
     private View view;
-
 
     public ViewController() {
         appController = new AppController();
     }
-    Point2D lastMouse;
 
     @FXML
     public void initialize() {
-
-
+        view = new View(canvas);
+        view.setMouseLocationView(mouseLocationLabel);
         suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
         suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
         suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
 
-        setupHbox();
-
-        appController.createView(canvas, mouseLocationLabel);
-
-        setupFileHandling();
+        appController.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
 
         loadDefault();
 
+        setupHbox();
+        setupFileHandling();
         setupZoomSlider();
 
         setupCanvas();
-
         setupSearchButton();
-
         setupRouteButton();
     }
 
-    public void loadDefault(){
-
+    private void loadDefault(){
         File file = null;
 
         try {
-
             //file = new File("c:\\Users\\Sam\\Downloads\\fyn.osm");
             //file = new File("d:\\Projects\\Java\\BFST20Gruppe17\\samsoe.bin");
             //file = new File("c:\\Users\\Sam\\Downloads\\denmark-latest.osm");
-            file = FileHandler.getResourceAsFile("samsoe.osm");
+            file = FileHandler.getResourceAsFile("samsoe.osm", appController);
             //file = new File("/home/nbryn/Desktop/Denmark.bin");
 
         } catch (NullPointerException e) {
@@ -118,10 +110,9 @@ public class ViewController {
             System.exit(1);
         }
 
-        appController.loadFile(file);
         try {
-            view = appController.initialize();
-        } catch (IOException e) {
+          appController.initialize(view, file);
+        } catch (Exception e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
         }
@@ -214,7 +205,7 @@ public class ViewController {
         InterestPointData data = InterestPointData.getInstance();
         List<InterestPoint> interestPoints = data.getAllInterestPoints();
 
-        for(int i = 0; i < interestPoints.size(); i++){
+        for (int i = 0; i < interestPoints.size(); i++) {
             Text scoreText = new Text(i + ". Interest point");
 
             int s = i;
@@ -248,10 +239,14 @@ public class ViewController {
     private void setupFileHandling() {
         openFile.setOnAction(e -> {
             try {
+
                 File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
                 if (file != null) {
-                    appController.loadFile(file);
-                    view = appController.initialize();
+                    wayPointFlowPane.getChildren().clear();
+
+                    view = new View(canvas);
+
+                    appController.initialize(view, file);
                 }
             } catch (Exception err) {
                 appController.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
@@ -304,9 +299,9 @@ public class ViewController {
                 AddressData addressData = AddressData.getInstance();
                 Address address = addressData.findAddress(searchText);
 
-                if(address != null){
+                if (address != null) {
                     view.setSearchAddress(address);
-                }else{
+                } else {
                     appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
                 }
             }

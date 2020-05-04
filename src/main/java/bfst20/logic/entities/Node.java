@@ -50,8 +50,6 @@ public class Node implements OSMElement, Comparable, Serializable {
         return Double.compare(this.distTo, ((Node) other).getDistTo());
     }
 
-    //TODO: NEVER USED \|/
-
     @Override
     public void setName(String name) {
     }

@@ -32,7 +32,7 @@ public class LinePathGeneratorTest {
     @BeforeAll
     static void setup() {
         appController = mock(AppController.class);
-        linePathGenerator = new LinePathGenerator(appController);
+        linePathGenerator = LinePathGenerator.getInstance(appController);
         relations = new ArrayList<>();
         ways = new ArrayList<>();
         nodes = new HashMap<>();
@@ -130,6 +130,11 @@ public class LinePathGeneratorTest {
 
     }
 
+    @Test
+    void getInstance() {
+        assertEquals(linePathGenerator, LinePathGenerator.getInstance(appController));
+    }
+
 
     @Test
     void combine() throws Exception {
@@ -152,19 +157,20 @@ public class LinePathGeneratorTest {
 
 
     @Test
-    void createWays() {
-        linePathGenerator.createWays(ways, nodes);
+    void convertWaysToLinePaths() {
+        linePathGenerator.convertWaysToLinePaths(ways, nodes);
+
+        verify(appController, times(2)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
+    }
+
+    @Test
+    void convertRelationsToLinePaths() {
+        linePathGenerator.convertWaysToLinePaths(ways, nodes);
+        linePathGenerator.convertRelationsToLinePaths(relations);
 
         verify(appController, times(4)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
 
-    @Test
-    void createRelations() {
-        linePathGenerator.createWays(ways, nodes);
-        linePathGenerator.createRelations(relations);
-
-        verify(appController, times(2)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
-    }
 
 
 }

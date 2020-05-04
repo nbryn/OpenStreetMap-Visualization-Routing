@@ -63,13 +63,6 @@ class LinePathDataTest {
     }
 
     @Test
-    void addType() {
-        linePathData.addType(OSMType.FOREST);
-
-        assertNotNull(linePathData.getLinePaths().get(OSMType.FOREST));
-    }
-
-    @Test
     void addNodeTo() {
         linePathData.addNodeTo(OSMType.FOREST, node, new Way());
 
@@ -101,34 +94,14 @@ class LinePathDataTest {
 
 
     @Test
-    void saveHighways() {
+    void save_getHighways() {
+        List<LinePath> linePaths = new ArrayList<>();
+        LinePath linePath = new LinePath(new Way(), OSMType.COASTLINE, new HashMap<>(), true);
+        linePaths.add(linePath);
+
+        linePathData.saveHighways(linePaths);
+        assertEquals(linePathData.getHighways(),linePaths);
     }
 
-    @Test
-    void getHighWays() {
-    }
-
-    @Test
-    void getCoastlines() {
-    }
-
-    @Test
-    void saveCoastlines() {
-    }
-
-    @Test
-    void getMotorways() {
-    }
-
-    @Test
-    void getNodeTo() {
-    }
-
-    @Test
-    void clearData() {
-    }
-
-    @Test
-    void saveSingleCoastLine() {
-    }
+   
 }

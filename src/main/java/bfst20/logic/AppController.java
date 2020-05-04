@@ -16,6 +16,7 @@ import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
 import bfst20.logic.ternary.TST;
+import bfst20.presentation.AlertHandler;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
@@ -23,7 +24,7 @@ import javafx.scene.control.Label;
 
 import javax.xml.stream.XMLStreamException;
 
-public class AppController {
+public class    AppController {
 
     private RoutingController routingController;
     private LinePathGenerator linePathGenerator;
@@ -43,35 +44,52 @@ public class AppController {
         addressData = AddressData.getInstance();
         kdTreeData = KDTreeData.getInstance();
         parser = Parser.getInstance();
-
     }
 
-    public View initialize() throws IOException {
-        linePathGenerator = new LinePathGenerator(new AppController());
-        routingController = new RoutingController(new AppController());
-
+    public void initialize(View view, File file) {
+        this.view = view;
+        loadFile(file);
+        routingController = new RoutingController(this);
+        linePathGenerator = LinePathGenerator.getInstance(this);
+        System.out.println("File loaded.");
         if (!isBinary) {
-            System.out.println("Creating linepaths");
-            linePathGenerator.createWays(fetchAllWays(), fetchAllNodes());
-            linePathGenerator.createRelations(fetchRelations());
+            linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
+            linePathGenerator.convertRelationsToLinePaths(fetchRelations());
+            linePathGenerator.clearData();
             clearNodeData();
-            System.out.println("Generate Highways");
+            System.out.println("Generating highways");
             generateHighways();
-            System.out.println("Building graph");
             routingController.buildRoutingGraph();
-
         }
-        System.out.println("Done");
+        System.out.println("Initializing.");
         view.initialize(isBinary);
         System.gc();
-
-        return view;
     }
 
-    public void setSearchString(Address address) {
-        view.setSearchAddress(address);
+    public void loadFile(File file) {
+        kdTreeData.clearData();
+        clearLinePathData();
+        addressData.clearData();
+        InterestPointData interestPointData = InterestPointData.getInstance();
+        interestPointData.clearData();
+        try {
+            if (file.getName().endsWith(".bin")){
+                isBinary = true;
+            }else{
+                isBinary = false;
+            }
+            FileHandler.load(file, this);
+        } catch (IOException ioException) {
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
+            System.exit(1);
+        } catch (XMLStreamException xmlStreamException) {
+            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
+            System.exit(1);
+        } catch (NullPointerException exception){
+            alertOK(Alert.AlertType.ERROR, "Error finding file, exiting.", true);
+            System.exit(1);
+        }
     }
-
 
     public void generateHighways() {
         Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
@@ -97,13 +115,11 @@ public class AppController {
         return linePathData.getHighways();
     }
 
-
     public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
         routingController = new RoutingController(new AppController());
 
         Address source = addressData.findAddress(sourceQuery);
         Address target = addressData.findAddress(targetQuery);
-
 
         Graph graph = fetchGraphData();
         List<Edge> edges = graph.getEdges();
@@ -139,17 +155,8 @@ public class AppController {
         routingData.clearData();
     }
 
-    public void loadFile(File file) {
-        try {
-            if (file.getName().endsWith(".bin")) isBinary = true;
-            FileHandler.load(file);
-        } catch (IOException ioException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
-            System.exit(1);
-        } catch (XMLStreamException xmlStreamException) {
-            alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
-            System.exit(1);
-        }
+    public void setSearchString(Address address) {
+        view.setSearchAddress(address);
     }
 
     public void parseOSM(File file) throws IOException, XMLStreamException {
@@ -216,7 +223,6 @@ public class AppController {
         return linePathData.getLinePaths();
     }
 
-
     public Way removeWayFromNodeTo(OSMType type, Node node) {
         return linePathData.removeWayFromNodeTo(type, node);
     }
@@ -235,12 +241,12 @@ public class AppController {
         else linePathData.saveLinePath(type, linePath);
     }
 
-
     public List<LinePath> fetchMotorways() {
         return linePathData.getMotorways();
     }
 
     public void clearLinePathData() {
+        LinePathGenerator.getInstance(this).clearData();
         linePathData.clearData();
     }
 
@@ -263,13 +269,9 @@ public class AppController {
         return kdTreeData.getKDTree(OSMType);
     }
 
-    public void createView(Canvas canvas, Label mouseLocationLabel) {
-        view = new View(canvas);
-        view.setMouseLocationView(mouseLocationLabel);
-    }
 
     public void alertOK(Alert.AlertType type, String text, boolean wait) {
-        view.displayError(type, text, wait);
+        AlertHandler.alertOK(type, text, wait);
     }
 
     public void generateBinary() throws IOException {

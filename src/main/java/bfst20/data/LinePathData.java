@@ -94,7 +94,9 @@ public class LinePathData {
     public void clearData() {
         linePaths = new HashMap<>();
         nodeTo = new HashMap<>();
-        //highWays = new ArrayList<>();
+        highways = new ArrayList<>();
+        coastlines = new ArrayList<>();
+        motorways = new ArrayList<>();
 
         System.gc();
     }

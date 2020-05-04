@@ -19,36 +19,34 @@ import java.util.zip.ZipFile;
 
 public class FileHandler {
 
-    public static void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
-        AppController appController = new AppController();
+    public static void load(File file, AppController appController) throws IOException, XMLStreamException, FactoryConfigurationError {
 
-        appController.clearNodeData();
-        appController.clearLinePathData();
+        try{
+            appController.clearNodeData();
+            appController.clearLinePathData();
 
-        long time = -System.nanoTime();
-        String filename = file.getName();
-        String fileExt = filename.substring(filename.lastIndexOf("."));
-        switch (fileExt) {
-            case ".bin":
-                loadBinary(file);
-                break;
-            case ".txt":
-
-                break;
-            case ".osm":
-                appController.parseOSM(file);
-                break;
-            case ".zip":
-                loadZip(file);
-                break;
+            String filename = file.getName();
+            String fileExt = filename.substring(filename.lastIndexOf("."));
+            switch (fileExt) {
+                case ".bin":
+                    loadBinary(file, appController);
+                    break;
+                case ".osm":
+                    appController.parseOSM(file);
+                    break;
+                case ".zip":
+                    loadZip(file, appController);
+                    break;
+            }
+        }catch (OutOfMemoryError e){
+            appController.alertOK(Alert.AlertType.ERROR, "Error loading, out of memory, exiting.", true);
+            System.exit(1);
         }
-        time += System.nanoTime();
-        System.out.printf("Load time: %.3fms\n", time / 1e6);
+
 
     }
 
-    private static void loadBinary(File file) {
-        AppController appController = new AppController();
+    private static void loadBinary(File file, AppController appController) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
@@ -70,9 +68,7 @@ public class FileHandler {
         }
     }
 
-    private static void loadZip(File file) {
-        AppController appController = new AppController();
-
+    private static void loadZip(File file, AppController appController) {
         try {
             ZipFile zipFile = new ZipFile(file.toString());
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -115,17 +111,14 @@ public class FileHandler {
         objectOut.close();
     }
 
-    //https://stackoverflow.com/questions/676097/java-resource-as-file
-    public static File getResourceAsFile(String resourcePath) {
-        AppController appController = new AppController();
-
+    public static File getResourceAsFile(String resourcePath, AppController appController) {
         try {
-            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-            if (in == null) {
-                return null;
-            }
+            String suffix = resourcePath.endsWith(".osm") ? ".osm" : ".bin";
 
-            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),".osm");
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+            if (in == null)  return null;
+
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),suffix);
             tempFile.deleteOnExit();
 
             try (FileOutputStream out = new FileOutputStream(tempFile)) {
