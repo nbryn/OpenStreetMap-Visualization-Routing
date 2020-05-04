@@ -110,13 +110,12 @@ public class ViewController {
             System.exit(1);
         }
 
-        appController.initialize(view, file);
-        /*try {
+        try {
           appController.initialize(view, file);
         } catch (Exception e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
-        }*/
+        }
     }
 
     private void setupRouteButton() {
