@@ -40,7 +40,7 @@
             <Menu mnemonicParsing="false" text="Color Scheme">
                <items>
                    <MenuItem mnemonicParsing="false" onAction="#normalColorButton" text="Normal Colors" />
-                   <MenuItem mnemonicParsing="false" onAction="#colorBlindButton" text="Colorblind Mode" />
+                   <MenuItem mnemonicParsing="false" onAction="#colorBlindButton" text="Invert Mode" />
                </items>
             </Menu>
        </menus>
