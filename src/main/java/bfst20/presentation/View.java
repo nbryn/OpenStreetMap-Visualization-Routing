@@ -139,7 +139,7 @@ public class View {
 
 
         gc.setTransform(new Affine());
-        gc.setFill(Color.LIGHTBLUE);
+        gc.setFill(OSMType.getColor(OSMType.OCEAN, isColorBlindMode));
 
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());

@@ -16,6 +16,7 @@ import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
 import bfst20.logic.ternary.TST;
+import bfst20.presentation.AlertHandler;
 import bfst20.presentation.View;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
@@ -45,7 +46,6 @@ public class    AppController {
         parser = Parser.getInstance();
     }
 
-    //TODO: Remove prints
     public void initialize(View view, File file) {
         this.view = view;
         loadFile(file);
@@ -53,23 +53,20 @@ public class    AppController {
         linePathGenerator = LinePathGenerator.getInstance(this);
 
         if (!isBinary) {
-            System.out.println("Creating linepaths");
             linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
             linePathGenerator.convertRelationsToLinePaths(fetchRelations());
             linePathGenerator.clearData();
             clearNodeData();
-            System.out.println("Generate Highways");
             generateHighways();
-            System.out.println("Building graph");
             routingController.buildRoutingGraph();
 
         }
-        System.out.println("Done");
         view.initialize(isBinary);
         System.gc();
     }
 
     public void loadFile(File file) {
+        kdTreeData.clearData();
         try {
             if (file.getName().endsWith(".bin")) isBinary = true;
             FileHandler.load(file, this);
@@ -78,6 +75,9 @@ public class    AppController {
             System.exit(1);
         } catch (XMLStreamException xmlStreamException) {
             alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
+            System.exit(1);
+        } catch (NullPointerException exception){
+            alertOK(Alert.AlertType.ERROR, "Error finding file, exiting.", true);
             System.exit(1);
         }
     }
@@ -262,7 +262,7 @@ public class    AppController {
 
 
     public void alertOK(Alert.AlertType type, String text, boolean wait) {
-        view.displayError(type, text, wait);
+        AlertHandler.alertOK(type, text, wait);
     }
 
     public void generateBinary() throws IOException {

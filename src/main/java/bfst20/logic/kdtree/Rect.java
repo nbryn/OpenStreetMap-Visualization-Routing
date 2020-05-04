@@ -49,18 +49,6 @@ public class Rect {
         return minLon;
     }
 
-//    Todo:
-    public boolean intersects(KDNode node) {
-        LinePath path = node.getLinePath();
-
-        if(node.getDirection() == Direction.Latitudinal){
-            return node.getSplit() >= minLat && node.getSplit() <= maxLat;
-        }else{
-            return true;
-        }
-    }
-
-
 
     public boolean intersectsRight(KDNode node){
         LinePath path = node.getLinePath();

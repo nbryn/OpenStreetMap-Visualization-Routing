@@ -108,7 +108,6 @@ class AppControllerTest {
         assertEquals(appController.fetchRouteDirections(), routeInfo);
     }
 
-    //TODO: NIKLAS PLZ MOCKITO THIS :)))
     @Test
     public void saveAddressData() {
         Address address = new Address("Farum", "21", "3520", "2", 21, 22, 26);

@@ -82,6 +82,8 @@ public class ViewController {
         suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
         suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
 
+        appController.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
+
         loadDefault();
 
         setupHbox();
@@ -107,6 +109,7 @@ public class ViewController {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);
         }
+
         try {
           appController.initialize(view, file);
         } catch (Exception e) {
