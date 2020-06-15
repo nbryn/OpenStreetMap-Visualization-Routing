@@ -94,11 +94,7 @@ public class View {
                 }
             }
         }
-
-        //List<LinePath> highways = appController.getHighwaysFromModel();
-
-        //appController.addKDTreeToModel(OSMType.HIGHWAY, highways);
-
+        
         motorways = appController.fetchMotorways();
 
         if(motorways.size() > 0){
@@ -156,8 +152,6 @@ public class View {
                 mousePos.getY());
 
 
-        //drawTypeKdTree(OSMType.COASTLINE, rect, pixelwidth);
-
         for (LinePath path : coastlines) {
             drawLinePath(path, pixelwidth);
         }
@@ -169,8 +163,6 @@ public class View {
         Point2D mc1 = convertCoordinates((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
         Point2D mc2 = convertCoordinates((canvas.getWidth() / 2) + boxSize, (canvas.getHeight() / 2) + boxSize);
 
-        //gc.setStroke(Color.PURPLE);
-        //gc.strokeRect(mouse.getX(), mouse.getY(), 0.001, 0.001);
         gc.beginPath();
         gc.setStroke(Color.BLUE);
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
@@ -191,7 +183,6 @@ public class View {
             }
         }
 
-        //System.gc();
     }
 
 
