@@ -99,7 +99,7 @@ public class ViewController {
         File file = null;
 
         try {
-            file = FileHandler.getResourceAsFile("samsoe.osm", appController);
+            file = FileHandler.getResourceAsFile("Farum.osm", appController);
 
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
