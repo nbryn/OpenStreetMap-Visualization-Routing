@@ -370,7 +370,6 @@ public class View {
         repaint();
     }
 
-    
     public void changeToColorBlindMode(boolean isColorBlindMode) {
         this.isColorBlindMode = isColorBlindMode;
     }
@@ -378,7 +377,6 @@ public class View {
     public void setMouseLocationView(Label mouseLocationLabel) {
         this.mouseLocationLabel = mouseLocationLabel;
     }
-
 
     public double getTimesZoomed() {
         return timesZoomed;

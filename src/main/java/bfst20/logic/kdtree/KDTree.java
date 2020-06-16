@@ -48,11 +48,10 @@ public class KDTree implements Serializable {
         if (rect.contains(node) && OSMType.getZoomLevel(node.getLinePath().getOSMType()) <= zoomLevel) {
             list.add(node.getLinePath());
 
-            if(point != null){
+            if (point != null) {
                 float[] coords = node.getLinePath().getCoords();
 
                 for (int i = 2; i <= coords.length; i += 2) {
-
                     float distance = (float) Math.sqrt(Math.pow(point.getY() - coords[i - 1], 2) + Math.pow(point.getX() - coords[i - 2], 2));
 
                     if (distance < closetNodeDistance) {
@@ -75,20 +74,21 @@ public class KDTree implements Serializable {
     public LinePath getClosetsLinepathToMouse() {
         return closetsNode.getLinePath();
     }
-    public double getClosetsLinePathToMouseDistance(){return closetNodeDistance;}
 
-    private KDNode createNewKdNode(LinePath path, Direction direction) {
-        KDNode node = new KDNode();
-        node.setDirection(direction);
-        if (direction == Direction.Latitudinal) {
-            node.setSplit(path.getCenterLatitude());
-        } else {
-            node.setSplit(path.getCenterLongitude());
+    public double getClosetsLinePathToMouseDistance() {
+        return closetNodeDistance;
+    }
+
+    private void insert(KDNode node, LinePath path) {
+        if (node.getLeftNode() == null && node.getRightNode() == null) {
+            insertNode(node, path);
+        } else if (node.getLeftNode() != null && node.getRightNode() == null) {
+            insertNodeLeftExists(node, path);
+        } else if (node.getRightNode() != null && node.getLeftNode() == null) {
+            insertNodeRightExists(node, path);
+        } else if (node.getLeftNode() != null && node.getRightNode() != null) {
+            insertNodeBothExists(node, path);
         }
-        path.removeWay();
-        node.setLinePath(path);
-
-        return node;
     }
 
     private void insertNode(KDNode node, LinePath path) {
@@ -136,7 +136,6 @@ public class KDTree implements Serializable {
                 node.setLeftNode(newNode);
             } else {
                 insert(node.getRightNode(), path);
-
             }
         } else {
             KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
@@ -164,17 +163,17 @@ public class KDTree implements Serializable {
         }
     }
 
-    private void insert(KDNode node, LinePath path) {
-        if (node.getLeftNode() == null && node.getRightNode() == null) {
-            insertNode(node, path);
-        } else if (node.getLeftNode() != null && node.getRightNode() == null) {
-            insertNodeLeftExists(node, path);
-        } else if (node.getRightNode() != null && node.getLeftNode() == null) {
-            insertNodeRightExists(node, path);
-        } else if (node.getLeftNode() != null && node.getRightNode() != null) {
-            insertNodeBothExists(node, path);
+    private KDNode createNewKdNode(LinePath path, Direction direction) {
+        KDNode node = new KDNode();
+        node.setDirection(direction);
+        if (direction == Direction.Latitudinal) {
+            node.setSplit(path.getCenterLatitude());
+        } else {
+            node.setSplit(path.getCenterLongitude());
         }
+        path.removeWay();
+        node.setLinePath(path);
+
+        return node;
     }
-
-
 }
