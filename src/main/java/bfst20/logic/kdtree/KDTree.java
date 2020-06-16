@@ -33,7 +33,6 @@ public class KDTree implements Serializable {
         return root;
     }
 
-    //With mouse to node distance calculation
     public Iterable<LinePath> getElementsInRect(Rect rect, double zoomLevel, Point2D point) {
         closetsNode = root;
         closetNodeDistance = Float.POSITIVE_INFINITY;
@@ -93,11 +92,9 @@ public class KDTree implements Serializable {
     }
 
     private void insertNode(KDNode node, LinePath path) {
-        //Both nodes are empty
         if (node.getDirection() == Direction.Latitudinal) {
             KDNode newNode = createNewKdNode(path, Direction.Longitudinal);
             if (node.getSplit() > path.getCenterLatitude()) {
-                //Since it is less it would be to the left of the split line for the node.
                 node.setLeftNode(newNode);
             } else {
                 node.setRightNode(newNode);
@@ -105,7 +102,6 @@ public class KDTree implements Serializable {
         } else {
             KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
             if (node.getSplit() > path.getCenterLongitude()) {
-                //Since it is less it would be to the left of the split line for the node.
                 node.setRightNode(newNode);
             } else {
                 node.setLeftNode(newNode);
@@ -114,13 +110,11 @@ public class KDTree implements Serializable {
     }
 
     private void insertNodeLeftExists(KDNode node, LinePath path) {
-        //Left node is there but no right node
         if (node.getDirection() == Direction.Latitudinal) {
             KDNode newNode = createNewKdNode(path, Direction.Longitudinal);
             if (node.getSplit() > path.getCenterLatitude()) {
-                //Since it is less it would be to the left of the split line for the node.
-                //node.setLeftNode(newNode);
-                insert(node.getLeftNode(), path); // Since left node exists
+
+                insert(node.getLeftNode(), path);
             } else {
                 node.setRightNode(newNode);
             }
@@ -128,65 +122,48 @@ public class KDTree implements Serializable {
             KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
 
             if (node.getSplit() > path.getCenterLongitude()) {
-                //Since it is less it would be to the left of the split line for the node.
                 node.setRightNode(newNode);
             } else {
-                //node.setLeftNode(newNode);
-                insert(node.getLeftNode(), path); // Since left node exists
+                insert(node.getLeftNode(), path);
             }
         }
     }
 
     private void insertNodeRightExists(KDNode node, LinePath path) {
-        //Right node is there but no left node.
         if (node.getDirection() == Direction.Latitudinal) {
             KDNode newNode = createNewKdNode(path, Direction.Longitudinal);
             if (node.getSplit() > path.getCenterLatitude()) {
-                //Since it is less it would be to the left of the split line for the node.
                 node.setLeftNode(newNode);
             } else {
-                //node.setRightNode(newNode);
-                insert(node.getRightNode(), path); // Since left node exists
+                insert(node.getRightNode(), path);
 
             }
         } else {
             KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
             if (node.getSplit() > path.getCenterLongitude()) {
-                //Since it is less it would be to the left of the split line for the node.
-                //node.setRightNode(newNode);
-                insert(node.getRightNode(), path); // Since left node exists
+                insert(node.getRightNode(), path);
             } else {
                 node.setLeftNode(newNode);
             }
         }
     }
 
-    //Going down the one of the children of the parent  node.
     private void insertNodeBothExists(KDNode node, LinePath path) {
-        //Both nodes are there.
         if (node.getDirection() == Direction.Latitudinal) {
-            KDNode newNode = createNewKdNode(path, Direction.Longitudinal);
             if (node.getSplit() > path.getCenterLatitude()) {
-                //Since it is less it would be to the left of the split line for the node.
-                //node.setLeftNode(newNode);
-                insert(node.getLeftNode(), path); // Since left node exists
+                insert(node.getLeftNode(), path);
             } else {
-                insert(node.getRightNode(), path); // Since left node exists
+                insert(node.getRightNode(), path);
             }
         } else {
-            KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
             if (node.getSplit() > path.getCenterLongitude()) {
-                //Since it is less it would be to the left of the split line for the node.
-                //node.setRightNode(newNode);
-                insert(node.getRightNode(), path); // Since left node exists
+                insert(node.getRightNode(), path);
             } else {
-                //node.setLeftNode(newNode);
-                insert(node.getLeftNode(), path); // Since left node exists
+                insert(node.getLeftNode(), path);
             }
         }
     }
 
-    //Determines what method to call.
     private void insert(KDNode node, LinePath path) {
         if (node.getLeftNode() == null && node.getRightNode() == null) {
             insertNode(node, path);
