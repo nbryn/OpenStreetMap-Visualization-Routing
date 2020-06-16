@@ -52,7 +52,6 @@ public class View {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-
     public void initialize(boolean isBinary) {
         trans = new Affine();
         linePaths = appController.fetchLinePathData();
@@ -103,7 +102,6 @@ public class View {
         repaint();
     }
 
-
     private boolean fps() {
         Date date = new Date();
 
@@ -119,7 +117,6 @@ public class View {
 
         return false;
     }
-
 
     public void repaint() {
         if (fps()) return;
@@ -160,18 +157,14 @@ public class View {
         drawSearchLocation(searchAddress, pixelWidth);
         drawInterestPoints(pixelWidth);
 
-
         if (route != null) {
-
             drawPointer(pixelWidth, 30, route.get(0).getTarget().getLongitude(), route.get(0).getTarget().getLatitude(), "1");
             drawPointer(pixelWidth, 30, route.get(route.size() - 1).getSource().getLongitude(), route.get(route.size() - 1).getSource().getLatitude(), "2");
-
 
             for (Edge edge : route) {
                 drawRoute(edge, pixelWidth);
             }
         }
-
     }
 
     private void drawAllKDTreeTypes(Rect rect, Point2D mouse) {
