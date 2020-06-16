@@ -10,8 +10,6 @@ import bfst20.logic.routing.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
@@ -43,7 +41,7 @@ public class View {
     private double timesZoomed = 0.0;
     private double sliderValue = 0;
     private long lastTime = 0;
-    private double pixelwidth;
+    private double pixelWidth;
 
     public View(Canvas canvas) {
         mousePos = new Point2D(0, 0);
@@ -66,7 +64,6 @@ public class View {
         }
 
         System.gc();
-
         Bounds bounds = appController.fetchBoundsData();
 
         float minLon = bounds.getMinLon();
@@ -95,15 +92,12 @@ public class View {
                 }
             }
         }
-
         motorways = appController.fetchMotorways();
-
         if (motorways.size() > 0) {
             appController.saveKDTree(OSMType.MOTORWAY, motorways);
         }
 
         appController.saveKDTree(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
-
         linePaths = null;
 
         repaint();
@@ -121,7 +115,6 @@ public class View {
                 return true;
             }
         }
-
         lastTime = date.getTime();
 
         return false;
@@ -129,9 +122,7 @@ public class View {
 
 
     public void repaint() {
-
         if (fps()) return;
-
 
         gc.setTransform(new Affine());
         gc.setFill(OSMType.getColor(OSMType.OCEAN, isColorBlindMode));
@@ -140,7 +131,7 @@ public class View {
         gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setTransform(trans);
 
-        pixelwidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
+        pixelWidth = 1 / Math.sqrt(Math.abs(trans.determinant()));
 
         int boxSize = (int) canvas.getWidth() + 50;
 
@@ -150,9 +141,8 @@ public class View {
                 mousePos.getX(),
                 mousePos.getY());
 
-
         for (LinePath path : coastlines) {
-            drawLinePath(path, pixelwidth);
+            drawLinePath(path, pixelWidth);
         }
 
         drawAllKDTreeTypes(rect, mouse);
@@ -167,23 +157,36 @@ public class View {
         gc.strokeRect(mc1.getX(), mc1.getY(), mc2.getX() - mc1.getX(), mc2.getY() - mc1.getY());
         gc.stroke();
 
-        drawSearchLocation(searchAddress, pixelwidth);
-        drawInterestPoints(pixelwidth);
+        drawSearchLocation(searchAddress, pixelWidth);
+        drawInterestPoints(pixelWidth);
 
 
         if (route != null) {
 
-            drawPointer(pixelwidth, 30, route.get(0).getTarget().getLongitude(), route.get(0).getTarget().getLatitude(), "1");
-            drawPointer(pixelwidth, 30, route.get(route.size() - 1).getSource().getLongitude(), route.get(route.size() - 1).getSource().getLatitude(), "2");
+            drawPointer(pixelWidth, 30, route.get(0).getTarget().getLongitude(), route.get(0).getTarget().getLatitude(), "1");
+            drawPointer(pixelWidth, 30, route.get(route.size() - 1).getSource().getLongitude(), route.get(route.size() - 1).getSource().getLatitude(), "2");
 
 
             for (Edge edge : route) {
-                drawRoute(edge, pixelwidth);
+                drawRoute(edge, pixelWidth);
             }
         }
 
     }
 
+    private void drawAllKDTreeTypes(Rect rect, Point2D mouse) {
+        OSMType[] drawableTypes = OSMType.drawables();
+
+        for (OSMType type : drawableTypes) {
+            drawKDTree(type, rect, pixelWidth, null);
+        }
+
+        OSMType[] highwayTypes = OSMType.highways();
+
+        for (OSMType type : highwayTypes) {
+            drawKDTree(type, rect, pixelWidth, mouse);
+        }
+    }
 
     private void drawKDTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
         if (appController.fetchKDTree(type) != null) {
@@ -194,7 +197,6 @@ public class View {
             }
         }
     }
-
 
     private Rect createRect(int boxSize) {
         Point2D mc1 = convertCoordinates((canvas.getWidth() / 2) - boxSize, (canvas.getHeight() / 2) - boxSize);
@@ -231,23 +233,24 @@ public class View {
 
     public void drawSearchLocation(Address address, double lineWidth) {
         if (address == null) return;
-
         int bubbleSize = 30;
 
         drawPointer(lineWidth, bubbleSize, address.getLon(), address.getLat(), "1");
-
     }
 
     private void drawPointer(double lineWidth, int bubbleSize, float lon, float lat, String id) {
         gc.beginPath();
         gc.setStroke(Color.RED);
         gc.setFill(Color.RED);
+
         gc.setFont(new Font("Arial", lineWidth * 20));
         gc.fillText(id, lon - (lineWidth * bubbleSize / 2) + (lineWidth * bubbleSize / 3), lat - (lineWidth * bubbleSize * 1.4) + (lineWidth * bubbleSize / 1.5));
         gc.fill();
+
         gc.strokeOval(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize * 1.4), lineWidth * bubbleSize, lineWidth * bubbleSize);
         gc.moveTo(lon - (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
         gc.lineTo(lon, lat);
+
         gc.moveTo(lon + (lineWidth * bubbleSize / 2), lat - (lineWidth * bubbleSize));
         gc.lineTo(lon, lat);
         gc.stroke();
@@ -258,7 +261,6 @@ public class View {
         gc.setLineWidth(lineWidth);
         gc.beginPath();
         gc.setStroke(OSMType.getColor(OSMType.ROUTING, false));
-
 
         traceEdge(edge, gc);
         gc.stroke();
@@ -271,6 +273,7 @@ public class View {
         float[] coords = new float[]{sourceNode.getLongitude(), sourceNode.getLatitude(), targetNode.getLongitude(), targetNode.getLatitude()};
         gc.setStroke(OSMType.getColor(OSMType.ROUTING, false));
         gc.moveTo(coords[0], coords[1]);
+
         for (int i = 2; i <= coords.length; i += 2) {
             gc.lineTo(coords[i - 2], coords[i - 1]);
         }
@@ -278,12 +281,10 @@ public class View {
 
 
     private void drawLinePath(LinePath linePath, double lineWidth) {
-
         OSMType OSMType = linePath.getOSMType();
         gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
         gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
         gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
-
 
         if (linePath.isMultipolygon()) {
             traceMultipolygon(linePath, gc);
@@ -307,11 +308,9 @@ public class View {
         }
     }
 
-
     private void trace(LinePath linePath, GraphicsContext gc) {
         gc.beginPath();
         draw(linePath, gc);
-
         gc.stroke();
 
         if (OSMType.getFill(linePath.getOSMType())) {
@@ -322,10 +321,10 @@ public class View {
     private void draw(LinePath linePath, GraphicsContext gc) {
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
+
         for (int i = 2; i <= coords.length; i += 2) {
             gc.lineTo(coords[i - 2], coords[i - 1]);
         }
-
     }
 
     //Converts raw coordinates to canvas coordinates.
@@ -333,14 +332,11 @@ public class View {
         try {
             return trans.inverseTransform(x, y);
         } catch (NonInvertibleTransformException e) {
-            //It is not possible for java to throw this exeption, but the try/catch is needed anyways.
-            // Troels siger at det her ikke kan ske
             return null;
         }
     }
 
     public void zoom(double factor, double x, double y, double deltaY) {
-
         scale(factor, x, y, deltaY);
         reduceZoomLevel();
         reduceTimesZoomed();
@@ -390,25 +386,8 @@ public class View {
         return sliderValue;
     }
 
-    private void drawAllKDTreeTypes(Rect rect, Point2D mouse) {
-
-        OSMType[] drawableTypes = OSMType.drawables();
-
-        for (OSMType type : drawableTypes) {
-            drawKDTree(type, rect, pixelwidth, null);
-        }
-
-        OSMType[] highwayTypes = OSMType.highways();
-
-        for (OSMType type : highwayTypes) {
-            drawKDTree(type, rect, pixelwidth, mouse);
-        }
-
-    }
-
     private void setClosetLinePathToMouse() {
         try {
-
             OSMType[] types = OSMType.highways();
 
             Map<OSMType, Double> dist = new HashMap<>();
@@ -432,6 +411,7 @@ public class View {
             String name = appController.fetchKDTree(shortestType).getClosetsLinepathToMouse().getName();
             mouseLocationLabel.setText(name == null ? "Unknown way" : name);
         } catch (Exception e) {
+
         }
     }
 }
