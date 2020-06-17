@@ -20,8 +20,7 @@ import java.util.zip.ZipFile;
 public class FileHandler {
 
     public static void load(File file, AppController appController) throws IOException, XMLStreamException, FactoryConfigurationError {
-
-        try{
+        try {
             appController.clearNodeData();
             appController.clearLinePathData();
 
@@ -38,12 +37,10 @@ public class FileHandler {
                     loadZip(file, appController);
                     break;
             }
-        }catch (OutOfMemoryError e){
+        } catch (OutOfMemoryError e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading, out of memory, exiting.", true);
             System.exit(1);
         }
-
-
     }
 
     private static void loadBinary(File file, AppController appController) {
@@ -100,12 +97,13 @@ public class FileHandler {
 
     private static void writeToFile(File file) throws FileNotFoundException, IOException {
         AppController appController = new AppController();
-
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+
         objectOut.writeObject(appController.fetchBoundsData());
         objectOut.writeObject(appController.fetchAllKDTrees());
         objectOut.writeObject(appController.fetchCoastlines());
+
         objectOut.writeObject(appController.fetchTSTData());
         objectOut.writeObject(appController.fetchGraphData());
         objectOut.close();
@@ -116,9 +114,9 @@ public class FileHandler {
             String suffix = resourcePath.endsWith(".osm") ? ".osm" : ".bin";
 
             InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-            if (in == null)  return null;
+            if (in == null) return null;
 
-            File tempFile = File.createTempFile(String.valueOf(in.hashCode()),suffix);
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()), suffix);
             tempFile.deleteOnExit();
 
             try (FileOutputStream out = new FileOutputStream(tempFile)) {
@@ -136,5 +134,4 @@ public class FileHandler {
             return null;
         }
     }
-
 }

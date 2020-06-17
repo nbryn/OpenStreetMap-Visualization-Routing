@@ -227,9 +227,6 @@ public class LinePathGenerator {
         }
     }
 
-
-
-
     private Way binarySearch(List<Way> list, long id) {
         int low = 0;
         int high = list.size() - 1;
