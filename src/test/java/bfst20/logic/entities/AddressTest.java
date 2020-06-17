@@ -20,7 +20,7 @@ public class AddressTest{
 
     @Test
     public void getHousenumber(){
-        assertEquals(address.getHousenumber(),"1");
+        assertEquals(address.getHouseNumber(),"1");
     }
 
     @Test

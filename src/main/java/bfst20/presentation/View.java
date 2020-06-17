@@ -276,6 +276,7 @@ public class View {
     private void drawLinePath(LinePath linePath, double lineWidth) {
         OSMType OSMType = linePath.getOSMType();
         gc.setStroke(OSMType.getColor(OSMType, isColorBlindMode));
+
         gc.setLineWidth(OSMType.getLineWidth(OSMType, lineWidth));
         gc.setFill(linePath.getFill() ? OSMType.getColor(OSMType, isColorBlindMode) : Color.TRANSPARENT);
 
@@ -289,8 +290,10 @@ public class View {
     private void traceMultipolygon(LinePath linePath, GraphicsContext gc) {
         gc.beginPath();
         gc.setFillRule(FillRule.EVEN_ODD);
+
         float[] coords = linePath.getCoords();
         gc.moveTo(coords[0], coords[1]);
+
         for (int i = 2; i <= coords.length; i += 2) {
             gc.lineTo(coords[i - 2], coords[i - 1]);
         }

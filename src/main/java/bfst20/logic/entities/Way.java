@@ -77,8 +77,7 @@ public class Way implements OSMElement, Serializable {
     public OSMType getOSMType() {
         return OSMType;
     }
- 
-   
+
     public List<Long> getNodeIds() {
         return nodeIds;
     }
@@ -87,7 +86,6 @@ public class Way implements OSMElement, Serializable {
         return id;
     }
 
-  
     public void addNodeId(long id) {
         nodeIds.add(id);
     }

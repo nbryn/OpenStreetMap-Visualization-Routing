@@ -4,21 +4,21 @@ import java.io.Serializable;
 
 public class Address implements Serializable {
     private String city,
-            housenumber,
+            houseNumber,
             postcode,
             street;
     private float lat, lon;
     private long nodeID;
 
     public Address(String city,
-                   String housenumber,
+                   String houseNumber,
                    String postcode,
                    String street,
                    float lat,
                    float lon, long nodeID) {
         this.city = city;
         this.street = street;
-        this.housenumber = housenumber;
+        this.houseNumber = houseNumber;
         this.postcode = postcode;
         this.lat = lat;
         this.lon = lon;
@@ -31,8 +31,8 @@ public class Address implements Serializable {
         return street;
     }
 
-    public String getHousenumber() {
-        return housenumber;
+    public String getHouseNumber() {
+        return houseNumber;
     }
 
     public String getPostcode() {
@@ -53,6 +53,6 @@ public class Address implements Serializable {
 
     @Override
     public String toString() {
-        return street + " " + housenumber + " " + postcode;
+        return street + " " + houseNumber + " " + postcode;
     }
 }

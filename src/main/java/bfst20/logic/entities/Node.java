@@ -36,7 +36,6 @@ public class Node implements OSMElement, Comparable, Serializable {
         return longitude;
     }
 
-
     public void setDistTo(double distTo) {
         this.distTo = distTo;
     }

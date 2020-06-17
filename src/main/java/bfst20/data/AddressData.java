@@ -73,7 +73,7 @@ public class AddressData {
         for(Address address : addresses){
 
             if(addressStrings.length == 3 && !addressStrings[1].equals("")){
-                if(!address.getHousenumber().startsWith(addressStrings[1])){
+                if(!address.getHouseNumber().startsWith(addressStrings[1])){
                     continue;
                 }
             }
@@ -100,7 +100,7 @@ public class AddressData {
 
             if (
                     address.getStreet().trim().toLowerCase().replaceAll(" ", "").equals(addressStrings[0].trim().toLowerCase())
-                            && address.getHousenumber().toLowerCase().trim().equals(addressStrings[1].trim().toLowerCase())
+                            && address.getHouseNumber().toLowerCase().trim().equals(addressStrings[1].trim().toLowerCase())
                             && (addressStrings[2].equals("") || (!addressStrings[2].equals("") && address.getPostcode().trim().equals(addressStrings[2].trim())))
 
             ) {

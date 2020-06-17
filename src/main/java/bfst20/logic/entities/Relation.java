@@ -42,7 +42,6 @@ public class Relation implements OSMElement {
         return name;
     }
 
-
     public void addMember(long member, String type) {
         if (!type.equals("way")) return;
         members.add(member);
@@ -55,5 +54,4 @@ public class Relation implements OSMElement {
     public long getId() {
         return id;
     }
-
 }

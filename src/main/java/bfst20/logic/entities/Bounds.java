@@ -3,8 +3,7 @@ package bfst20.logic.entities;
 import java.io.Serializable;
 
 public class Bounds implements Serializable {
-
-    float maxLat, minLat, maxLon, minLon;
+    private float maxLat, minLat, maxLon, minLon;
 
     public Bounds(float maxLat, float minLat, float maxLon, float minLon) {
         this.maxLat = maxLat;

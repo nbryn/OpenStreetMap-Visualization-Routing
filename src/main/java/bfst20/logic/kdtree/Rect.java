@@ -3,14 +3,13 @@ package bfst20.logic.kdtree;
 import bfst20.logic.entities.LinePath;
 
 public class Rect {
-
     private float minLat, maxLat, minLon, maxLon;
 
     public Rect() {
 
     }
 
-    public Rect(float minLat, float maxLat, float minLon, float maxLon){
+    public Rect(float minLat, float maxLat, float minLon, float maxLon) {
         this.maxLat = maxLat;
         this.maxLon = maxLon;
         this.minLat = minLat;
@@ -49,31 +48,25 @@ public class Rect {
         return minLon;
     }
 
-
-    public boolean intersectsRight(KDNode node){
-        LinePath path = node.getLinePath();
-
-        if(node.getDirection() == Direction.Latitudinal){
+    public boolean intersectsRight(KDNode node) {
+        if (node.getDirection() == Direction.Latitudinal) {
             return node.getSplit() <= minLat || node.getSplit() <= maxLat;
-        }else{
+        } else {
             return node.getSplit() >= minLon || node.getSplit() >= maxLon;
         }
     }
 
-    public boolean intersectsLeft(KDNode node){
-        LinePath path = node.getLinePath();
-        if(node.getDirection() == Direction.Latitudinal){
+    public boolean intersectsLeft(KDNode node) {
+        if (node.getDirection() == Direction.Latitudinal) {
             return node.getSplit() >= minLat || node.getSplit() >= maxLat;
-        }else{
+        } else {
             return node.getSplit() <= minLon || node.getSplit() <= maxLon;
         }
     }
 
-    public boolean contains(KDNode node){
+    public boolean contains(KDNode node) {
         LinePath path = node.getLinePath();
         return (path.getMaxX() >= minLat) && (path.getMinX() <= maxLat)
                 && (path.getMaxY() >= minLon) && (path.getMinY() <= maxLon);
     }
-
-
 }
