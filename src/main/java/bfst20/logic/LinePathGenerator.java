@@ -52,8 +52,6 @@ public class LinePathGenerator {
         try {
             type = way.getOSMType();
         } catch (Exception e) {
-            //This catch is here to check if the current way type exists in the Type enum, if it does, that will be used,
-            //If it dosen't this will throw, and the program will use Type.UNKNOWN
         }
         Boolean fill = OSMType.getFill(type);
 
@@ -165,10 +163,7 @@ public class LinePathGenerator {
         } else if (before.getLastNodeId() == after.getFirstNodeId()) {
 
             addWayToMerge(way, before, after);
-        }
-
-        // Why do we need this? Seems to do the same without it
-        else if (before.getLastNodeId() == after.getLastNodeId()) {
+        } else if (before.getLastNodeId() == after.getLastNodeId()) {
             Way tmp = new Way(after);
 
             Collections.reverse(tmp.getNodeIds());
@@ -182,7 +177,6 @@ public class LinePathGenerator {
         return way;
     }
 
-    //Order of before and after depends on the context
     private void addWayToMerge(Way way, Way before, Way after) {
         way.addAllNodeIds(before);
         way.getNodeIds().remove(way.getNodeIds().size() - 1);
@@ -210,7 +204,6 @@ public class LinePathGenerator {
         appController.saveNodeToData(osmType, nodes.get(way.getFirstNodeId()), way);
         appController.saveNodeToData(osmType, nodes.get(way.getLastNodeId()), way);
     }
-
 
     private void addRelation(OSMType OSMType, Map<Node, Way> nodeTo) {
         for (Map.Entry<Node, Way> entry : nodeTo.entrySet()) {

@@ -24,7 +24,7 @@ import javafx.scene.control.Label;
 
 import javax.xml.stream.XMLStreamException;
 
-public class    AppController {
+public class AppController {
 
     private RoutingController routingController;
     private LinePathGenerator linePathGenerator;
@@ -41,6 +41,7 @@ public class    AppController {
         osmElementData = OSMElementData.getInstance();
         linePathData = LinePathData.getInstance();
         routingData = RoutingData.getInstance();
+
         addressData = AddressData.getInstance();
         kdTreeData = KDTreeData.getInstance();
         parser = Parser.getInstance();
@@ -55,6 +56,7 @@ public class    AppController {
             linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
             linePathGenerator.convertRelationsToLinePaths(fetchRelations());
             linePathGenerator.clearData();
+
             clearNodeData();
             generateHighways();
             routingController.buildRoutingGraph();
@@ -67,14 +69,15 @@ public class    AppController {
         linePathData.clearMotorways();
         linePathData.clearCoastlines();
         kdTreeData.clearData();
+
         clearLinePathData();
         addressData.clearData();
         InterestPointData interestPointData = InterestPointData.getInstance();
         interestPointData.clearData();
         try {
-            if (file.getName().endsWith(".bin")){
+            if (file.getName().endsWith(".bin")) {
                 isBinary = true;
-            }else{
+            } else {
                 isBinary = false;
             }
             FileHandler.load(file, this);
@@ -84,7 +87,7 @@ public class    AppController {
         } catch (XMLStreamException xmlStreamException) {
             alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
             System.exit(1);
-        } catch (NullPointerException exception){
+        } catch (NullPointerException exception) {
             alertOK(Alert.AlertType.ERROR, "Error finding file, exiting.", true);
             System.exit(1);
         }
@@ -267,7 +270,6 @@ public class    AppController {
     public KDTree fetchKDTree(OSMType OSMType) {
         return kdTreeData.getKDTree(OSMType);
     }
-
 
     public void alertOK(Alert.AlertType type, String text, boolean wait) {
         AlertHandler.alertOK(type, text, wait);
