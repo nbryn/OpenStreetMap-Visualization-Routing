@@ -8,7 +8,11 @@ import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.LinePath;
 import javafx.geometry.Point2D;
 
+import static bfst20.logic.kdtree.Direction.Latitudinal;
+import static bfst20.logic.kdtree.Direction.Longitudinal;
+
 public class KDTree implements Serializable {
+
     private float closetNodeDistance;
     private KDNode closetsNode;
     private KDNode root;
@@ -17,7 +21,7 @@ public class KDTree implements Serializable {
     public KDTree(List<LinePath> paths, Rect rect) {
         root = new KDNode();
         root.setLinePath(paths.get(0));
-        root.setDirection(Direction.Latitudinal);
+        root.setDirection(Latitudinal);
         root.setSplit(rect.getMinLat() + (rect.getMaxLat() - rect.getMinLat()) / 2);
 
         for (int i = 1; i < paths.size(); i++) {
@@ -92,15 +96,15 @@ public class KDTree implements Serializable {
     }
 
     private void insertNode(KDNode node, LinePath path) {
-        if (node.getDirection() == Direction.Latitudinal) {
-            KDNode newNode = createNewKdNode(path, Direction.Longitudinal);
+        if (node.getDirection() == Latitudinal) {
+            KDNode newNode = createNewKdNode(path, Longitudinal);
             if (node.getSplit() > path.getCenterLatitude()) {
                 node.setLeftNode(newNode);
             } else {
                 node.setRightNode(newNode);
             }
         } else {
-            KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
+            KDNode newNode = createNewKdNode(path, Latitudinal);
             if (node.getSplit() > path.getCenterLongitude()) {
                 node.setRightNode(newNode);
             } else {
@@ -110,8 +114,8 @@ public class KDTree implements Serializable {
     }
 
     private void insertNodeLeftExists(KDNode node, LinePath path) {
-        if (node.getDirection() == Direction.Latitudinal) {
-            KDNode newNode = createNewKdNode(path, Direction.Longitudinal);
+        if (node.getDirection() == Latitudinal) {
+            KDNode newNode = createNewKdNode(path, Longitudinal);
             if (node.getSplit() > path.getCenterLatitude()) {
 
                 insert(node.getLeftNode(), path);
@@ -119,7 +123,7 @@ public class KDTree implements Serializable {
                 node.setRightNode(newNode);
             }
         } else {
-            KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
+            KDNode newNode = createNewKdNode(path, Latitudinal);
 
             if (node.getSplit() > path.getCenterLongitude()) {
                 node.setRightNode(newNode);
@@ -130,15 +134,15 @@ public class KDTree implements Serializable {
     }
 
     private void insertNodeRightExists(KDNode node, LinePath path) {
-        if (node.getDirection() == Direction.Latitudinal) {
-            KDNode newNode = createNewKdNode(path, Direction.Longitudinal);
+        if (node.getDirection() == Latitudinal) {
+            KDNode newNode = createNewKdNode(path, Longitudinal);
             if (node.getSplit() > path.getCenterLatitude()) {
                 node.setLeftNode(newNode);
             } else {
                 insert(node.getRightNode(), path);
             }
         } else {
-            KDNode newNode = createNewKdNode(path, Direction.Latitudinal);
+            KDNode newNode = createNewKdNode(path, Latitudinal);
             if (node.getSplit() > path.getCenterLongitude()) {
                 insert(node.getRightNode(), path);
             } else {
@@ -148,7 +152,7 @@ public class KDTree implements Serializable {
     }
 
     private void insertNodeBothExists(KDNode node, LinePath path) {
-        if (node.getDirection() == Direction.Latitudinal) {
+        if (node.getDirection() == Latitudinal) {
             if (node.getSplit() > path.getCenterLatitude()) {
                 insert(node.getLeftNode(), path);
             } else {
@@ -166,7 +170,7 @@ public class KDTree implements Serializable {
     private KDNode createNewKdNode(LinePath path, Direction direction) {
         KDNode node = new KDNode();
         node.setDirection(direction);
-        if (direction == Direction.Latitudinal) {
+        if (direction == Latitudinal) {
             node.setSplit(path.getCenterLatitude());
         } else {
             node.setSplit(path.getCenterLongitude());

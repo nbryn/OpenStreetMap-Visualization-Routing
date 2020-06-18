@@ -115,7 +115,6 @@ public enum OSMType {
         }
     }
 
-
     public static Color getColor(OSMType OSMType, Boolean colorBlindMode) {
         if (!colorBlindMode) return getNormalColor(OSMType);
         else return getColorBlindColor(OSMType);
@@ -182,34 +181,30 @@ public enum OSMType {
             default:
                 return Color.TRANSPARENT;
         }
-
     }
 
     public static Color getColorBlindColor(OSMType OSMType) {
         return getColor(OSMType, false).invert();
     }
 
-    //TODO: FIX SPEED
     public static int getMaxSpeed(OSMType OSMType) {
         switch (OSMType) {
-            case RESIDENTIAL_HIGHWAY:
-                return 50;
-            case MOTORWAY:
-                return 110;
-            case TERTIARY:
-                return 80;
-            case UNCLASSIFIED_HIGHWAY:
-                return 70;
             case TRACK:
                 return 20;
-            case PRIMARY:
-                return 80;
-            case SECONDARY:
-                return 50;
             case SERVICE:
                 return 30;
-            default:
+            case RESIDENTIAL_HIGHWAY:
+            case SECONDARY:
+                return 50;
+            case UNCLASSIFIED_HIGHWAY:
+                return 70;
+            case TERTIARY:
+            case PRIMARY:
                 return 80;
+            case MOTORWAY:
+                return 110;
+            default:
+                return 75;
         }
     }
 
@@ -261,5 +256,4 @@ public enum OSMType {
 
         return types;
     }
-
 }
