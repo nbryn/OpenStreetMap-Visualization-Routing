@@ -4,5 +4,4 @@ public enum Vehicle {
     CAR,
     BICYCLE,
     WALK
-
 }

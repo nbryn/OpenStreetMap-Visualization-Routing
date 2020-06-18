@@ -132,18 +132,16 @@ public class TST implements Serializable {
         if (startNode == null) return queue;
         if (startNode.getValue() != null) queue.addAll(startNode.getValue());
 
-        collect(startNode.getMid(), new StringBuilder(prefix), queue);
+        collect(startNode.getMid(), queue);
 
         return queue;
     }
 
-    private void collect(Node parent, StringBuilder prefix, Queue<Address> queue) {
+    private void collect(Node parent, Queue<Address> queue) {
         if (parent == null) return;
-        collect(parent.getLeft(), prefix, queue);
+        collect(parent.getLeft(), queue);
         if (parent.getValue() != null) queue.addAll(parent.getValue());
-        collect(parent.getMid(), prefix.append(parent.getKey()), queue);
-        prefix.deleteCharAt(prefix.length() - 1);
-        collect(parent.getRight(), prefix, queue);
+        collect(parent.getMid(), queue);
+        collect(parent.getRight(), queue);
     }
-
 }

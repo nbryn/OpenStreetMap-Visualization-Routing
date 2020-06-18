@@ -16,7 +16,6 @@ public class Edge implements Serializable {
     private Node source;
     private Node target;
 
-
     public Edge(OSMType highwayType, Node source, Node target, double length, String street, int maxSpeed, boolean isOneWay) {
         this.maxSpeed = maxSpeed != 0 ? maxSpeed : OSMType.getMaxSpeed(highwayType);
         this.highwayType = highwayType;
@@ -68,6 +67,5 @@ public class Edge implements Serializable {
     public double getLength() {
         return length;
     }
-
 
 }
