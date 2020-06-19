@@ -24,62 +24,54 @@ import java.util.Queue;
 
 public class SuggestionHandler {
 
-    public enum SuggestionEvent{
+    public enum SuggestionEvent {
         SEARCH,
         ADDRESS,
         DESTINATION
     }
 
-    private VBox suggestionsList;
-    private TextField textField;
-    private AppController appController;
     private SuggestionEvent suggestionEvent;
+    private AppController appController;
+    private TextField textField;
+    private ContextMenu cm;
+    private boolean space;
 
-    ContextMenu cm;
-
-    boolean space;
-
-    public SuggestionHandler(AppController appController, TextField textField, SuggestionEvent suggestionEvent){
+    public SuggestionHandler(AppController appController, TextField textField, SuggestionEvent suggestionEvent) {
         this.textField = textField;
         this.appController = appController;
         this.suggestionEvent = suggestionEvent;
         setupEvents();
     }
 
-    public void show(String text){
-
+    public void show(String text) {
         hide();
         AddressData addressData = AddressData.getInstance();
 
         Queue<Address> addresses = addressData.searchSuggestions(text);
-
         cm = new ContextMenu();
 
         cm.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(event.getCode() == KeyCode.SPACE){
+                if (event.getCode() == KeyCode.SPACE) {
                     space = true;
                 }
-
             }
         });
 
         cm.addEventFilter(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(event.getCode() == KeyCode.SPACE){
+                if (event.getCode() == KeyCode.SPACE) {
                     space = false;
                 }
-
             }
         });
 
         cm.setPrefWidth(400);
+        if (addresses.size() <= 0) return;
 
-        if(addresses.size() <= 0) return;
-
-        for(int i = 0; i < 10; i++){
+        for (int i = 0; i < 10; i++) {
             Address address = addresses.poll();
             if (address == null) continue;
 
@@ -88,17 +80,17 @@ public class SuggestionHandler {
             t1.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    if(space) return;
+                    if (space) return;
 
                     String addressText = address.toString();
-                    if(suggestionEvent == SuggestionEvent.SEARCH){
+                    if (suggestionEvent == SuggestionEvent.SEARCH) {
 
                         AddressData addressData = AddressData.getInstance();
                         Address address = addressData.findAddress(addressText);
 
-                        if(address != null){
+                        if (address != null) {
                             appController.setSearchString(address);
-                        }else{
+                        } else {
                             appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
                         }
                     }
@@ -108,30 +100,26 @@ public class SuggestionHandler {
                 }
             });
 
-
             cm.getItems().add(t1);
         }
 
-
         cm.show(textField, Side.BOTTOM, 0, 0);
-
     }
 
-    public void hide(){
-        if(cm == null) return;
+    public void hide() {
+        if (cm == null) return;
         cm.getItems().clear();
         cm.hide();
         cm = null;
-
     }
 
-    public void setupEvents(){
+    public void setupEvents() {
         textField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                                 String oldValue, String newValue) {
 
-                if(newValue.equals("")){
+                if (newValue.equals("")) {
                     hide();
                     return;
                 }
@@ -146,7 +134,6 @@ public class SuggestionHandler {
                 if (!newPropertyValue) {
                     hide();
                 }
-
             }
         });
     }
