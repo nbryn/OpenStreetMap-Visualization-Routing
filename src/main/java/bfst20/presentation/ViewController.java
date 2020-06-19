@@ -95,7 +95,7 @@ public class ViewController {
         setupRouteButton();
     }
 
-    private void loadDefault(){
+    private void loadDefault() {
         File file = null;
 
         try {
@@ -107,7 +107,7 @@ public class ViewController {
         }
 
         try {
-          appController.initialize(view, file);
+            appController.initialize(view, file);
         } catch (Exception e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
             System.exit(1);
@@ -139,9 +139,11 @@ public class ViewController {
                                 String text = street.equals("ååååå") ? "Unknown Street" : street;
                                 Button route = new Button("Follow " + text + " for " + routeDirections.get(street) + " km");
                                 route.setPrefWidth(375);
+
                                 route.setPrefHeight(60);
                                 route.setMouseTransparent(true);
                                 route.setFocusTraversable(false);
+
                                 Separator spacing = new Separator();
                                 displayPane.getChildren().add(spacing);
                                 displayPane.getChildren().add(route);
@@ -165,13 +167,11 @@ public class ViewController {
 
     private void setupHbox() {
         hbox.widthProperty().addListener((obs, oldVal, newVal) -> {
-            // Do whatever you want
             canvas.setWidth((double) newVal - 400);
             view.repaint();
         });
 
         hbox.heightProperty().addListener((obs, oldVal, newVal) -> {
-            // Do whatever you want
             canvas.setHeight((double) newVal);
             view.repaint();
         });
@@ -182,7 +182,6 @@ public class ViewController {
         zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-
                 if (!scrollTrigger) {
                     double deltaValue = zoomSlider.getValue() - view.getSliderValue();
                     double factor = Math.pow(1.001, 20 * deltaValue);
@@ -217,7 +216,6 @@ public class ViewController {
             box.setMinWidth(400);
             box.setPrefWidth(400);
 
-
             button.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -235,7 +233,6 @@ public class ViewController {
     private void setupFileHandling() {
         openFile.setOnAction(e -> {
             try {
-
                 File file = new FileChooser().showOpenDialog(Launcher.primaryStage);
                 if (file != null) {
                     wayPointFlowPane.getChildren().clear();
@@ -265,8 +262,8 @@ public class ViewController {
 
             if (e.isControlDown()) {
                 Point2D converted = view.convertCoordinates(e.getX(), e.getY());
-
                 InterestPointData interestPointData = InterestPointData.getInstance();
+
                 interestPointData.saveInterestPoint(new InterestPoint((float) converted.getY(), (float) converted.getX()));
                 updateInterestPoints();
             }

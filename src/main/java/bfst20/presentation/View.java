@@ -22,7 +22,6 @@ import java.util.List;
 
 import javafx.scene.transform.NonInvertibleTransformException;
 
-
 public class View {
     private Map<OSMType, List<LinePath>> linePaths;
     private boolean isColorBlindMode = false;
