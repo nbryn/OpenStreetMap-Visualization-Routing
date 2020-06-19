@@ -27,17 +27,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class AppControllerTest {
+    public static Map<String, Double> routeInfo;
     public static AppController appController;
     public static Map<OSMType, KDTree> tree;
-    public static Graph graph;
-    public static List<Edge> route;
     public static RoutingData routingData;
-    public static Map<String, Double> routeInfo;
+    public static Relation relation;
+    public static List<Edge> route;
     public static Node node1;
     public static Node node2;
     public static Edge edge;
-    public static Relation relation;
-
 
     @BeforeAll
     public static void setup() {
@@ -49,9 +47,11 @@ class AppControllerTest {
         node1 = new Node(1, (float) 55.6388937, (float) 12.6195664);
         node2 = new Node(2, (float) 55.6388541, (float) 12.6195888);
         edge = new Edge(OSMType.MOTORWAY, node1, node2, 100, "Farstrupvej", 50, false);
+
         routingData = RoutingData.getInstance();
         route = new ArrayList<>();
         routeInfo = new HashMap<>();
+
         route.add(edge);
         routeInfo.put("Farstrupvej", 100.0);
         relation = new Relation(10);
@@ -64,9 +64,11 @@ class AppControllerTest {
         Rect rect = new Rect(0, 10, 0, 10);
         LinePath p1 = createTestLinePath(5, 5, 6, 6);
         LinePath p2 = createTestLinePath(6, 6, 7, 7);
+
         List<LinePath> paths = new ArrayList<>();
         paths.add(p1);
         paths.add(p2);
+
         KDTree kdtree = new KDTree(paths, rect);
         tree.put(OSMType.BUILDING, kdtree);
 
@@ -79,6 +81,7 @@ class AppControllerTest {
         Map<Long, Node> nodes1 = new HashMap<>();
         nodes1.put((long) 1, new Node(1, fLat, fLon));
         nodes1.put((long) 2, new Node(2, tLat, tLon));
+
         Way way1 = new Way();
         way1.addNodeId(1);
         way1.addNodeId(2);
@@ -103,6 +106,7 @@ class AppControllerTest {
     public void save_fetch_clearRouteInfoData() {
         appController.saveRouteDirections(routeInfo);
         assertEquals(appController.fetchRouteDirections(), routeInfo);
+
         appController.clearRouteInfoData();
         routeInfo.clear();
         assertEquals(appController.fetchRouteDirections(), routeInfo);
@@ -150,19 +154,18 @@ class AppControllerTest {
     public void removeWayFrom_get_saveNodeToData() {
         assertEquals(appController.getNodeTo(OSMType.HIGHWAY), null);
         appController.saveNodeToData(OSMType.HIGHWAY, node1, way1);
+
         assertEquals(appController.getNodeTo(OSMType.HIGHWAY).get(node1), way1);
         appController.removeWayFromNodeTo(OSMType.HIGHWAY, node1);
         assertEquals(appController.getNodeTo(OSMType.HIGHWAY).get(node1), null);
-
     }
-
 
     @Test
     public void save_fetchCoastlines() {
-
         List<LinePath> linePaths = new ArrayList<>();
         LinePath linePath = new LinePath(new Way(), OSMType.COASTLINE, new HashMap<>(), true);
         linePaths.add(linePath);
+
         appController.saveCoastlines(linePaths);
         assertEquals(appController.fetchCoastlines(), linePaths);
         linePaths.clear();
@@ -172,35 +175,36 @@ class AppControllerTest {
     public void setup_fetchRectData() {
         appController.setupRect();
         assertNotNull(appController.fetchRectData());
-
     }
 
     @Test
-    public void save_fetchLinePathData(){
+    public void save_fetchLinePathData() {
         appController.clearLinePathData();
         List<LinePath> linePaths = new ArrayList<>();
         LinePath linePath = new LinePath(new Way(), OSMType.COASTLINE, new HashMap<>(), true);
         LinePath linePath2 = new LinePath(new Way(), OSMType.BUILDING, new HashMap<>(), true);
+
         linePaths.add(linePath);
-        appController.saveLinePathData(OSMType.COASTLINE,linePath);
+        appController.saveLinePathData(OSMType.COASTLINE, linePath);
         assertEquals(appController.fetchCoastlines(), linePaths);
-        appController.saveLinePathData(OSMType.BUILDING,linePath2);
+
+        appController.saveLinePathData(OSMType.BUILDING, linePath2);
         assertNotNull(appController.fetchLinePathData());
 
         appController.clearLinePathData();
         assertNull(appController.fetchLinePathData().get(0));
+
         linePaths.clear();
     }
 
     @Test
-    public void save_fetchKDTree(){
+    public void save_fetchKDTree() {
         List<LinePath> linePaths = new ArrayList<>();
         LinePath linePath = new LinePath(new Way(), OSMType.BUILDING, new HashMap<>(), true);
+
         linePaths.add(linePath);
         appController.saveKDTree(OSMType.BUILDING, linePaths);
-        
-        assertNotNull(appController.fetchKDTree(OSMType.BUILDING));
 
+        assertNotNull(appController.fetchKDTree(OSMType.BUILDING));
     }
-    
 }
