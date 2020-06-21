@@ -8,13 +8,11 @@ import java.util.Queue;
 
 public class TSTTest {
 
-
     @Test
-    public void put(){
-
+    public void put() {
         Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1, 1);
-
         bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
+
         tst.put("Hello", address);
         tst.put("Hej", address);
         tst.put("Hellsevej", address);
@@ -23,13 +21,14 @@ public class TSTTest {
     }
 
     @Test
-    public void get(){
+    public void get() {
         Address addressRes = new Address("Not hillerod", "10", "3400", "test", 1, 1, 1);
         Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1, 1);
-
         bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
+
         tst.put("Hello", address);
         tst.put("Hej", addressRes);
+
         tst.put("Hellsevej", address);
         tst.put("Hellsevej", address);
 
@@ -37,12 +36,13 @@ public class TSTTest {
     }
 
     @Test
-    public void keysWithPrefix(){
+    public void keysWithPrefix() {
         Address Address1 = new Address("Hilleroed", "10", "3400", "Hello", 1, 1, 1);
         Address Address2 = new Address("Hilleroed", "10", "3400", "Hej", 1, 1, 1);
-        Address Address3 = new Address("Hilleroed", "10", "3400", "Hellsevej", 1, 1, 1);
 
+        Address Address3 = new Address("Hilleroed", "10", "3400", "Hellsevej", 1, 1, 1);
         bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
+
         tst.put("Hello", Address1);
         tst.put("Hej", Address2);
         tst.put("Hellsevej", Address3);
@@ -53,7 +53,7 @@ public class TSTTest {
     }
 
     @Test
-    public void spaceTest(){
+    public void spaceTest() {
         Address Address1 = new Address("Hjørring", "10", "9800", "Skagen landevej", 1, 1, 1);
         bfst20.logic.ternary.TST tst = new bfst20.logic.ternary.TST();
 
