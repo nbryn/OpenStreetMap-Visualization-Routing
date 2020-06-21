@@ -130,13 +130,13 @@ public class LinePathGeneratorTest {
 
         nodes.put(7L, node7);
         nodes.put(8L, node8);
+
         nodes.put(9L, node9);
         nodes.put(10L, node10);
 
 
         Collections.addAll(relations, relation1, relation2);
         Collections.addAll(ways, way1, way2, way3);
-
     }
 
     @Test
@@ -144,12 +144,11 @@ public class LinePathGeneratorTest {
         assertEquals(linePathGenerator, LinePathGenerator.getInstance(appController));
     }
 
-
     @Test
     void combine() throws Exception {
-
         Method method = LinePathGenerator.class.getDeclaredMethod("combineWays", Way.class, Way.class);
         method.setAccessible(true);
+
         Way way = (Way) method.invoke(linePathGenerator, way1, way2);
         assertEquals(way.getFirstNodeId(), 1);
         assertEquals(way.getLastNodeId(), 5);
@@ -157,9 +156,9 @@ public class LinePathGeneratorTest {
 
     @Test
     void combineSize() throws Exception {
-
         Method method = LinePathGenerator.class.getDeclaredMethod("combineWays", Way.class, Way.class);
         method.setAccessible(true);
+
         Way way = (Way) method.invoke(linePathGenerator, way1, way2);
         assertEquals(way.getFirstNodeId(), 1);
         assertEquals(way.getNodeIds().size(), 10);
@@ -180,6 +179,4 @@ public class LinePathGeneratorTest {
 
         verify(appController, times(4)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
-
-
 }
