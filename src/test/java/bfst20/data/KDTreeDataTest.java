@@ -42,12 +42,13 @@ class KDTreeDataTest {
 
         assertEquals(10, kdTreeData.getRect().getMinLat());
         assertEquals(15, kdTreeData.getRect().getMaxLat());
+
         assertEquals(20, kdTreeData.getRect().getMinLon());
         assertEquals(25, kdTreeData.getRect().getMaxLon());
     }
 
     @Test
-    void saveKDTree(){
+    void saveKDTree() {
         List<LinePath> linePaths = new ArrayList<>();
         LinePath linePath = new LinePath(40, 45, 50, 55);
         linePaths.add(linePath);

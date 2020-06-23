@@ -15,7 +15,6 @@ public class InterestPointDataTest {
     static void setup() {
         interestPointData = InterestPointData.getInstance();
         interestPoint = new InterestPoint(9999, 8888);
-
     }
 
     @Test
@@ -35,12 +34,13 @@ public class InterestPointDataTest {
 
     @Test
     void getAll_remove_addInterestPoint() {
-        assertEquals(interestPointData.getAllInterestPoints().size(),0);
+        assertEquals(interestPointData.getAllInterestPoints().size(), 0);
         interestPointData.saveInterestPoint(interestPoint);
-        assertEquals(interestPointData.getAllInterestPoints().get(0),interestPoint);
-        assertEquals(interestPointData.getAllInterestPoints().size(),1);
-        interestPointData.removeInterestPoint(0);
-        assertEquals(interestPointData.getAllInterestPoints().size(),0);
-    }
 
+        assertEquals(interestPointData.getAllInterestPoints().get(0), interestPoint);
+        assertEquals(interestPointData.getAllInterestPoints().size(), 1);
+
+        interestPointData.removeInterestPoint(0);
+        assertEquals(interestPointData.getAllInterestPoints().size(), 0);
+    }
 }

@@ -76,14 +76,12 @@ class LinePathDataTest {
         assertEquals(1, linePathData.getNodeTo(OSMType.FARMLAND).size());
     }
 
-
     @Test
     void getNodeToCoastline() {
         linePathData.addNodeTo(OSMType.COASTLINE, node, new Way());
 
         assertEquals(1, linePathData.getNodeTo(OSMType.COASTLINE).size());
     }
-
 
     @Test
     void removeWayFromNodeTo() {
@@ -92,7 +90,6 @@ class LinePathDataTest {
         assertEquals(0, linePathData.getNodeTo(OSMType.FOREST).size());
     }
 
-
     @Test
     void save_getHighways() {
         List<LinePath> linePaths = new ArrayList<>();
@@ -100,8 +97,6 @@ class LinePathDataTest {
         linePaths.add(linePath);
 
         linePathData.saveHighways(linePaths);
-        assertEquals(linePathData.getHighways(),linePaths);
+        assertEquals(linePathData.getHighways(), linePaths);
     }
-
-   
 }

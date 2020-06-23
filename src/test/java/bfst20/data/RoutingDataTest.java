@@ -31,6 +31,7 @@ class RoutingDataTest {
         node1 = new Node(1, (float) 55.6388937, (float) 12.6195664);
         node2 = new Node(2, (float) 55.6388541, (float) 12.6195888);
         edge = new Edge(OSMType.MOTORWAY,node1,node2,100,"Farstrupvej",50,false);
+
         routingData = RoutingData.getInstance();
         route = new ArrayList<>();
         routeInfo = new HashMap<>();
@@ -62,6 +63,4 @@ class RoutingDataTest {
         routingData.saveRouteDirections(routeInfo);
         assertEquals(routingData.getRouteDirections(),routeInfo);
     }
-
-
 }
