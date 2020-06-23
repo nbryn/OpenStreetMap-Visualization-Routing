@@ -25,6 +25,7 @@ public class LinePathTest {
         Map<Long, Node> nodes1 = new HashMap<>();
         nodes1.put((long) 1, new Node(1, 10, 9));
         nodes1.put((long) 2, new Node(2, 11, 8));
+
         way1 = new Way(10);
         way1.addNodeId(1);
         way1.addNodeId(2);
@@ -60,13 +61,13 @@ public class LinePathTest {
     public void getBounds() {
         assertEquals(linePath1.getBounds().getMaxLat(), 30);
         assertEquals(linePath1.getBounds().getMaxLon(), 20);
+
         assertEquals(linePath1.getBounds().getMinLat(), 15);
         assertEquals(linePath1.getBounds().getMinLon(), 10);
     }
 
     @Test
     public void getCenterLatitude() {
-
         assertEquals(linePath1.getCenterLatitude(), 22.5);
         assertEquals(linePath2.getCenterLatitude(), 10.5);
     }
@@ -129,16 +130,16 @@ public class LinePathTest {
     }
 
     @Test
-    public void getWayId(){
+    public void getWayId() {
         assertEquals(linePath2.getWayId(), 10);
     }
 
     @Test
     public void setWayNull() {
-        assertEquals(linePath3.getWay(),way1);
-        assertEquals(linePath3.getWayId(),10);
+        assertEquals(linePath3.getWay(), way1);
+        assertEquals(linePath3.getWayId(), 10);
         linePath3.removeWay();
         assertEquals(linePath3.getWay(), null);
-        assertEquals(linePath3.getWayId(),0);
+        assertEquals(linePath3.getWayId(), 0);
     }
 }

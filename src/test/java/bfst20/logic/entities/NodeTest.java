@@ -34,6 +34,7 @@ public class NodeTest {
     public void setDistTo() {
         node1.setDistTo(30);
         node2.setDistTo(60);
+
         assertEquals(node1.getDistTo(), 30);
         assertEquals(node2.getDistTo(), 60);
     }
@@ -42,9 +43,9 @@ public class NodeTest {
     public void compareTo(){
         node1.setDistTo(30);
         node2.setDistTo(60);
+
         assertEquals(node1.compareTo(node2), -1);
         assertEquals(node2.compareTo(node1), 1);
     }
-
 }
 

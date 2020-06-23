@@ -11,11 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RelationTest {
     public static Relation relation;
 
-
-
-
     @BeforeAll
-    public static void setup(){
+    public static void setup() {
         relation = new Relation(10);
     }
 
@@ -26,7 +23,6 @@ public class RelationTest {
         assertEquals(relation.getName(), "Building");
     }
 
-
     @Test
     public void is_setMultipolygon() {
         assertEquals(relation.isMultipolygon(), false);
@@ -35,21 +31,21 @@ public class RelationTest {
     }
 
     @Test
-    public void is_setOSMType(){
+    public void is_setOSMType() {
         relation.setOSMType(OSMType.BUILDING);
-        assertEquals(relation.getOSMType(),OSMType.BUILDING);
+        assertEquals(relation.getOSMType(), OSMType.BUILDING);
     }
 
     @Test
     public void get_addMember() {
         ArrayList<Long> member = new ArrayList<>();
-        member.add((long)500);
+        member.add((long) 500);
         relation.addMember(500, "way");
-        assertEquals(relation.getMembers(),member);
+        assertEquals(relation.getMembers(), member);
     }
 
     @Test
-    public void getId(){
-        assertEquals(relation.getId(),10);
+    public void getId() {
+        assertEquals(relation.getId(), 10);
     }
 }
