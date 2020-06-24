@@ -8,9 +8,7 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class AddressData {
-
     private static String addressRegex = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d][\\w]*)[,. ]*(?<postcode>[\\w]*)[,.\\V]*";
     private static AddressData addressData;
     private TST tst;
@@ -28,14 +26,15 @@ public class AddressData {
     }
 
     public void saveAddress(long id, Address address) {
-        if(address.getStreet() == null) return;
+        if (address.getStreet() == null) return;
         tst.put(address.getStreet().replaceAll(" ", ""), address);
     }
 
-    public TST getTST(){
+    public TST getTST() {
         return tst;
     }
-    public void clearData(){
+
+    public void clearData() {
         tst = new TST();
     }
 
@@ -59,27 +58,26 @@ public class AddressData {
         }
     }
 
-    public Queue<Address> searchSuggestions(String input){
-
+    public Queue<Address> searchSuggestions(String input) {
         String[] addressStrings = parseAddress(input);
 
-        if(addressStrings == null) return null;
+        if (addressStrings == null) return null;
 
         addressStrings[0] = addressStrings[0].replaceAll(" ", "");
 
         Queue<Address> addresses = getTST().keysWithPrefix(addressStrings[0]);
         Queue<Address> newAddresses = new LinkedList<>();
 
-        for(Address address : addresses){
+        for (Address address : addresses) {
 
-            if(addressStrings.length == 3 && !addressStrings[1].equals("")){
-                if(!address.getHouseNumber().startsWith(addressStrings[1])){
+            if (addressStrings.length == 3 && !addressStrings[1].equals("")) {
+                if (!address.getHouseNumber().startsWith(addressStrings[1])) {
                     continue;
                 }
             }
 
-            if(addressStrings.length == 3 && !addressStrings[2].equals("")){
-                if(!address.getPostcode().startsWith(addressStrings[2])){
+            if (addressStrings.length == 3 && !addressStrings[2].equals("")) {
+                if (!address.getPostcode().startsWith(addressStrings[2])) {
                     continue;
                 }
             }
@@ -112,7 +110,7 @@ public class AddressData {
         return null;
     }
 
-	public void saveTST(TST tst) {
+    public void saveTST(TST tst) {
         this.tst = tst;
-	}
+    }
 }

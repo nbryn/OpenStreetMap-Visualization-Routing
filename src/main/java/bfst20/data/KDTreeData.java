@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class KDTreeData {
-
     private static boolean isLoaded = false;
     private static KDTreeData kdTreeData;
     private Map<OSMType, KDTree> kdTrees;
@@ -59,5 +58,4 @@ public class KDTreeData {
     public void saveAllKDTrees(Map<OSMType, KDTree> tree){
         this.kdTrees = tree;
     }
-
 }

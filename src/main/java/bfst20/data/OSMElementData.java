@@ -7,7 +7,6 @@ import java.util.Map;
 
 import bfst20.logic.entities.*;
 
-
 public class OSMElementData {
     private static OSMElementData OSMElementData;
     private static boolean isLoaded = false;

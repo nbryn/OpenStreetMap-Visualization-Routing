@@ -9,7 +9,6 @@ public class InterestPointData {
     private static InterestPointData interestPointData;
     private List<InterestPoint> interestPoints;
 
-
     private InterestPointData() {
         interestPoints = new LinkedList<>();
     }
@@ -37,6 +36,5 @@ public class InterestPointData {
     public List<InterestPoint> getAllInterestPoints() {
         return interestPoints;
     }
-
 
 }

@@ -15,7 +15,6 @@ public class RoutingData {
     private List<Edge> route;
     private Graph graph;
 
-
     private RoutingData() {
     }
 

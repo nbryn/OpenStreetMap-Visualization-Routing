@@ -77,7 +77,6 @@ public class LinePathData {
     public void addNodeTo(OSMType type, Node node, Way way) {
         if (nodeTo.get(type) == null) nodeTo.put(type, new HashMap<>());
 
-
         nodeTo.get(type).put(node, way);
     }
 
@@ -103,7 +102,7 @@ public class LinePathData {
         coastlines = new ArrayList<>();
     }
 
-    public void clearMotorways(){
+    public void clearMotorways() {
         motorways = new ArrayList<>();
     }
 
@@ -112,5 +111,4 @@ public class LinePathData {
 
         coastlines.add(linePath);
     }
-
 }
