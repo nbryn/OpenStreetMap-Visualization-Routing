@@ -171,5 +171,4 @@ public class WayTest {
         assertEquals(way3.getNodes(), list);
 
     }
-
 }

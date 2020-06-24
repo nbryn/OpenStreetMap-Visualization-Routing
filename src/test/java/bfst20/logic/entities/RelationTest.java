@@ -40,6 +40,7 @@ public class RelationTest {
     public void get_addMember() {
         ArrayList<Long> member = new ArrayList<>();
         member.add((long) 500);
+
         relation.addMember(500, "way");
         assertEquals(relation.getMembers(), member);
     }

@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class OSMTypeTest {
     public static Color color;
 
-
     @Test
     public void getLineWidth() {
         assertEquals(OSMType.getLineWidth(RESIDENTIAL_HIGHWAY, 10), 20);
