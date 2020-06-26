@@ -62,7 +62,7 @@ public class RoutingController {
         Node trgNode = findClosestNodeTo(trgAddress, edges, vehicle);
 
         Dijkstra dijkstra = new Dijkstra(graph, srcNode, trgNode, vehicle);
-        
+
         if (dijkstra.distTo(trgNode) != Double.POSITIVE_INFINITY) {
             List<Edge> route = new ArrayList<>();
 
@@ -108,7 +108,6 @@ public class RoutingController {
 
         return closestNode;
     }
-
 
     private List<Edge> extractRouteInfo(Map<Node, Edge> dijkstraEdges, Node source, Node target) {
         Map<String, Double> routeDirections = new LinkedHashMap<>();

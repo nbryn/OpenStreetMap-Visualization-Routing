@@ -127,7 +127,6 @@ public class Parser {
                     break;
             }
         }
-
     }
 
     private void setBounds(XMLStreamReader reader) {
@@ -178,14 +177,12 @@ public class Parser {
         return relation;
     }
 
-
     private void addMemberToRelation(XMLStreamReader reader) {
         Relation relation = tempOSMRelations.get(tempOSMRelations.size() - 1);
         long member = Long.parseLong(reader.getAttributeValue(null, "ref"));
         String type = reader.getAttributeValue(null, "type").intern();
         relation.addMember(member, type);
     }
-
 
     private void parseAddressTags(long lastNodeId, float lon, float lat, HashMap<String, String> tags) {
         if (tags.size() == 0) return;
@@ -211,7 +208,7 @@ public class Parser {
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
         try {
-            if(tags.containsKey("route")) return;
+            if (tags.containsKey("route")) return;
 
             if (tags.containsKey("name")) lastElementParsed.setName(tags.get("name").intern());
 
@@ -233,7 +230,7 @@ public class Parser {
 
                     lastElementParsed.setOSMType(type);
                 }
-            } else if (tags.containsKey("building")){
+            } else if (tags.containsKey("building")) {
                 lastElementParsed.setOSMType(OSMType.BUILDING);
             } else if (tags.containsKey("highway")) {
                 parseHighway(lastElementParsed, tags);

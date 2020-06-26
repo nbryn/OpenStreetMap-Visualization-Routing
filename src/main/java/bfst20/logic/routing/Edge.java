@@ -36,12 +36,12 @@ public class Edge implements Serializable {
     public boolean isVehicleAllowed(Vehicle vehicle) {
         if (vehicle == Vehicle.BICYCLE && highwayType == OSMType.MOTORWAY || vehicle == Vehicle.WALK && highwayType == OSMType.MOTORWAY) {
             return false;
-        } else if (     vehicle == Vehicle.CAR
-                    &&  highwayType == OSMType.FOOTWAY
-                    ||  vehicle == Vehicle.CAR
-                    &&  highwayType == OSMType.PATH
-                    ||  vehicle == Vehicle.CAR
-                    &&  highwayType == OSMType.CYCLEWAY) {
+        } else if (vehicle == Vehicle.CAR
+                && highwayType == OSMType.FOOTWAY
+                || vehicle == Vehicle.CAR
+                && highwayType == OSMType.PATH
+                || vehicle == Vehicle.CAR
+                && highwayType == OSMType.CYCLEWAY) {
             return false;
         }
 

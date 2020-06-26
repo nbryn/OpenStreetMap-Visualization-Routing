@@ -1,6 +1,5 @@
 package bfst20.logic.misc;
 
-
 public interface OSMElement {
     void setName(String name);
 
