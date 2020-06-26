@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Queue;
 
 public class TST implements Serializable {
+    private Node root;
+    private int size;
+
     private class Node implements Serializable {
         private Node left, mid, right;
         private List<Address> value;
         private char key;
-
 
         public Node(char key) {
             this.key = key;
@@ -60,9 +62,6 @@ public class TST implements Serializable {
         }
     }
 
-    private Node root;
-    private int size;
-
     public void put(String key, Address value) {
         key = key.toLowerCase();
         root = put(root, key, value, 0);
@@ -76,16 +75,14 @@ public class TST implements Serializable {
             parent = new Node(character);
         }
 
-        if (character == 'l') {
-            String i = "";
-        }
-
         if (character < parent.getKey()) {
             parent.setLeft(put(parent.getLeft(), key, value, index));
         } else if (character > parent.getKey()) {
             parent.setRight(put(parent.getRight(), key, value, index));
+
         } else if (index < key.length() - 1) {
             parent.setMid(put(parent.getMid(), key, value, index + 1));
+
         } else {
             parent.setValue(value);
         }
@@ -100,10 +97,10 @@ public class TST implements Serializable {
         return result == null ? null : result.getValue();
     }
 
-
     private Node get(Node parent, String key, int index) {
         char character = key.charAt(index);
         if (character == ' ') return parent;
+
         if (character > parent.getKey()) {
             return get(parent.getRight(), key, index);
         } else if (character < parent.getKey()) {
@@ -140,7 +137,9 @@ public class TST implements Serializable {
     private void collect(Node parent, Queue<Address> queue) {
         if (parent == null) return;
         collect(parent.getLeft(), queue);
+
         if (parent.getValue() != null) queue.addAll(parent.getValue());
+
         collect(parent.getMid(), queue);
         collect(parent.getRight(), queue);
     }
