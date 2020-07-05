@@ -50,17 +50,17 @@ public class Rect {
 
     public boolean intersectsRight(KDNode node) {
         if (node.getDirection() == Direction.Latitudinal) {
-            return node.getSplit() <= minLat || node.getSplit() <= maxLat;
+            return node.getSplit() <= maxLat;
         } else {
-            return node.getSplit() >= minLon || node.getSplit() >= maxLon;
+            return node.getSplit() >= minLon;
         }
     }
 
     public boolean intersectsLeft(KDNode node) {
         if (node.getDirection() == Direction.Latitudinal) {
-            return node.getSplit() >= minLat || node.getSplit() >= maxLat;
+            return node.getSplit() >= minLat;
         } else {
-            return node.getSplit() <= minLon || node.getSplit() <= maxLon;
+            return node.getSplit() <= maxLon;
         }
     }
 
