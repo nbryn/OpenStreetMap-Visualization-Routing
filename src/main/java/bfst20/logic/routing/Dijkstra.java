@@ -54,10 +54,6 @@ public class Dijkstra {
         if (min == edge.getSource()) current = edge.getTarget();
         else current = !edge.isOneWay(vehicle) ? edge.getSource() : edge.getTarget();
 
-        vehicleAllowed(edge, min, vehicle, current);
-    }
-
-    private void vehicleAllowed(Edge edge, Node min, Vehicle vehicle, Node current) {
         if (edge.isVehicleAllowed(vehicle)) {
             double distance;
             if (vehicle == Vehicle.CAR) distance = distTo.get(min) + (edge.getLength() / edge.getMaxSpeed());
