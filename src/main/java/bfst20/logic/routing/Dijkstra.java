@@ -29,7 +29,6 @@ public class Dijkstra {
 
             for (Edge edge : graph.adj(min)) {
                 if (min.getId() == target.getId()) {
-                    // Source and Target = Same edge
                     if (edgeTo.size() == 0) edgeTo.put(target, edge);
 
                     return;
@@ -50,38 +49,27 @@ public class Dijkstra {
     }
 
     private void relax(Edge edge, Node min, Vehicle vehicle) {
-        // Current node can be target or source for current edge because the graph is not directed
         Node current;
-        if (min == edge.getSource()) {
-            current = edge.getTarget();
-            // Only need to check oneway when coming from source
-            // As we know it's not oneway when coming from target
-            if (!edge.isOneWay(vehicle)) vehicleAllowed(edge, min, vehicle, current);
-        } else {
-            current = edge.getSource();
-            vehicleAllowed(edge, min, vehicle, current);
-        }
+
+        if (min == edge.getSource()) current = edge.getTarget();
+        else current = !edge.isOneWay(vehicle) ? edge.getSource() : edge.getTarget();
+
+        vehicleAllowed(edge, min, vehicle, current);
     }
 
     private void vehicleAllowed(Edge edge, Node min, Vehicle vehicle, Node current) {
         if (edge.isVehicleAllowed(vehicle)) {
             double distance;
-            // Need to take speed limits into account if vehicle is car
             if (vehicle == Vehicle.CAR) distance = distTo.get(min) + (edge.getLength() / edge.getMaxSpeed());
             else distance = distTo.get(min) + edge.getLength();
-            // If distance to node is INFINITY -> Insert actual distance
             if (distTo.get(current) > distance) {
                 distTo.put(current, distance);
-                insertNodePQ(edge, current);
+                edgeTo.put(current, edge);
+                current.setDistTo(distTo.get(current));
+
+                minPQ.add(current);
             }
         }
-    }
-
-    private void insertNodePQ(Edge edge, Node current) {
-        edgeTo.put(current, edge);
-        current.setDistTo(distTo.get(current));
-
-        minPQ.add(current);
     }
 
     public Map<Node, Edge> getEdgeTo() {
