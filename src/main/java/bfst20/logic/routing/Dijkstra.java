@@ -21,7 +21,7 @@ public class Dijkstra {
         findShortestPath(graph, source, target, vehicle);
     }
 
-    public void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
+    private void findShortestPath(Graph graph, Node source, Node target, Vehicle vehicle) {
         setup(graph, source);
 
         while (!minPQ.isEmpty()) {
@@ -34,7 +34,7 @@ public class Dijkstra {
                     return;
                 }
 
-                relax(edge, min, vehicle);
+                relax(edge, min, vehicle, target);
             }
         }
     }
@@ -48,16 +48,20 @@ public class Dijkstra {
         minPQ.add(source);
     }
 
-    private void relax(Edge edge, Node min, Vehicle vehicle) {
+    private void relax(Edge edge, Node min, Vehicle vehicle, Node target) {
         Node current;
 
         if (min == edge.getSource()) current = edge.getTarget();
         else current = !edge.isOneWay(vehicle) ? edge.getSource() : edge.getTarget();
 
         if (edge.isVehicleAllowed(vehicle)) {
-            double distance;
-            if (vehicle == Vehicle.CAR) distance = distTo.get(min) + (edge.getLength() / edge.getMaxSpeed());
-            else distance = distTo.get(min) + edge.getLength();
+            double distance = euclideanDistance(current, target);
+            if (vehicle == Vehicle.CAR) {
+                distance = (distance / 110) + distTo.get(min) + (edge.getLength() / edge.getMaxSpeed());
+            } else {
+                distance = distTo.get(min) + edge.getLength();
+            }
+
             if (distTo.get(current) > distance) {
                 distTo.put(current, distance);
                 edgeTo.put(current, edge);
@@ -66,6 +70,11 @@ public class Dijkstra {
                 minPQ.add(current);
             }
         }
+    }
+
+    private double euclideanDistance(Node current, Node target) {
+        return (float) Math.sqrt(Math.pow(target.getLatitude() - current.getLatitude(), 2)
+                + Math.pow(target.getLongitude() - current.getLongitude(), 2));
     }
 
     public Map<Node, Edge> getEdgeTo() {
