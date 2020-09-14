@@ -99,7 +99,7 @@ public class ViewController {
         File file = null;
 
         try {
-            file = FileHandler.getResourceAsFile("Farum.osm", appController);
+            file = FileHandler.getResourceAsFile("Samsø.osm", appController);
 
         } catch (NullPointerException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
@@ -277,7 +277,7 @@ public class ViewController {
         });
 
         canvas.setOnMouseMoved(e -> {
-            view.setMousePos(new Point2D(e.getX(), e.getY()));
+            view.setMousePosition(new Point2D(e.getX(), e.getY()));
             view.repaint();
         });
     }
@@ -302,13 +302,7 @@ public class ViewController {
 
     }
 
-    public static void main(String[] args) {
-        Launcher.main(args);
-    }
 
-    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
-
-    }
 
     public void save(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
         appController.generateBinary();
@@ -320,5 +314,13 @@ public class ViewController {
 
     public void colorBlindButton(ActionEvent actionEvent) {
         view.changeToColorBlindMode(true);
+    }
+
+    public static void main(String[] args) {
+        Launcher.main(args);
+    }
+
+    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+
     }
 }

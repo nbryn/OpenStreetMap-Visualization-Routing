@@ -32,18 +32,18 @@ public class View {
     private Label mouseLocationLabel;
     private Address searchAddress;
     private GraphicsContext gc;
-    private Point2D mousePos;
+    private Point2D mousePosition;
     private Canvas canvas;
 
     private List<Edge> route = null;
     private double zoomLevel = 1.0;
     private double timesZoomed = 0.0;
     private double sliderValue = 0;
-    private long lastTime = 0;
+    private long secondSinceLastRepaint = 0;
     private double pixelWidth;
 
     public View(Canvas canvas) {
-        mousePos = new Point2D(0, 0);
+        mousePosition = new Point2D(0, 0);
         appController = new AppController();
         this.canvas = canvas;
         gc = canvas.getGraphicsContext2D();
@@ -75,8 +75,8 @@ public class View {
         repaint();
     }
 
-    public void setMousePos(Point2D mousePos) {
-        this.mousePos = mousePos;
+    public void setMousePosition(Point2D mousePosition) {
+        this.mousePosition = mousePosition;
     }
 
     private void createKDTrees() {
@@ -104,15 +104,15 @@ public class View {
     private boolean fps() {
         Date date = new Date();
 
-        if (lastTime == 0) {
-            lastTime = date.getTime();
+        if (secondSinceLastRepaint == 0) {
+            secondSinceLastRepaint = date.getTime();
             return false;
         } else {
-            if ((date.getTime() - 30) < lastTime) {
+            if ((date.getTime() - 30) < secondSinceLastRepaint) {
                 return true;
             }
         }
-        lastTime = date.getTime();
+        secondSinceLastRepaint = date.getTime();
 
         return false;
     }
@@ -134,8 +134,8 @@ public class View {
         Rect rect = createRect(boxSize);
 
         Point2D mouse = convertCoordinates(
-                mousePos.getX(),
-                mousePos.getY());
+                mousePosition.getX(),
+                mousePosition.getY());
 
         for (LinePath path : coastlines) {
             drawLinePath(path, pixelWidth);
