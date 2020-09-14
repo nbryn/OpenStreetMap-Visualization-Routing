@@ -8,12 +8,10 @@ import java.util.*;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
-import bfst20.data.AddressData;
-import bfst20.data.InterestPointData;
-import bfst20.data.LinePathData;
-import bfst20.data.OSMElementData;
+import bfst20.data.*;
 import bfst20.logic.AppController;
 import bfst20.logic.FileHandler;
+import bfst20.logic.controllers.KDTreeController;
 import bfst20.logic.controllers.LinePathController;
 import bfst20.logic.controllers.OSMElementController;
 import bfst20.logic.entities.Address;
@@ -84,6 +82,7 @@ public class ViewController {
         view = new View.Builder(canvas)
                 .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
                 .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
+                .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
                 .withMouseLocationLabel(mouseLocationLabel)
                 .Build();
 
@@ -251,6 +250,7 @@ public class ViewController {
                     view = new View.Builder(canvas)
                             .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
                             .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
+                            .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
                             .withMouseLocationLabel(mouseLocationLabel)
                             .Build();
 

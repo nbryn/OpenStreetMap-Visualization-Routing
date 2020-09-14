@@ -18,12 +18,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileHandler {
+    private Parser parser;
 
-    public static void load(File file, AppController appController) throws IOException, XMLStreamException, FactoryConfigurationError {
+    public FileHandler(Parser parser) {
+        this.parser = parser;
+    }
+
+    public void load(File file, AppController appController) throws IOException, XMLStreamException, FactoryConfigurationError {
         try {
-            appController.clearNodeData();
-            appController.clearLinePathData();
-
             String filename = file.getName();
             String fileExt = filename.substring(filename.lastIndexOf("."));
             switch (fileExt) {
@@ -31,7 +33,7 @@ public class FileHandler {
                     loadBinary(file, appController);
                     break;
                 case ".osm":
-                    appController.parseOSM(file);
+                    parser.parseOSMFile(file);
                     break;
                 case ".zip":
                     loadZip(file, appController);
@@ -43,7 +45,7 @@ public class FileHandler {
         }
     }
 
-    private static void loadBinary(File file, AppController appController) {
+    private void loadBinary(File file, AppController appController) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
@@ -65,7 +67,7 @@ public class FileHandler {
         }
     }
 
-    private static void loadZip(File file, AppController appController) {
+    private void loadZip(File file, AppController appController) {
         try {
             ZipFile zipFile = new ZipFile(file.toString());
             Enumeration<? extends ZipEntry> entries = zipFile.entries();

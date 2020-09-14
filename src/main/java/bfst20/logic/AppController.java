@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import bfst20.data.*;
+import bfst20.logic.controllers.*;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
@@ -30,20 +31,34 @@ public class AppController {
     private OSMElementData osmElementData;
     private LinePathData linePathData;
     private boolean isBinary = false;
+    private FileHandler fileHandler;
     private RoutingData routingData;
     private AddressData addressData;
     private KDTreeData kdTreeData;
     private Parser parser;
+    private OSMElementAPI osmElementController;
+    private AddressAPI addressController;
+    private KDTreeAPI kdTreeController;
+    private LinePathAPI linePathController;
     private View view;
 
     public AppController() {
         osmElementData = OSMElementData.getInstance();
         linePathData = LinePathData.getInstance();
         routingData = RoutingData.getInstance();
-
         addressData = AddressData.getInstance();
         kdTreeData = KDTreeData.getInstance();
-        parser = Parser.getInstance();
+
+
+        addressController = new AddressController(addressData);
+        osmElementController = new OSMElementController(osmElementData);
+        kdTreeController = new KDTreeController(kdTreeData);
+
+        parser = new Parser(osmElementController, addressController);
+
+        fileHandler = new FileHandler(parser);
+
+
     }
 
     public void initialize(View view, File file) {
@@ -51,6 +66,7 @@ public class AppController {
         loadFile(file);
         routingController = new RoutingController(this);
         linePathService = LinePathService.getInstance(this);
+        linePathController = new LinePathController(linePathData, linePathService);
         if (!isBinary) {
             linePathService.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
             linePathService.convertRelationsToLinePaths(fetchRelations());
@@ -59,27 +75,20 @@ public class AppController {
             clearNodeData();
             generateHighways();
             routingController.buildRoutingGraph();
+            generateKDTrees();
+
         }
+
         view.initialize(isBinary);
         System.gc();
     }
 
     public void loadFile(File file) {
-        linePathData.clearMotorways();
-        linePathData.clearCoastlines();
-        kdTreeData.clearData();
-
-        clearLinePathData();
-        addressData.clearData();
-        InterestPointData interestPointData = InterestPointData.getInstance();
-        interestPointData.clearData();
+        clearExistingData();
         try {
-            if (file.getName().endsWith(".bin")) {
-                isBinary = true;
-            } else {
-                isBinary = false;
-            }
-            FileHandler.load(file, this);
+            isBinary = file.getName().endsWith(".bin") ? true : false;
+
+            fileHandler.load(file, this);
         } catch (IOException ioException) {
             alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
             System.exit(1);
@@ -90,6 +99,32 @@ public class AppController {
             alertOK(Alert.AlertType.ERROR, "Error finding file, exiting.", true);
             System.exit(1);
         }
+    }
+
+    private void generateKDTrees() {
+        kdTreeController.saveRect(osmElementController.fetchBoundsData());
+
+        for (Map.Entry<OSMType, List<LinePath>> entry : linePathController.fetchLinePathData().entrySet()) {
+            if (entry.getValue().size() != 0) {
+                kdTreeController.saveKDTree(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private void clearExistingData() {
+        linePathData.clearMotorways();
+        linePathData.clearCoastlines();
+        kdTreeData.clearData();
+
+        clearLinePathData();
+        addressData.clearData();
+
+        InterestPointData interestPointData = InterestPointData.getInstance();
+        interestPointData.clearData();
+
+        clearNodeData();
+        clearLinePathData();
+
     }
 
     public void generateHighways() {
@@ -223,6 +258,7 @@ public class AppController {
     public Map<OSMType, List<LinePath>> fetchLinePathData() {
         return linePathData.getLinePaths();
     }
+
     public Way removeWayFromNodeTo(OSMType type, Node node) {
         return linePathData.removeWayFromNodeTo(type, node);
     }

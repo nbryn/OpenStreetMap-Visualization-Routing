@@ -2,6 +2,8 @@ package bfst20.presentation;
 
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.controllers.KDTreeAPI;
+import bfst20.logic.controllers.KDTreeController;
 import bfst20.logic.controllers.LinePathAPI;
 import bfst20.logic.controllers.OSMElementAPI;
 import bfst20.logic.misc.OSMType;
@@ -36,8 +38,10 @@ public class View {
     private Label mouseLocationLabel;
     private OSMElementAPI osmElementController;
     private LinePathAPI linePathController;
+    private KDTreeAPI kdTreeController;
     private Point2D mousePosition;
     private Address searchAddress;
+
 
     private GraphicsContext gc;
 
@@ -54,6 +58,7 @@ public class View {
         private Canvas canvas;
         private LinePathAPI linePathController;
         private OSMElementAPI osmElementController;
+        private KDTreeAPI kdTreeController;
         private Label mouseLocationLabel;
 
         public Builder(Canvas canvas) {
@@ -72,6 +77,12 @@ public class View {
             return this;
         }
 
+        public Builder withKDTreeAPI(KDTreeAPI kdTreeAPI) {
+            this.kdTreeController = kdTreeAPI;
+
+            return this;
+        }
+
         public Builder withMouseLocationLabel(Label mouseLocationLabel) {
             this.mouseLocationLabel = mouseLocationLabel;
 
@@ -83,6 +94,7 @@ public class View {
             view.canvas = this.canvas;
             view.linePathController = this.linePathController;
             view.osmElementController = this.osmElementController;
+            view.kdTreeController = this.kdTreeController;
             view.mouseLocationLabel = this.mouseLocationLabel;
 
             view.mousePosition = new Point2D(0, 0);
@@ -112,34 +124,9 @@ public class View {
         pan(-minLon, -minLat);
         zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0, 1);
 
-        if (!isBinary) {
-            linePathController.clearData();
-            createKDTrees();
-        } else {
-            repaint();
-        }
-    }
-
-    private void createKDTrees() {
-        appController.setupRect();
-
-        for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
-
-            if (entry.getKey() != OSMType.COASTLINE) {
-                if (entry.getValue().size() != 0) {
-                    appController.saveKDTree(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        motorways = appController.fetchMotorways();
-        if (motorways.size() > 0) {
-            appController.saveKDTree(OSMType.MOTORWAY, motorways);
-        }
-
-        appController.saveKDTree(OSMType.COASTLINE, linePaths.get(OSMType.COASTLINE));
-        linePaths = null;
 
         repaint();
+
     }
 
     public void setMousePosition(Point2D mousePosition) {
@@ -228,8 +215,8 @@ public class View {
     }
 
     private void drawKDTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
-        if (appController.fetchKDTree(type) != null) {
-            for (LinePath linePath : appController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
+        if (kdTreeController.fetchKDTree(type) != null) {
+            for (LinePath linePath : kdTreeController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
 
                 drawLinePath(linePath, lineWidth);
                 gc.fill();

@@ -50,10 +50,12 @@ public class LinePathData {
 
     public void saveLinePath(OSMType type, LinePath linePath) {
         if (linePaths.get(type) == null) linePaths.put(type, new ArrayList<>());
-        if (type == type.COASTLINE) coastlines.add(linePath);
-        else if (type == type.MOTORWAY) motorways.add(linePath);
 
         else linePaths.get(type).add(linePath);
+    }
+
+    public List<LinePath> getLinePathsByType(OSMType type) {
+        return linePaths.get(type);
     }
 
     public List<LinePath> getCoastlines() {
