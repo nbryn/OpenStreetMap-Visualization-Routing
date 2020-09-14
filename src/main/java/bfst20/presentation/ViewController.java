@@ -10,11 +10,16 @@ import javax.xml.stream.XMLStreamException;
 
 import bfst20.data.AddressData;
 import bfst20.data.InterestPointData;
+import bfst20.data.LinePathData;
+import bfst20.data.OSMElementData;
 import bfst20.logic.AppController;
 import bfst20.logic.FileHandler;
+import bfst20.logic.controllers.LinePathController;
+import bfst20.logic.controllers.OSMElementController;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
+import bfst20.logic.services.LinePathService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -76,8 +81,13 @@ public class ViewController {
 
     @FXML
     public void initialize() {
-        view = new View(canvas);
-        view.setMouseLocationView(mouseLocationLabel);
+        view = new View.Builder(canvas)
+                .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
+                .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
+                .withMouseLocationLabel(mouseLocationLabel)
+                .Build();
+
+
         suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
         suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
         suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
@@ -109,7 +119,8 @@ public class ViewController {
         try {
             appController.initialize(view, file);
         } catch (Exception e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
+            e.printStackTrace();
+            appController.alertOK(Alert.AlertType.ERROR, "Error initializing application, exiting.", true);
             System.exit(1);
         }
     }
@@ -237,7 +248,11 @@ public class ViewController {
                 if (file != null) {
                     wayPointFlowPane.getChildren().clear();
 
-                    view = new View(canvas);
+                    view = new View.Builder(canvas)
+                            .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
+                            .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
+                            .withMouseLocationLabel(mouseLocationLabel)
+                            .Build();
 
                     appController.initialize(view, file);
                 }
@@ -301,7 +316,6 @@ public class ViewController {
         });
 
     }
-
 
 
     public void save(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {

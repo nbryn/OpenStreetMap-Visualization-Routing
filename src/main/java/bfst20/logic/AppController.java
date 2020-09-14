@@ -15,19 +15,18 @@ import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
+import bfst20.logic.services.LinePathService;
 import bfst20.logic.ternary.TST;
 import bfst20.presentation.AlertHandler;
 import bfst20.presentation.View;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 
 import javax.xml.stream.XMLStreamException;
 
 public class AppController {
 
     private RoutingController routingController;
-    private LinePathGenerator linePathGenerator;
+    private LinePathService linePathService;
     private OSMElementData osmElementData;
     private LinePathData linePathData;
     private boolean isBinary = false;
@@ -51,11 +50,11 @@ public class AppController {
         this.view = view;
         loadFile(file);
         routingController = new RoutingController(this);
-        linePathGenerator = LinePathGenerator.getInstance(this);
+        linePathService = LinePathService.getInstance(this);
         if (!isBinary) {
-            linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
-            linePathGenerator.convertRelationsToLinePaths(fetchRelations());
-            linePathGenerator.clearData();
+            linePathService.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
+            linePathService.convertRelationsToLinePaths(fetchRelations());
+            linePathService.clearData();
 
             clearNodeData();
             generateHighways();
@@ -224,7 +223,6 @@ public class AppController {
     public Map<OSMType, List<LinePath>> fetchLinePathData() {
         return linePathData.getLinePaths();
     }
-
     public Way removeWayFromNodeTo(OSMType type, Node node) {
         return linePathData.removeWayFromNodeTo(type, node);
     }
@@ -248,7 +246,7 @@ public class AppController {
     }
 
     public void clearLinePathData() {
-        LinePathGenerator.getInstance(this).clearData();
+        LinePathService.getInstance(this).clearData();
         linePathData.clearData();
     }
 

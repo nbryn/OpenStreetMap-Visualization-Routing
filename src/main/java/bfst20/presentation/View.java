@@ -2,6 +2,8 @@ package bfst20.presentation;
 
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
+import bfst20.logic.controllers.LinePathAPI;
+import bfst20.logic.controllers.OSMElementAPI;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
@@ -24,15 +26,21 @@ import javafx.scene.transform.NonInvertibleTransformException;
 
 public class View {
     private Map<OSMType, List<LinePath>> linePaths;
+
     private boolean isColorBlindMode = false;
     private Affine trans = new Affine();
+
     private AppController appController;
     private List<LinePath> coastlines;
     private List<LinePath> motorways;
     private Label mouseLocationLabel;
-    private Address searchAddress;
-    private GraphicsContext gc;
+    private OSMElementAPI osmElementController;
+    private LinePathAPI linePathController;
     private Point2D mousePosition;
+    private Address searchAddress;
+
+    private GraphicsContext gc;
+
     private Canvas canvas;
 
     private List<Edge> route = null;
@@ -42,27 +50,59 @@ public class View {
     private long secondSinceLastRepaint = 0;
     private double pixelWidth;
 
-    public View(Canvas canvas) {
-        mousePosition = new Point2D(0, 0);
-        appController = new AppController();
-        this.canvas = canvas;
-        gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.LIGHTBLUE);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    public static class Builder {
+        private Canvas canvas;
+        private LinePathAPI linePathController;
+        private OSMElementAPI osmElementController;
+        private Label mouseLocationLabel;
+
+        public Builder(Canvas canvas) {
+            this.canvas = canvas;
+        }
+
+        public Builder withLinePathAPI(LinePathAPI linePathAPI) {
+            this.linePathController = linePathAPI;
+
+            return this;
+        }
+
+        public Builder withOSMElementAPI(OSMElementAPI osmElementAPI) {
+            this.osmElementController = osmElementAPI;
+
+            return this;
+        }
+
+        public Builder withMouseLocationLabel(Label mouseLocationLabel) {
+            this.mouseLocationLabel = mouseLocationLabel;
+
+            return this;
+        }
+
+        public View Build() {
+            View view = new View();
+            view.canvas = this.canvas;
+            view.linePathController = this.linePathController;
+            view.osmElementController = this.osmElementController;
+            view.mouseLocationLabel = this.mouseLocationLabel;
+
+            view.mousePosition = new Point2D(0, 0);
+            view.appController = new AppController();
+
+            view.gc = canvas.getGraphicsContext2D();
+            view.gc.setFill(Color.LIGHTBLUE);
+            view.gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+            return view;
+        }
     }
+
 
     public void initialize(boolean isBinary) {
         trans = new Affine();
-        linePaths = appController.fetchLinePathData();
-        coastlines = appController.fetchCoastlines();
+        linePaths = linePathController.fetchLinePathData();
+        coastlines = linePathController.fetchCoastlines();
 
-        if (!isBinary) {
-            appController.clearLinePathData();
-            createKDTrees();
-        }
-
-        System.gc();
-        Bounds bounds = appController.fetchBoundsData();
+        Bounds bounds = osmElementController.fetchBoundsData();
 
         float minLon = bounds.getMinLon();
         float maxLon = bounds.getMaxLon();
@@ -72,11 +112,12 @@ public class View {
         pan(-minLon, -minLat);
         zoom(canvas.getHeight() / (maxLon - minLon), (minLat - maxLat) / 2, 0, 1);
 
-        repaint();
-    }
-
-    public void setMousePosition(Point2D mousePosition) {
-        this.mousePosition = mousePosition;
+        if (!isBinary) {
+            linePathController.clearData();
+            createKDTrees();
+        } else {
+            repaint();
+        }
     }
 
     private void createKDTrees() {
@@ -101,20 +142,8 @@ public class View {
         repaint();
     }
 
-    private boolean fps() {
-        Date date = new Date();
-
-        if (secondSinceLastRepaint == 0) {
-            secondSinceLastRepaint = date.getTime();
-            return false;
-        } else {
-            if ((date.getTime() - 30) < secondSinceLastRepaint) {
-                return true;
-            }
-        }
-        secondSinceLastRepaint = date.getTime();
-
-        return false;
+    public void setMousePosition(Point2D mousePosition) {
+        this.mousePosition = mousePosition;
     }
 
     public void repaint() {
@@ -165,6 +194,24 @@ public class View {
             }
         }
     }
+
+
+    private boolean fps() {
+        Date date = new Date();
+
+        if (secondSinceLastRepaint == 0) {
+            secondSinceLastRepaint = date.getTime();
+            return false;
+        } else {
+            if ((date.getTime() - 30) < secondSinceLastRepaint) {
+                return true;
+            }
+        }
+        secondSinceLastRepaint = date.getTime();
+
+        return false;
+    }
+
 
     private void drawAllKDTreeTypes(Rect rect, Point2D mouse) {
         OSMType[] drawableTypes = OSMType.drawables();
