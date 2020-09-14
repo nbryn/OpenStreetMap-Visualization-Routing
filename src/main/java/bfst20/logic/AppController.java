@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import bfst20.data.*;
+import bfst20.logic.controllers.*;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.KDTree;
 import bfst20.logic.kdtree.Rect;
@@ -15,72 +16,79 @@ import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
+import bfst20.logic.services.LinePathService;
 import bfst20.logic.ternary.TST;
 import bfst20.presentation.AlertHandler;
 import bfst20.presentation.View;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 
 import javax.xml.stream.XMLStreamException;
 
 public class AppController {
 
     private RoutingController routingController;
-    private LinePathGenerator linePathGenerator;
+    private LinePathService linePathService;
     private OSMElementData osmElementData;
     private LinePathData linePathData;
     private boolean isBinary = false;
+    private FileHandler fileHandler;
     private RoutingData routingData;
     private AddressData addressData;
     private KDTreeData kdTreeData;
     private Parser parser;
+    private OSMElementAPI osmElementController;
+    private AddressAPI addressController;
+    private KDTreeAPI kdTreeController;
+    private LinePathAPI linePathController;
     private View view;
 
     public AppController() {
         osmElementData = OSMElementData.getInstance();
         linePathData = LinePathData.getInstance();
         routingData = RoutingData.getInstance();
-
         addressData = AddressData.getInstance();
         kdTreeData = KDTreeData.getInstance();
-        parser = Parser.getInstance();
+
+
+        addressController = new AddressController(addressData);
+        osmElementController = new OSMElementController(osmElementData);
+        kdTreeController = new KDTreeController(kdTreeData);
+
+        parser = new Parser(osmElementController, addressController);
+
+        fileHandler = new FileHandler(parser);
+
+
     }
 
     public void initialize(View view, File file) {
         this.view = view;
         loadFile(file);
         routingController = new RoutingController(this);
-        linePathGenerator = LinePathGenerator.getInstance(this);
+        linePathService = LinePathService.getInstance(this);
+        linePathController = new LinePathController(linePathData, linePathService);
         if (!isBinary) {
-            linePathGenerator.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
-            linePathGenerator.convertRelationsToLinePaths(fetchRelations());
-            linePathGenerator.clearData();
+            linePathService.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
+            linePathService.convertRelationsToLinePaths(fetchRelations());
+            linePathService.clearData();
 
             clearNodeData();
             generateHighways();
             routingController.buildRoutingGraph();
+            generateKDTrees();
+
         }
+
         view.initialize(isBinary);
         System.gc();
     }
 
     public void loadFile(File file) {
-        linePathData.clearMotorways();
-        linePathData.clearCoastlines();
-        kdTreeData.clearData();
-
-        clearLinePathData();
-        addressData.clearData();
-        InterestPointData interestPointData = InterestPointData.getInstance();
-        interestPointData.clearData();
+        clearExistingData();
         try {
-            if (file.getName().endsWith(".bin")) {
-                isBinary = true;
-            } else {
-                isBinary = false;
-            }
-            FileHandler.load(file, this);
+            isBinary = file.getName().endsWith(".bin") ? true : false;
+
+            fileHandler.load(file, this);
         } catch (IOException ioException) {
             alertOK(Alert.AlertType.ERROR, "Invalid xml data, exiting.", true);
             System.exit(1);
@@ -91,6 +99,32 @@ public class AppController {
             alertOK(Alert.AlertType.ERROR, "Error finding file, exiting.", true);
             System.exit(1);
         }
+    }
+
+    private void generateKDTrees() {
+        kdTreeController.saveRect(osmElementController.fetchBoundsData());
+
+        for (Map.Entry<OSMType, List<LinePath>> entry : linePathController.fetchLinePathData().entrySet()) {
+            if (entry.getValue().size() != 0) {
+                kdTreeController.saveKDTree(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private void clearExistingData() {
+        linePathData.clearMotorways();
+        linePathData.clearCoastlines();
+        kdTreeData.clearData();
+
+        clearLinePathData();
+        addressData.clearData();
+
+        InterestPointData interestPointData = InterestPointData.getInstance();
+        interestPointData.clearData();
+
+        clearNodeData();
+        clearLinePathData();
+
     }
 
     public void generateHighways() {
@@ -248,7 +282,7 @@ public class AppController {
     }
 
     public void clearLinePathData() {
-        LinePathGenerator.getInstance(this).clearData();
+        LinePathService.getInstance(this).clearData();
         linePathData.clearData();
     }
 

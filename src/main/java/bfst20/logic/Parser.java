@@ -1,5 +1,7 @@
 package bfst20.logic;
 
+import bfst20.logic.controllers.AddressAPI;
+import bfst20.logic.controllers.OSMElementAPI;
 import bfst20.logic.entities.*;
 import bfst20.logic.misc.OSMElement;
 import bfst20.logic.misc.OSMType;
@@ -18,21 +20,13 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 public class Parser {
     private List<Relation> tempOSMRelations;
-    private static boolean isLoaded = false;
-    private AppController appController;
-    private static Parser parser;
+    private OSMElementAPI osmElementController;
+    private AddressAPI addressController;
 
-    private Parser() {
-        appController = new AppController();
+    public Parser(OSMElementAPI osmElementController, AddressAPI addressController) {
+        this.osmElementController = osmElementController;
+        this.addressController = addressController;
         tempOSMRelations = new ArrayList<>();
-    }
-
-    public static Parser getInstance() {
-        if (!isLoaded) {
-            isLoaded = true;
-            parser = new Parser();
-        }
-        return parser;
     }
 
     public void parseOSMFile(File file) throws IOException, XMLStreamException {
@@ -115,7 +109,7 @@ public class Parser {
                             break;
                         case "relation":
                             Relation relation = (Relation) lastElementParsed;
-                            appController.saveRelationData(relation);
+                            osmElementController.saveRelationData(relation);
                             parseTags(lastElementParsed, tags, firstTag);
                             break;
                         case "way":
@@ -135,7 +129,7 @@ public class Parser {
         float maxLat = -Float.parseFloat(reader.getAttributeValue(null, "minlat"));
         float minLon = 0.56f * Float.parseFloat(reader.getAttributeValue(null, "minlon"));
 
-        appController.saveBoundsData(new Bounds(maxLat, minLat, maxLon, minLon));
+        osmElementController.saveBoundsData(new Bounds(maxLat, minLat, maxLon, minLon));
     }
 
 
@@ -145,7 +139,7 @@ public class Parser {
         float longitude = Float.parseFloat(reader.getAttributeValue(null, "lon")) * 0.56f;
 
         Node node = new Node(id, latitude, longitude);
-        appController.saveNodeData(node.getId(), node);
+        osmElementController.saveNodeData(node.getId(), node);
 
     }
 
@@ -153,7 +147,7 @@ public class Parser {
         long id = Long.parseLong(reader.getAttributeValue(null, "id"));
         Way way = new Way(id);
 
-        appController.saveWayData(way);
+        osmElementController.saveWayData(way);
 
         return way;
     }
@@ -203,7 +197,7 @@ public class Parser {
                 postcode.equals("") ? "" : postcode.intern(),
                 street.equals("") ? "" : street.intern(),
                 lat, lon, lastNodeId);
-        appController.saveAddressData(lastNodeId, address);
+        addressController.saveAddressData(lastNodeId, address);
     }
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {
@@ -249,7 +243,7 @@ public class Parser {
 
         // Need source and target for graph edges
         for (long id : way.getNodeIds()) {
-            Node node = appController.fetchNodeData(id);
+            Node node = osmElementController.fetchNodeById(id);
             way.addNode(node);
         }
 
