@@ -1,6 +1,6 @@
 package bfst20.logic.controllers;
 
-import bfst20.data.KDTreeData;
+import bfst20.data.*;
 import bfst20.logic.controllers.interfaces.KDTreeAPI;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
@@ -60,5 +60,6 @@ public class KDTreeController implements KDTreeAPI {
     public Map<OSMType, KDTree> fetchAllKDTrees() {
         return kdTreeData.getAllLKDTrees();
     }
+
 
 }

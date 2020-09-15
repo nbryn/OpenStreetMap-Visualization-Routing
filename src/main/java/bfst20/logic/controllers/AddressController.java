@@ -3,7 +3,9 @@ package bfst20.logic.controllers;
 import bfst20.data.AddressData;
 import bfst20.logic.controllers.interfaces.AddressAPI;
 import bfst20.logic.entities.Address;
-import bfst20.logic.ternary.TST;
+import bfst20.logic.routing.TernarySearchTree;
+
+import java.util.Queue;
 
 public class AddressController implements AddressAPI {
 
@@ -20,12 +22,22 @@ public class AddressController implements AddressAPI {
     }
 
     @Override
-    public void saveTSTData(TST tst) {
-        addressData.saveTST(tst);
+    public void saveTSTData(TernarySearchTree ternarySearchTree) {
+        addressData.saveTST(ternarySearchTree);
     }
 
     @Override
-    public TST fetchTSTData() {
+    public TernarySearchTree fetchTSTData() {
         return addressData.getTST();
+    }
+
+    @Override
+    public Address findAddress(String input) {
+        return addressData.findAddress(input);
+    }
+
+    @Override
+    public Queue<Address> searchSuggestions(String input) {
+        return addressData.searchSuggestions(input);
     }
 }

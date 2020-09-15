@@ -1,11 +1,9 @@
 package bfst20.logic.entities;
 
 import bfst20.logic.misc.OSMType;
-import bfst20.logic.misc.OSMElement;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 

@@ -61,4 +61,9 @@ public class OSMElementController implements OSMElementAPI {
     public Map<Long, Node> fetchAllNodes() {
         return osmElementData.getNodes();
     }
+
+    @Override
+    public void clearNodeData() {
+        osmElementData.clearNodeData();
+    }
 }

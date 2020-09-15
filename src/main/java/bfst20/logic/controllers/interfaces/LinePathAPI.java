@@ -23,5 +23,9 @@ public interface LinePathAPI {
 
     void clearData();
 
+    List<LinePath> fetchHighways();
+
+    void clearLinePathData();
+
 
 }

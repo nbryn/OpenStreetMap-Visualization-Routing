@@ -3,7 +3,6 @@ package bfst20.logic.services;
 import java.util.*;
 
 import bfst20.data.LinePathData;
-import bfst20.logic.AppController;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
 import bfst20.logic.entities.Way;

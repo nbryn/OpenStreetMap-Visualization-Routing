@@ -1,15 +1,12 @@
-package bfst20.logic;
+package bfst20.logic.misc;
 
-import bfst20.logic.controllers.interfaces.AddressAPI;
-import bfst20.logic.controllers.interfaces.KDTreeAPI;
-import bfst20.logic.controllers.interfaces.LinePathAPI;
-import bfst20.logic.controllers.interfaces.OSMElementAPI;
+import bfst20.logic.controllers.interfaces.*;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import bfst20.presentation.AlertHandler;
 import javafx.scene.control.Alert;
-import bfst20.logic.misc.OSMType;
 import bfst20.logic.routing.Graph;
-import bfst20.logic.ternary.TST;
+import bfst20.logic.routing.TernarySearchTree;
 import bfst20.logic.kdtree.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -22,11 +19,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileHandler {
-    private Parser parser;
     private OSMElementAPI osmElementAPI;
-    private KDTreeAPI kdTreeAPI;
-    private AddressAPI addressAPI;
     private LinePathAPI linePathAPI;
+    private AddressAPI addressAPI;
+    private RoutingAPI routingAPI;
+    private KDTreeAPI kdTreeAPI;
+    private Parser parser;
 
     private FileHandler() {
 
@@ -38,14 +36,26 @@ public class FileHandler {
         private KDTreeAPI kdTreeAPI;
         private AddressAPI addressAPI;
         private LinePathAPI linePathAPI;
+        private RoutingAPI routingAPI;
 
-        public Builder(Parser parser) {
+        public Builder() {
+
+        }
+
+        public Builder withParser(Parser parser) {
             this.parser = parser;
 
+            return this;
         }
 
         public Builder withKDTreeAPI(KDTreeAPI kdTreeAPI) {
             this.kdTreeAPI = kdTreeAPI;
+
+            return this;
+        }
+
+        public Builder withRoutingAPI(RoutingAPI routingAPI) {
+            this.routingAPI = routingAPI;
 
             return this;
         }
@@ -75,58 +85,56 @@ public class FileHandler {
             fileHandler.linePathAPI = this.linePathAPI;
             fileHandler.kdTreeAPI = this.kdTreeAPI;
             fileHandler.addressAPI = this.addressAPI;
-
+            fileHandler.routingAPI = this.routingAPI;
 
             return fileHandler;
-
         }
-
     }
 
-    public void load(File file, AppController appController) throws IOException, XMLStreamException, FactoryConfigurationError {
+    public void load(File file) throws IOException, XMLStreamException, FactoryConfigurationError {
         try {
             String filename = file.getName();
             String fileExt = filename.substring(filename.lastIndexOf("."));
             switch (fileExt) {
                 case ".bin":
-                    loadBinary(file, appController);
+                    loadBinary(file);
                     break;
                 case ".osm":
                     parser.parseOSMFile(file);
                     break;
                 case ".zip":
-                    loadZip(file, appController);
+                    loadZip(file);
                     break;
             }
         } catch (OutOfMemoryError e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading, out of memory, exiting.", true);
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading, out of memory, exiting.", true);
             System.exit(1);
         }
     }
 
-    private void loadBinary(File file, AppController appController) {
+    private void loadBinary(File file) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
             Map<OSMType, KDTree> trees = (Map<OSMType, KDTree>) in.readObject();
             List<LinePath> coastline = (List<LinePath>) in.readObject();
-            TST tst = (TST) in.readObject();
+            TernarySearchTree ternarySearchTree = (TernarySearchTree) in.readObject();
             Graph graph = (Graph) in.readObject();
 
             osmElementAPI.saveBoundsData(bounds);
             kdTreeAPI.saveAllKDTrees(trees);
             linePathAPI.saveCoastlines(coastline);
-            addressAPI.saveTSTData(tst);
-            appController.saveGraphData(graph);
+            addressAPI.saveTSTData(ternarySearchTree);
+            routingAPI.saveGraph(graph);
         } catch (IOException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.", true);
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.", true);
             System.exit(1);
         } catch (ClassNotFoundException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.", true);
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Invalid binary file, exiting.", true);
             System.exit(1);
         }
     }
 
-    private void loadZip(File file, AppController appController) {
+    private void loadZip(File file) {
         try {
             ZipFile zipFile = new ZipFile(file.toString());
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -138,14 +146,14 @@ public class FileHandler {
                 if (name.endsWith(".osm")) {
                     InputStream stream = zipFile.getInputStream(entry);
                     String toBeParsed = new String(stream.readAllBytes());
-                    appController.parseString(toBeParsed);
+                    parser.parseString(toBeParsed);
                 }
             }
 
             zipFile.close();
 
         } catch (IOException | XMLStreamException ex) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.", true);
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading zip file, exiting.", true);
             System.exit(1);
         }
     }
@@ -157,7 +165,6 @@ public class FileHandler {
     }
 
     private void writeToFile(File file) throws IOException {
-        AppController appController = new AppController();
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
 
@@ -166,11 +173,11 @@ public class FileHandler {
         objectOut.writeObject(linePathAPI.fetchCoastlines());
 
         objectOut.writeObject(addressAPI.fetchTSTData());
-        objectOut.writeObject(appController.fetchGraphData());
+        objectOut.writeObject(routingAPI.fetchGraph());
         objectOut.close();
     }
 
-    public static File getResourceAsFile(String resourcePath, AppController appController) {
+    public File getResourceAsFile(String resourcePath) {
         try {
             String suffix = resourcePath.endsWith(".osm") ? ".osm" : ".bin";
 
@@ -190,7 +197,7 @@ public class FileHandler {
             }
             return tempFile;
         } catch (IOException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading file stream, exiting.", true);
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading file stream, exiting.", true);
             System.exit(1);
             return null;
         }

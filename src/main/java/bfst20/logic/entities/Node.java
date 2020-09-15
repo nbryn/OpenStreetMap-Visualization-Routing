@@ -1,11 +1,8 @@
 package bfst20.logic.entities;
 
 import bfst20.logic.misc.OSMType;
-import bfst20.logic.misc.OSMElement;
 
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamReader;
 
 public class Node implements OSMElement, Comparable, Serializable {
     protected float longitude;

@@ -68,4 +68,14 @@ public class LinePathController implements LinePathAPI {
         linePathService.clearData();
         linePathData.clearData();
     }
+
+    @Override
+    public List<LinePath> fetchHighways() {
+        return linePathData.getHighways();
+    }
+
+    @Override
+    public void clearLinePathData() {
+        linePathData.clearData();
+    }
 }

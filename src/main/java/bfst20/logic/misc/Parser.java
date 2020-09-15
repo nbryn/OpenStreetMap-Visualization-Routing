@@ -1,9 +1,9 @@
-package bfst20.logic;
+package bfst20.logic.misc;
 
 import bfst20.logic.controllers.interfaces.AddressAPI;
 import bfst20.logic.controllers.interfaces.OSMElementAPI;
 import bfst20.logic.entities.*;
-import bfst20.logic.misc.OSMElement;
+import bfst20.logic.entities.OSMElement;
 import bfst20.logic.misc.OSMType;
 
 import java.io.*;

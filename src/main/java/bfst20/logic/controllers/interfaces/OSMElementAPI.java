@@ -28,5 +28,7 @@ public interface OSMElementAPI {
 
     Map<Long, Node> fetchAllNodes();
 
+    void clearNodeData();
+
 
 }
