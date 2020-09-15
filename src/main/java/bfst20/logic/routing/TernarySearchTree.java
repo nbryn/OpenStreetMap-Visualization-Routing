@@ -1,4 +1,4 @@
-package bfst20.logic.ternary;
+package bfst20.logic.routing;
 
 import bfst20.logic.entities.Address;
 
@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class TST implements Serializable {
+public class TernarySearchTree implements Serializable {
     private Node root;
     private int size;
 

@@ -1,24 +1,26 @@
-package bfst20.logic.routing;
+package bfst20.logic.services;
 
-import bfst20.logic.AppController;
+import bfst20.data.RoutingData;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Way;
 import bfst20.logic.misc.Vehicle;
+import bfst20.logic.routing.Dijkstra;
+import bfst20.logic.routing.Edge;
+import bfst20.logic.routing.Graph;
 
 import java.util.*;
 
-public class RoutingController {
-    private AppController appController;
+public class RoutingService {
+    private RoutingData routingData;
 
-    public RoutingController(AppController appController) {
-        this.appController = appController;
+    public RoutingService(RoutingData routingData) {
+        this.routingData = routingData;
     }
 
-    public void buildRoutingGraph() {
-        List<LinePath> highways = appController.fetchHighways();
+    public void buildRoutingGraph(List<LinePath> highways) {
         List<Node> highwayNodes = new ArrayList<>();
 
         for (LinePath lp : highways) {
@@ -30,10 +32,8 @@ public class RoutingController {
         generateGraphEdges(highways, graph);
         graph.sortEdges();
 
-        appController.saveGraphData(graph);
+        routingData.saveGraph(graph);
 
-        highwayNodes = null;
-        graph = null;
         System.gc();
     }
 
@@ -69,7 +69,7 @@ public class RoutingController {
             if (dijkstra.getEdgeTo().size() == 1) route.addAll(dijkstra.getEdgeTo().values());
             else route.addAll(extractRouteInfo(dijkstra.getEdgeTo(), srcNode, trgNode));
 
-            appController.saveRouteData(route);
+            routingData.saveRoute(route);
         }
 
         double dist = dijkstra.distTo(trgNode);
@@ -127,7 +127,7 @@ public class RoutingController {
             collectRouteDirections(routeDirections, edge);
         }
 
-        appController.saveRouteDirections(routeDirections);
+        routingData.saveRouteDirections(routeDirections);
         return edges;
     }
 

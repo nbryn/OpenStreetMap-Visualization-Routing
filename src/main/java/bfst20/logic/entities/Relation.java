@@ -1,7 +1,6 @@
 package bfst20.logic.entities;
 
 import bfst20.logic.misc.OSMType;
-import bfst20.logic.misc.OSMElement;
 
 import java.util.ArrayList;
 

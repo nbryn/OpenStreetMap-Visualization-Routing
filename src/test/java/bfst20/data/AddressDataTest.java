@@ -2,7 +2,7 @@ package bfst20.data;
 
 
 import bfst20.logic.entities.Address;
-import bfst20.logic.ternary.TST;
+import bfst20.logic.routing.TernarySearchTree;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -31,19 +31,19 @@ class AddressDataTest {
 
     @Test
     void saveAddress() {
-        TST tst = new TST();
-        addressData.saveTST(tst);
+        TernarySearchTree ternarySearchTree = new TernarySearchTree();
+        addressData.saveTST(ternarySearchTree);
         Address address = new Address("Farum", "21", "3520", "2", 21, 22, 26);
         addressData.saveAddress(23232, address);
 
-        assertEquals(1, tst.getSize());
+        assertEquals(1, ternarySearchTree.getSize());
     }
 
     @Test
     void getTST() {
-        TST tst = new TST();
-        addressData.saveTST(tst);
-        assertEquals(tst, addressData.getTST());
+        TernarySearchTree ternarySearchTree = new TernarySearchTree();
+        addressData.saveTST(ternarySearchTree);
+        assertEquals(ternarySearchTree, addressData.getTST());
     }
 
 

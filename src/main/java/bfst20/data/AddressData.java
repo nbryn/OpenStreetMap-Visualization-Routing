@@ -1,7 +1,7 @@
 package bfst20.data;
 
 import bfst20.logic.entities.Address;
-import bfst20.logic.ternary.TST;
+import bfst20.logic.routing.TernarySearchTree;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,10 +11,10 @@ import java.util.regex.Pattern;
 public class AddressData {
     private static String addressRegex = "[,. ]*(?<street>[\\D]+)[,. ]+(?<house>[\\d][\\w]*)[,. ]*(?<postcode>[\\w]*)[,.\\V]*";
     private static AddressData addressData;
-    private TST tst;
+    private TernarySearchTree ternarySearchTree;
 
     private AddressData() {
-        tst = new TST();
+        ternarySearchTree = new TernarySearchTree();
     }
 
     public static AddressData getInstance() {
@@ -27,15 +27,15 @@ public class AddressData {
 
     public void saveAddress(long id, Address address) {
         if (address.getStreet() == null) return;
-        tst.put(address.getStreet().replaceAll(" ", ""), address);
+        ternarySearchTree.put(address.getStreet().replaceAll(" ", ""), address);
     }
 
-    public TST getTST() {
-        return tst;
+    public TernarySearchTree getTST() {
+        return ternarySearchTree;
     }
 
     public void clearData() {
-        tst = new TST();
+        ternarySearchTree = new TernarySearchTree();
     }
 
 
@@ -93,7 +93,7 @@ public class AddressData {
         if (addressStrings.length == 0) return null;
         addressStrings[0] = addressStrings[0].replaceAll(" ", "");
 
-        for (Address address : tst.keysWithPrefix(addressStrings[0])) {
+        for (Address address : ternarySearchTree.keysWithPrefix(addressStrings[0])) {
             if (address.getStreet() == null) continue;
 
             if (
@@ -110,7 +110,7 @@ public class AddressData {
         return null;
     }
 
-    public void saveTST(TST tst) {
-        this.tst = tst;
+    public void saveTST(TernarySearchTree ternarySearchTree) {
+        this.ternarySearchTree = ternarySearchTree;
     }
 }

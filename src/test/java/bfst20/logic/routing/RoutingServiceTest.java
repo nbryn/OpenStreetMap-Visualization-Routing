@@ -1,11 +1,11 @@
 package bfst20.logic.routing;
 
-import bfst20.logic.AppController;
-
+import bfst20.logic.controllers.KDTreeController;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.Node;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.Vehicle;
+import bfst20.logic.services.RoutingService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,9 +16,9 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class RoutingControllerTest {
-    private static RoutingController routingController;
-    private static AppController appController;
+class RoutingServiceTest {
+    private static RoutingService routingService;
+    private static KDTreeController.StartupController startupController;
     private static Graph graph;
     private static List<Node> nodes = new ArrayList<>();
     private static List<Edge> edges = new ArrayList<>();
@@ -31,8 +31,8 @@ class RoutingControllerTest {
 
     @BeforeAll
     static void setup() {
-        appController = mock(AppController.class);
-        routingController = new RoutingController(appController);
+        startupController = mock(KDTreeController.StartupController.class);
+        routingService = new RoutingService(startupController);
         Collections.addAll(nodes, node1, node2);
         Collections.addAll(edges, edge1, edge2);
         graph = new Graph(nodes);
@@ -44,18 +44,18 @@ class RoutingControllerTest {
 
     @Test
     void buildRoutingGraph() {
-        routingController.buildRoutingGraph();
+        routingService.buildRoutingGraph();
 
-        verify(appController, times(1)).saveGraphData(Mockito.any(Graph.class));
+        verify(startupController, times(1)).saveGraphData(Mockito.any(Graph.class));
     }
 
     @Test
     void calculateShortestRoute() {
-        routingController.calculateShortestRoute(graph, edges, address, address2, Vehicle.CAR);
+        routingService.calculateShortestRoute(graph, edges, address, address2, Vehicle.CAR);
 
-        verify(appController, times(1)).saveRouteData(Mockito.any(ArrayList.class));
+        verify(startupController, times(1)).saveRouteData(Mockito.any(ArrayList.class));
 
-        assertEquals(0.04, routingController.calculateShortestRoute(graph, edges, address, address2, Vehicle.CAR));
-        assertEquals(3, routingController.calculateShortestRoute(graph, edges, address, address2, Vehicle.BICYCLE));
+        assertEquals(0.04, routingService.calculateShortestRoute(graph, edges, address, address2, Vehicle.CAR));
+        assertEquals(3, routingService.calculateShortestRoute(graph, edges, address, address2, Vehicle.BICYCLE));
     }
 }

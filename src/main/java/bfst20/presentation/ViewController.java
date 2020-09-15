@@ -9,15 +9,15 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
 import bfst20.data.*;
-import bfst20.logic.AppController;
-import bfst20.logic.FileHandler;
-import bfst20.logic.controllers.KDTreeController;
-import bfst20.logic.controllers.LinePathController;
-import bfst20.logic.controllers.OSMElementController;
+import bfst20.logic.misc.FileHandler;
+import bfst20.logic.controllers.*;
+import bfst20.logic.controllers.interfaces.AddressAPI;
+import bfst20.logic.controllers.interfaces.RoutingAPI;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
 import bfst20.logic.services.LinePathService;
+import bfst20.logic.services.RoutingService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -38,10 +38,10 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class ViewController {
-    private SuggestionHandler suggestionHandlerDestination;
-    private SuggestionHandler suggestionHandlerAddress;
-    private SuggestionHandler suggestionHandlerSearch;
-    private AppController appController;
+    private StartupController startupController;
+    private FileHandler fileHandler;
+    private RoutingAPI routingAPI;
+
     @FXML
     private FlowPane wayPointFlowPane;
     @FXML
@@ -73,26 +73,20 @@ public class ViewController {
     private Point2D lastMouse;
     private View view;
 
+
     public ViewController() {
-        appController = new AppController();
+        startupController = new StartupController();
+        routingAPI = new RoutingController(new RoutingService(RoutingData.getInstance()),
+                RoutingData.getInstance(), AddressData.getInstance());
     }
 
     @FXML
     public void initialize() {
-        view = new View.Builder(canvas)
-                .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
-                .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
-                .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
-                .withMouseLocationLabel(mouseLocationLabel)
-                .Build();
+        buildView();
+        setupSuggestionHandlers();
 
-
-        suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
-        suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
-        suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
-
-        appController.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
-
+        fileHandler = new FileHandler.Builder().build();
+        AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
         loadDefault();
 
         setupHbox();
@@ -104,22 +98,42 @@ public class ViewController {
         setupRouteButton();
     }
 
+    private void buildView() {
+        view = new View.Builder(canvas)
+                .withLinePathAPI(new LinePathController(LinePathData.getInstance(),
+                        LinePathService.getInstance(LinePathData.getInstance())))
+                .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
+                .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
+                .withRoutingAPI(new RoutingController(new RoutingService(RoutingData.getInstance()),
+                        RoutingData.getInstance(), AddressData.getInstance()))
+                .withMouseLocationLabel(mouseLocationLabel)
+                .build();
+    }
+
+    private void setupSuggestionHandlers() {
+        AddressAPI addressAPI = new AddressController(AddressData.getInstance());
+
+        new SuggestionHandler(addressAPI, view, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
+        new SuggestionHandler(addressAPI, view, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
+        new SuggestionHandler(addressAPI, view, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
+    }
+
     private void loadDefault() {
         File file = null;
 
         try {
-            file = FileHandler.getResourceAsFile("Samsø.osm", appController);
+            file = fileHandler.getResourceAsFile("Samsø.osm");
 
         } catch (NullPointerException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
             System.exit(1);
         }
 
         try {
-            appController.initialize(view, file);
+            startupController.initialize(view, file);
         } catch (Exception e) {
             e.printStackTrace();
-            appController.alertOK(Alert.AlertType.ERROR, "Error initializing application, exiting.", true);
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error initializing application, exiting.", true);
             System.exit(1);
         }
     }
@@ -130,7 +144,7 @@ public class ViewController {
             public void handle(MouseEvent mouseEvent) {
 
                 if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
-                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address", true);
+                    AlertHandler.alertOK(Alert.AlertType.WARNING, "Please specify search or target address", true);
                     return;
                 }
 
@@ -138,13 +152,13 @@ public class ViewController {
                     Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
                     view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
 
-                    if (appController.fetchRouteDirections() != null) {
+                    if (routingAPI.fetchRouteDirections() != null) {
                         displayPane.getChildren().clear();
 
-                        Map<String, Double> routeDirections = appController.fetchRouteDirections();
+                        Map<String, Double> routeDirections = routingAPI.fetchRouteDirections();
                         List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
                         Collections.reverse(streetsOnRoute);
-                        if (appController.fetchRouteDirections().size() > 0) {
+                        if (routingAPI.fetchRouteDirections().size() > 0) {
                             for (String street : streetsOnRoute) {
                                 String text = street.equals("ååååå") ? "Unknown Street" : street;
                                 Button route = new Button("Follow " + text + " for " + routeDirections.get(street) + " km");
@@ -158,18 +172,18 @@ public class ViewController {
                                 displayPane.getChildren().add(spacing);
                                 displayPane.getChildren().add(route);
                             }
-                            appController.clearRouteInfoData();
+                            routingAPI.clearRouteInfoData();
                         } else {
                             displayPane.getChildren().clear();
-                            appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                            AlertHandler.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                         }
 
                     } else {
                         displayPane.getChildren().clear();
-                        appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                        AlertHandler.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                     }
                 } catch (NullPointerException e) {
-                    appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                    AlertHandler.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
                 }
             }
         });
@@ -248,16 +262,17 @@ public class ViewController {
                     wayPointFlowPane.getChildren().clear();
 
                     view = new View.Builder(canvas)
-                            .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
+                            .withLinePathAPI(new LinePathController(LinePathData.getInstance(),
+                                    LinePathService.getInstance(LinePathData.getInstance())))
                             .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
                             .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
                             .withMouseLocationLabel(mouseLocationLabel)
-                            .Build();
+                            .build();
 
-                    appController.initialize(view, file);
+                    startupController.initialize(view, file);
                 }
             } catch (Exception err) {
-                appController.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
+                AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
             }
         });
     }
@@ -310,7 +325,7 @@ public class ViewController {
                 if (address != null) {
                     view.setSearchAddress(address);
                 } else {
-                    appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
+                    AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
                 }
             }
         });
@@ -319,7 +334,7 @@ public class ViewController {
 
 
     public void save(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
-        appController.generateBinary();
+        startupController.generateBinary();
     }
 
     public void normalColorButton(ActionEvent actionEvent) {

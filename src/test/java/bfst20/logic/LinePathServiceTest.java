@@ -1,5 +1,6 @@
 package bfst20.logic;
 
+import bfst20.logic.controllers.KDTreeController;
 import bfst20.logic.entities.LinePath;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.*;
 
 public class LinePathServiceTest {
     private static LinePathService linePathService;
-    private static AppController appController;
+    private static KDTreeController.StartupController startupController;
     private static List<Relation> relations;
     private static Map<Long, Node> nodes;
     private static List<Way> ways;
@@ -30,8 +31,8 @@ public class LinePathServiceTest {
 
     @BeforeAll
     static void setup() {
-        appController = mock(AppController.class);
-        linePathService = LinePathService.getInstance(appController);
+        startupController = mock(KDTreeController.StartupController.class);
+        linePathService = LinePathService.getInstance(startupController);
         relations = new ArrayList<>();
 
         ways = new ArrayList<>();
@@ -142,7 +143,7 @@ public class LinePathServiceTest {
 
     @Test
     void getInstance() {
-        assertEquals(linePathService, LinePathService.getInstance(appController));
+        assertEquals(linePathService, LinePathService.getInstance(startupController));
     }
 
     @Test
@@ -170,7 +171,7 @@ public class LinePathServiceTest {
     void convertWaysToLinePaths() {
         linePathService.convertWaysToLinePaths(ways, nodes);
 
-        verify(appController, times(2)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
+        verify(startupController, times(2)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
 
     @Test
@@ -178,6 +179,6 @@ public class LinePathServiceTest {
         linePathService.convertWaysToLinePaths(ways, nodes);
         linePathService.convertRelationsToLinePaths(relations);
 
-        verify(appController, times(4)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
+        verify(startupController, times(4)).saveLinePathData(Mockito.any(OSMType.class), Mockito.any(LinePath.class));
     }
 }
