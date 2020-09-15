@@ -80,11 +80,12 @@ public class ViewController {
     @FXML
     public void initialize() {
         view = new View.Builder(canvas)
-                .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
+                .withLinePathAPI(new LinePathController(LinePathData.getInstance(),
+                        LinePathService.getInstance(LinePathData.getInstance())))
                 .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
                 .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
                 .withMouseLocationLabel(mouseLocationLabel)
-                .Build();
+                .build();
 
 
         suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
@@ -248,11 +249,12 @@ public class ViewController {
                     wayPointFlowPane.getChildren().clear();
 
                     view = new View.Builder(canvas)
-                            .withLinePathAPI(new LinePathController(LinePathData.getInstance(), LinePathService.getInstance(appController)))
+                            .withLinePathAPI(new LinePathController(LinePathData.getInstance(),
+                                    LinePathService.getInstance(LinePathData.getInstance())))
                             .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
                             .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
                             .withMouseLocationLabel(mouseLocationLabel)
-                            .Build();
+                            .build();
 
                     appController.initialize(view, file);
                 }

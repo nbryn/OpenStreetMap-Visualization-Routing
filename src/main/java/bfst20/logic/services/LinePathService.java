@@ -2,6 +2,7 @@ package bfst20.logic.services;
 
 import java.util.*;
 
+import bfst20.data.LinePathData;
 import bfst20.logic.AppController;
 import bfst20.logic.entities.Node;
 import bfst20.logic.entities.Relation;
@@ -12,19 +13,19 @@ import bfst20.logic.misc.OSMType;
 public class LinePathService {
     private static LinePathService linePathService;
     private static boolean loaded = false;
-    private AppController appController;
+    private LinePathData linePathData;
     private List<Relation> relations;
     private Map<Long, Node> nodes;
     private List<Way> ways;
 
-    private LinePathService(AppController appController) {
-        this.appController = appController;
+    private LinePathService(LinePathData linePathData) {
+        this.linePathData = linePathData;
     }
 
-    public static LinePathService getInstance(AppController appController) {
+    public static LinePathService getInstance(LinePathData linePathData) {
         if (!loaded) {
             loaded = true;
-            linePathService = new LinePathService(appController);
+            linePathService = new LinePathService(linePathData);
         }
 
         return linePathService;
@@ -41,7 +42,9 @@ public class LinePathService {
             OSMType type = linePath.getOSMType();
 
             if (type != OSMType.PLACE) {
-                appController.saveLinePathData(type, linePath);
+                if (type == OSMType.COASTLINE) linePathData.saveSingleCoastLine(linePath);
+
+                else linePathData.saveLinePath(type, linePath);
 
             }
         }
@@ -81,8 +84,8 @@ public class LinePathService {
         OSMType[] types = OSMType.relations();
 
         for (OSMType type : types) {
-            if (appController.getNodeTo(type) != null) {
-                addRelation(type, appController.getNodeTo(type));
+            if (linePathData.getNodeTo(type) != null) {
+                addRelation(type, linePathData.getNodeTo(type));
             }
         }
     }
@@ -105,8 +108,8 @@ public class LinePathService {
 
             way = merge(merge(before, way), after);
 
-            appController.saveNodeToData(OSMType, nodes.get(way.getFirstNodeId()), way);
-            appController.saveNodeToData(OSMType, nodes.get(way.getLastNodeId()), way);
+            linePathData.addNodeTo(OSMType, nodes.get(way.getFirstNodeId()), way);
+            linePathData.addNodeTo(OSMType, nodes.get(way.getLastNodeId()), way);
         }
     }
 
@@ -121,12 +124,12 @@ public class LinePathService {
     }
 
     private Way getWay(OSMType OSMType, Node node) {
-        Way way = appController.removeWayFromNodeTo(OSMType, node);
+        Way way = linePathData.removeWayFromNodeTo(OSMType, node);
         if (way != null) {
             Node firstNode = nodes.get(way.getFirstNodeId());
             Node lastNode = nodes.get(way.getLastNodeId());
-            appController.removeWayFromNodeTo(OSMType, firstNode);
-            appController.removeWayFromNodeTo(OSMType, lastNode);
+            linePathData.removeWayFromNodeTo(OSMType, firstNode);
+            linePathData.removeWayFromNodeTo(OSMType, lastNode);
 
         }
 
@@ -202,8 +205,8 @@ public class LinePathService {
 
         way.setMultipolygon(true);
 
-        appController.saveNodeToData(osmType, nodes.get(way.getFirstNodeId()), way);
-        appController.saveNodeToData(osmType, nodes.get(way.getLastNodeId()), way);
+        linePathData.addNodeTo(osmType, nodes.get(way.getFirstNodeId()), way);
+        linePathData.addNodeTo(osmType, nodes.get(way.getLastNodeId()), way);
     }
 
     private void addRelation(OSMType OSMType, Map<Node, Way> nodeTo) {
@@ -216,7 +219,9 @@ public class LinePathService {
                     path.setMultipolygon(true);
                 }
 
-                appController.saveLinePathData(OSMType, path);
+                if (OSMType == OSMType.COASTLINE) linePathData.saveSingleCoastLine(path);
+
+                else linePathData.saveLinePath(OSMType, path);
             }
         }
     }

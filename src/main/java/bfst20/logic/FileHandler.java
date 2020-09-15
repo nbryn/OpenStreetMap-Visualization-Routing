@@ -1,5 +1,9 @@
 package bfst20.logic;
 
+import bfst20.logic.controllers.interfaces.AddressAPI;
+import bfst20.logic.controllers.interfaces.KDTreeAPI;
+import bfst20.logic.controllers.interfaces.LinePathAPI;
+import bfst20.logic.controllers.interfaces.OSMElementAPI;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
 import javafx.scene.control.Alert;
@@ -19,9 +23,64 @@ import java.util.zip.ZipFile;
 
 public class FileHandler {
     private Parser parser;
+    private OSMElementAPI osmElementAPI;
+    private KDTreeAPI kdTreeAPI;
+    private AddressAPI addressAPI;
+    private LinePathAPI linePathAPI;
 
-    public FileHandler(Parser parser) {
-        this.parser = parser;
+    private FileHandler() {
+
+    }
+
+    public static class Builder {
+        private Parser parser;
+        private OSMElementAPI osmElementAPI;
+        private KDTreeAPI kdTreeAPI;
+        private AddressAPI addressAPI;
+        private LinePathAPI linePathAPI;
+
+        public Builder(Parser parser) {
+            this.parser = parser;
+
+        }
+
+        public Builder withKDTreeAPI(KDTreeAPI kdTreeAPI) {
+            this.kdTreeAPI = kdTreeAPI;
+
+            return this;
+        }
+
+        public Builder withAddressAPI(AddressAPI addressAPI) {
+            this.addressAPI = addressAPI;
+
+            return this;
+        }
+
+        public Builder withLinePathAPI(LinePathAPI linePathAPI) {
+            this.linePathAPI = linePathAPI;
+
+            return this;
+        }
+
+        public Builder withOSMElementAPI(OSMElementAPI osmElementAPI) {
+            this.osmElementAPI = osmElementAPI;
+
+            return this;
+        }
+
+        public FileHandler build() {
+            FileHandler fileHandler = new FileHandler();
+            fileHandler.parser = this.parser;
+            fileHandler.osmElementAPI = this.osmElementAPI;
+            fileHandler.linePathAPI = this.linePathAPI;
+            fileHandler.kdTreeAPI = this.kdTreeAPI;
+            fileHandler.addressAPI = this.addressAPI;
+
+
+            return fileHandler;
+
+        }
+
     }
 
     public void load(File file, AppController appController) throws IOException, XMLStreamException, FactoryConfigurationError {
@@ -48,15 +107,15 @@ public class FileHandler {
     private void loadBinary(File file, AppController appController) {
         try (var in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             Bounds bounds = (Bounds) in.readObject();
-            Map<OSMType, KDTree> tree = (Map<OSMType, KDTree>) in.readObject();
+            Map<OSMType, KDTree> trees = (Map<OSMType, KDTree>) in.readObject();
             List<LinePath> coastline = (List<LinePath>) in.readObject();
             TST tst = (TST) in.readObject();
             Graph graph = (Graph) in.readObject();
 
-            appController.saveBoundsData(bounds);
-            appController.saveAllKDTrees(tree);
-            appController.saveCoastlines(coastline);
-            appController.saveTSTData(tst);
+            osmElementAPI.saveBoundsData(bounds);
+            kdTreeAPI.saveAllKDTrees(trees);
+            linePathAPI.saveCoastlines(coastline);
+            addressAPI.saveTSTData(tst);
             appController.saveGraphData(graph);
         } catch (IOException e) {
             appController.alertOK(Alert.AlertType.ERROR, "Error loading the binary file, exiting.", true);
@@ -91,22 +150,22 @@ public class FileHandler {
         }
     }
 
-    public static void generateBinary() throws IOException {
+    public void generateBinary() throws IOException {
         File file = new File("samsoe.bin");
         file.createNewFile();
         writeToFile(file);
     }
 
-    private static void writeToFile(File file) throws FileNotFoundException, IOException {
+    private void writeToFile(File file) throws IOException {
         AppController appController = new AppController();
         FileOutputStream fileOut = new FileOutputStream(file, false);
         ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
 
-        objectOut.writeObject(appController.fetchBoundsData());
-        objectOut.writeObject(appController.fetchAllKDTrees());
-        objectOut.writeObject(appController.fetchCoastlines());
+        objectOut.writeObject(osmElementAPI.fetchBoundsData());
+        objectOut.writeObject(kdTreeAPI.fetchAllKDTrees());
+        objectOut.writeObject(linePathAPI.fetchCoastlines());
 
-        objectOut.writeObject(appController.fetchTSTData());
+        objectOut.writeObject(addressAPI.fetchTSTData());
         objectOut.writeObject(appController.fetchGraphData());
         objectOut.close();
     }

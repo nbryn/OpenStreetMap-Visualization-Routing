@@ -2,10 +2,9 @@ package bfst20.presentation;
 
 import bfst20.data.InterestPointData;
 import bfst20.logic.AppController;
-import bfst20.logic.controllers.KDTreeAPI;
-import bfst20.logic.controllers.KDTreeController;
-import bfst20.logic.controllers.LinePathAPI;
-import bfst20.logic.controllers.OSMElementAPI;
+import bfst20.logic.controllers.interfaces.KDTreeAPI;
+import bfst20.logic.controllers.interfaces.LinePathAPI;
+import bfst20.logic.controllers.interfaces.OSMElementAPI;
 import bfst20.logic.misc.OSMType;
 import bfst20.logic.entities.*;
 import bfst20.logic.kdtree.Rect;
@@ -54,6 +53,10 @@ public class View {
     private long secondSinceLastRepaint = 0;
     private double pixelWidth;
 
+    private View() {
+
+    }
+
     public static class Builder {
         private Canvas canvas;
         private LinePathAPI linePathController;
@@ -89,7 +92,7 @@ public class View {
             return this;
         }
 
-        public View Build() {
+        public View build() {
             View view = new View();
             view.canvas = this.canvas;
             view.linePathController = this.linePathController;
@@ -215,8 +218,8 @@ public class View {
     }
 
     private void drawKDTree(OSMType type, Rect rect, double lineWidth, Point2D point) {
-        if (kdTreeController.fetchKDTree(type) != null) {
-            for (LinePath linePath : kdTreeController.fetchKDTree(type).getElementsInRect(rect, trans.determinant(), point)) {
+        if (kdTreeController.fetchKDTreeByType(type) != null) {
+            for (LinePath linePath : kdTreeController.fetchKDTreeByType(type).getElementsInRect(rect, trans.determinant(), point)) {
 
                 drawLinePath(linePath, lineWidth);
                 gc.fill();
@@ -422,8 +425,8 @@ public class View {
             Map<OSMType, Double> dist = new HashMap<>();
 
             for (OSMType type : types) {
-                if (appController.fetchAllKDTrees().get(type) != null) {
-                    dist.put(type, appController.fetchKDTree(type).getClosetsLinePathToMouseDistance());
+                if (kdTreeController.fetchAllKDTrees().get(type) != null) {
+                    dist.put(type, kdTreeController.fetchKDTreeByType(type).getClosetsLinePathToMouseDistance());
                 }
             }
 
@@ -437,7 +440,7 @@ public class View {
                 }
             }
 
-            String name = appController.fetchKDTree(shortestType).getClosetsLinepathToMouse().getName();
+            String name = kdTreeController.fetchKDTreeByType(shortestType).getClosetsLinepathToMouse().getName();
             mouseLocationLabel.setText(name == null ? "Unknown way" : name);
         } catch (Exception e) {
 

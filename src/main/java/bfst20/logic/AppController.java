@@ -1,23 +1,22 @@
 package bfst20.logic;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import bfst20.data.*;
 import bfst20.logic.controllers.*;
+import bfst20.logic.controllers.interfaces.AddressAPI;
+import bfst20.logic.controllers.interfaces.KDTreeAPI;
+import bfst20.logic.controllers.interfaces.LinePathAPI;
+import bfst20.logic.controllers.interfaces.OSMElementAPI;
 import bfst20.logic.entities.*;
-import bfst20.logic.kdtree.KDTree;
-import bfst20.logic.kdtree.Rect;
 import bfst20.logic.entities.LinePath;
-import bfst20.logic.misc.OSMType;
 import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
 import bfst20.logic.routing.RoutingController;
 import bfst20.logic.services.LinePathService;
-import bfst20.logic.ternary.TST;
 import bfst20.presentation.AlertHandler;
 import bfst20.presentation.View;
 import javafx.scene.control.Alert;
@@ -49,15 +48,21 @@ public class AppController {
         addressData = AddressData.getInstance();
         kdTreeData = KDTreeData.getInstance();
 
-
         addressController = new AddressController(addressData);
         osmElementController = new OSMElementController(osmElementData);
         kdTreeController = new KDTreeController(kdTreeData);
 
+        linePathService = LinePathService.getInstance(linePathData);
+        linePathController = new LinePathController(linePathData, linePathService);
+
         parser = new Parser(osmElementController, addressController);
 
-        fileHandler = new FileHandler(parser);
-
+        fileHandler = new FileHandler.Builder(parser)
+                .withKDTreeAPI(kdTreeController)
+                .withAddressAPI(addressController)
+                .withLinePathAPI(linePathController)
+                .withOSMElementAPI(osmElementController)
+                .build();
 
     }
 
@@ -65,17 +70,14 @@ public class AppController {
         this.view = view;
         loadFile(file);
         routingController = new RoutingController(this);
-        linePathService = LinePathService.getInstance(this);
-        linePathController = new LinePathController(linePathData, linePathService);
         if (!isBinary) {
-            linePathService.convertWaysToLinePaths(fetchAllWays(), fetchAllNodes());
-            linePathService.convertRelationsToLinePaths(fetchRelations());
-            linePathService.clearData();
+            linePathController.init(osmElementController.fetchAllWays(), osmElementController.fetchAllNodes(),
+                    osmElementController.fetchAllRelations());
 
             clearNodeData();
-            generateHighways();
+
             routingController.buildRoutingGraph();
-            generateKDTrees();
+            kdTreeController.generateKDTrees(linePathController.fetchLinePathData(), osmElementController.fetchBoundsData());
 
         }
 
@@ -101,16 +103,6 @@ public class AppController {
         }
     }
 
-    private void generateKDTrees() {
-        kdTreeController.saveRect(osmElementController.fetchBoundsData());
-
-        for (Map.Entry<OSMType, List<LinePath>> entry : linePathController.fetchLinePathData().entrySet()) {
-            if (entry.getValue().size() != 0) {
-                kdTreeController.saveKDTree(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-
     private void clearExistingData() {
         linePathData.clearMotorways();
         linePathData.clearCoastlines();
@@ -125,26 +117,6 @@ public class AppController {
         clearNodeData();
         clearLinePathData();
 
-    }
-
-    public void generateHighways() {
-        Map<OSMType, List<LinePath>> linePaths = linePathData.getLinePaths();
-        List<LinePath> highWays = new ArrayList<>();
-
-        if (linePathData.getMotorways() != null) highWays.addAll(linePathData.getMotorways());
-        for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {
-            highWays.addAll(entry.getValue());
-        }
-
-        linePathData.saveHighways(highWays);
-    }
-
-    public Map<OSMType, KDTree> fetchAllKDTrees() {
-        return kdTreeData.getAllLKDTrees();
-    }
-
-    public void saveAllKDTrees(Map<OSMType, KDTree> tree) {
-        kdTreeData.saveAllKDTrees(tree);
     }
 
     public List<LinePath> fetchHighways() {
@@ -195,114 +167,19 @@ public class AppController {
         view.setSearchAddress(address);
     }
 
-    public void parseOSM(File file) throws IOException, XMLStreamException {
-        parser.parseOSMFile(file);
-    }
 
     public void parseString(String string) throws XMLStreamException {
         parser.parseString(string);
     }
 
-    public void saveAddressData(long id, Address address) {
-        addressData.saveAddress(id, address);
-    }
-
-    public void saveRelationData(Relation relation) {
-        osmElementData.saveRelation(relation);
-    }
-
-    public List<Relation> fetchRelations() {
-        return osmElementData.getRelations();
-    }
-
-    public void saveBoundsData(Bounds bounds) {
-        osmElementData.saveBounds(bounds);
-    }
-
-    public Bounds fetchBoundsData() {
-        return osmElementData.getBounds();
-    }
-
-    public void saveNodeData(long id, Node node) {
-        osmElementData.addToNodeMap(id, node);
-    }
-
-    public void saveWayData(Way way) {
-        osmElementData.saveWay(way);
-    }
-
-    public List<Way> fetchAllWays() {
-        return osmElementData.getWays();
-    }
-
-    public Node fetchNodeData(long id) {
-        return osmElementData.getNode(id);
-    }
-
-    public Map<Long, Node> fetchAllNodes() {
-        return osmElementData.getNodes();
-    }
-
-    public List<LinePath> fetchCoastlines() {
-        return linePathData.getCoastlines();
-    }
-
-    public void saveCoastlines(List<LinePath> paths) {
-        linePathData.saveCoastlines(paths);
-    }
 
     public void clearNodeData() {
         OSMElementData.getInstance().clearNodeData();
     }
 
-    public Map<OSMType, List<LinePath>> fetchLinePathData() {
-        return linePathData.getLinePaths();
-    }
-
-    public Way removeWayFromNodeTo(OSMType type, Node node) {
-        return linePathData.removeWayFromNodeTo(type, node);
-    }
-
-    public void saveNodeToData(OSMType type, Node node, Way way) {
-        linePathData.addNodeTo(type, node, way);
-    }
-
-    public Map<Node, Way> getNodeTo(OSMType type) {
-        return linePathData.getNodeTo(type);
-    }
-
-    public void saveLinePathData(OSMType type, LinePath linePath) {
-        if (type == OSMType.COASTLINE) linePathData.saveSingleCoastLine(linePath);
-
-        else linePathData.saveLinePath(type, linePath);
-    }
-
-    public List<LinePath> fetchMotorways() {
-        return linePathData.getMotorways();
-    }
-
     public void clearLinePathData() {
-        LinePathService.getInstance(this).clearData();
+        LinePathService.getInstance(linePathData).clearData();
         linePathData.clearData();
-    }
-
-    public void setupRect() {
-        Bounds bounds = fetchBoundsData();
-
-        kdTreeData.saveRectValues(bounds.getMinLat(), bounds.getMaxLat(), bounds.getMinLon(), bounds.getMaxLon());
-    }
-
-    public Rect fetchRectData() {
-        return kdTreeData.getRect();
-    }
-
-    public void saveKDTree(OSMType type, List<LinePath> linePaths) {
-        if (type == OSMType.COASTLINE) return;
-        kdTreeData.saveKDTree(type, new KDTree(linePaths, fetchRectData()));
-    }
-
-    public KDTree fetchKDTree(OSMType OSMType) {
-        return kdTreeData.getKDTree(OSMType);
     }
 
     public void alertOK(Alert.AlertType type, String text, boolean wait) {
@@ -312,7 +189,7 @@ public class AppController {
     public void generateBinary() throws IOException {
         clearAllNonBinData();
         try {
-            FileHandler.generateBinary();
+            fileHandler.generateBinary();
         } catch (Exception e) {
             alertOK(Alert.AlertType.ERROR, "Error generating binary, please retry.", false);
         }
@@ -324,12 +201,5 @@ public class AppController {
         routingData.clearData();
     }
 
-    public TST fetchTSTData() {
-        return addressData.getTST();
-    }
-
-    public void saveTSTData(TST tst) {
-        addressData.saveTST(tst);
-    }
 
 }
