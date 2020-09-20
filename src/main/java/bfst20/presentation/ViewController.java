@@ -2,11 +2,9 @@ package bfst20.presentation;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import bfst20.Launcher;
 import bfst20.data.*;
@@ -92,7 +90,6 @@ public class ViewController {
         buildView();
         setupSuggestionHandlers();
 
-        fileHandler = new FileHandler.Builder().build();
         AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
         loadDefault();
 
@@ -127,6 +124,7 @@ public class ViewController {
         File file = null;
 
         try {
+            fileHandler = new FileHandler.Builder().build();
             file = fileHandler.getResourceAsFile("Samsø.osm");
 
         } catch (NullPointerException e) {
