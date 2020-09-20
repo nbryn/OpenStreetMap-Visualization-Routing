@@ -40,7 +40,7 @@ public class SuggestionHandler {
     public void show(String text) {
         hide();
 
-        Queue<Address> addresses = addressAPI.searchSuggestions(text);
+        Queue<Address> addresses = addressAPI.fetchSearchSuggestions(text);
         cm = new ContextMenu();
 
         cm.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {

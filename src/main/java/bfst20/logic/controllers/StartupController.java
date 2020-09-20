@@ -1,12 +1,13 @@
 package bfst20.logic.controllers;
 
 import bfst20.data.*;
-import bfst20.logic.misc.FileHandler;
-import bfst20.logic.misc.Parser;
+import bfst20.logic.filehandling.FileHandler;
+import bfst20.logic.filehandling.Parser;
 import bfst20.logic.controllers.interfaces.AddressAPI;
 import bfst20.logic.controllers.interfaces.KDTreeAPI;
 import bfst20.logic.controllers.interfaces.LinePathAPI;
 import bfst20.logic.controllers.interfaces.OSMElementAPI;
+import bfst20.logic.services.AddressService;
 import bfst20.logic.services.LinePathService;
 import bfst20.logic.services.RoutingService;
 import bfst20.presentation.AlertHandler;
@@ -22,6 +23,7 @@ public class StartupController {
     private OSMElementAPI osmElementController;
     private LinePathService linePathService;
     private LinePathAPI linePathController;
+    private AddressService addressService;
     private OSMElementData osmElementData;
     private RoutingService routingService;
     private AddressAPI addressController;
@@ -44,14 +46,18 @@ public class StartupController {
         addressData = AddressData.getInstance();
         kdTreeData = KDTreeData.getInstance();
 
+        linePathService = LinePathService.getInstance(linePathData);
+        addressService = new AddressService(addressData);
+
+
         osmElementController = new OSMElementController(osmElementData);
-        addressController = new AddressController(addressData);
+        addressController = new AddressController(new AddressService(addressData), addressData);
         kdTreeController = new KDTreeController(kdTreeData);
 
         routingService = new RoutingService(routingData);
-        routingController = new RoutingController(routingService, routingData, addressData);
+        routingController = new RoutingController(routingService, routingData, addressService);
 
-        linePathService = LinePathService.getInstance(linePathData);
+
         linePathController = new LinePathController(linePathData, linePathService);
 
         parser = new Parser(osmElementController, addressController);
@@ -75,7 +81,7 @@ public class StartupController {
 
             osmElementController.clearNodeData();
             routingController.buildRoutingGraph(linePathController.fetchHighways());
-            kdTreeController.generateKDTrees(linePathController.fetchLinePathData(), osmElementController.fetchBoundsData());
+            kdTreeController.constructKDTrees(linePathController.fetchLinePathData(), osmElementController.fetchBoundsData());
         }
 
         view.initialize(isBinary);

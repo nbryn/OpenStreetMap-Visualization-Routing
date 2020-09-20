@@ -8,14 +8,16 @@ import java.util.*;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import bfst20.Launcher;
 import bfst20.data.*;
-import bfst20.logic.misc.FileHandler;
+import bfst20.logic.filehandling.FileHandler;
 import bfst20.logic.controllers.*;
 import bfst20.logic.controllers.interfaces.AddressAPI;
 import bfst20.logic.controllers.interfaces.RoutingAPI;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
+import bfst20.logic.services.AddressService;
 import bfst20.logic.services.LinePathService;
 import bfst20.logic.services.RoutingService;
 import javafx.beans.value.ChangeListener;
@@ -40,12 +42,15 @@ import javafx.stage.FileChooser;
 public class ViewController {
     private StartupController startupController;
     private FileHandler fileHandler;
+    private AddressData addressData;
+    private AddressAPI addressAPI;
     private RoutingAPI routingAPI;
+
 
     @FXML
     private FlowPane wayPointFlowPane;
     @FXML
-    private Button searchAdressButton;
+    private Button searchAddressButton;
     @FXML
     private Button searchRouteButton;
     @FXML
@@ -75,9 +80,11 @@ public class ViewController {
 
 
     public ViewController() {
+        addressData = AddressData.getInstance();
         startupController = new StartupController();
+        addressAPI = new AddressController(new AddressService(addressData), addressData);
         routingAPI = new RoutingController(new RoutingService(RoutingData.getInstance()),
-                RoutingData.getInstance(), AddressData.getInstance());
+                RoutingData.getInstance(), new AddressService(addressData));
     }
 
     @FXML
@@ -105,14 +112,12 @@ public class ViewController {
                 .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
                 .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
                 .withRoutingAPI(new RoutingController(new RoutingService(RoutingData.getInstance()),
-                        RoutingData.getInstance(), AddressData.getInstance()))
+                        RoutingData.getInstance(), new AddressService(addressData)))
                 .withMouseLocationLabel(mouseLocationLabel)
                 .build();
     }
 
     private void setupSuggestionHandlers() {
-        AddressAPI addressAPI = new AddressController(AddressData.getInstance());
-
         new SuggestionHandler(addressAPI, view, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
         new SuggestionHandler(addressAPI, view, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
         new SuggestionHandler(addressAPI, view, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
@@ -168,8 +173,7 @@ public class ViewController {
                                 route.setMouseTransparent(true);
                                 route.setFocusTraversable(false);
 
-                                Separator spacing = new Separator();
-                                displayPane.getChildren().add(spacing);
+                                displayPane.getChildren().add(new Separator());
                                 displayPane.getChildren().add(route);
                             }
                             routingAPI.clearRouteInfoData();
@@ -314,13 +318,11 @@ public class ViewController {
 
 
     private void setupSearchButton() {
-        searchAdressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+        searchAddressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 String searchText = searchAddress.getText();
-
-                AddressData addressData = AddressData.getInstance();
-                Address address = addressData.findAddress(searchText);
+                Address address = addressAPI.findAddress(searchText);
 
                 if (address != null) {
                     view.setSearchAddress(address);
@@ -333,7 +335,7 @@ public class ViewController {
     }
 
 
-    public void save(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+    public void save(ActionEvent actionEvent) throws FactoryConfigurationError {
         startupController.generateBinary();
     }
 
@@ -345,11 +347,7 @@ public class ViewController {
         view.changeToColorBlindMode(true);
     }
 
-    public static void main(String[] args) {
-        Launcher.main(args);
-    }
-
-    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+    public void load(ActionEvent actionEvent) throws FactoryConfigurationError {
 
     }
 }

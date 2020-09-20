@@ -1,8 +1,9 @@
-package bfst20.logic.misc;
+package bfst20.logic.filehandling;
 
 import bfst20.logic.controllers.interfaces.*;
 import bfst20.logic.entities.Bounds;
 import bfst20.logic.entities.LinePath;
+import bfst20.logic.misc.OSMType;
 import bfst20.presentation.AlertHandler;
 import javafx.scene.control.Alert;
 import bfst20.logic.routing.Graph;

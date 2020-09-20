@@ -1,4 +1,4 @@
-package bfst20.logic.misc;
+package bfst20.logic.filehandling;
 
 import bfst20.logic.controllers.interfaces.AddressAPI;
 import bfst20.logic.controllers.interfaces.OSMElementAPI;
@@ -197,7 +197,7 @@ public class Parser {
                 postcode.equals("") ? "" : postcode.intern(),
                 street.equals("") ? "" : street.intern(),
                 lat, lon, lastNodeId);
-        addressController.saveAddressData(lastNodeId, address);
+        addressController.saveAddressData(address);
     }
 
     private void parseTags(OSMElement lastElementParsed, HashMap<String, String> tags, String[] firstTag) {

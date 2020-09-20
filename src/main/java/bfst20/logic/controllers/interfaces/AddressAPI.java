@@ -7,7 +7,7 @@ import java.util.Queue;
 
 public interface AddressAPI {
 
-    void saveAddressData(long id, Address address);
+    void saveAddressData(Address address);
 
     void saveTSTData(TernarySearchTree ternarySearchTree);
 
@@ -15,5 +15,5 @@ public interface AddressAPI {
 
     Address findAddress(String input);
 
-    Queue<Address> searchSuggestions(String input);
+    Queue<Address> fetchSearchSuggestions(String input);
 }

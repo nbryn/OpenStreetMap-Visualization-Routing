@@ -20,7 +20,7 @@ public class KDTreeController implements KDTreeAPI {
     }
 
     @Override
-    public void generateKDTrees(Map<OSMType, List<LinePath>> linePaths, Bounds bounds) {
+    public void constructKDTrees(Map<OSMType, List<LinePath>> linePaths, Bounds bounds) {
         saveRect(bounds);
 
         for (Map.Entry<OSMType, List<LinePath>> entry : linePaths.entrySet()) {

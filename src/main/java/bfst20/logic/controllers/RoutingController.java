@@ -1,6 +1,5 @@
 package bfst20.logic.controllers;
 
-import bfst20.data.AddressData;
 import bfst20.data.RoutingData;
 import bfst20.logic.controllers.interfaces.RoutingAPI;
 import bfst20.logic.entities.Address;
@@ -8,6 +7,7 @@ import bfst20.logic.entities.LinePath;
 import bfst20.logic.misc.Vehicle;
 import bfst20.logic.routing.Edge;
 import bfst20.logic.routing.Graph;
+import bfst20.logic.services.AddressService;
 import bfst20.logic.services.RoutingService;
 
 import java.util.List;
@@ -15,13 +15,13 @@ import java.util.Map;
 
 public class RoutingController implements RoutingAPI {
     private RoutingService routingService;
-    private AddressData addressData;
+    private AddressService addressService;
     private RoutingData routingData;
 
-    public RoutingController(RoutingService routingService, RoutingData routingData, AddressData addressData) {
+    public RoutingController(RoutingService routingService, RoutingData routingData, AddressService addressService) {
         this.routingService = routingService;
         this.routingData = routingData;
-        this.addressData = addressData;
+        this.addressService= addressService;
     }
 
     @Override
@@ -41,8 +41,8 @@ public class RoutingController implements RoutingAPI {
 
     @Override
     public double initializeRouting(String sourceQuery, String targetQuery, Vehicle vehicle) {
-        Address source = addressData.findAddress(sourceQuery);
-        Address target = addressData.findAddress(targetQuery);
+        Address source = addressService.findAddress(sourceQuery);
+        Address target = addressService.findAddress(targetQuery);
 
         Graph graph = routingData.getGraph();
         List<Edge> edges = graph.getEdges();

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface KDTreeAPI {
 
-    void generateKDTrees(Map<OSMType, List<LinePath>> linePaths, Bounds bounds);
+    void constructKDTrees(Map<OSMType, List<LinePath>> linePaths, Bounds bounds);
 
     void saveRect(Bounds bounds);
 

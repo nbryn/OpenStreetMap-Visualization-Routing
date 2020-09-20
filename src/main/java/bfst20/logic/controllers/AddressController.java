@@ -4,20 +4,22 @@ import bfst20.data.AddressData;
 import bfst20.logic.controllers.interfaces.AddressAPI;
 import bfst20.logic.entities.Address;
 import bfst20.logic.routing.TernarySearchTree;
+import bfst20.logic.services.AddressService;
 
 import java.util.Queue;
 
 public class AddressController implements AddressAPI {
-
+    private AddressService addressService;
     private AddressData addressData;
 
-    public AddressController(AddressData addressData) {
+    public AddressController(AddressService addressService, AddressData addressData) {
+        this.addressService = addressService;
         this.addressData = addressData;
     }
 
     @Override
-    public void saveAddressData(long id, Address address) {
-        addressData.saveAddress(id, address);
+    public void saveAddressData(Address address) {
+        addressData.saveAddress(address);
 
     }
 
@@ -33,11 +35,11 @@ public class AddressController implements AddressAPI {
 
     @Override
     public Address findAddress(String input) {
-        return addressData.findAddress(input);
+        return addressService.findAddress(input);
     }
 
     @Override
-    public Queue<Address> searchSuggestions(String input) {
-        return addressData.searchSuggestions(input);
+    public Queue<Address> fetchSearchSuggestions(String input) {
+        return addressService.generateSearchSuggestions(input);
     }
 }
