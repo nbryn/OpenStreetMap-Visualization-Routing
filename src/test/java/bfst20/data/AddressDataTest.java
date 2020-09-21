@@ -33,7 +33,7 @@ class AddressDataTest {
     void saveAddress() {
         TernarySearchTree ternarySearchTree = new TernarySearchTree();
         addressData.saveTST(ternarySearchTree);
-        Address address = new Address("Farum", "21", "3520", "2", 21, 22, 26);
+        Address address = new Address("Farum", "21", "3520", "2", 21, 22);
         addressData.saveAddress(23232, address);
 
         assertEquals(1, ternarySearchTree.getSize());
@@ -49,7 +49,7 @@ class AddressDataTest {
 
     @Test
     void findAddress() {
-        addressData.saveAddress(1, new Address("Samsoe", "1", "1234", "Smediegyde", 1, 1, 321));
+        addressData.saveAddress(1, new Address("Samsoe", "1", "1234", "Smediegyde", 1, 1));
         String searchString = "Smediegyde 1";
         Address address = addressData.findAddress(searchString);
 
@@ -71,7 +71,7 @@ class AddressDataTest {
 
     @Test
     void searchSuggestions() {
-        Address address = new Address("Samsoe", "1", "1234", "Smediegydee", 1, 1, 321);
+        Address address = new Address("Samsoe", "1", "1234", "Smediegydee", 1, 1);
         addressData.saveAddress(1, address);
         Queue<Address> test = addressData.searchSuggestions("Smediegydee");
 

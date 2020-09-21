@@ -39,11 +39,12 @@ import javafx.stage.FileChooser;
 
 public class ViewController {
     private StartupController startupController;
-    private FileHandler fileHandler;
+    private AddressService addressService;
+    private RoutingService routingService;
     private AddressData addressData;
+    private FileHandler fileHandler;
     private AddressAPI addressAPI;
     private RoutingAPI routingAPI;
-
 
     @FXML
     private FlowPane wayPointFlowPane;
@@ -78,21 +79,23 @@ public class ViewController {
 
 
     public ViewController() {
+        fileHandler = new FileHandler.Builder().build();
         addressData = AddressData.getInstance();
+        routingService = new RoutingService(RoutingData.getInstance());
         startupController = new StartupController();
-        addressAPI = new AddressController(new AddressService(addressData), addressData);
-        routingAPI = new RoutingController(new RoutingService(RoutingData.getInstance()),
-                RoutingData.getInstance(), new AddressService(addressData));
+        addressService = new AddressService(addressData);
+
+        addressAPI = new AddressController(addressService);
+        routingAPI = new RoutingController(routingService, addressService);
     }
 
     @FXML
     public void initialize() {
-        buildView();
-        setupSuggestionHandlers();
+        view = buildView();
 
-        AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
         loadDefault();
 
+        setupSuggestionHandlers();
         setupHbox();
         setupFileHandling();
         setupZoomSlider();
@@ -102,14 +105,12 @@ public class ViewController {
         setupRouteButton();
     }
 
-    private void buildView() {
-        view = new View.Builder(canvas)
-                .withLinePathAPI(new LinePathController(LinePathData.getInstance(),
-                        LinePathService.getInstance(LinePathData.getInstance())))
-                .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
-                .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
-                .withRoutingAPI(new RoutingController(new RoutingService(RoutingData.getInstance()),
-                        RoutingData.getInstance(), new AddressService(addressData)))
+    private View buildView() {
+        return new View.Builder(canvas)
+                .withLinePathAPI(new LinePathController(LinePathService.getInstance(LinePathData.getInstance())))
+                .withOSMElementAPI(new OSMElementController())
+                .withKDTreeAPI(new KDTreeController())
+                .withRoutingAPI(new RoutingController(routingService, addressService))
                 .withMouseLocationLabel(mouseLocationLabel)
                 .build();
     }
@@ -121,24 +122,44 @@ public class ViewController {
     }
 
     private void loadDefault() {
-        File file = null;
+        AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
 
         try {
-            fileHandler = new FileHandler.Builder().build();
-            file = fileHandler.getResourceAsFile("Samsø.osm");
-
-        } catch (NullPointerException e) {
-            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
-            System.exit(1);
-        }
-
-        try {
-            startupController.initialize(view, file);
+            startupController.initialize(view, fileHandler.getFile());
         } catch (Exception e) {
             e.printStackTrace();
             AlertHandler.alertOK(Alert.AlertType.ERROR, "Error initializing application, exiting.", true);
             System.exit(1);
         }
+    }
+
+    private void setupHbox() {
+        hbox.widthProperty().addListener((obs, oldVal, newVal) -> {
+            canvas.setWidth((double) newVal - 400);
+            view.repaint();
+        });
+
+        hbox.heightProperty().addListener((obs, oldVal, newVal) -> {
+            canvas.setHeight((double) newVal);
+            view.repaint();
+        });
+    }
+
+    private void setupZoomSlider() {
+        zoomSlider.setMax(126);
+        zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
+                if (!scrollTrigger) {
+                    double deltaValue = zoomSlider.getValue() - view.getSliderValue();
+                    double factor = Math.pow(1.001, 20 * deltaValue);
+
+                    view.zoom(factor, canvas.getWidth() / 2, canvas.getHeight() / 2, 20 * deltaValue);
+                }
+                view.setSliderValue(zoomSlider.getValue());
+            }
+
+        });
     }
 
     private void setupRouteButton() {
@@ -191,35 +212,6 @@ public class ViewController {
         });
     }
 
-    private void setupHbox() {
-        hbox.widthProperty().addListener((obs, oldVal, newVal) -> {
-            canvas.setWidth((double) newVal - 400);
-            view.repaint();
-        });
-
-        hbox.heightProperty().addListener((obs, oldVal, newVal) -> {
-            canvas.setHeight((double) newVal);
-            view.repaint();
-        });
-    }
-
-    private void setupZoomSlider() {
-        zoomSlider.setMax(126);
-        zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-                if (!scrollTrigger) {
-                    double deltaValue = zoomSlider.getValue() - view.getSliderValue();
-                    double factor = Math.pow(1.001, 20 * deltaValue);
-
-                    view.zoom(factor, canvas.getWidth() / 2, canvas.getHeight() / 2, 20 * deltaValue);
-                }
-                view.setSliderValue(zoomSlider.getValue());
-            }
-
-        });
-    }
-
     private void updateInterestPoints() {
         wayPointFlowPane.getChildren().clear();
 
@@ -263,13 +255,7 @@ public class ViewController {
                 if (file != null) {
                     wayPointFlowPane.getChildren().clear();
 
-                    view = new View.Builder(canvas)
-                            .withLinePathAPI(new LinePathController(LinePathData.getInstance(),
-                                    LinePathService.getInstance(LinePathData.getInstance())))
-                            .withOSMElementAPI(new OSMElementController(OSMElementData.getInstance()))
-                            .withKDTreeAPI(new KDTreeController(KDTreeData.getInstance()))
-                            .withMouseLocationLabel(mouseLocationLabel)
-                            .build();
+                    view = buildView();
 
                     startupController.initialize(view, file);
                 }
@@ -314,7 +300,6 @@ public class ViewController {
         });
     }
 
-
     private void setupSearchButton() {
         searchAddressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -331,7 +316,6 @@ public class ViewController {
         });
 
     }
-
 
     public void save(ActionEvent actionEvent) throws FactoryConfigurationError {
         startupController.generateBinary();

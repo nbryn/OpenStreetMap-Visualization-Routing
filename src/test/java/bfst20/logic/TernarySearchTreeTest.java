@@ -10,7 +10,7 @@ public class TernarySearchTreeTest {
 
     @Test
     public void put() {
-        Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1, 1);
+        Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1);
         TernarySearchTree ternarySearchTree = new TernarySearchTree();
 
         ternarySearchTree.put("Hello", address);
@@ -22,8 +22,8 @@ public class TernarySearchTreeTest {
 
     @Test
     public void get() {
-        Address addressRes = new Address("Not hillerod", "10", "3400", "test", 1, 1, 1);
-        Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1, 1);
+        Address addressRes = new Address("Not hillerod", "10", "3400", "test", 1, 1);
+        Address address = new Address("Hilleroed", "10", "3400", "test", 1, 1);
         TernarySearchTree ternarySearchTree = new TernarySearchTree();
 
         ternarySearchTree.put("Hello", address);
@@ -37,10 +37,10 @@ public class TernarySearchTreeTest {
 
     @Test
     public void keysWithPrefix() {
-        Address Address1 = new Address("Hilleroed", "10", "3400", "Hello", 1, 1, 1);
-        Address Address2 = new Address("Hilleroed", "10", "3400", "Hej", 1, 1, 1);
+        Address Address1 = new Address("Hilleroed", "10", "3400", "Hello", 1, 1);
+        Address Address2 = new Address("Hilleroed", "10", "3400", "Hej", 1, 1);
 
-        Address Address3 = new Address("Hilleroed", "10", "3400", "Hellsevej", 1, 1, 1);
+        Address Address3 = new Address("Hilleroed", "10", "3400", "Hellsevej", 1, 1);
         TernarySearchTree ternarySearchTree = new TernarySearchTree();
 
         ternarySearchTree.put("Hello", Address1);
@@ -54,7 +54,7 @@ public class TernarySearchTreeTest {
 
     @Test
     public void spaceTest() {
-        Address Address1 = new Address("Hjørring", "10", "9800", "Skagen landevej", 1, 1, 1);
+        Address Address1 = new Address("Hjørring", "10", "9800", "Skagen landevej", 1, 1);
         TernarySearchTree ternarySearchTree = new TernarySearchTree();
 
         ternarySearchTree.put(Address1.getStreet(), Address1);

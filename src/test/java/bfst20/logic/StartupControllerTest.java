@@ -108,7 +108,7 @@ class StartupControllerTest {
 
     @Test
     public void saveAddressData() {
-        Address address = new Address("Farum", "21", "3520", "2", 21, 22, 26);
+        Address address = new Address("Farum", "21", "3520", "2", 21, 22);
         startupController.saveAddressData((long) 1, address);
 
 

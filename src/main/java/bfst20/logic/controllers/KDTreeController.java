@@ -15,8 +15,8 @@ public class KDTreeController implements KDTreeAPI {
 
     private KDTreeData kdTreeData;
 
-    public KDTreeController(KDTreeData kdTreeData) {
-        this.kdTreeData = kdTreeData;
+    public KDTreeController() {
+        this.kdTreeData = KDTreeData.getInstance();
     }
 
     @Override

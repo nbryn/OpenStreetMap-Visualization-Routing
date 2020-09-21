@@ -13,8 +13,8 @@ import java.util.Map;
 public class OSMElementController implements OSMElementAPI {
     private OSMElementData osmElementData;
 
-    public OSMElementController(OSMElementData osmElementData) {
-        this.osmElementData = osmElementData;
+    public OSMElementController() {
+        this.osmElementData = OSMElementData.getInstance();
     }
 
     @Override

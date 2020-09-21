@@ -49,16 +49,13 @@ public class StartupController {
         linePathService = LinePathService.getInstance(linePathData);
         addressService = new AddressService(addressData);
 
-
-        osmElementController = new OSMElementController(osmElementData);
-        addressController = new AddressController(new AddressService(addressData), addressData);
-        kdTreeController = new KDTreeController(kdTreeData);
+        osmElementController = new OSMElementController();
+        addressController = new AddressController(addressService);
+        kdTreeController = new KDTreeController();
 
         routingService = new RoutingService(routingData);
-        routingController = new RoutingController(routingService, routingData, addressService);
-
-
-        linePathController = new LinePathController(linePathData, linePathService);
+        routingController = new RoutingController(routingService, addressService);
+        linePathController = new LinePathController(linePathService);
 
         parser = new Parser(osmElementController, addressController);
 

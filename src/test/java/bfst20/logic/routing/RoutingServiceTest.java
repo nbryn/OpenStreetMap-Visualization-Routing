@@ -26,8 +26,8 @@ class RoutingServiceTest {
     private static Node node2 = new Node(27, 4, 5);
     private static Edge edge1 = new Edge(OSMType.PRIMARY, node1, node2, 3, "Gedevasevej", 75, false);
     private static Edge edge2 = new Edge(OSMType.PRIMARY, node2, node1, 5, "Dyrevænget", 75, false);
-    Address address = new Address("Farum", "21", "3520", "Gedevasevej", 1, 2, 26);
-    Address address2 = new Address("Farum", "21", "3520", "Dyrevænget", 3, 4, 27);
+    Address address = new Address("Farum", "21", "3520", "Gedevasevej", 1, 2);
+    Address address2 = new Address("Farum", "21", "3520", "Dyrevænget", 3, 4);
 
     @BeforeAll
     static void setup() {

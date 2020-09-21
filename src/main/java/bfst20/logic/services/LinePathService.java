@@ -151,7 +151,7 @@ public class LinePathService {
         if (after == null) return before;
 
         Way way = new Way();
-        // Why do we need this? Seems to do the same without it
+
         if (before.getFirstNodeId() == after.getFirstNodeId()) {
             way.addAllNodeIds(before);
 

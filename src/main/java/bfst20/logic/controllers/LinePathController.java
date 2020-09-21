@@ -19,8 +19,8 @@ public class LinePathController implements LinePathAPI {
     private LinePathService linePathService;
 
 
-    public LinePathController(LinePathData linePathData, LinePathService linePathService) {
-        this.linePathData = linePathData;
+    public LinePathController(LinePathService linePathService) {
+        this.linePathData = LinePathData.getInstance();
         this.linePathService = linePathService;
     }
 

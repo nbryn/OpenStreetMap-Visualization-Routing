@@ -37,7 +37,7 @@ public class SuggestionHandler {
         setupEvents();
     }
 
-    public void show(String text) {
+    private void show(String text) {
         hide();
 
         Queue<Address> addresses = addressAPI.fetchSearchSuggestions(text);
@@ -97,14 +97,14 @@ public class SuggestionHandler {
         cm.show(textField, Side.BOTTOM, 0, 0);
     }
 
-    public void hide() {
+    private void hide() {
         if (cm == null) return;
         cm.getItems().clear();
         cm.hide();
         cm = null;
     }
 
-    public void setupEvents() {
+    private void setupEvents() {
         textField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,

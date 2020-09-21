@@ -12,9 +12,9 @@ public class AddressController implements AddressAPI {
     private AddressService addressService;
     private AddressData addressData;
 
-    public AddressController(AddressService addressService, AddressData addressData) {
+    public AddressController(AddressService addressService) {
         this.addressService = addressService;
-        this.addressData = addressData;
+        this.addressData = AddressData.getInstance();
     }
 
     @Override

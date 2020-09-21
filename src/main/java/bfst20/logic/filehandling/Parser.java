@@ -196,7 +196,7 @@ public class Parser {
                 housenumber.equals("") ? "" : housenumber.intern(),
                 postcode.equals("") ? "" : postcode.intern(),
                 street.equals("") ? "" : street.intern(),
-                lat, lon, lastNodeId);
+                lat, lon);
         addressController.saveAddressData(address);
     }
 

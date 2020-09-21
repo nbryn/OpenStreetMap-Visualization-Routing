@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Way implements OSMElement, Serializable {
     private boolean multipolygon;
     private List<Long> nodeIds;

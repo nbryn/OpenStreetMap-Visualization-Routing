@@ -25,7 +25,9 @@ public class FileHandler {
     private AddressAPI addressAPI;
     private RoutingAPI routingAPI;
     private KDTreeAPI kdTreeAPI;
+    private static File file;
     private Parser parser;
+
 
     private FileHandler() {
 
@@ -202,5 +204,13 @@ public class FileHandler {
             System.exit(1);
             return null;
         }
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public File getFile() {
+        return this.file;
     }
 }

@@ -27,7 +27,6 @@ public class RoutingService {
             if (lp.getWay() == null) continue;
             highwayNodes.addAll(lp.getWay().getNodes());
         }
-
         Graph graph = new Graph(new ArrayList<>(highwayNodes));
         generateGraphEdges(highways, graph);
         graph.sortEdges();

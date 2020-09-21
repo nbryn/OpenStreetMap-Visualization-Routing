@@ -18,9 +18,9 @@ public class RoutingController implements RoutingAPI {
     private AddressService addressService;
     private RoutingData routingData;
 
-    public RoutingController(RoutingService routingService, RoutingData routingData, AddressService addressService) {
+    public RoutingController(RoutingService routingService, AddressService addressService) {
         this.routingService = routingService;
-        this.routingData = routingData;
+        this.routingData = RoutingData.getInstance();
         this.addressService= addressService;
     }
 

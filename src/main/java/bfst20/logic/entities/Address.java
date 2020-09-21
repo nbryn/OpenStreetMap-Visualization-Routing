@@ -8,24 +8,20 @@ public class Address implements Serializable {
             postcode,
             street;
     private float lat, lon;
-    private long nodeID;
 
     public Address(String city,
                    String houseNumber,
                    String postcode,
                    String street,
                    float lat,
-                   float lon, long nodeID) {
+                   float lon) {
         this.city = city;
         this.street = street;
         this.houseNumber = houseNumber;
         this.postcode = postcode;
         this.lat = lat;
         this.lon = lon;
-        this.nodeID = nodeID;
     }
-
-
 
     public String getStreet(){
         return street;
