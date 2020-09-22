@@ -1,13 +1,10 @@
 package bfst20.logic.entities;
 
-import bfst20.logic.LinePathGenerator;
 import bfst20.logic.misc.OSMType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

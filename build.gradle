@@ -38,7 +38,7 @@ dependencies {
 }
 
 application {
-    mainClassName = 'bfst20.presentation.ViewController'
+    mainClassName = 'bfst20.Launcher'
     applicationDefaultJvmArgs = ["-Xmx8192m"]
 }
 
@@ -52,7 +52,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'bfst20.presentation.ViewController'
+        attributes 'Main-Class': 'bfst20.Launcher'
     }
     from {
         configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }

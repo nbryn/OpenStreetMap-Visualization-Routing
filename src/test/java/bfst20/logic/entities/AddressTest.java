@@ -10,7 +10,7 @@ public class AddressTest {
 
     @BeforeAll
     public static void setup() {
-        address = new Address("Køge", "1", "4600", "Farstrupvej", 56, 54, 1);
+        address = new Address("Køge", "1", "4600", "Farstrupvej", 56, 54);
     }
 
     @Test

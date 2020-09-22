@@ -1,25 +1,17 @@
 package bfst20.presentation;
 
-import bfst20.data.AddressData;
-import bfst20.logic.AppController;
+import bfst20.logic.controllers.interfaces.AddressAPI;
 import bfst20.logic.entities.Address;
-import bfst20.logic.misc.Vehicle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 
-import java.util.Map;
+
 import java.util.Queue;
 
 public class SuggestionHandler {
@@ -31,23 +23,24 @@ public class SuggestionHandler {
     }
 
     private SuggestionEvent suggestionEvent;
-    private AppController appController;
+    private View view;
+    private AddressAPI addressAPI;
     private TextField textField;
     private ContextMenu cm;
     private boolean space;
 
-    public SuggestionHandler(AppController appController, TextField textField, SuggestionEvent suggestionEvent) {
+    public SuggestionHandler(AddressAPI addressAPI, View view, TextField textField, SuggestionEvent suggestionEvent) {
         this.textField = textField;
-        this.appController = appController;
+        this.addressAPI = addressAPI;
+        this.view = view;
         this.suggestionEvent = suggestionEvent;
         setupEvents();
     }
 
-    public void show(String text) {
+    private void show(String text) {
         hide();
-        AddressData addressData = AddressData.getInstance();
 
-        Queue<Address> addresses = addressData.searchSuggestions(text);
+        Queue<Address> addresses = addressAPI.fetchSearchSuggestions(text);
         cm = new ContextMenu();
 
         cm.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -84,14 +77,12 @@ public class SuggestionHandler {
 
                     String addressText = address.toString();
                     if (suggestionEvent == SuggestionEvent.SEARCH) {
-
-                        AddressData addressData = AddressData.getInstance();
-                        Address address = addressData.findAddress(addressText);
+                        Address address = addressAPI.findAddress(addressText);
 
                         if (address != null) {
-                            appController.setSearchString(address);
+                            view.setSearchAddress(address);
                         } else {
-                            appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
+                            AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
                         }
                     }
                     textField.setText(addressText);
@@ -106,14 +97,14 @@ public class SuggestionHandler {
         cm.show(textField, Side.BOTTOM, 0, 0);
     }
 
-    public void hide() {
+    private void hide() {
         if (cm == null) return;
         cm.getItems().clear();
         cm.hide();
         cm = null;
     }
 
-    public void setupEvents() {
+    private void setupEvents() {
         textField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,

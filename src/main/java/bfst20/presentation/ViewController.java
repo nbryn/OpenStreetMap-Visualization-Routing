@@ -2,19 +2,22 @@ package bfst20.presentation;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
-import bfst20.data.AddressData;
-import bfst20.data.InterestPointData;
-import bfst20.logic.AppController;
-import bfst20.logic.FileHandler;
+import bfst20.Launcher;
+import bfst20.data.*;
+import bfst20.logic.filehandling.FileHandler;
+import bfst20.logic.controllers.*;
+import bfst20.logic.controllers.interfaces.AddressAPI;
+import bfst20.logic.controllers.interfaces.RoutingAPI;
 import bfst20.logic.entities.Address;
 import bfst20.logic.entities.InterestPoint;
 import bfst20.logic.misc.Vehicle;
+import bfst20.logic.services.AddressService;
+import bfst20.logic.services.LinePathService;
+import bfst20.logic.services.RoutingService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -35,14 +38,18 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class ViewController {
-    private SuggestionHandler suggestionHandlerDestination;
-    private SuggestionHandler suggestionHandlerAddress;
-    private SuggestionHandler suggestionHandlerSearch;
-    private AppController appController;
+    private StartupController startupController;
+    private AddressService addressService;
+    private RoutingService routingService;
+    private AddressData addressData;
+    private FileHandler fileHandler;
+    private AddressAPI addressAPI;
+    private RoutingAPI routingAPI;
+
     @FXML
     private FlowPane wayPointFlowPane;
     @FXML
-    private Button searchAdressButton;
+    private Button searchAddressButton;
     @FXML
     private Button searchRouteButton;
     @FXML
@@ -70,22 +77,25 @@ public class ViewController {
     private Point2D lastMouse;
     private View view;
 
+
     public ViewController() {
-        appController = new AppController();
+        fileHandler = new FileHandler.Builder().build();
+        addressData = AddressData.getInstance();
+        routingService = new RoutingService(RoutingData.getInstance());
+        startupController = new StartupController();
+        addressService = new AddressService(addressData);
+
+        addressAPI = new AddressController(addressService);
+        routingAPI = new RoutingController(routingService, addressService);
     }
 
     @FXML
     public void initialize() {
-        view = new View(canvas);
-        view.setMouseLocationView(mouseLocationLabel);
-        suggestionHandlerSearch = new SuggestionHandler(appController, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
-        suggestionHandlerAddress = new SuggestionHandler(appController, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
-        suggestionHandlerDestination = new SuggestionHandler(appController, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
-
-        appController.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
+        view = buildView();
 
         loadDefault();
 
+        setupSuggestionHandlers();
         setupHbox();
         setupFileHandling();
         setupZoomSlider();
@@ -95,74 +105,32 @@ public class ViewController {
         setupRouteButton();
     }
 
-    private void loadDefault() {
-        File file = null;
-
-        try {
-            file = FileHandler.getResourceAsFile("Samsø.osm", appController);
-
-        } catch (NullPointerException e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error loading startup file, exiting.", true);
-            System.exit(1);
-        }
-
-        try {
-            appController.initialize(view, file);
-        } catch (Exception e) {
-            appController.alertOK(Alert.AlertType.ERROR, "Error initalizing application, exiting.", true);
-            System.exit(1);
-        }
+    private View buildView() {
+        return new View.Builder(canvas)
+                .withLinePathAPI(new LinePathController(LinePathService.getInstance(LinePathData.getInstance())))
+                .withOSMElementAPI(new OSMElementController())
+                .withKDTreeAPI(new KDTreeController())
+                .withRoutingAPI(new RoutingController(routingService, addressService))
+                .withMouseLocationLabel(mouseLocationLabel)
+                .build();
     }
 
-    private void setupRouteButton() {
-        searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
+    private void setupSuggestionHandlers() {
+        new SuggestionHandler(addressAPI, view, searchAddress, SuggestionHandler.SuggestionEvent.SEARCH);
+        new SuggestionHandler(addressAPI, view, searchbar, SuggestionHandler.SuggestionEvent.ADDRESS);
+        new SuggestionHandler(addressAPI, view, destinationBar, SuggestionHandler.SuggestionEvent.DESTINATION);
+    }
 
-                if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
-                    appController.alertOK(Alert.AlertType.WARNING, "Please specify search or target address", true);
-                    return;
-                }
+    private void loadDefault() {
+        AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Starting program, press OK to continue!", true);
 
-                try {
-                    Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
-                    view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
-
-                    if (appController.fetchRouteDirections() != null) {
-                        displayPane.getChildren().clear();
-
-                        Map<String, Double> routeDirections = appController.fetchRouteDirections();
-                        List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
-                        Collections.reverse(streetsOnRoute);
-                        if (appController.fetchRouteDirections().size() > 0) {
-                            for (String street : streetsOnRoute) {
-                                String text = street.equals("ååååå") ? "Unknown Street" : street;
-                                Button route = new Button("Follow " + text + " for " + routeDirections.get(street) + " km");
-                                route.setPrefWidth(375);
-
-                                route.setPrefHeight(60);
-                                route.setMouseTransparent(true);
-                                route.setFocusTraversable(false);
-
-                                Separator spacing = new Separator();
-                                displayPane.getChildren().add(spacing);
-                                displayPane.getChildren().add(route);
-                            }
-                            appController.clearRouteInfoData();
-                        } else {
-                            displayPane.getChildren().clear();
-                            appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
-                        }
-
-                    } else {
-                        displayPane.getChildren().clear();
-                        appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
-                    }
-                } catch (NullPointerException e) {
-                    appController.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
-                }
-            }
-        });
+        try {
+            startupController.initialize(view, fileHandler.getFile());
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertHandler.alertOK(Alert.AlertType.ERROR, "Error initializing application, exiting.", true);
+            System.exit(1);
+        }
     }
 
     private void setupHbox() {
@@ -191,6 +159,56 @@ public class ViewController {
                 view.setSliderValue(zoomSlider.getValue());
             }
 
+        });
+    }
+
+    private void setupRouteButton() {
+        searchRouteButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+
+                if (searchbar.getText().equals("") || destinationBar.getText().equals("")) {
+                    AlertHandler.alertOK(Alert.AlertType.WARNING, "Please specify search or target address", true);
+                    return;
+                }
+
+                try {
+                    Vehicle vehicle = Vehicle.valueOf(type.getSelectedToggle().getUserData().toString().toUpperCase());
+                    view.shortestPath(searchbar.getText(), destinationBar.getText(), vehicle);
+
+                    if (routingAPI.fetchRouteDirections() != null) {
+                        displayPane.getChildren().clear();
+
+                        Map<String, Double> routeDirections = routingAPI.fetchRouteDirections();
+                        List<String> streetsOnRoute = new ArrayList<>(routeDirections.keySet());
+                        Collections.reverse(streetsOnRoute);
+                        if (routingAPI.fetchRouteDirections().size() > 0) {
+                            for (String street : streetsOnRoute) {
+                                String text = street.equals("ååååå") ? "Unknown Street" : street;
+                                Button route = new Button("Follow " + text + " for " + routeDirections.get(street) + " km");
+                                route.setPrefWidth(375);
+
+                                route.setPrefHeight(60);
+                                route.setMouseTransparent(true);
+                                route.setFocusTraversable(false);
+
+                                displayPane.getChildren().add(new Separator());
+                                displayPane.getChildren().add(route);
+                            }
+                            routingAPI.clearRouteInfoData();
+                        } else {
+                            displayPane.getChildren().clear();
+                            AlertHandler.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                        }
+
+                    } else {
+                        displayPane.getChildren().clear();
+                        AlertHandler.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                    }
+                } catch (NullPointerException e) {
+                    AlertHandler.alertOK(Alert.AlertType.INFORMATION, "No route(s) found!", true);
+                }
+            }
         });
     }
 
@@ -237,12 +255,12 @@ public class ViewController {
                 if (file != null) {
                     wayPointFlowPane.getChildren().clear();
 
-                    view = new View(canvas);
+                    view = buildView();
 
-                    appController.initialize(view, file);
+                    startupController.initialize(view, file);
                 }
             } catch (Exception err) {
-                appController.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
+                AlertHandler.alertOK(Alert.AlertType.ERROR, "Error loading selected file, please retry with a new one.", false);
             }
         });
     }
@@ -282,30 +300,25 @@ public class ViewController {
         });
     }
 
-
     private void setupSearchButton() {
-        searchAdressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+        searchAddressButton.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 String searchText = searchAddress.getText();
-
-                AddressData addressData = AddressData.getInstance();
-                Address address = addressData.findAddress(searchText);
+                Address address = addressAPI.findAddress(searchText);
 
                 if (address != null) {
                     view.setSearchAddress(address);
                 } else {
-                    appController.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
+                    AlertHandler.alertOK(Alert.AlertType.INFORMATION, "Typed address not found!", true);
                 }
             }
         });
 
     }
 
-
-
-    public void save(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
-        appController.generateBinary();
+    public void save(ActionEvent actionEvent) throws FactoryConfigurationError {
+        startupController.generateBinary();
     }
 
     public void normalColorButton(ActionEvent actionEvent) {
@@ -316,11 +329,7 @@ public class ViewController {
         view.changeToColorBlindMode(true);
     }
 
-    public static void main(String[] args) {
-        Launcher.main(args);
-    }
-
-    public void load(ActionEvent actionEvent) throws IOException, XMLStreamException, FactoryConfigurationError {
+    public void load(ActionEvent actionEvent) throws FactoryConfigurationError {
 
     }
 }
