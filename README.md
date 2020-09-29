@@ -20,7 +20,7 @@ In order to achieve all of this the application includes custom implementations 
  * Dijkstra's Algorithm - Algorithm for finding the shortest paths between nodes in a graph. Used for routing.
  * A* - Extension of Dijkstra's Algorithm. A* achieves better performance by using heuristics to guide its search.
  * KD-Tree - Space-partitioning data structure for organizing points in a k-dimensional space.
- * Ternary Search Tree - Type of trie (prefix tree) where nodes are arranged in a manner similar to a binary search tree.
+ * Ternary Search Tree - Type of trie (prefix tree) where nodes are arranged similar to a binary search tree.
  
  ## Tech 
 * Java - Class-based, object-oriented and general-purpose programming language used to develop the application.
