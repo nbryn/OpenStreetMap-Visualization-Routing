@@ -9,8 +9,7 @@ and get the fastest(cars) or shortest(bicycle) route between two locations.
 The application also provides search suggestions based on the users input.
 The application only paints the area which are currently visible to the user. This improve performance in situations where an user loads e.g. Denmark and zooms in on a specific area. 
 
-In order to achieve all of this the application includes custom implementations of well known Algorithms and Data Structures such as Dijkstra's Shortest Path Algorithm,
-KD-Tree and Ternary Search Tree.
+In order to achieve all of this the application includes custom implementations of well known Algorithms and Data Structures such as Dijkstra's Shortest Path Algorithm, KD-Tree and Ternary Search Tree.
 
 <h3 align="center">Picture of the app showing a route</h3>
 <p align="center">
@@ -19,9 +18,9 @@ KD-Tree and Ternary Search Tree.
 
  ## Algorithms and Data Structures
  * Dijkstra's Algorithm - Algorithm for finding the shortest paths between nodes in a graph. Used for routing.
- * A* - Extension of Dijkstra's Algorithm. A* achieves better performance by using heuristics to guide its search. Also used for routing.
- * KD-Tree - k-d tree (short for k-dimensional tree) is a space-partitioning data structure for organizing points in a k-dimensional space.
- * Ternary Search Tree(TST) - TST is a type of trie (prefix tree) where nodes are arranged in a manner similar to a binary search tree.
+ * A* - Extension of Dijkstra's Algorithm. A* achieves better performance by using heuristics to guide its search.
+ * KD-Tree - Space-partitioning data structure for organizing points in a k-dimensional space.
+ * Ternary Search Tree - Type of trie (prefix tree) where nodes are arranged in a manner similar to a binary search tree.
  
  ## Tech 
 * Java - Class-based, object-oriented and general-purpose programming language used to develop the application.
