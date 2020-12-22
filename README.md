@@ -13,7 +13,7 @@ In order to achieve all of this the application includes custom implementations 
 
 <h3 align="center">Picture of the app showing a route</h3>
 <p align="center">
-<img  src="https://user-images.githubusercontent.com/44057369/94069316-a591de00-fdf0-11ea-93c6-dec6a9921bc0.png"  width="50%" height="475"/> 
+<img  src="https://user-images.githubusercontent.com/44057369/102916929-9ddfe500-4484-11eb-81c9-cdd24380ffee.png"  width="50%" height="475"/> 
 </p>
 
  ## Algorithms and Data Structures
