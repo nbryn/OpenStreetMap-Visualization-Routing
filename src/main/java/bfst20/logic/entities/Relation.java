@@ -3,9 +3,10 @@ package bfst20.logic.entities;
 import bfst20.logic.misc.OSMType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Relation implements OSMElement {
-    private ArrayList<Long> members;
+    private List<Long> members;
     private boolean multipolygon;
     private OSMType OSMType;
     private String name;
@@ -46,7 +47,7 @@ public class Relation implements OSMElement {
         members.add(member);
     }
 
-    public ArrayList<Long> getMembers() {
+    public List<Long> getMembers() {
         return members;
     }
 
