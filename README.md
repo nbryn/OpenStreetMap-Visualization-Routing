@@ -3,13 +3,12 @@
 ## Summary
 Java desktop application which can load user(or default) specified data(zip, .osm) in XML format from <link> www.openstreetmap.org</link>.
 
-The application parses the data and creates a visual representation of it in the GUI after which the user can zoom, search for locations, specify interest points
+The application parses the input data in order to create a visual representation in the GUI where the user can zoom, search for specific locations, specify interest points
 and get the fastest(cars) or shortest(bicycle) route between two locations.
 
-The application also provides search suggestions based on the users input.
-The application only paints the area which are currently visible to the user. This improve performance in situations where an user loads e.g. Denmark and zooms in on a specific area. 
+The systems provides search suggestions based on the users input and it only paints the area which is currently visible to the user. This improves performance in situations where an user loads e.g. Denmark and zooms in on a specific area. 
 
-In order to achieve all of this the application includes custom implementations of well known Algorithms and Data Structures such as Dijkstra's Shortest Path Algorithm, KD-Tree and Ternary Search Tree.
+In order to achieve this the application includes custom implementations of well known Algorithms and Data Structures such as Dijkstra's Shortest Path Algorithm, KD-Tree and Ternary Search Tree.
 
 <h3 align="center">Picture of the app showing a route</h3>
 <p align="center">
