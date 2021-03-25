@@ -1,4 +1,4 @@
-# OpenStreetMap Routing Service
+# Interactive Map
 
 ## Summary
 Java desktop application which can load user(or default) specified data(zip, .osm) in XML format from <link> www.openstreetmap.org</link>.
